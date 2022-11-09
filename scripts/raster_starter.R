@@ -8,24 +8,24 @@ library(viridis)
 library(readr)
 library(raster)
 library(rasterVis)
-
+library(gridExtra)
 
 # 2. LOADING DATA ----
 
 # Loading raster of shrub biomass (g/m2) on Alaskan North Slope  
-shrub_map_test <- raster("data/katie_maps/pft_agb_deciduousshrub_p025_1985.tif") 
+p50_1985 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_1985.tif") 
 # Using the best-estimates: the 50th percentile of the 1,000 permutations
+p50_2020 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_2020.tif") 
 
-shrub_map_test_2 <- raster("data/katie_maps/pft_agb_deciduousshrub_p025_1990.tif") 
 
-plot(shrub_map_test_2)
+# 3. DATA EXPLORE  -----
+plot(p50_1985)
 
 # exploring resolution 
-res(shrub_map_test) # resolution 30m x 30m
+res(sp50_1985) # resolution 30m x 30m
 
 # exploring projection
-projection(shrub_map_test)
-# "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"
+projection(p50_2020)
 
 # setting a personalised theme 
 theme_shrub <- function(){ theme(legend.position = "right",
@@ -40,23 +40,23 @@ theme_shrub <- function(){ theme(legend.position = "right",
                                  plot.margin = unit(c(1,1,1,1), units = , "cm"))}
 
 # Plotting shrub raster (entire) with ggplot
-(gplot_shrub_map_test <- gplot(shrub_map_test) +
+(gplot_p50_1985 <- gplot(p50_1985) +
     geom_raster(aes(x = x, y = y, fill = value)) +
     # value is the specific value (of reflectance) each pixel is associated with
     scale_fill_viridis_c(rescaler = function(x, to = c(0, 1), from = NULL) {
-      ifelse(x<250, scales::rescale(x, to = to, from = c(min(x, na.rm = TRUE), 250)),1)}, na.value="white") +
+      ifelse(x<500, scales::rescale(x, to = to, from = c(min(x, na.rm = TRUE), 500)),1)}, na.value="white") +
     coord_quickmap()+
     theme_shrub() +  # Remove ugly grey background
     xlab("\nLongitude") +
     ylab("Latitude\n") +
-    ggtitle("Shrub biomass cover (g/m2) of PCH range (1985)\n") +
+    ggtitle("Shrub biomass (g/m2) in PCH range (1985)\n") +
     theme(plot.title = element_text(hjust = 0.5),     # centres plot title
           text = element_text(size=15),		       	    # font size
-          axis.text.x = element_text(angle = 0, hjust = 1)))  # rotates x axis text
+          axis.text.x = element_text(angle = 30, hjust = 1)))  # rotates x axis text
 
 
 # Cropped map with personalised colour palette (low-mid-high) 
-(gplot_shrub_map_test_my_palette <- gplot(shrub_map_test) +
+(gplot_p50_1985_test_my_palette <- gplot(p50_1985) +
     geom_raster(aes(x = x, y = y, fill = value)) +
     # value is the specific value (of reflectance) each pixel is associated with
     scale_fill_gradient2(low = "green4", mid = "green3", high = "brown", midpoint = 10,  na.value="white") +
@@ -69,3 +69,18 @@ theme_shrub <- function(){ theme(legend.position = "right",
           text = element_text(size=15),		       	    # font size
           axis.text.x = element_text(angle = 30, hjust = 1)))  # rotates x axis text
 
+(gplot_p50_2020 <- gplot(p50_2020) +
+    geom_raster(aes(x = x, y = y, fill = value)) +
+    # value is the specific value (of reflectance) each pixel is associated with
+    scale_fill_viridis_c(rescaler = function(x, to = c(0, 1), from = NULL) {
+      ifelse(x<500, scales::rescale(x, to = to, from = c(min(x, na.rm = TRUE), 500)),1)}, na.value="white") +
+    coord_quickmap()+
+    theme_shrub() +  # Remove ugly grey background
+    xlab("\nLongitude") +
+    ylab("Latitude\n") +
+    ggtitle("Shrub biomass (g/m2) in PCH range (2020)\n") +
+    theme(plot.title = element_text(hjust = 0.5),     # centres plot title
+          text = element_text(size=15),		       	    # font size
+          axis.text.x = element_text(angle = 30, hjust = 1)))  # rotates x axis text
+
+grid.arrange(gplot_p50_1985, gplot_p50_2020, nrow=1)
