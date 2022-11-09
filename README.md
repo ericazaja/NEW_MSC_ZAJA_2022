@@ -1,0 +1,1 @@
+# NEW_MSC_ZAJA_2022
