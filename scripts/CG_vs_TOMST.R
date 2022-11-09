@@ -1,6 +1,6 @@
 #### COMMON GARDEN vs ENVIRONMENTAL VARIABLES 2022
 #### Script by Erica Zaja, created 12/10/22
-### Last updated: 12/10/2022
+### Last updated: 12/10/2022 
 
 # 1. LOADING LIBRARIES ----
 library(tidyverse)
