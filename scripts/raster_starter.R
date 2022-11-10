@@ -12,9 +12,16 @@ library(gridExtra)
 
 # 2. LOADING DATA ----
 
-# Loading raster of shrub biomass (g/m2) on Alaskan North Slope  
-p50_1985 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_1985.tif") 
+# Loading rasters of shrub biomass (g/m2) in the PCH range from 1985-2020
 # Using the best-estimates: the 50th percentile of the 1,000 permutations
+
+p50_1985 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_1985.tif") 
+p50_1990 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_1990.tif") 
+p50_1995 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_1995.tif") 
+p50_2000 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_2000.tif") 
+p50_2005 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_2005.tif") 
+p50_2010 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_2010.tif") 
+p50_2015 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_2015.tif") 
 p50_2020 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_2020.tif") 
 
 
