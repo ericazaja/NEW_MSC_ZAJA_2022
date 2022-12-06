@@ -18,7 +18,9 @@
     - [katie_maps](not uploaded yet)
     - [source_pop_Kluane_shrub_data](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/data/source_pop_Kluane_shrub_data): 2022 subsets from Kluane Plateau
     - [source_pop_QHI_shrub_data](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/data/source_pop_QHI_shrub_data): 2022 subsets from QHI
-    - [tomst](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/data/tomst): common garde, KP and QHI tomst 2022.
+    - [tomst](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/data/tomst): common garden, KP and QHI tomst 2022.
+    - [phenology](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/data/phenology): common garden phenology groundtruthing weekly 2022.
+    
     
 - #### [scripts](https://github.com/ericazaja/MSc_ZAJA_2022/tree/main/scripts)
 - #### [img]()
