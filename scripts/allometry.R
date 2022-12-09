@@ -27,7 +27,7 @@ Andy_heights_salix <- Andy_heights %>%
 
 Andy_heights_salix$Height <-as.numeric(Andy_heights_salix$Height)
 
-Andy_heights_salix <- Andy_heights_salix %>% na.omit() 
+Andy_heights_salix <- Andy_heights_salix %>% na.omit()  
 
 # merge biomass and heights data  by plot N 
 
