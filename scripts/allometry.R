@@ -31,15 +31,6 @@ Logan_data_biomass <- read_excel("data/allometry/Berner/Logan-data-biomass.xlsx"
 
 # 3.1. QHI SALIX PULCHRA and SALIX ARCTICA (Andy) ----
 
-## do the maximum height for Andy’s data - he used a point framing grid and 
-# did a bunch of heights,but the most relevant thing is the maximum height for 
-# what you want to do.
-
-# Then the shrubs are always the tallest thing in those plots if there are shrubs there, 
-# so you don’t really need to worry about knowing what species it is.  
-# The shrub is always Salix richardsonii or Salix arctica.  
-# Only use the Sal arctica data if there is no richardsonii in the plot.
-
 Andy_biomass <- Andy_biomass[-1,] # removing row with words
 
 Andy_heights_salix <- Andy_heights %>%
@@ -49,6 +40,11 @@ Andy_heights_salix$Height <-as.numeric(Andy_heights_salix$Height)
 
 Andy_heights_salix <- Andy_heights_salix %>% na.omit()  
 
+# multiple heights are measured (point framing), so retaining maximum heights (aka shrubs)
+# the shrubs are always the tallest thing in the plots if there are shrubs there.
+# Don't really need to worry about knowing what species it is.  
+# The shrub is always Salix richardsonii or Salix arctica.  
+# Only use the Salix arctica data if there is no richardsonii in the plot.
 Andy_maxheights_salix <- Andy_heights_salix %>%
   select(Species, Height, PlotN)%>%
   group_by(PlotN)%>%
@@ -57,22 +53,23 @@ Andy_maxheights_salix <- Andy_heights_salix %>%
   distinct()%>%
   rename("PlotID" = "PlotN")
 
+# merging heights and biomass datasets
 QHI_all_biomass <- full_join(Andy_maxheights_salix, Andy_biomass, 
                              by = "PlotID")
-
+# renaming columns
 QHI_all_biomass <- QHI_all_biomass %>%
   rename("Woody_stem_biomass" = "Woody stem biomass",
          "Shrub_leaf_biomass" = "Shrub leaf biomass")
 
+# reclassing variables
 QHI_all_biomass$PlotID <- as.factor(QHI_all_biomass$PlotID)
 QHI_all_biomass$Shrub_leaf_biomass <- as.numeric(QHI_all_biomass$Shrub_leaf_biomass)
 QHI_all_biomass$Woody_stem_biomass<- as.numeric(QHI_all_biomass$Woody_stem_biomass)
 
+# making a total biomass column summing stem and leaf biomass
 QHI_all_shrub_biomass <- QHI_all_biomass %>%
   select(PlotID, max_height, Woody_stem_biomass, Shrub_leaf_biomass)%>%
   mutate(tot_shrub_biomass = sum (Woody_stem_biomass, Shrub_leaf_biomass))
-
-QHI_all_shrub_biomass[nrow(QHI_all_shrub_biomass) + 1,] <- c("P00", "0", "0", "0", "0")
 
 # Adding zeros row: if height 0, biomass 0
 PlotID <- "P00"
@@ -85,40 +82,65 @@ zeros <- data.frame(PlotID, max_height,
                     Woody_stem_biomass, Shrub_leaf_biomass,
                     tot_shrub_biomass)
 
+# adding zero row
 QHI_all_shrub_biomass <- rbind(QHI_all_shrub_biomass, zeros)
 
 # 3.2. PIKA SALIX PULCHRA and SALIX RICHARDSONII (Isla) ----
 
+# renaming columns
 Biomass_Pika <- Biomass_Calculations_Pika %>%
   select(Plot...2, `Tall Shrubs...12`) %>%
   rename("Tall_shrub_biomass"= "Tall Shrubs...12",
          "Plot" = "Plot...2")
 
+# removing zeros
 Biomass_Pika[Biomass_Pika == 0.000] <- NA
 
 Biomass_Pika <- Biomass_Pika %>%
   na.omit()
 
+# renaming columns
 Percent_cov_Pika <- Percent_cover_Pika %>%
   select(Plot, `Tall Shrubs...10`) %>%
   na.omit() %>%
   rename("Tall_shrub_cov"= "Tall Shrubs...10")
 
+# removing zeros 
 Percent_cov_Pika[Percent_cov_Pika == 0.0000000] <- NA
 
 Percent_cov_Pika <- Percent_cov_Pika %>%
   na.omit()
 
+# keeping relevant columns
 Heights_Pika <- Pika_heights_edit %>%
   select(Plot, Species, Shrub_Height_cm)
 
+# reclassing variables
 Heights_Pika$Plot <- as.factor(Heights_Pika$Plot)
 Percent_cov_Pika$Plot <- as.factor(Percent_cov_Pika$Plot)
 Biomass_Pika$Plot <- as.factor(Biomass_Pika$Plot)
 
+# joinin heights and biomass datasets
 Pika_all <- print(list(Heights_Pika,Biomass_Pika) %>% 
                     reduce(left_join, by='Plot')) %>%
-  distinct() 
+              distinct() 
+
+# multiple biomass values per height, so I kept max biomass per height
+Pika_all_shrub_biomass <- Pika_all %>%
+  group_by(Plot) %>%
+  mutate(max_biomass = max(Tall_shrub_biomass))  %>%
+  select(Plot, Shrub_Height_cm, max_biomass)%>%
+  distinct()
+   
+# Adding zeros row: if height 0, biomass 0
+Plot <- "00"
+Shrub_Height_cm <- 0
+max_biomass <- 0
+
+zeros_pika <- data.frame(Plot, Shrub_Height_cm, max_biomass)
+
+Pika_all_shrub_biomass <- rbind(Pika_all_shrub_biomass, zeros_pika)
+
 # NB havent added cover yet
 
 
@@ -156,15 +178,14 @@ tab_model(andy_model)
 
 
 # Isla: Salix pulchra and richardsonii
-isla_model <- lm(Tall_shrub_biomass ~ Shrub_Height_cm, data = Pika_all)
+isla_model <- lm(max_biomass ~ Shrub_Height_cm, data = Pika_all_shrub_biomass)
 summary(isla_model)
 tab_model(isla_model)
 
-# **ADD a 0, 0 value to the data from my PhD (like Logan's)**
 
-(plot_isla_model <- ggplot(Pika_all) +
-    geom_point(aes(x = Shrub_Height_cm, y= Tall_shrub_biomass), size = 3, alpha = 0.5) +
-    geom_smooth(aes(x = Shrub_Height_cm, y= Tall_shrub_biomass), colour = "brown",method = "lm") +
+(plot_isla_model <- ggplot(Pika_all_shrub_biomass) +
+    geom_point(aes(x = Shrub_Height_cm, y= max_biomass), size = 3, alpha = 0.5) +
+    geom_smooth(aes(x = Shrub_Height_cm, y= max_biomass), colour = "brown",method = "lm") +
     ylab("AGB (g)") +
     xlab("\nHeight (cm)") +
     scale_colour_viridis_d(begin = 0.3, end = 0.9) +
