@@ -69,7 +69,8 @@ QHI_all_biomass$Woody_stem_biomass<- as.numeric(QHI_all_biomass$Woody_stem_bioma
 # making a total biomass column summing stem and leaf biomass
 QHI_all_shrub_biomass <- QHI_all_biomass %>%
   select(PlotID, max_height, Woody_stem_biomass, Shrub_leaf_biomass)%>%
-  mutate(tot_shrub_biomass = sum (Woody_stem_biomass, Shrub_leaf_biomass))
+  mutate(tot_shrub_biomass = sum (Woody_stem_biomass, Shrub_leaf_biomass)) %>%
+  mutate(biomass_per_m2 = (tot_shrub_biomass*4)) # times 4 to make biomass/m2
 
 # Adding zeros row: if height 0, biomass 0
 PlotID <- "P00"
@@ -77,10 +78,11 @@ max_height <- 0
 Woody_stem_biomass <- 0
 Shrub_leaf_biomass <- 0
 tot_shrub_biomass <- 0
+biomass_per_m2 <- 0
 
 zeros <- data.frame(PlotID, max_height, 
                     Woody_stem_biomass, Shrub_leaf_biomass,
-                    tot_shrub_biomass)
+                    tot_shrub_biomass, biomass_per_m2)
 
 # adding zero row
 QHI_all_shrub_biomass <- rbind(QHI_all_shrub_biomass, zeros)
@@ -130,14 +132,17 @@ Pika_all_shrub_biomass <- Pika_all %>%
   group_by(Plot) %>%
   mutate(max_biomass = max(Tall_shrub_biomass))  %>%
   select(Plot, Shrub_Height_cm, max_biomass)%>%
-  distinct()
+  distinct() %>%
+  mutate(biomass_per_m2 = (max_biomass*4)) # times 4 to make biomass/m2
+
    
 # Adding zeros row: if height 0, biomass 0
 Plot <- "00"
 Shrub_Height_cm <- 0
 max_biomass <- 0
+biomass_per_m2 <- 0
 
-zeros_pika <- data.frame(Plot, Shrub_Height_cm, max_biomass)
+zeros_pika <- data.frame(Plot, Shrub_Height_cm, max_biomass, biomass_per_m2)
 
 Pika_all_shrub_biomass <- rbind(Pika_all_shrub_biomass, zeros_pika)
 
@@ -156,14 +161,14 @@ Logan_salix_pulchra <- Logan_data_biomass %>%
 # 4. MODELLING: regression  biomass ~ height  
 
 # Andy: Salix richardsonii
-andy_model <- lm(tot_shrub_biomass ~ max_height, data = QHI_all_shrub_biomass)
+andy_model <- lm(biomass_per_m2 ~ max_height, data = QHI_all_shrub_biomass)
 summary(andy_model)
 tab_model(andy_model)
 
 (plot_andy_model <- ggplot(QHI_all_shrub_biomass) +
-    geom_point(aes(x = max_height, y= tot_shrub_biomass), size = 3, alpha = 0.5) +
-    geom_smooth(aes(x = max_height, y= tot_shrub_biomass), colour = "brown",method = "lm") +
-    ylab("AGB (g)") +
+    geom_point(aes(x = max_height, y= biomass_per_m2), size = 3, alpha = 0.5) +
+    geom_smooth(aes(x = max_height, y= biomass_per_m2), colour = "brown",method = "lm") +
+    ylab("AGB (g/m2)") +
     xlab("\nHeight (cm)") +
     scale_colour_viridis_d(begin = 0.3, end = 0.9) +
     scale_fill_viridis_d(begin = 0.3, end = 0.9) +
@@ -178,15 +183,14 @@ tab_model(andy_model)
 
 
 # Isla: Salix pulchra and richardsonii
-isla_model <- lm(max_biomass ~ Shrub_Height_cm, data = Pika_all_shrub_biomass)
+isla_model <- lm(biomass_per_m2 ~ Shrub_Height_cm, data = Pika_all_shrub_biomass)
 summary(isla_model)
 tab_model(isla_model)
 
-
 (plot_isla_model <- ggplot(Pika_all_shrub_biomass) +
-    geom_point(aes(x = Shrub_Height_cm, y= max_biomass), size = 3, alpha = 0.5) +
-    geom_smooth(aes(x = Shrub_Height_cm, y= max_biomass), colour = "brown",method = "lm") +
-    ylab("AGB (g)") +
+    geom_point(aes(x = Shrub_Height_cm, y= biomass_per_m2), size = 3, alpha = 0.5) +
+    geom_smooth(aes(x = Shrub_Height_cm, y= biomass_per_m2), colour = "brown",method = "lm") +
+    ylab("AGB (g/m2)") +
     xlab("\nHeight (cm)") +
     scale_colour_viridis_d(begin = 0.3, end = 0.9) +
     scale_fill_viridis_d(begin = 0.3, end = 0.9) +
