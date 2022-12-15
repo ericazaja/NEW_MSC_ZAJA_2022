@@ -28,7 +28,13 @@ Percent_cover_Pika <- read_excel("data/allometry/Isla_phd/Percent_cover_Pika.xls
 Logan_data_biomass <- read_excel("data/allometry/Berner/Logan-data-biomass.xlsx")
 
 # 3. DATA WRANGLING -----
-
+# Workflow for Andy and Isla's data: keeping max values (of height, biomass and cover),
+# incorporating cover into the relationship by dividing biomass by cover in the 
+# 50x50cm quadrat and then multiplying by 100 (i.e what biomass of the full shrub would be?)
+# once i have indexed biomass, I multiply by 4 to obtain biomass in g/m2. 
+# NB for point framing, I divide the count by the tot number of point and then multiply by 100 for % cover, 
+# I then I go on to calculate indexed biomass
+ 
 # 3.1. QHI SALIX PULCHRA and SALIX ARCTICA (Andy) ----
 
 Andy_biomass <- Andy_biomass[-1,] # removing row with words
@@ -36,7 +42,7 @@ Andy_biomass <- Andy_biomass[-1,] # removing row with words
 Andy_heights_salix <- Andy_heights %>%
   filter(Species %in% c("Salix arctica", "Salix richardsonii" ))
 
-Andy_heights_salix$Height <-as.numeric(Andy_heights_salix$Height)
+Andy_heights_salix$Height <- as.numeric(Andy_heights_salix$Height)
 
 Andy_heights_salix <- Andy_heights_salix %>% na.omit()  
 
@@ -46,11 +52,13 @@ Andy_heights_salix <- Andy_heights_salix %>% na.omit()
 # The shrub is always Salix richardsonii or Salix arctica.  
 # Only use the Salix arctica data if there is no richardsonii in the plot.
 Andy_maxheights_salix <- Andy_heights_salix %>%
-  select(Species, Height, PlotN)%>%
+  select(Species, Height, Count, PlotN)%>%
   group_by(PlotN)%>%
-  mutate(max_height = max(Height)) %>%
-  select(-Height, -Species)%>%
+  mutate(max_height = max(Height),
+         max_count= max(Count)) %>%
+  select(-Height, -Species, -Count)%>%
   distinct()%>%
+  na.omit() %>%
   rename("PlotID" = "PlotN")
 
 # merging heights and biomass datasets
@@ -65,12 +73,16 @@ QHI_all_biomass <- QHI_all_biomass %>%
 QHI_all_biomass$PlotID <- as.factor(QHI_all_biomass$PlotID)
 QHI_all_biomass$Shrub_leaf_biomass <- as.numeric(QHI_all_biomass$Shrub_leaf_biomass)
 QHI_all_biomass$Woody_stem_biomass<- as.numeric(QHI_all_biomass$Woody_stem_biomass)
+QHI_all_biomass$max_count<- as.numeric(QHI_all_biomass$max_count)
 
 # making a total biomass column summing stem and leaf biomass
 QHI_all_shrub_biomass <- QHI_all_biomass %>%
-  select(PlotID, max_height, Woody_stem_biomass, Shrub_leaf_biomass)%>%
+  select(max_count, PlotID, max_height, Woody_stem_biomass, Shrub_leaf_biomass)%>%
   mutate(tot_shrub_biomass = sum (Woody_stem_biomass, Shrub_leaf_biomass)) %>%
-  mutate(biomass_per_m2 = (tot_shrub_biomass*4)) # times 4 to make biomass/m2
+  mutate(percent_cover = (max_count/36)*100) %>% # calculating % cov from point framing (36 points tot)
+  mutate(biomass_index =  (tot_shrub_biomass/percent_cover)*100) %>%
+  distinct() %>%
+  mutate(biomass_per_m2 = (biomass_index*4)) # times 4 to make biomass/m2
 
 # Adding zeros row: if height 0, biomass 0
 PlotID <- "P00"
@@ -78,11 +90,14 @@ max_height <- 0
 Woody_stem_biomass <- 0
 Shrub_leaf_biomass <- 0
 tot_shrub_biomass <- 0
+percent_cover <- 0
+biomass_index <- 0
 biomass_per_m2 <- 0
 
 zeros <- data.frame(PlotID, max_height, 
                     Woody_stem_biomass, Shrub_leaf_biomass,
-                    tot_shrub_biomass, biomass_per_m2)
+                    tot_shrub_biomass, percent_cover, 
+                    biomass_index, biomass_per_m2)
 
 # adding zero row
 QHI_all_shrub_biomass <- rbind(QHI_all_shrub_biomass, zeros)
@@ -169,7 +184,7 @@ tab_model(andy_model)
 (plot_andy_model <- ggplot(QHI_all_shrub_biomass) +
     geom_point(aes(x = max_height, y= biomass_per_m2), size = 3, alpha = 0.5) +
     geom_smooth(aes(x = max_height, y= biomass_per_m2), colour = "brown",method = "lm") +
-    ylab("AGB (g/m2)") +
+    ylab("full shrub AGB (g/m2)") +
     xlab("\nHeight (cm)") +
     scale_colour_viridis_d(begin = 0.3, end = 0.9) +
     scale_fill_viridis_d(begin = 0.3, end = 0.9) +
