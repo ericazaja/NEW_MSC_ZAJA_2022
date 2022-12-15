@@ -13,7 +13,7 @@ library(sjPlot)
 # NB data only for 50 x 50 cm plots (aka might not be all of the shrub)
 Andy_biomass <- read_csv("data/allometry/Andy_paper/biomass.csv")
 Andy_heights <- read_excel("data/allometry/Andy_paper/heights.xlsx")
-Andy_main_database <- read_excel("data/allometry/Andy_paper/main_database.xlsx")
+# Andy_main_database <- read_excel("data/allometry/Andy_paper/main_database.xlsx")
 
 # Biomass harvests and heights from Myers-Smith PhD: Pika  
 # NB data only for 50 x 50 cm plots (aka might not be all of the shrub)
@@ -123,30 +123,31 @@ Percent_cov_Pika$Plot <- as.factor(Percent_cov_Pika$Plot)
 Biomass_Pika$Plot <- as.factor(Biomass_Pika$Plot)
 
 # joinin heights and biomass datasets
-Pika_all <- print(list(Heights_Pika,Biomass_Pika) %>% 
+Pika_all <- print(list(Heights_Pika,Biomass_Pika, Percent_cov_Pika) %>% 
                     reduce(left_join, by='Plot')) %>%
               distinct() 
 
 # multiple biomass values per height, so I kept max biomass per height
 Pika_all_shrub_biomass <- Pika_all %>%
   group_by(Plot) %>%
-  mutate(max_biomass = max(Tall_shrub_biomass))  %>%
-  select(Plot, Shrub_Height_cm, max_biomass)%>%
+  mutate(max_biomass = max(Tall_shrub_biomass), 
+          max_cover = max(Tall_shrub_cov)) %>%
+  mutate(biomass_index = (max_biomass/max_cover)*100) %>%
+  select(Plot, Shrub_Height_cm, max_biomass, max_cover, biomass_index)%>%
   distinct() %>%
-  mutate(biomass_per_m2 = (max_biomass*4)) # times 4 to make biomass/m2
+  mutate(biomass_per_m2 = (biomass_index*4)) # times 4 to make biomass/m2
 
-   
 # Adding zeros row: if height 0, biomass 0
 Plot <- "00"
 Shrub_Height_cm <- 0
 max_biomass <- 0
+max_cover <- 0
+biomass_index <- 0
 biomass_per_m2 <- 0
 
-zeros_pika <- data.frame(Plot, Shrub_Height_cm, max_biomass, biomass_per_m2)
+zeros_pika <- data.frame(Plot, Shrub_Height_cm, max_biomass, max_cover, biomass_index, biomass_per_m2)
 
 Pika_all_shrub_biomass <- rbind(Pika_all_shrub_biomass, zeros_pika)
-
-# NB havent added cover yet
 
 
 # 3.3. ALASKA SALIX PULCHRA (Logan Berner)----
@@ -190,7 +191,7 @@ tab_model(isla_model)
 (plot_isla_model <- ggplot(Pika_all_shrub_biomass) +
     geom_point(aes(x = Shrub_Height_cm, y= biomass_per_m2), size = 3, alpha = 0.5) +
     geom_smooth(aes(x = Shrub_Height_cm, y= biomass_per_m2), colour = "brown",method = "lm") +
-    ylab("AGB (g/m2)") +
+    ylab("Full shrub AGB (g/m2)") +
     xlab("\nHeight (cm)") +
     scale_colour_viridis_d(begin = 0.3, end = 0.9) +
     scale_fill_viridis_d(begin = 0.3, end = 0.9) +
