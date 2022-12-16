@@ -39,6 +39,10 @@ Logan_data_biomass <- read_excel("data/allometry/Berner/Logan-data-biomass.xlsx"
 # N.B. For point framing (Andy's data), I divide the "count" by the total number of points (36) 
 # and then multiply by 100 to obtain % cover. 
 # I then I go on to calculate indexed biomass and convert to g/m2.
+
+## Q from Mariana: what's the thinking behind keeping max values only? I get that this will be representative of how tall each species can be, 
+## but is this what we want for the allometric equations or should we be looking more at mean type of metrics?
+
  
 # 3.1. QHI SALIX PULCHRA and SALIX ARCTICA (Andy) ----
 
@@ -46,7 +50,7 @@ Andy_biomass <- Andy_biomass[-1,] # removing row with words
 
 # retaining salix target species
 Andy_heights_salix <- Andy_heights %>%
-  filter(Species %in% c("Salix arctica", "Salix richardsonii" ))
+  filter(Species %in% c("Salix arctica", "Salix richardsonii"))
 
 # reclassing height 
 Andy_heights_salix$Height <- as.numeric(Andy_heights_salix$Height)
@@ -59,6 +63,10 @@ Andy_heights_salix <- Andy_heights_salix %>% na.omit()
 # Don't really need to worry about knowing what species it is.  
 # The shrub is always Salix richardsonii or Salix arctica.  
 # Only use the Salix arctica data if there is no richardsonii in the plot.
+
+## Q from Mariana: height is very different from S. richardsonii to S. arctica. I think that the specific species the data comes from
+## does matter, as we'd be introducing quite a lot of variability in the allometric equations by using them both indistinctly. 
+## Shouldn't we be creating one allometric equation per species instead? 
 
 Andy_maxheights_salix <- Andy_heights_salix %>%
   select(Species, Height, Count, PlotN) %>% # selecting columns of interest
