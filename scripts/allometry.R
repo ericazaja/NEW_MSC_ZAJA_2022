@@ -146,7 +146,7 @@ PlotID <- "P00"
 max_height <- 0
 Woody_stem_biomass <- 0
 Shrub_leaf_biomass <- 0
-Species <- "Salix richardsonii"
+Species <- "Salix richardsonii" # N.B. change name here to spp. needed and re run
 tot_shrub_biomass <- 0
 percent_cover <- 0
 biomass_index <- 0
@@ -159,8 +159,14 @@ zeros_salric <- data.frame(PlotID, max_height,
                     tot_shrub_biomass, percent_cover, 
                     biomass_index, biomass_per_m2, max_count)
 
+zeros_salarc <- data.frame(PlotID, max_height, 
+                            Woody_stem_biomass, Shrub_leaf_biomass, Species,
+                            tot_shrub_biomass, percent_cover, 
+                            biomass_index, biomass_per_m2, max_count)
+
 # adding zero vector to the full dataset
 QHI_salric_shrub_biomass <- rbind(QHI_salric_shrub_biomass, zeros_salric)
+QHI_salarc_shrub_biomass <- rbind(QHI_salarc_shrub_biomass, zeros_salarc)
 
 # ANDY DATA DONE 
 
@@ -239,16 +245,16 @@ Logan_salix_pulchra <- Logan_data_biomass %>%
 
 # LOGAN DATA DONE
 
-# 4. MODELLING: regression  biomass ~ height ----
+# 4. MODELLING and DATA VIS: regression  biomass ~ height ---- 
 
 # Andy: Salix richardsonii
-andy_model <- lm(biomass_per_m2 ~ max_height, data = QHI_all_shrub_biomass)
-summary(andy_model)
-tab_model(andy_model)
+andy_model_salric <- lm(biomass_per_m2 ~ max_height, data = QHI_salric_shrub_biomass)
+summary(andy_model_salric)
+tab_model(andy_model_salric)
 # biomass increases with height
 
-# Scatter 
-(plot_andy_model <- ggplot(QHI_all_shrub_biomass) +
+# Scatter salix richardsonii
+(plot_andy_model_salric <- ggplot(QHI_salric_shrub_biomass) +
     geom_point(aes(x = max_height, y= biomass_per_m2), size = 3, alpha = 0.5) +
     geom_smooth(aes(x = max_height, y= biomass_per_m2), colour = "brown",method = "lm") +
     ylab("Full shrub AGB (g/m2)") +
@@ -265,6 +271,32 @@ tab_model(andy_model)
           axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
           axis.text.y = element_text(size = 12, colour = "black")))
 
+# Andy: Salix arctica
+andy_model_salarc <- lm(biomass_per_m2 ~ max_height, data = QHI_salarc_shrub_biomass)
+summary(andy_model_salarc)
+tab_model(andy_model_salarc)
+# biomass increases with height
+
+# Scatter salix arctica
+(plot_andy_model_salarc <- ggplot(QHI_salarc_shrub_biomass) +
+    geom_point(aes(x = max_height, y= biomass_per_m2), size = 3, alpha = 0.5) +
+    geom_smooth(aes(x = max_height, y= biomass_per_m2), colour = "brown",method = "lm") +
+    ylab("Full shrub AGB (g/m2)") +
+    xlab("\nHeight (cm)") +
+    ggtitle("Cunliffe, 2020: Salix arctica, QHI") +
+    scale_colour_viridis_d(begin = 0.3, end = 0.9) +
+    scale_fill_viridis_d(begin = 0.3, end = 0.9) +
+    theme_bw() +
+    theme(panel.border = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.line = element_line(colour = "black"),
+          axis.title = element_text(size = 14),
+          axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
+          axis.text.y = element_text(size = 12, colour = "black")))
+
+# panel
+panel_Andy <- grid.arrange(plot_andy_model_salarc, plot_andy_model_salric, nrow=1)
 
 # Isla: Salix pulchra and richardsonii
 isla_model <- lm(biomass_per_m2 ~ Shrub_Height_cm, data = Pika_all_shrub_biomass)
