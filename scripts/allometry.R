@@ -1,6 +1,6 @@
-### Making allometric equations for Salix spp.
+### Making species-specific allometric equations for Salix spp. (richardsonii, pulchra, arctica)
 ### Script by Erica Zaja
-### Last updated: 16/12/2022
+### Last updated: 29/12/2022
 
 # 1. LOADING LIBRARIES -----
 library(tidyverse)
@@ -30,20 +30,21 @@ Logan_data_biomass <- read_excel("data/allometry/Berner/Logan-data-biomass.xlsx"
 
 # 3. DATA WRANGLING -----
 
-# Workflow for Andy and Isla's data: 
+# Workflow explained -----
+
+# For Andy and Isla's data: 
 # I am keeping max values (of height, biomass and cover),
-# when there are multiple values per plot. Incorporating cover into the 
-# relationship (height VS biomass) by dividing biomass by cover in the 
+# when there are multiple values per plot. 
+# N.B. We are using maximum heights because that is the data that we have from the common garden. 
+
+# Incorporating cover into the relationship (height VS biomass) by dividing biomass by cover in the 
 # 50x50cm quadrat and then multiplying by 100 (i.e what biomass of the full shrub would be?).
+
 # Once i have indexed biomass, I multiply by 4 to obtain biomass in g/m2. 
 # N.B. For point framing (Andy's data), I divide the "count" by the total number of points (36) 
 # and then multiply by 100 to obtain % cover. 
 # I then I go on to calculate indexed biomass and convert to g/m2.
 
-## Q from Mariana: what's the thinking behind keeping max values only? I get that this will be representative of how tall each species can be, 
-## but is this what we want for the allometric equations or should we be looking more at mean type of metrics?
-
- 
 # 3.1. QHI SALIX PULCHRA and SALIX ARCTICA (Andy) ----
 
 Andy_biomass <- Andy_biomass[-1,] # removing row with words
@@ -58,44 +59,82 @@ Andy_heights_salix$Height <- as.numeric(Andy_heights_salix$Height)
 # removing NAs 
 Andy_heights_salix <- Andy_heights_salix %>% na.omit()  
 
+# reclassing variables
+Andy_heights_salix$PlotN <- as.factor(Andy_heights_salix$PlotN)
+Andy_heights_salix$Count <- as.numeric(Andy_heights_salix$Count)
+Andy_heights_salix$Species <- as.factor(Andy_heights_salix$Species)
+
 # Multiple heights are measured (while point framing), so retaining maximum heights (which are shrubs).
-# The shrubs are always the tallest thing in the plots.
-# Don't really need to worry about knowing what species it is.  
+# The salix rich. shrubs are always the tallest thing in the plots.
 # The shrub is always Salix richardsonii or Salix arctica.  
-# Only use the Salix arctica data if there is no richardsonii in the plot.
+# Only use the Salix arctica data if there is no/less richardsonii in the plot.
+# Calculating max heights and max count per species per plot
 
-## Q from Mariana: height is very different from S. richardsonii to S. arctica. I think that the specific species the data comes from
-## does matter, as we'd be introducing quite a lot of variability in the allometric equations by using them both indistinctly. 
-## Shouldn't we be creating one allometric equation per species instead? 
-
-Andy_maxheights_salix <- Andy_heights_salix %>%
+Andy_maxcount_maxheight <- Andy_heights_salix %>% 
   select(Species, Height, Count, PlotN) %>% # selecting columns of interest
-  group_by(PlotN) %>% 
-  mutate(max_height = max(Height),
-         max_count= max(Count)) %>% # also keeping max value of "count" 
-  select(-Height, -Species, -Count)%>%
-  distinct() %>% # only keeping one set of indentical observations
+  group_by(PlotN, Species) %>%
+  mutate(max_count = max(Count), max_height = max(Height)) %>%
+  select(Species, PlotN, max_count, max_height) %>%
+  distinct() # only keeping one set of indentical observations
+
+# Filter salix richardsonii and salix arctica
+Andy_salric <- Andy_maxcount_maxheight %>%
+  filter(Species == "Salix richardsonii")%>%
   na.omit() %>%
   rename("PlotID" = "PlotN")
 
-# merging heights and biomass datasets by PlotID
-QHI_all_biomass <- full_join(Andy_maxheights_salix, Andy_biomass, 
-                             by = "PlotID")
+Andy_salarc <- Andy_maxcount_maxheight %>%
+  filter(Species == "Salix arctica") %>%
+  rename("PlotID" = "PlotN")
+
+# removing plot 1, 3 and 35 from sal arc. (because those plots have higher sal rich. count)
+Andy_salarc <- Andy_salarc[-c(1,3,7),]
+
+# removing plot 2 from sal. rich. because high sal arc in that plot
+Andy_salric <- Andy_salric[-2,]
+
+# merging salix arc heights and biomass datasets by PlotID
+QHI_salarc_biomass <- full_join(Andy_salarc , Andy_biomass, 
+                                by = "PlotID")%>%
+                      na.omit()
+
+# merging salix rich heights and biomass datasets by PlotID
+QHI_salric_biomass <- full_join(Andy_salric , Andy_biomass, 
+                             by = "PlotID")%>%
+                      na.omit()
+
 # renaming columns
-QHI_all_biomass <- QHI_all_biomass %>%
+QHI_salarc_biomass <- QHI_salarc_biomass %>%
+  rename("Woody_stem_biomass" = "Woody stem biomass",
+         "Shrub_leaf_biomass" = "Shrub leaf biomass")
+
+QHI_salric_biomass <- QHI_salric_biomass %>%
   rename("Woody_stem_biomass" = "Woody stem biomass",
          "Shrub_leaf_biomass" = "Shrub leaf biomass")
 
 # reclassing variables
-QHI_all_biomass$PlotID <- as.factor(QHI_all_biomass$PlotID)
-QHI_all_biomass$Shrub_leaf_biomass <- as.numeric(QHI_all_biomass$Shrub_leaf_biomass)
-QHI_all_biomass$Woody_stem_biomass<- as.numeric(QHI_all_biomass$Woody_stem_biomass)
-QHI_all_biomass$max_count<- as.numeric(QHI_all_biomass$max_count)
+QHI_salarc_biomass$PlotID <- as.factor(QHI_salarc_biomass$PlotID)
+QHI_salarc_biomass$Shrub_leaf_biomass <- as.numeric(QHI_salarc_biomass$Shrub_leaf_biomass)
+QHI_salarc_biomass$Woody_stem_biomass<- as.numeric(QHI_salarc_biomass$Woody_stem_biomass)
+QHI_salarc_biomass$max_count<- as.numeric(QHI_salarc_biomass$max_count)
+
+QHI_salric_biomass$PlotID <- as.factor(QHI_salric_biomass$PlotID)
+QHI_salric_biomass$Shrub_leaf_biomass <- as.numeric(QHI_salric_biomass$Shrub_leaf_biomass)
+QHI_salric_biomass$Woody_stem_biomass<- as.numeric(QHI_salric_biomass$Woody_stem_biomass)
+QHI_salric_biomass$max_count<- as.numeric(QHI_salric_biomass$max_count)
 
 # making a total biomass column adding stem and leaf biomass, calculating % cover,
 # indexing biomass and converting to g/m2 
-QHI_all_shrub_biomass <- QHI_all_biomass %>%
-  select(max_count, PlotID, max_height, Woody_stem_biomass, Shrub_leaf_biomass)%>%
+QHI_salarc_shrub_biomass <- QHI_salarc_biomass %>%
+  select(max_count, PlotID, max_height, Woody_stem_biomass, Shrub_leaf_biomass, Species)%>%
+  mutate(tot_shrub_biomass = sum (Woody_stem_biomass, Shrub_leaf_biomass)) %>%
+  mutate(percent_cover = (max_count/36)*100) %>% # calculating % cover from point framing (36 points tot)
+  mutate(biomass_index =  (tot_shrub_biomass/percent_cover)*100) %>%
+  distinct() %>%
+  mutate(biomass_per_m2 = (biomass_index*4)) # times 4 to make biomass/m2
+
+QHI_salric_shrub_biomass <- QHI_salric_biomass %>%
+  select(max_count, PlotID, max_height, Woody_stem_biomass, Shrub_leaf_biomass, Species)%>%
   mutate(tot_shrub_biomass = sum (Woody_stem_biomass, Shrub_leaf_biomass)) %>%
   mutate(percent_cover = (max_count/36)*100) %>% # calculating % cover from point framing (36 points tot)
   mutate(biomass_index =  (tot_shrub_biomass/percent_cover)*100) %>%
@@ -107,19 +146,21 @@ PlotID <- "P00"
 max_height <- 0
 Woody_stem_biomass <- 0
 Shrub_leaf_biomass <- 0
+Species <- "Salix richardsonii"
 tot_shrub_biomass <- 0
 percent_cover <- 0
 biomass_index <- 0
 biomass_per_m2 <- 0
+max_count <- 0
 
 # making into vector of zeros
-zeros <- data.frame(PlotID, max_height, 
-                    Woody_stem_biomass, Shrub_leaf_biomass,
+zeros_salric <- data.frame(PlotID, max_height, 
+                    Woody_stem_biomass, Shrub_leaf_biomass, Species,
                     tot_shrub_biomass, percent_cover, 
-                    biomass_index, biomass_per_m2)
+                    biomass_index, biomass_per_m2, max_count)
 
 # adding zero vector to the full dataset
-QHI_all_shrub_biomass <- rbind(QHI_all_shrub_biomass, zeros)
+QHI_salric_shrub_biomass <- rbind(QHI_salric_shrub_biomass, zeros_salric)
 
 # ANDY DATA DONE 
 
