@@ -36,6 +36,7 @@ Logan_data_biomass <- read_excel("data/allometry/Berner/Logan-data-biomass.xlsx"
 # I am keeping max values (of height, biomass and cover),
 # when there are multiple values per plot. 
 # N.B. We are using maximum heights because that is the data that we have from the common garden. 
+# N.B. Biomass values are NOT sorted by species. 
 
 # Incorporating cover into the relationship (height VS biomass) by dividing biomass by cover in the 
 # 50x50cm quadrat and then multiplying by 100 (i.e what biomass of the full shrub would be?).
@@ -45,7 +46,7 @@ Logan_data_biomass <- read_excel("data/allometry/Berner/Logan-data-biomass.xlsx"
 # and then multiply by 100 to obtain % cover. 
 # I then I go on to calculate indexed biomass and convert to g/m2.
 
-# 3.1. QHI SALIX PULCHRA and SALIX ARCTICA (Andy) ----
+# 3.1. QHI SALIX RICHARDSONII and SALIX ARCTICA (Andy) ----
 
 Andy_biomass <- Andy_biomass[-1,] # removing row with words
 
@@ -168,9 +169,12 @@ zeros_salarc <- data.frame(PlotID, max_height,
 QHI_salric_shrub_biomass <- rbind(QHI_salric_shrub_biomass, zeros_salric)
 QHI_salarc_shrub_biomass <- rbind(QHI_salarc_shrub_biomass, zeros_salarc)
 
-# ANDY DATA DONE 
+# ANDY DATA DONE
 
 # 3.2. PIKA SALIX PULCHRA and SALIX RICHARDSONII (Isla) ----
+
+# N.B. CANNOT distinguish salix pulchra and salix rich,
+# cover and biomass only given for generic "tall shrubs" 
 
 # renaming columns of biomass dataset
 Biomass_Pika <- Biomass_Calculations_Pika %>%
@@ -215,7 +219,7 @@ Pika_all_shrub_biomass <- Pika_all %>%
   mutate(max_biomass = max(Tall_shrub_biomass), 
           max_cover = max(Tall_shrub_cov)) %>%
   mutate(biomass_index = (max_biomass/max_cover)*100) %>%
-  select(Plot, Shrub_Height_cm, max_biomass, max_cover, biomass_index)%>%
+  select(Plot, Shrub_Height_cm, max_biomass, max_cover, biomass_index, Species)%>%
   distinct() %>% # only keeping one set of identical observations
   mutate(biomass_per_m2 = (biomass_index*4)) # times 4 to make biomass/m2
 
@@ -231,6 +235,7 @@ zeros_pika <- data.frame(Plot, Shrub_Height_cm, max_biomass, max_cover, biomass_
 
 # adding zero vector to full dataset
 Pika_all_shrub_biomass <- rbind(Pika_all_shrub_biomass, zeros_pika)
+
 
 # ISLA DATA DONE 
 
@@ -251,7 +256,7 @@ Logan_salix_pulchra <- Logan_data_biomass %>%
 andy_model_salric <- lm(biomass_per_m2 ~ max_height, data = QHI_salric_shrub_biomass)
 summary(andy_model_salric)
 tab_model(andy_model_salric)
-# biomass increases with height
+# biomass increases with height, significant relationship
 
 # Scatter salix richardsonii
 (plot_andy_model_salric <- ggplot(QHI_salric_shrub_biomass) +
@@ -259,7 +264,7 @@ tab_model(andy_model_salric)
     geom_smooth(aes(x = max_height, y= biomass_per_m2), colour = "brown",method = "lm") +
     ylab("Full shrub AGB (g/m2)") +
     xlab("\nHeight (cm)") +
-    ggtitle("Cunliffe, 2020: Salix richardsonii, QHI") +
+    ggtitle("Cunliffe, 2020: Salix richardsonii, QHI. R2 = 0.653 ") +
     scale_colour_viridis_d(begin = 0.3, end = 0.9) +
     scale_fill_viridis_d(begin = 0.3, end = 0.9) +
     theme_bw() +
@@ -275,7 +280,9 @@ tab_model(andy_model_salric)
 andy_model_salarc <- lm(biomass_per_m2 ~ max_height, data = QHI_salarc_shrub_biomass)
 summary(andy_model_salarc)
 tab_model(andy_model_salarc)
-# biomass increases with height
+# biomass increases with height, marginally significant
+# N.B. without the zero intercept the salix arctica model looks very different. 
+# NO significant relationship, flat line. Because only 4 points!
 
 # Scatter salix arctica
 (plot_andy_model_salarc <- ggplot(QHI_salarc_shrub_biomass) +
@@ -283,7 +290,7 @@ tab_model(andy_model_salarc)
     geom_smooth(aes(x = max_height, y= biomass_per_m2), colour = "brown",method = "lm") +
     ylab("Full shrub AGB (g/m2)") +
     xlab("\nHeight (cm)") +
-    ggtitle("Cunliffe, 2020: Salix arctica, QHI") +
+    ggtitle("Cunliffe, 2020: Salix arctica, QHI. R2 = 0.801") +
     scale_colour_viridis_d(begin = 0.3, end = 0.9) +
     scale_fill_viridis_d(begin = 0.3, end = 0.9) +
     theme_bw() +
@@ -295,22 +302,23 @@ tab_model(andy_model_salarc)
           axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
           axis.text.y = element_text(size = 12, colour = "black")))
 
+
 # panel
 panel_Andy <- grid.arrange(plot_andy_model_salarc, plot_andy_model_salric, nrow=1)
 
-# Isla: Salix pulchra and richardsonii
+# Isla: Salix pulchra and richardsonii (can't distinguish spp.)
 isla_model <- lm(biomass_per_m2 ~ Shrub_Height_cm, data = Pika_all_shrub_biomass)
 summary(isla_model)
 tab_model(isla_model)
 # biomass increases with height. But not significant relationship
 
-# Scatter
+# Scatter salix pulchra + salix rich.
 (plot_isla_model <- ggplot(Pika_all_shrub_biomass) +
     geom_point(aes(x = Shrub_Height_cm, y= biomass_per_m2), size = 3, alpha = 0.5) +
     geom_smooth(aes(x = Shrub_Height_cm, y= biomass_per_m2), colour = "brown",method = "lm") +
     ylab("Full shrub AGB (g/m2)") +
     xlab("\nHeight (cm)") +
-    ggtitle("Myers-Smith, date?: Salix richardsonii and pulchra, Pika Camp") +
+    ggtitle("Myers-Smith, date?: Salix richardsonii and pulchra, Pika Camp. R2 = 0.401 ") +
     scale_colour_viridis_d(begin = 0.3, end = 0.9) +
     scale_fill_viridis_d(begin = 0.3, end = 0.9) +
     theme_bw() +
@@ -326,7 +334,7 @@ tab_model(isla_model)
 logan_model <- lm(AGB_g ~ Height_cm, data = Logan_salix_pulchra)
 summary(logan_model)
 tab_model(logan_model)
-# biomass increases with height 
+# biomass increases with height, significant relationship.
 
 # Scatter
 (plot_logan_model <- ggplot(Logan_salix_pulchra) +
@@ -334,7 +342,7 @@ tab_model(logan_model)
     geom_smooth(aes(x = Height_cm, y= AGB_g), colour = "brown",method = "lm") +
     ylab("Full shrub AGB (g)") +
     xlab("\nHeight (cm)") +
-    ggtitle("Berner 2015: Salix pulchra, Alaska ") +
+    ggtitle("Berner 2015: Salix pulchra, Alaska. R2 = 0.611 ") +
     scale_colour_viridis_d(begin = 0.3, end = 0.9) +
     scale_fill_viridis_d(begin = 0.3, end = 0.9) +
     theme_bw() +
@@ -347,6 +355,6 @@ tab_model(logan_model)
           axis.text.y = element_text(size = 12, colour = "black")))
 
 # panel
-all_allometry <- grid.arrange(plot_andy_model, plot_isla_model, plot_logan_model,
-                               ncol=1)
+all_allometry <- grid.arrange(plot_andy_model_salric, plot_andy_model_salarc, plot_isla_model, plot_logan_model,
+                               ncol=2)
 
