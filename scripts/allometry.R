@@ -373,8 +373,6 @@ all_allometry <- grid.arrange(plot_andy_model_salric, plot_andy_model_salarc, pl
 # ggsave()
 
 # Plot all on same plot to visually compare
-colors <- c("Salix richardsonii" = "black", "Salix pulchra" = "brown", "Salix arctica" = "dark green")
-
 (plot_all <- ggplot() +
  geom_point(aes(x = Shrub_Height_cm, y= biomass_per_m2), colour = "brown", size = 3, alpha = 0.5, data = Pika_all_shrub_biomass) +
   geom_smooth(aes(x = Shrub_Height_cm, y= biomass_per_m2), fill = "brown", colour = "brown",method = "lm", data = Pika_all_shrub_biomass) +
@@ -399,13 +397,57 @@ colors <- c("Salix richardsonii" = "black", "Salix pulchra" = "brown", "Salix ar
     
 
 
-# WORK HERE ------
-# make the axes all the same so you can compare visually to see 
-# if the relationships look different out the same
-
 # 4.2. MODELLING PART 2: hierarchical modelling ------
 
 # Ultimately you may want to combine the data, 
 # unless you think there are different relationships among the sites. 
 # So the question is whether species or site influence the relationship?
 # Set up a hierarchical model to ask if the slopes are different among sites and species.
+
+# extracting model coefficients and estimates
+coef1 <- summary(isla_model)$coef # pulchra
+coef1 <- as.data.frame(coef1)
+coef1 <- coef1[-1, ] # removing intercept row, only keeping estimates
+coef1_long <- coef1 %>% 
+  pivot_longer(cols=c('Estimate', 'Std. Error', 't value', 'Pr(>|t|)'),
+                      names_to = "name", values_to = "value") %>%
+  mutate(Species = rep("Salix pulchra"), # adding species col
+         Site = rep("Pika camp")) # adding species col
+
+
+  
+coef2 <-summary(andy_model_salarc)$coef # rich
+coef2 <- as.data.frame(coef2)
+coef2 <- coef2[-1, ] # removing intercept row, only keeping estimates
+coef2_long <- coef2 %>% 
+  pivot_longer(cols=c('Estimate', 'Std. Error', 't value', 'Pr(>|t|)'),
+               names_to = "name", values_to = "value") %>%
+  mutate(Species = rep("Salix richarsonii"), # adding species col
+         Site = rep("QHI")) # adding species col
+
+coef3 <- summary(andy_model_salric)$coef # arctica
+coef3 <- as.data.frame(coef3)
+coef3 <- coef3[-1, ] # removing intercept row, only keeping estimates
+coef3_long <- coef3 %>% 
+  pivot_longer(cols=c('Estimate', 'Std. Error', 't value', 'Pr(>|t|)'),
+               names_to = "name", values_to = "value") %>%
+  mutate(Species = rep("Salix arctica"), # adding species col
+         Site = rep("QHI")) # adding species col
+
+model_comp <- rbind(coef1_long, coef2_long, coef3_long)
+
+model_comp_estimates <- model_comp %>%
+  filter(name == "Estimate")
+
+# make Site and Species categorical cols
+model_comp_estimates$Site <- as.factor(model_comp_estimates$Site)
+model_comp_estimates$Species <- as.factor(model_comp_estimates$Species)
+str(model_comp_estimates)
+
+# then model the coefficients VS site and VS species.
+lm_comp_site <- lm(value ~ Site, data = model_comp_estimates)
+summary(lm_comp_site)
+tab_model(lm_comp_site)
+
+lm_comp_spp <- lm(value ~ Species, data = model_comp_estimates)
+tab_model(lm_comp_spp) # WRONG
