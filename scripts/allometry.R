@@ -372,6 +372,33 @@ all_allometry <- grid.arrange(plot_andy_model_salric, plot_andy_model_salarc, pl
 
 # ggsave()
 
+# Plot all on same plot to visually compare
+colors <- c("Salix richardsonii" = "black", "Salix pulchra" = "brown", "Salix arctica" = "dark green")
+
+(plot_all <- ggplot() +
+ geom_point(aes(x = Shrub_Height_cm, y= biomass_per_m2), colour = "brown", size = 3, alpha = 0.5, data = Pika_all_shrub_biomass) +
+  geom_smooth(aes(x = Shrub_Height_cm, y= biomass_per_m2), fill = "brown", colour = "brown",method = "lm", data = Pika_all_shrub_biomass) +
+  geom_point(aes(x = max_height, y= biomass_per_m2), colour = "dark green", size = 3, alpha = 0.5, data = QHI_salarc_shrub_biomass) +
+  geom_smooth(aes(x = max_height, y= biomass_per_m2), fill = "dark green", colour = "dark green", method = "lm", data = QHI_salarc_shrub_biomass) +
+  geom_point(aes(x = max_height, y= biomass_per_m2), size = 3, alpha = 0.5, data = QHI_salric_shrub_biomass) +
+  geom_smooth(aes(x = max_height, y= biomass_per_m2), colour = "black",method = "lm", data = QHI_salric_shrub_biomass) +
+  ylab("Full shrub AGB (g/m2)") +
+  xlab("\nHeight (cm)") +
+  ggtitle("Salix richardsoni (black), Salix pulchra (brown), Salix arctica (green) ") +
+  theme_bw() +
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black"),
+        axis.title = element_text(size = 14),
+        axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
+        axis.text.y = element_text(size = 12, colour = "black"))) 
+    #scale_color_manual(name='Salix spp.',
+                      # breaks=c('Pulchra', 'Richardsonii', 'Arctica'),
+                      # values=c('Pulchra'='brown', 'Richardsonii'='black', 'Arctica'='green')))
+    
+
+
 # WORK HERE ------
 # make the axes all the same so you can compare visually to see 
 # if the relationships look different out the same
