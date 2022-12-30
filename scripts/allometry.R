@@ -25,7 +25,8 @@ Percent_cover_Pika <- read_excel("data/allometry/Isla_phd/Percent_cover_Pika.xls
 # Biomass_harvest_Pika <- read_excel("data/allometry/Isla_phd/Biomass_harvest_Pika.xlsx") # no need to read in
 
 # c. Biomass harvests and heights from Logan Berner's 2015 paper: Alaska 
-# N.B. biomass (g) data for the full shrub - or is it g/m2?
+# N.B. biomass (g) data for the full shrub
+# **need to find width** ----
 Logan_data_biomass <- read_excel("data/allometry/Berner/Logan-data-biomass.xlsx")
 
 # 3. DATA WRANGLING -----
@@ -36,7 +37,11 @@ Logan_data_biomass <- read_excel("data/allometry/Berner/Logan-data-biomass.xlsx"
 # I am keeping max values (of height, biomass and cover),
 # when there are multiple values per plot. 
 # N.B. We are using maximum heights because that is the data that we have from the common garden. 
-# N.B. Biomass values are NOT sorted by species. 
+
+# N.B. Biomass values are NOT sorted by species, 
+# so I am looking at plots that are dominated by one species or the other.
+# e.g. if plot has more salix pulchra than richardsonii, I categorise 
+# that plot as salix pulchra. 
 
 # Incorporating cover into the relationship (height VS biomass) by dividing biomass by cover in the 
 # 50x50cm quadrat and then multiplying by 100 (i.e what biomass of the full shrub would be?).
@@ -174,7 +179,12 @@ QHI_salarc_shrub_biomass <- rbind(QHI_salarc_shrub_biomass, zeros_salarc)
 # 3.2. PIKA SALIX PULCHRA and SALIX RICHARDSONII (Isla) ----
 
 # N.B. CANNOT distinguish salix pulchra and salix rich,
-# cover and biomass only given for generic "tall shrubs" 
+# cover and biomass only given for generic "tall shrubs".
+# There's some plots with only salix pulchra, but there is no way 
+# of doing only salix richardsonii, because in every plot where 
+# there is sal. rich. there is also sal. pulchra (plots 3b, 5b, 6b). 
+# There is actually always more pulchra than richardsonii in those plots anyway. 
+# So may end up saying it's only salix pulchra (as the dominating shrub in these plots).
 
 # renaming columns of biomass dataset
 Biomass_Pika <- Biomass_Calculations_Pika %>%
@@ -250,13 +260,15 @@ Logan_salix_pulchra <- Logan_data_biomass %>%
 
 # LOGAN DATA DONE
 
-# 4. MODELLING and DATA VIS: regression  biomass ~ height ---- 
+# 4.1. MODELLING Part 1 ------ 
+# Species specific and site specific regression  biomass ~ height 
+# N.B.the statistical significance of the overall relationship per se does not matter
 
 # Andy: Salix richardsonii
 andy_model_salric <- lm(biomass_per_m2 ~ max_height, data = QHI_salric_shrub_biomass)
 summary(andy_model_salric)
 tab_model(andy_model_salric)
-# biomass increases with height, significant relationship
+# biomass increases with height
 
 # Scatter salix richardsonii
 (plot_andy_model_salric <- ggplot(QHI_salric_shrub_biomass) +
@@ -358,3 +370,15 @@ tab_model(logan_model)
 all_allometry <- grid.arrange(plot_andy_model_salric, plot_andy_model_salarc, plot_isla_model, plot_logan_model,
                                ncol=2)
 
+# ggsave()
+
+# WORK HERE ------
+# make the axes all the same so you can compare visually to see 
+# if the relationships look different out the same
+
+# 4.2. MODELLING PART 2: hierarchical modelling ------
+
+# Ultimately you may want to combine the data, 
+# unless you think there are different relationships among the sites. 
+# So the question is whether species or site influence the relationship?
+# Set up a hierarchical model to ask if the slopes are different among sites and species.
