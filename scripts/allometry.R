@@ -426,18 +426,36 @@ QHI_salarc_biomass_merge <- QHI_salarc_shrub_biomass %>%
          Site = rep("QHI")) %>% # adding species col
   select(Plot, Site, Species, height, biomass_per_m2)
 
-all_shrubs <- rbind(QHI_salarc_biomass_merge, QHI_salric_biomass_merge,
-                    Pika_all_shrub_biomass_merge)
-
+all_shrubs <- rbind(Pika_all_shrub_biomass_merge, QHI_salarc_biomass_merge, 
+                    QHI_salric_biomass_merge)
+                    
+all_shrubs$Plot <- as.factor(all_shrubs$Plot)
 all_shrubs$Species <- as.factor(all_shrubs$Species)
 all_shrubs$Site <- as.factor(all_shrubs$Site)
 levels(all_shrubs$Species)
-# see if site and species affect the relationship
-compare <- lm(biomass_per_m2 ~ height + Site + Species, data = all_shrubs)
-tab_model(compare) # nb there is one extra zero in the dataset for pulchra 
-summary(compare)
+levels(all_shrubs$Site)
 
-# wrong below -----
+hist(all_shrubs$biomass_per_m2, breaks = 15)
+# not super normally distributed so use glm 
+
+# see if site and species affect the relationship
+compare_sp <- glm(biomass_per_m2 ~ height + Species, data = all_shrubs)
+tab_model(compare_sp) 
+summary(compare_sp)
+
+compare_site <- glm(biomass_per_m2 ~ height + Site, data = all_shrubs)
+tab_model(compare_site) 
+summary(compare_site)
+
+# Site is significant and Salix pulchra is different 
+# from arctica while richardsonii is not different 
+# from arctica. (as for my current interpretation)
+
+# So I should probably keep the Salix pulchra relationship from Pika, 
+# and perhaps pool richardsonii and arctica (which is andy's data) 
+# into one relationship? 
+
+# WRONG below -----
 # extracting model coefficients and estimates
 coef1 <- summary(isla_model)$coef # pulchra
 coef1 <- as.data.frame(coef1)
@@ -447,9 +465,6 @@ coef1_long <- coef1 %>%
                       names_to = "name", values_to = "value") %>%
   mutate(Species = rep("Salix pulchra"), # adding species col
          Site = rep("Pika camp")) # adding species col
-
-
-
 
   
 coef2 <-summary(andy_model_salarc)$coef # rich
