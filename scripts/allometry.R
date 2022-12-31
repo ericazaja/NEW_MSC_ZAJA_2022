@@ -454,6 +454,22 @@ summary(compare_site)
 # So I should probably keep the Salix pulchra relationship from Pika, 
 # and Salix rich and salix artica from QHI. All separate.
 
+# visual assessment of site differences
+(plot_all_site <- ggplot() +
+    geom_point(aes(x = height, y= biomass_per_m2, colour = Site), size = 3, alpha = 0.5, data = all_shrubs) +
+    geom_smooth(aes(x = height, y= biomass_per_m2, colour = Site), method = "lm", data = all_shrubs) +
+    ylab("Full shrub AGB (g/m2)") +
+    xlab("\nHeight (cm)") +
+    # ggtitle("Salix richardsoni (black), Salix pulchra (brown), Salix arctica (green) ") +
+    theme_bw() +
+    theme(panel.border = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.line = element_line(colour = "black"),
+          axis.title = element_text(size = 14),
+          axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
+          axis.text.y = element_text(size = 12, colour = "black"))) 
+
 
 # WRONG below -----
 # extracting model coefficients and estimates
