@@ -247,8 +247,9 @@ max_biomass <- 0
 max_cover <- 0
 biomass_index <- 0
 biomass_per_m2 <- 0
+Species <- "Salix pulchra"
 # making zeros vector
-zeros_pika <- data.frame(Plot, Shrub_Height_cm, max_biomass, max_cover, biomass_index, biomass_per_m2)
+zeros_pika <- data.frame(Plot, Shrub_Height_cm, max_biomass, max_cover, biomass_index, biomass_per_m2, Species)
 
 # adding zero vector to full dataset
 Pika_all_shrub_biomass <- rbind(Pika_all_shrub_biomass, zeros_pika)
@@ -406,6 +407,37 @@ all_allometry <- grid.arrange(plot_andy_model_salric, plot_andy_model_salarc, pl
 # So the question is whether species or site influence the relationship?
 # Set up a hierarchical model to ask if the slopes are different among sites and species.
 
+# wrangle to merge relevant cols of datasets
+Pika_all_shrub_biomass_merge <- Pika_all_shrub_biomass %>%
+  rename("height" = "Shrub_Height_cm") %>%
+  mutate(Species = rep("Salix pulchra"), # adding species col
+         Site = rep("Pika camp")) %>% # adding species col
+  select(Plot, Site, Species, height, biomass_per_m2)
+
+QHI_salric_biomass_merge <- QHI_salric_shrub_biomass %>%
+  rename("height" = "max_height", "Plot" = "PlotID") %>%
+  mutate(Species = rep("Salix richardsonii"), # adding species col
+         Site = rep("QHI")) %>% # adding species col
+  select(Plot, Site, Species, height, biomass_per_m2)
+
+QHI_salarc_biomass_merge <- QHI_salarc_shrub_biomass %>%
+  rename("height" = "max_height", "Plot" = "PlotID") %>%
+  mutate(Species = rep("Salix arctica"), # adding species col
+         Site = rep("QHI")) %>% # adding species col
+  select(Plot, Site, Species, height, biomass_per_m2)
+
+all_shrubs <- rbind(QHI_salarc_biomass_merge, QHI_salric_biomass_merge,
+                    Pika_all_shrub_biomass_merge)
+
+all_shrubs$Species <- as.factor(all_shrubs$Species)
+all_shrubs$Site <- as.factor(all_shrubs$Site)
+levels(all_shrubs$Species)
+# see if site and species affect the relationship
+compare <- lm(biomass_per_m2 ~ height + Site + Species, data = all_shrubs)
+tab_model(compare) # nb there is one extra zero in the dataset for pulchra 
+summary(compare)
+
+# wrong below -----
 # extracting model coefficients and estimates
 coef1 <- summary(isla_model)$coef # pulchra
 coef1 <- as.data.frame(coef1)
@@ -415,6 +447,8 @@ coef1_long <- coef1 %>%
                       names_to = "name", values_to = "value") %>%
   mutate(Species = rep("Salix pulchra"), # adding species col
          Site = rep("Pika camp")) # adding species col
+
+
 
 
   
