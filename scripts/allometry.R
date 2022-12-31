@@ -24,10 +24,17 @@ Percent_cover_Pika <- read_excel("data/allometry/Isla_phd/Percent_cover_Pika.xls
 # Heights_Regression_Pika <- read_excel("data/allometry/Isla_phd/Heights_Regression_Pika.xlsx") # no need to read in
 # Biomass_harvest_Pika <- read_excel("data/allometry/Isla_phd/Biomass_harvest_Pika.xlsx") # no need to read in
 
-# c. Biomass harvests and heights from Logan Berner's 2015 paper: Alaska 
+# Caribou forage Alaska’s Arctic Coastal Plain Gustine 2011-2014
+# Forage plants were sampled for biomass and quality by mimicking caribou browsing 
+# and grazing, that is, for deciduous shrubs, easily accessible leaves and twigs were stripped off. 
+# Biomass was measured in 0.5 × 0.5 m (i.e 50 x 50cm) quadrats at up to five locations within each site of 5 ha. 
+# Forage quality samples (20–100 g) were collected directly adjacent to biomass sites to preclude any effects of forage removal.
+caribou_forage <- read_csv("data/allometry/Heather/caribou_forage_northSlope_gustine_2011_2014.csv")
+
+# Biomass harvests and heights from Logan Berner's 2015 paper: Alaska 
 # N.B. biomass (g) data for the full shrub
-# **need to find width** ----
-Logan_data_biomass <- read_excel("data/allometry/Berner/Logan-data-biomass.xlsx")
+# can't use because no cover measurements 
+# Logan_data_biomass <- read_excel("data/allometry/Berner/Logan-data-biomass.xlsx")
 
 # 3. DATA WRANGLING -----
 
@@ -176,7 +183,7 @@ QHI_salarc_shrub_biomass <- rbind(QHI_salarc_shrub_biomass, zeros_salarc)
 
 # ANDY DATA DONE
 
-# 3.2. PIKA SALIX PULCHRA and SALIX RICHARDSONII (Isla) ----
+# 3.2. PIKA SALIX PULCHRA (and SALIX RICHARDSONII) (Isla) ----
 
 # N.B. CANNOT distinguish salix pulchra and salix rich,
 # cover and biomass only given for generic "tall shrubs".
@@ -184,7 +191,7 @@ QHI_salarc_shrub_biomass <- rbind(QHI_salarc_shrub_biomass, zeros_salarc)
 # of doing only salix richardsonii, because in every plot where 
 # there is sal. rich. there is also sal. pulchra (plots 3b, 5b, 6b). 
 # There is actually always more pulchra than richardsonii in those plots anyway. 
-# So may end up saying it's only salix pulchra (as the dominating shrub in these plots).
+# So we can say it's only salix pulchra (as the dominating shrub in these plots).
 
 # renaming columns of biomass dataset
 Biomass_Pika <- Biomass_Calculations_Pika %>%
@@ -246,19 +253,14 @@ zeros_pika <- data.frame(Plot, Shrub_Height_cm, max_biomass, max_cover, biomass_
 # adding zero vector to full dataset
 Pika_all_shrub_biomass <- rbind(Pika_all_shrub_biomass, zeros_pika)
 
-
 # ISLA DATA DONE 
 
-# 3.3. ALASKA SALIX PULCHRA (Logan Berner)----
+# 3.3. ALASKA SALIX PULCHRA AND RICHARDSONII  -----
+caribou_forage_SALPUL <- caribou_forage %>%
+  filter(species == "SAPU")
 
-Logan_salix_pulchra <- Logan_data_biomass %>% 
-  filter(Genus == "Salix" & Species == "pulchra") %>% # keeping target salix
-  select(Genus, Species, Region, Ecosystem, "Height (cm)", "AGB (g)") %>% # columns of interest
-  na.omit() %>%
-  rename("AGB_g" = "AGB (g)",
-         "Height_cm" = "Height (cm)")
-
-# LOGAN DATA DONE
+caribou_forage_SALRIC <- caribou_forage %>%
+  filter(species == "SARI")
 
 # 4.1. MODELLING Part 1 ------ 
 # Species specific and site specific regression  biomass ~ height 
@@ -318,7 +320,7 @@ tab_model(andy_model_salarc)
 # panel
 panel_Andy <- grid.arrange(plot_andy_model_salarc, plot_andy_model_salric, nrow=1)
 
-# Isla: Salix pulchra and richardsonii (can't distinguish spp.)
+# Isla: Salix pulchra (and richardsonii) (can't distinguish spp.)
 isla_model <- lm(biomass_per_m2 ~ Shrub_Height_cm, data = Pika_all_shrub_biomass)
 summary(isla_model)
 tab_model(isla_model)
@@ -451,3 +453,14 @@ tab_model(lm_comp_site)
 
 lm_comp_spp <- lm(value ~ Species, data = model_comp_estimates)
 tab_model(lm_comp_spp) # WRONG
+
+
+# 3.3. ALASKA SALIX PULCHRA (Logan Berner)
+
+#Logan_salix_pulchra <- Logan_data_biomass %>% 
+ # filter(Genus == "Salix" & Species == "pulchra") %>% # keeping target salix
+ # select(Genus, Species, Region, Ecosystem, "Height (cm)", "AGB (g)") %>% # columns of interest
+ # na.omit() %>%
+ # rename("AGB_g" = "AGB (g)",
+       #  "Height_cm" = "Height (cm)")
+
