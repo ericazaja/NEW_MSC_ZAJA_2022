@@ -470,6 +470,11 @@ summary(compare_site)
           axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
           axis.text.y = element_text(size = 12, colour = "black"))) 
 
+# the difference is more likely due to the different species and not site
+# but I can't test for that because I don't have the same species at 2 sites to compare.
+
+# KEEPING 3 separate relationships! DONE
+
 
 # WRONG below -----
 # extracting model coefficients and estimates
