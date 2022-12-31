@@ -452,8 +452,8 @@ summary(compare_site)
 # from arctica. (as for my current interpretation)
 
 # So I should probably keep the Salix pulchra relationship from Pika, 
-# and perhaps pool richardsonii and arctica (which is andy's data) 
-# into one relationship? 
+# and Salix rich and salix artica from QHI. All separate.
+
 
 # WRONG below -----
 # extracting model coefficients and estimates
