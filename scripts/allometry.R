@@ -25,19 +25,6 @@ Percent_cover_Pika <- read_excel("data/allometry/Isla_phd/Percent_cover_Pika.xls
 # Heights_Regression_Pika <- read_excel("data/allometry/Isla_phd/Heights_Regression_Pika.xlsx") # no need to read in
 # Biomass_harvest_Pika <- read_excel("data/allometry/Isla_phd/Biomass_harvest_Pika.xlsx") # no need to read in
 
-# Caribou forage Alaska’s Arctic Coastal Plain Gustine 2011-2014
-# Forage plants were sampled for biomass and quality by mimicking caribou browsing 
-# and grazing, that is, for deciduous shrubs, easily accessible leaves and twigs were stripped off. 
-# Biomass was measured in 0.5 × 0.5 m (i.e 50 x 50cm) quadrats at up to five locations within each site of 5 ha. 
-# Forage quality samples (20–100 g) were collected directly adjacent to biomass sites to preclude any effects of forage removal.
-# can't use because no height measurements 
-# caribou_forage <- read_csv("data/allometry/Heather/caribou_forage_northSlope_gustine_2011_2014.csv")
-
-# Biomass harvests and heights from Logan Berner's 2015 paper: Alaska 
-# N.B. biomass (g) data for the full shrub
-# can't use because no cover measurements 
-# Logan_data_biomass <- read_excel("data/allometry/Berner/Logan-data-biomass.xlsx")
-
 # 3. DATA WRANGLING -----
 
 # Workflow explained -----
@@ -327,6 +314,7 @@ panel_Andy <- grid.arrange(plot_andy_model_salarc, plot_andy_model_salric, nrow=
 isla_model <- lm(biomass_per_m2 ~ Shrub_Height_cm + max_cover, data = Pika_all_shrub_biomass)
 summary(isla_model)
 tab_model(isla_model)
+avPlots(isla_model)
 # biomass increases with height. But not significant relationship
 
 # Scatter salix pulchra + salix rich.
@@ -349,7 +337,7 @@ tab_model(isla_model)
 
 
 # panel
-all_allometry <- grid.arrange(plot_andy_model_salric, plot_andy_model_salarc, plot_isla_model, plot_logan_model,
+all_allometry <- grid.arrange(plot_andy_model_salric, plot_andy_model_salarc, plot_isla_model,
                                ncol=2)
 
 # ggsave()
@@ -379,31 +367,26 @@ all_allometry <- grid.arrange(plot_andy_model_salric, plot_andy_model_salarc, pl
     
 
 
-# 4.2. MODELLING PART 2: hierarchical modelling ------
-
-# Ultimately you may want to combine the data, 
-# unless you think there are different relationships among the sites. 
-# So the question is whether species or site influence the relationship?
-# Set up a hierarchical model to ask if the slopes are different among sites and species.
-
+# 5. VISUALISATION -----
 # wrangle to merge relevant cols of datasets
 Pika_all_shrub_biomass_merge <- Pika_all_shrub_biomass %>%
-  rename("height" = "Shrub_Height_cm") %>%
+  rename("height" = "Shrub_Height_cm", 
+         "cover"="max_cover") %>%
   mutate(Species = rep("Salix pulchra"), # adding species col
          Site = rep("Pika camp")) %>% # adding species col
-  dplyr::select(Plot, Site, Species, height, biomass_per_m2)
+  dplyr::select(Plot, Site, Species, height, biomass_per_m2, cover)
 
 QHI_salric_biomass_merge <- QHI_salric_shrub_biomass %>%
-  rename("height" = "max_height", "Plot" = "PlotID") %>%
+  rename("height" = "max_height", "Plot" = "PlotID", "cover"="percent_cover") %>%
   mutate(Species = rep("Salix richardsonii"), # adding species col
          Site = rep("QHI")) %>% # adding species col
-  dplyr::select(Plot, Site, Species, height, biomass_per_m2)
+  dplyr::select(Plot, Site, Species, height, biomass_per_m2, cover)
 
 QHI_salarc_biomass_merge <- QHI_salarc_shrub_biomass %>%
-  rename("height" = "max_height", "Plot" = "PlotID") %>%
+  rename("height" = "max_height", "Plot" = "PlotID", "cover"="percent_cover") %>%
   mutate(Species = rep("Salix arctica"), # adding species col
          Site = rep("QHI")) %>% # adding species col
-  dplyr::select(Plot, Site, Species, height, biomass_per_m2)
+  dplyr::select(Plot, Site, Species, height, biomass_per_m2, cover)
 
 all_shrubs_allom <- rbind(Pika_all_shrub_biomass_merge, QHI_salarc_biomass_merge, 
                     QHI_salric_biomass_merge)
@@ -419,9 +402,8 @@ hist(all_shrubs_allom$biomass_per_m2, breaks = 15)
 write.csv(all_shrubs_allom, "data/allometry/all_shrubs_allom.csv")
 
 
-
-# visual assessment of 3 allometric equations 
-(plot_all_allom <- ggplot() +
+# visual assessment of 3 allometric equations: height vs biomass
+(plot_all_allom_height <- ggplot() +
     geom_point(aes(x = height, y= biomass_per_m2, colour = Species, fill = Species), size = 3, alpha = 0.5, data = all_shrubs_allom) +
     geom_smooth(aes(x = height, y= biomass_per_m2, colour = Species, fill = Species), method = "lm", data = all_shrubs_allom) +
     ylab("Full shrub AGB (g/m2)") +
@@ -439,13 +421,56 @@ write.csv(all_shrubs_allom, "data/allometry/all_shrubs_allom.csv")
           axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
           axis.text.y = element_text(size = 12, colour = "black"))) 
 
-# the difference is more likely due to the different species and not site
-# but I can't test for that because I don't have the same species at 2 sites to compare.
+# visual assessment of 3 allometric equations: cover vs biomass
+(plot_all_allom_cover <- ggplot() +
+    geom_point(aes(x = cover, y= biomass_per_m2, colour = Species, fill = Species), size = 3, alpha = 0.5, data = all_shrubs_allom) +
+    geom_smooth(aes(x = cover, y= biomass_per_m2, colour = Species, fill = Species), method = "lm", data = all_shrubs_allom) +
+    ylab("Full shrub AGB (g/m2)") +
+    xlab("\nCover (%)") +
+    facet_wrap(~Species, scales = "free") +
+    # ggtitle("Salix richardsoni (black), Salix pulchra (brown), Salix arctica (green) ") +
+    scale_colour_viridis_d(begin = 0.1, end = 0.95) +
+    scale_fill_viridis_d(begin = 0.1, end = 0.95) + 
+    theme_bw() +
+    theme(panel.border = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.line = element_line(colour = "black"),
+          axis.title = element_text(size = 14),
+          axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
+          axis.text.y = element_text(size = 12, colour = "black"))) 
+
+
+# visual assessment of 3 allometric equations: cover vs biomass
+(plot_all_allom_height_cover <- ggplot() +
+    geom_point(aes(x = cover, y = height, colour = Species, fill = Species), size = 3, alpha = 0.5, data = all_shrubs_allom) +
+    geom_smooth(aes(x = cover, y=height , colour = Species, fill = Species), method = "lm", data = all_shrubs_allom) +
+    ylab("Height (cm)") +
+    xlab("\nCover (%)") +
+    facet_wrap(~Species, scales = "free") +
+    # ggtitle("Salix richardsoni (black), Salix pulchra (brown), Salix arctica (green) ") +
+    scale_colour_viridis_d(begin = 0.1, end = 0.95) +
+    scale_fill_viridis_d(begin = 0.1, end = 0.95) + 
+    theme_bw() +
+    theme(panel.border = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.line = element_line(colour = "black"),
+          axis.title = element_text(size = 14),
+          axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
+          axis.text.y = element_text(size = 12, colour = "black"))) 
+
 
 # KEEPING 3 separate relationships! DONE
+# END
 
 
 # WRONG below -----
+# MODELLING PART 2: hierarchical modelling 
+# Ultimately you may want to combine the data, 
+# unless you think there are different relationships among the sites. 
+# So the question is whether species or site influence the relationship?
+# Set up a hierarchical model to ask if the slopes are different among sites and species.
 
 # see if site and species affect the relationship: i cant compare because I never have the same spp at 2 sites
 compare_sp <- glm(biomass_per_m2 ~ height + Species, data = all_shrubs)
@@ -462,6 +487,10 @@ summary(compare_site)
 
 # So I should probably keep the Salix pulchra relationship from Pika, 
 # and Salix rich and salix artica from QHI. All separate.
+
+#NB The difference is more likely due to the different species and not site
+# but I can't test for that because I don't have the same species at 2 sites to compare.
+# So i'm keeping separate relationships
 
 # Logan: Salix pulchra
 # logan_model <- lm(AGB_g ~ Height_cm, data = Logan_salix_pulchra)
@@ -534,8 +563,21 @@ tab_model(lm_comp_site)
 lm_comp_spp <- lm(value ~ Species, data = model_comp_estimates)
 tab_model(lm_comp_spp) # WRONG
 
+# Extra data that I can't use
+# Caribou forage Alaska’s Arctic Coastal Plain Gustine 2011-2014
+# Forage plants were sampled for biomass and quality by mimicking caribou browsing 
+# and grazing, that is, for deciduous shrubs, easily accessible leaves and twigs were stripped off. 
+# Biomass was measured in 0.5 × 0.5 m (i.e 50 x 50cm) quadrats at up to five locations within each site of 5 ha. 
+# Forage quality samples (20–100 g) were collected directly adjacent to biomass sites to preclude any effects of forage removal.
+# can't use because no height measurements 
+# caribou_forage <- read_csv("data/allometry/Heather/caribou_forage_northSlope_gustine_2011_2014.csv")
 
-# 3.3. ALASKA SALIX PULCHRA (Logan Berner)
+# Biomass harvests and heights from Logan Berner's 2015 paper: Alaska 
+# N.B. biomass (g) data for the full shrub
+# can't use because no cover measurements 
+# Logan_data_biomass <- read_excel("data/allometry/Berner/Logan-data-biomass.xlsx")
+
+# ALASKA SALIX PULCHRA (Logan Berner)
 
 #Logan_salix_pulchra <- Logan_data_biomass %>% 
  # filter(Genus == "Salix" & Species == "pulchra") %>% # keeping target salix
@@ -543,4 +585,5 @@ tab_model(lm_comp_spp) # WRONG
  # na.omit() %>%
  # rename("AGB_g" = "AGB (g)",
        #  "Height_cm" = "Height (cm)")
+
 
