@@ -24,6 +24,8 @@ p50_2010 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_2010.tif")
 p50_2015 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_2015.tif") 
 p50_2020 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_2020.tif") 
 
+# Rasters tell us where there is shrub and where there isn't (cover)
+# if there is shrub, what is their biomass
 
 # 3. DATA EXPLORE  -----
 plot(p50_1985)

@@ -1,6 +1,7 @@
 ### Making species-specific allometric equations for Salix spp. (richardsonii, pulchra, arctica)
+## Equations: cover and height terms to predict biomass
 ### Script by Erica Zaja
-### Last updated: 29/12/2022
+### Last updated: 30/01/2023
 
 # 1. LOADING LIBRARIES -----
 library(tidyverse)
@@ -29,7 +30,8 @@ Percent_cover_Pika <- read_excel("data/allometry/Isla_phd/Percent_cover_Pika.xls
 # and grazing, that is, for deciduous shrubs, easily accessible leaves and twigs were stripped off. 
 # Biomass was measured in 0.5 × 0.5 m (i.e 50 x 50cm) quadrats at up to five locations within each site of 5 ha. 
 # Forage quality samples (20–100 g) were collected directly adjacent to biomass sites to preclude any effects of forage removal.
-caribou_forage <- read_csv("data/allometry/Heather/caribou_forage_northSlope_gustine_2011_2014.csv")
+# can't use because no height measurements 
+# caribou_forage <- read_csv("data/allometry/Heather/caribou_forage_northSlope_gustine_2011_2014.csv")
 
 # Biomass harvests and heights from Logan Berner's 2015 paper: Alaska 
 # N.B. biomass (g) data for the full shrub
@@ -50,10 +52,10 @@ caribou_forage <- read_csv("data/allometry/Heather/caribou_forage_northSlope_gus
 # e.g. if plot has more salix pulchra than richardsonii, I categorise 
 # that plot as salix pulchra. 
 
-# Incorporating cover into the relationship (height VS biomass) by dividing biomass by cover in the 
+# NOT DOING THIS: Incorporating cover into the relationship (height VS biomass) by dividing biomass by cover in the 
 # 50x50cm quadrat and then multiplying by 100 (i.e what biomass of the full shrub would be?).
 
-# Once i have indexed biomass, I multiply by 4 to obtain biomass in g/m2. 
+# Once i have (indexed) biomass, I multiply by 4 to obtain biomass in g/m2. 
 # N.B. For point framing (Andy's data), I divide the "count" by the total number of points (36) 
 # and then multiply by 100 to obtain % cover. 
 # I then I go on to calculate indexed biomass and convert to g/m2.
@@ -88,7 +90,7 @@ Andy_maxcount_maxheight <- Andy_heights_salix %>%
   group_by(PlotN, Species) %>%
   mutate(max_count = max(Count), max_height = max(Height)) %>%
   select(Species, PlotN, max_count, max_height) %>%
-  distinct() # only keeping one set of indentical observations
+  distinct() # only keeping one set of identical observations
 
 # Filter salix richardsonii and salix arctica
 Andy_salric <- Andy_maxcount_maxheight %>%
@@ -139,20 +141,20 @@ QHI_salric_biomass$max_count<- as.numeric(QHI_salric_biomass$max_count)
 # making a total biomass column adding stem and leaf biomass, calculating % cover,
 # indexing biomass and converting to g/m2 
 QHI_salarc_shrub_biomass <- QHI_salarc_biomass %>%
-  select(max_count, PlotID, max_height, Woody_stem_biomass, Shrub_leaf_biomass, Species)%>%
+  dplyr::select(max_count, PlotID, max_height, Woody_stem_biomass, Shrub_leaf_biomass, Species)%>%
   mutate(tot_shrub_biomass = sum (Woody_stem_biomass, Shrub_leaf_biomass)) %>%
   mutate(percent_cover = (max_count/36)*100) %>% # calculating % cover from point framing (36 points tot)
-  mutate(biomass_index =  (tot_shrub_biomass/percent_cover)*100) %>%
-  distinct() %>%
-  mutate(biomass_per_m2 = (biomass_index*4)) # times 4 to make biomass/m2
+ # mutate(biomass_index =  (tot_shrub_biomass/percent_cover)*100) %>%
+  # distinct() %>%
+  mutate(biomass_per_m2 = (tot_shrub_biomass*4)) # times 4 to make biomass/m2
 
 QHI_salric_shrub_biomass <- QHI_salric_biomass %>%
-  select(max_count, PlotID, max_height, Woody_stem_biomass, Shrub_leaf_biomass, Species)%>%
+  dplyr::select(max_count, PlotID, max_height, Woody_stem_biomass, Shrub_leaf_biomass, Species)%>%
   mutate(tot_shrub_biomass = sum (Woody_stem_biomass, Shrub_leaf_biomass)) %>%
   mutate(percent_cover = (max_count/36)*100) %>% # calculating % cover from point framing (36 points tot)
-  mutate(biomass_index =  (tot_shrub_biomass/percent_cover)*100) %>%
-  distinct() %>%
-  mutate(biomass_per_m2 = (biomass_index*4)) # times 4 to make biomass/m2
+  # mutate(biomass_index =  (tot_shrub_biomass/percent_cover)*100) %>%
+  # distinct() %>%
+  mutate(biomass_per_m2 = (tot_shrub_biomass*4)) # times 4 to make biomass/m2
 
 # Adding zeros row to set intercept to zero: i.e. if height 0, biomass 0
 PlotID <- "P00"
@@ -162,7 +164,7 @@ Shrub_leaf_biomass <- 0
 Species <- "Salix richardsonii" # N.B. change name here to spp. needed and re run
 tot_shrub_biomass <- 0
 percent_cover <- 0
-biomass_index <- 0
+#biomass_index <- 0
 biomass_per_m2 <- 0
 max_count <- 0
 
@@ -170,12 +172,12 @@ max_count <- 0
 zeros_salric <- data.frame(PlotID, max_height, 
                     Woody_stem_biomass, Shrub_leaf_biomass, Species,
                     tot_shrub_biomass, percent_cover, 
-                    biomass_index, biomass_per_m2, max_count)
+                    biomass_per_m2, max_count)
 
 zeros_salarc <- data.frame(PlotID, max_height, 
                             Woody_stem_biomass, Shrub_leaf_biomass, Species,
                             tot_shrub_biomass, percent_cover, 
-                            biomass_index, biomass_per_m2, max_count)
+                           biomass_per_m2, max_count)
 
 # adding zero vector to the full dataset
 QHI_salric_shrub_biomass <- rbind(QHI_salric_shrub_biomass, zeros_salric)
@@ -195,7 +197,7 @@ QHI_salarc_shrub_biomass <- rbind(QHI_salarc_shrub_biomass, zeros_salarc)
 
 # renaming columns of biomass dataset
 Biomass_Pika <- Biomass_Calculations_Pika %>%
-  select(Plot...2, `Tall Shrubs...12`) %>%
+  dplyr::select(Plot...2, `Tall Shrubs...12`) %>%
   rename("Tall_shrub_biomass"= "Tall Shrubs...12",
          "Plot" = "Plot...2")
 
@@ -206,7 +208,7 @@ Biomass_Pika <- Biomass_Pika %>%
 
 # renaming columns of percentage cover dataset
 Percent_cov_Pika <- Percent_cover_Pika %>%
-  select(Plot, `Tall Shrubs...10`) %>%
+  dplyr::select(Plot, `Tall Shrubs...10`) %>%
   na.omit() %>%
   rename("Tall_shrub_cov"= "Tall Shrubs...10")
 
@@ -235,21 +237,21 @@ Pika_all_shrub_biomass <- Pika_all %>%
   group_by(Plot) %>%
   mutate(max_biomass = max(Tall_shrub_biomass), 
           max_cover = max(Tall_shrub_cov)) %>%
-  mutate(biomass_index = (max_biomass/max_cover)*100) %>%
-  select(Plot, Shrub_Height_cm, max_biomass, max_cover, biomass_index, Species)%>%
-  distinct() %>% # only keeping one set of identical observations
-  mutate(biomass_per_m2 = (biomass_index*4)) # times 4 to make biomass/m2
+  #mutate(biomass_index = (max_biomass/max_cover)*100) %>%
+  dplyr::select(Plot, Shrub_Height_cm, max_biomass, max_cover, Species)%>%
+  # distinct() %>% # only keeping one set of identical observations
+  mutate(biomass_per_m2 = (max_biomass*4)) # times 4 to make biomass/m2
 
 # Adding zeros row to set intercept to zero: if height 0, biomass 0
 Plot <- "00"
 Shrub_Height_cm <- 0
 max_biomass <- 0
 max_cover <- 0
-biomass_index <- 0
+# biomass_index <- 0
 biomass_per_m2 <- 0
 Species <- "Salix pulchra"
 # making zeros vector
-zeros_pika <- data.frame(Plot, Shrub_Height_cm, max_biomass, max_cover, biomass_index, biomass_per_m2, Species)
+zeros_pika <- data.frame(Plot, Shrub_Height_cm, max_biomass, max_cover, biomass_per_m2, Species)
 
 # adding zero vector to full dataset
 Pika_all_shrub_biomass <- rbind(Pika_all_shrub_biomass, zeros_pika)
@@ -268,7 +270,7 @@ caribou_forage_SALRIC <- caribou_forage %>%
 # N.B.the statistical significance of the overall relationship per se does not matter
 
 # Andy: Salix richardsonii
-andy_model_salric <- lm(biomass_per_m2 ~ max_height, data = QHI_salric_shrub_biomass)
+andy_model_salric <- lm(biomass_per_m2 ~ max_height + percent_cover, data = QHI_salric_shrub_biomass)
 summary(andy_model_salric)
 tab_model(andy_model_salric)
 # biomass increases with height
@@ -292,7 +294,7 @@ tab_model(andy_model_salric)
           axis.text.y = element_text(size = 12, colour = "black")))
 
 # Andy: Salix arctica
-andy_model_salarc <- lm(biomass_per_m2 ~ max_height, data = QHI_salarc_shrub_biomass)
+andy_model_salarc <- lm(biomass_per_m2 ~ max_height + percent_cover, data = QHI_salarc_shrub_biomass)
 summary(andy_model_salarc)
 tab_model(andy_model_salarc)
 # biomass increases with height, marginally significant
@@ -322,7 +324,7 @@ tab_model(andy_model_salarc)
 panel_Andy <- grid.arrange(plot_andy_model_salarc, plot_andy_model_salric, nrow=1)
 
 # Isla: Salix pulchra (and richardsonii) (can't distinguish spp.)
-isla_model <- lm(biomass_per_m2 ~ Shrub_Height_cm, data = Pika_all_shrub_biomass)
+isla_model <- lm(biomass_per_m2 ~ Shrub_Height_cm + max_cover, data = Pika_all_shrub_biomass)
 summary(isla_model)
 tab_model(isla_model)
 # biomass increases with height. But not significant relationship
@@ -345,29 +347,6 @@ tab_model(isla_model)
           axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
           axis.text.y = element_text(size = 12, colour = "black")))
 
-# Logan: Salix pulchra
-logan_model <- lm(AGB_g ~ Height_cm, data = Logan_salix_pulchra)
-summary(logan_model)
-tab_model(logan_model)
-# biomass increases with height, significant relationship.
-
-# Scatter
-(plot_logan_model <- ggplot(Logan_salix_pulchra) +
-    geom_point(aes(x = Height_cm, y= AGB_g), size = 3, alpha = 0.5) +
-    geom_smooth(aes(x = Height_cm, y= AGB_g), colour = "brown",method = "lm") +
-    ylab("Full shrub AGB (g)") +
-    xlab("\nHeight (cm)") +
-    ggtitle("Berner 2015: Salix pulchra, Alaska. R2 = 0.611 ") +
-    scale_colour_viridis_d(begin = 0.3, end = 0.9) +
-    scale_fill_viridis_d(begin = 0.3, end = 0.9) +
-    theme_bw() +
-    theme(panel.border = element_blank(),
-          panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank(),
-          axis.line = element_line(colour = "black"),
-          axis.title = element_text(size = 14),
-          axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
-          axis.text.y = element_text(size = 12, colour = "black")))
 
 # panel
 all_allometry <- grid.arrange(plot_andy_model_salric, plot_andy_model_salarc, plot_isla_model, plot_logan_model,
@@ -412,55 +391,45 @@ Pika_all_shrub_biomass_merge <- Pika_all_shrub_biomass %>%
   rename("height" = "Shrub_Height_cm") %>%
   mutate(Species = rep("Salix pulchra"), # adding species col
          Site = rep("Pika camp")) %>% # adding species col
-  select(Plot, Site, Species, height, biomass_per_m2)
+  dplyr::select(Plot, Site, Species, height, biomass_per_m2)
 
 QHI_salric_biomass_merge <- QHI_salric_shrub_biomass %>%
   rename("height" = "max_height", "Plot" = "PlotID") %>%
   mutate(Species = rep("Salix richardsonii"), # adding species col
          Site = rep("QHI")) %>% # adding species col
-  select(Plot, Site, Species, height, biomass_per_m2)
+  dplyr::select(Plot, Site, Species, height, biomass_per_m2)
 
 QHI_salarc_biomass_merge <- QHI_salarc_shrub_biomass %>%
   rename("height" = "max_height", "Plot" = "PlotID") %>%
   mutate(Species = rep("Salix arctica"), # adding species col
          Site = rep("QHI")) %>% # adding species col
-  select(Plot, Site, Species, height, biomass_per_m2)
+  dplyr::select(Plot, Site, Species, height, biomass_per_m2)
 
-all_shrubs <- rbind(Pika_all_shrub_biomass_merge, QHI_salarc_biomass_merge, 
+all_shrubs_allom <- rbind(Pika_all_shrub_biomass_merge, QHI_salarc_biomass_merge, 
                     QHI_salric_biomass_merge)
                     
-all_shrubs$Plot <- as.factor(all_shrubs$Plot)
-all_shrubs$Species <- as.factor(all_shrubs$Species)
-all_shrubs$Site <- as.factor(all_shrubs$Site)
-levels(all_shrubs$Species)
-levels(all_shrubs$Site)
+all_shrubs_allom$Plot <- as.factor(all_shrubs_allom$Plot)
+all_shrubs_allom$Species <- as.factor(all_shrubs_allom$Species)
+all_shrubs_allom$Site <- as.factor(all_shrubs_allom$Site)
+levels(all_shrubs_allom$Species) # "Salix arctica" "Salix pulchra" "Salix richardsonii"    
+levels(all_shrubs_allom$Site) #"Pika camp" "QHI"      
+hist(all_shrubs_allom$biomass_per_m2, breaks = 15)
+# not super normally distributed
 
-hist(all_shrubs$biomass_per_m2, breaks = 15)
-# not super normally distributed so use glm 
+write.csv(all_shrubs_allom, "data/allometry/all_shrubs_allom.csv")
 
-# see if site and species affect the relationship
-compare_sp <- glm(biomass_per_m2 ~ height + Species, data = all_shrubs)
-tab_model(compare_sp) 
-summary(compare_sp)
 
-compare_site <- glm(biomass_per_m2 ~ height + Site, data = all_shrubs)
-tab_model(compare_site) 
-summary(compare_site)
 
-# Site is significant and Salix pulchra is different 
-# from arctica while richardsonii is not different 
-# from arctica. (as for my current interpretation)
-
-# So I should probably keep the Salix pulchra relationship from Pika, 
-# and Salix rich and salix artica from QHI. All separate.
-
-# visual assessment of site differences
-(plot_all_site <- ggplot() +
-    geom_point(aes(x = height, y= biomass_per_m2, colour = Site), size = 3, alpha = 0.5, data = all_shrubs) +
-    geom_smooth(aes(x = height, y= biomass_per_m2, colour = Site), method = "lm", data = all_shrubs) +
+# visual assessment of 3 allometric equations 
+(plot_all_allom <- ggplot() +
+    geom_point(aes(x = height, y= biomass_per_m2, colour = Species, fill = Species), size = 3, alpha = 0.5, data = all_shrubs_allom) +
+    geom_smooth(aes(x = height, y= biomass_per_m2, colour = Species, fill = Species), method = "lm", data = all_shrubs_allom) +
     ylab("Full shrub AGB (g/m2)") +
     xlab("\nHeight (cm)") +
+    facet_wrap(~Species, scales = "free") +
     # ggtitle("Salix richardsoni (black), Salix pulchra (brown), Salix arctica (green) ") +
+    scale_colour_viridis_d(begin = 0.1, end = 0.95) +
+    scale_fill_viridis_d(begin = 0.1, end = 0.95) + 
     theme_bw() +
     theme(panel.border = element_blank(),
           panel.grid.major = element_blank(),
@@ -477,6 +446,47 @@ summary(compare_site)
 
 
 # WRONG below -----
+
+# see if site and species affect the relationship: i cant compare because I never have the same spp at 2 sites
+compare_sp <- glm(biomass_per_m2 ~ height + Species, data = all_shrubs)
+tab_model(compare_sp) 
+summary(compare_sp)
+
+compare_site <- glm(biomass_per_m2 ~ height + Site, data = all_shrubs)
+tab_model(compare_site) 
+summary(compare_site)
+
+# Site is significant and Salix pulchra is different 
+# from arctica while richardsonii is not different 
+# from arctica. (as for my current interpretation)
+
+# So I should probably keep the Salix pulchra relationship from Pika, 
+# and Salix rich and salix artica from QHI. All separate.
+
+# Logan: Salix pulchra
+# logan_model <- lm(AGB_g ~ Height_cm, data = Logan_salix_pulchra)
+#summary(logan_model)
+#tab_model(logan_model)
+# biomass increases with height, significant relationship.
+
+# Scatter
+#(plot_logan_model <- ggplot(Logan_salix_pulchra) +
+ #  geom_point(aes(x = Height_cm, y= AGB_g), size = 3, alpha = 0.5) +
+  ## geom_smooth(aes(x = Height_cm, y= AGB_g), colour = "brown",method = "lm") +
+   #ylab("Full shrub AGB (g)") +
+   #xlab("\nHeight (cm)") +
+   #ggtitle("Berner 2015: Salix pulchra, Alaska. R2 = 0.611 ") +
+   #scale_colour_viridis_d(begin = 0.3, end = 0.9) +
+  # scale_fill_viridis_d(begin = 0.3, end = 0.9) +
+   #theme_bw() +
+   #theme(panel.border = element_blank(),
+      #   panel.grid.major = element_blank(),
+       ##  panel.grid.minor = element_blank(),
+       #  axis.line = element_line(colour = "black"),
+       #  axis.title = element_text(size = 14),
+       #  axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
+        # axis.text.y = element_text(size = 12, colour = "black")))
+
 # extracting model coefficients and estimates
 coef1 <- summary(isla_model)$coef # pulchra
 coef1 <- as.data.frame(coef1)
