@@ -32,7 +32,6 @@ all_CG_growth$population <- as.factor(all_CG_growth$population)
 all_CG_growth$Site <- as.factor(all_CG_growth$Site)
 all_CG_growth$Sample_Date <- as.POSIXct(all_CG_growth$Sample_Date, format = '%Y/%m/%d')
 all_CG_growth$Year <- as.factor(all_CG_growth$Year)
-all_CG_growth$Sample_age <- as.factor(all_CG_growth$Sample_age)
 unique(all_CG_growth$population)
 unique(all_CG_growth$Site)
 unique(all_CG_growth$Species)
@@ -47,26 +46,26 @@ all_CG_growth_cover <- all_CG_growth %>%
 all_CG_growth_cover$Sample_age <- as.numeric(all_CG_growth_cover$Sample_age )
 
 # calculate biomass for each species based on allometric equations
-# Salix richardsonii: Biomass = -626.32 + 21.27*height + 40.34*cover +- 386
+# Salix richardsonii: Biomass =  17.971*height + 11.882*cover +- 444.5
 all_CG_growth_cover_biomass_SALRIC <- all_CG_growth_cover %>%
   filter(Species == "Salix richardsonii" & population == "Southern") %>% # only keeping southern shrubs
-  mutate(biomass_per_m2 = -626.32 + (21.27*Canopy_Height_cm) + (40.34*cover_percent), 
-         biomass_error_high = biomass_per_m2 + 386,
-         biomass_error_low = biomass_per_m2 - 386)
+  mutate(biomass_per_m2 = (17.971*Canopy_Height_cm) + (11.882*cover_percent), 
+         biomass_error_high = biomass_per_m2 + 444.5,
+         biomass_error_low = biomass_per_m2 - 444.5)
 
-# Salix pulchra: Biomass = 343.20 -30.75*height + 63.34*cover +- 479.3
+# Salix pulchra: Biomass = -23.74*height + 61.75*cover +- 480.8
 all_CG_growth_cover_biomass_SALPUL <- all_CG_growth_cover %>%
   filter(Species == "Salix pulchra" & population == "Southern") %>% # only keeping southern shrubs
-  mutate(biomass_per_m2 = 343.20  + (-30.75*Canopy_Height_cm) + (63.34*cover_percent), 
-         biomass_error_high = biomass_per_m2 + 479.3,
-         biomass_error_low = biomass_per_m2 - 479.3)
+  mutate(biomass_per_m2 = (-23.74*Canopy_Height_cm) + (61.75*cover_percent), 
+         biomass_error_high = biomass_per_m2 + 480.8,
+         biomass_error_low = biomass_per_m2 - 480.8)
 
-# Salix arctica: Biomass = -3.71 + 2.72*height + 14.24*cover +- 34.75 
+# Salix arctica: Biomass = 2.10*height + 14.35*cover +- 28.46 
 all_CG_growth_cover_biomass_SALARC <- all_CG_growth_cover %>%
   filter(Species == "Salix arctica" & population == "Southern") %>% # only keeping southern shrubs
-  mutate(biomass_per_m2 = -3.71  + (2.72*Canopy_Height_cm) + (14.24*cover_percent), 
-         biomass_error_high = biomass_per_m2 + 34.75 ,
-         biomass_error_low = biomass_per_m2 - 34.75 )
+  mutate(biomass_per_m2 = (2.10*Canopy_Height_cm) + (14.35*cover_percent), 
+         biomass_error_high = biomass_per_m2 + 28.46 ,
+         biomass_error_low = biomass_per_m2 - 28.46  )
 
 # 3. Data visualisation -----
 

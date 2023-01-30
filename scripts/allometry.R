@@ -245,23 +245,17 @@ Pika_all_shrub_biomass <- rbind(Pika_all_shrub_biomass, zeros_pika)
 
 # ISLA DATA DONE 
 
-# 3.3. ALASKA SALIX PULCHRA AND RICHARDSONII  -----
-caribou_forage_SALPUL <- caribou_forage %>%
-  filter(species == "SAPU")
-
-caribou_forage_SALRIC <- caribou_forage %>%
-  filter(species == "SARI")
-
 # 4.1. MODELLING Part 1 ------ 
 # Species specific and site specific regression  biomass ~ height 
 # N.B.the statistical significance of the overall relationship per se does not matter
 
 # Andy: Salix richardsonii
-andy_model_salric <- lm(biomass_per_m2 ~ max_height + percent_cover, data = QHI_salric_shrub_biomass)
+andy_model_salric <- lm(biomass_per_m2 ~ 0 + max_height + percent_cover, data = QHI_salric_shrub_biomass)
+# Adding the 0 term tells the lm() to fit the line through the origin
 summary(andy_model_salric)
 tab_model(andy_model_salric)
 # biomass increases with height
-# Equation: Biomass = -626.32 + 21.27*height + 40.34*cover +- 386
+# Equation: Biomass =  17.971*height + 11.882*cover +- 444.5
 
 # Scatter salix richardsonii
 (plot_andy_model_salric <- ggplot(QHI_salric_shrub_biomass) +
@@ -282,13 +276,13 @@ tab_model(andy_model_salric)
           axis.text.y = element_text(size = 12, colour = "black")))
 
 # Andy: Salix arctica
-andy_model_salarc <- lm(biomass_per_m2 ~ max_height + percent_cover, data = QHI_salarc_shrub_biomass)
+andy_model_salarc <- lm(biomass_per_m2 ~ 0 + max_height + percent_cover, data = QHI_salarc_shrub_biomass)
 summary(andy_model_salarc)
 tab_model(andy_model_salarc)
 # biomass increases with height, marginally significant
 # N.B. without the zero intercept the salix arctica model looks very different. 
 # NO significant relationship, flat line. Because only 4 points!
-# Equation: Biomass = -3.71 + 2.72*height + 14.24*cover +- 34.75 
+# Biomass = 2.10*height + 14.35*cover +- 28.46
 
 # Scatter salix arctica
 (plot_andy_model_salarc <- ggplot(QHI_salarc_shrub_biomass) +
@@ -313,11 +307,11 @@ tab_model(andy_model_salarc)
 panel_Andy <- grid.arrange(plot_andy_model_salarc, plot_andy_model_salric, nrow=1)
 
 # Isla: Salix pulchra (and richardsonii) (can't distinguish spp.)
-isla_model <- lm(biomass_per_m2 ~ Shrub_Height_cm + max_cover, data = Pika_all_shrub_biomass)
+isla_model <- lm(biomass_per_m2 ~ 0 + Shrub_Height_cm + max_cover, data = Pika_all_shrub_biomass)
 summary(isla_model)
 tab_model(isla_model)
 # biomass increases with height. But not significant relationship
-# Equation: Biomass = 343.20 -30.75*height + 63.34*cover +- 479.3
+# Equation: Biomass = -23.74*height + 61.75*cover +- 480.8
 
 # Scatter salix pulchra + salix rich.
 (plot_isla_model <- ggplot(Pika_all_shrub_biomass) +
