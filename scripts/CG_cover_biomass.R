@@ -1,4 +1,4 @@
-# CG cover and biomass script
+# CG cover and biomass calculation and visualisation script
 #### Script by Erica Zaja, created 30/01/23
 ### Last updated: 30/01/23
 
