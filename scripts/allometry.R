@@ -261,6 +261,7 @@ andy_model_salric <- lm(biomass_per_m2 ~ max_height + percent_cover, data = QHI_
 summary(andy_model_salric)
 tab_model(andy_model_salric)
 # biomass increases with height
+# Equation: Biomass = -626.32 + 21.27*height + 40.34*cover +- 386
 
 # Scatter salix richardsonii
 (plot_andy_model_salric <- ggplot(QHI_salric_shrub_biomass) +
@@ -287,6 +288,7 @@ tab_model(andy_model_salarc)
 # biomass increases with height, marginally significant
 # N.B. without the zero intercept the salix arctica model looks very different. 
 # NO significant relationship, flat line. Because only 4 points!
+# Equation: Biomass = -3.71 + 2.72*height + 14.24*cover +- 34.75 
 
 # Scatter salix arctica
 (plot_andy_model_salarc <- ggplot(QHI_salarc_shrub_biomass) +
@@ -314,8 +316,8 @@ panel_Andy <- grid.arrange(plot_andy_model_salarc, plot_andy_model_salric, nrow=
 isla_model <- lm(biomass_per_m2 ~ Shrub_Height_cm + max_cover, data = Pika_all_shrub_biomass)
 summary(isla_model)
 tab_model(isla_model)
-avPlots(isla_model)
 # biomass increases with height. But not significant relationship
+# Equation: Biomass = 343.20 -30.75*height + 63.34*cover +- 479.3
 
 # Scatter salix pulchra + salix rich.
 (plot_isla_model <- ggplot(Pika_all_shrub_biomass) +
