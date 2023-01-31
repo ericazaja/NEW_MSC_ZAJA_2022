@@ -401,7 +401,7 @@ write.csv(all_shrubs_allom, "data/allometry/all_shrubs_allom.csv")
 # visual assessment of 3 allometric equations: height vs biomass
 (plot_all_allom_height <- ggplot() +
     geom_point(aes(x = height, y= biomass_per_m2, colour = Species, fill = Species), size = 3, alpha = 0.5, data = all_shrubs_allom) +
-    geom_smooth(aes(x = height, y= biomass_per_m2, colour = Species, fill = Species), method = "lm", data = all_shrubs_allom) +
+    geom_smooth(aes(x = height, y= biomass_per_m2, colour = Species, fill = Species), method = "lm",data = all_shrubs_allom) +
     ylab("Full shrub AGB (g/m2)") +
     xlab("\nHeight (cm)") +
     facet_wrap(~Species, scales = "free") +

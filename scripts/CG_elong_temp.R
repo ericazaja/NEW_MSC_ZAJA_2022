@@ -6,7 +6,7 @@
 # model annual stem elongation as a function of annual temperature
 # INFORMATIVE analysis, not used in the allom. equations. 
 # Just to see if we see more growth in warmer years
-#
+
 # 1. Libraries -------
 library(tidyverse)
 library(readr)

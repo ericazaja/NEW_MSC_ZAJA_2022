@@ -94,7 +94,7 @@ all_CG_growth_cover_biomass_SALARC <- all_CG_growth_cover %>%
 # predicted biomass: salix rich.
 (scatter_biomass_CG_SALRICH <- ggplot(all_CG_growth_cover_biomass_SALRIC) +
     geom_point(aes(x = Sample_age, y= biomass_per_m2), size = 1.5, alpha = 0.5, colour ="dark green" ) +
-    geom_smooth(aes(x = Sample_age, y= biomass_per_m2), method = "glm", colour = "dark green", fill = "dark green")) +
+    geom_smooth(aes(x = Sample_age, y= biomass_per_m2), method = "lm", colour = "dark green", fill = "dark green")) +
     ylab("Salix richardsonii biomass (g/m2)") +
     xlab("\n Sample age (n years)") +
     scale_colour_viridis_d(begin = 0.1, end = 0.8) +
@@ -114,7 +114,7 @@ all_CG_growth_cover_biomass_SALARC <- all_CG_growth_cover %>%
 # predicted biomass: salix pulchra
 (scatter_biomass_CG_SALPUL <- ggplot(all_CG_growth_cover_biomass_SALPUL) +
     geom_point(aes(x = Sample_age, y= biomass_per_m2), size = 1.5, alpha = 0.5, colour ="dark green" ) +
-    geom_smooth(aes(x = Sample_age, y= biomass_per_m2), method = "glm", colour = "dark green", fill = "dark green")) +
+    geom_smooth(aes(x = Sample_age, y= biomass_per_m2) ,method = "lm", colour = "dark green", fill = "dark green")) +
   ylab("Salix pulchra biomass (g/m2)") +
   xlab("\n Sample age (n years)") +
   scale_colour_viridis_d(begin = 0.1, end = 0.8) +
@@ -134,7 +134,7 @@ all_CG_growth_cover_biomass_SALARC <- all_CG_growth_cover %>%
 # predicted biomass: salix arctica
 (scatter_biomass_CG_SALARC <- ggplot(all_CG_growth_cover_biomass_SALARC) +
     geom_point(aes(x = Sample_age, y= biomass_per_m2), size = 1.5, alpha = 0.5, colour ="dark green" ) +
-    geom_smooth(aes(x = Sample_age, y= biomass_per_m2), method = "glm", colour = "dark green", fill = "dark green")) +
+    geom_smooth(aes(x = Sample_age, y= biomass_per_m2), method = "lm",  colour = "dark green", fill = "dark green")) +
   ylab("Salix arctica biomass (g/m2)") +
   xlab("\n Sample age (n years)") +
   scale_colour_viridis_d(begin = 0.1, end = 0.8) +
