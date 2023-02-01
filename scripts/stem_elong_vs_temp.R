@@ -14,7 +14,8 @@
 # libraries
 library(tidyverse)
 library(readr)
-
+library(lme4)
+library(sjPlot)
 # 1. Loading data ----
 all_CG_source_growth <- read_csv("data/common_garden_shrub_data/all_CG_source_growth.csv")
 
@@ -67,4 +68,11 @@ unique(all_CG_source_growth_temp_edit$Site)
 
 
 # Modelling -----
+model_elong_temp <- lmer(mean_stem_elong ~ july_mean_temp + Species + (1|Site) , data = all_CG_source_growth_temp)
+tab_model(model_elong_temp)
+plot(model_elong_temp)
 
+model_elong_temp_interaction <- lm(mean_stem_elong ~ july_mean_temp + Species*Site , data = all_CG_source_growth_temp)
+tab_model(model_elong_temp_interaction)
+plot(model_elong_temp_interaction)
+                        
