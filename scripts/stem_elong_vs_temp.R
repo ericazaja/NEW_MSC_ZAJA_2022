@@ -34,7 +34,7 @@ all_CG_source_growth_temp$Site <- as.factor(all_CG_source_growth_temp$Site)
 all_CG_source_growth_temp$july_mean_temp <- as.factor(all_CG_source_growth_temp$july_mean_temp)
 
 # remove first few years of stem elongation data
-unique(all_CG_source_growth_temp$Sample_age) # 17.97  9.25  9.10
+unique(all_CG_source_growth_temp$Sample_age) 
 
 all_CG_source_growth_temp_edit_1 <- all_CG_source_growth_temp %>%
   filter(Site %in% c("Kluane", "Qikiqtaruk"))
@@ -46,9 +46,22 @@ all_CG_source_growth_temp_edit <- rbind(all_CG_source_growth_temp_edit_2, all_CG
 unique(all_CG_source_growth_temp_edit$Sample_age) # 3-6
 unique(all_CG_source_growth_temp_edit$Site)
 
+# creating mean stem elong value for each site
+all_CG_source_growth_means <- all_CG_source_growth_temp_edit %>%
+  group_by(Site, Species) %>%
+  summarise(mean_elong=mean(mean_stem_elong, na.rm=TRUE))
+
+temps <- c(17.97, 17.97, 17.97, 9.25, 9.25, 9.10, 9.10, 9.10)
+
+means_temps <- cbind(all_CG_source_growth_means, new_col = temps)
+
+means_temps <- means_temps %>%
+  rename("july_temps"="new_col")
+
+
 # 3. Data visualisation -----
 
-(scatter_elong_temp <- ggplot(all_CG_source_growth_temp) +
+(box_elong_temp <- ggplot(all_CG_source_growth_temp) +
    geom_point(aes(x = july_mean_temp, y= mean_stem_elong, colour = Site, fill = Site), size = 3, alpha = 0.1, data = all_CG_source_growth_temp) +
    # geom_smooth(aes(x = july_mean_temp, y= mean_stem_elong, colour = Site, fill = Site, method = "glm"),  size = 3, alpha = 0.5, data = all_CG_source_growth_temp) +
     geom_boxplot(aes(x = july_mean_temp, y= mean_stem_elong, colour = Site, fill = Site), size = 0.5, alpha = 0.5) +
@@ -66,11 +79,46 @@ unique(all_CG_source_growth_temp_edit$Site)
          axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
          axis.text.y = element_text(size = 12, colour = "black"))) 
 
+(scatter_elong_temp <- ggplot(all_CG_source_growth_temp_edit) +
+    geom_point(aes(x = july_mean_temp, y= mean_stem_elong), size = 3, alpha = 0.1, data = all_CG_source_growth_temp_edit) +
+    geom_smooth(aes(x = july_mean_temp, y= mean_stem_elong), method = "gam", data = all_CG_source_growth_temp) +
+    ylab("Mean stem elongation (mm)") +
+    xlab("\nMean july temperature (degC)") +
+    facet_wrap(~Species, scales = "free") +
+    scale_colour_viridis_d(begin = 0.1, end = 0.95) +
+    scale_fill_viridis_d(begin = 0.1, end = 0.95) + 
+    theme_shrub() +
+    theme(panel.border = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.line = element_line(colour = "black"),
+          axis.title = element_text(size = 14),
+          axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
+          axis.text.y = element_text(size = 12, colour = "black"))) 
+
+(scatter_elong_temp <- ggplot(means_temps) +
+    geom_point(aes(x = july_temps, y= mean_elong, colour = Site, fill = Site), size = 3, alpha = 0.5) +
+    geom_smooth(aes(x = july_temps, y= mean_elong), method = "lm")  +
+    ylab("Mean stem elongation (mm)") +
+    xlab("\nMean july temperature (degC)") +
+    facet_wrap(~Species, scales = "free") +
+    scale_colour_viridis_d(begin = 0.1, end = 0.95) +
+    scale_fill_viridis_d(begin = 0.1, end = 0.95) + 
+    theme_shrub() +
+    theme(panel.border = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.line = element_line(colour = "black"),
+          axis.title = element_text(size = 14),
+          axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
+          axis.text.y = element_text(size = 12, colour = "black"))) 
+
 
 # Modelling -----
 model_elong_temp <- lmer(mean_stem_elong ~ july_mean_temp + Species + (1|Site) , data = all_CG_source_growth_temp)
 tab_model(model_elong_temp)
 plot(model_elong_temp)
+
 
 model_elong_temp_interaction <- lm(mean_stem_elong ~ july_mean_temp + Species*Site , data = all_CG_source_growth_temp)
 tab_model(model_elong_temp_interaction)
