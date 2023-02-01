@@ -54,17 +54,33 @@ ITEX_shrubs_msc <-  ITEX_veg_msc %>%
   filter(SPECIES_NAME %in% c("Salix arctica", "Salix pulchra"))
 
 ITEX_shrubs_msc$SPECIES_NAME <- as.factor(ITEX_shrubs_msc$SPECIES_NAME )
+ITEX_shrubs_msc$SITE <- as.factor(ITEX_shrubs_msc$SITE)
 
 # separating pulchra and arctica
 ITEX_pulchra <- ITEX_shrubs_msc %>%
   filter(SPECIES_NAME == "Salix pulchra")
 
 ITEX_arctica <- ITEX_shrubs_msc %>%
-  filter(SPECIES_NAME == "Salix arctica")%>%
+  filter(SPECIES_NAME == "Salix arctica") %>%
   filter(SITE %in% c("ANWR", "QHI" ))
 
+unique(ITEX_arctica$SITE)
 
-# 3. DATA VIS ------
+str(ITEX_arctica)
+
+# 3. MODELLING ------
+# shrub spp. cover change over time
+pulchra <- lm(RelCover ~ YEAR + SITE, data = ITEX_pulchra)
+tab_model(pulchra)
+plot(pulchra) # checking assumptions
+
+arctica <- lm(RelCover ~ YEAR + SITE, data = ITEX_arctica)
+tab_model(arctica)
+plot(arctica) # checking assumptions
+
+
+# 4. DATA VISUALISATION ------
+
 # THEME ----
 theme_shrub <- function(){ theme(legend.position = "right",
                                  axis.title.x = element_text(face="bold", size=20),
@@ -83,7 +99,7 @@ theme_shrub <- function(){ theme(legend.position = "right",
     ggplot(aes(x = RelCover, fill = SITE)) +
     geom_histogram( color="#e9ecef", alpha=0.6, position = 'identity', bins = 30) +
     labs(x = "\nCover (%)", y = "Frequency\n") +
-    scale_fill_manual(values = c("#332288", "#DDCC77", "dark green"), name = "Species")+
+    scale_fill_manual(values = c("#332288", "#DDCC77", "dark green"), name = "SITE")+
     theme_shrub() +
     theme(legend.text = element_text(size=20),
           legend.title = element_text(size=25)) )
@@ -92,7 +108,7 @@ theme_shrub <- function(){ theme(legend.position = "right",
     ggplot(aes(x = RelCover, fill = SITE)) +
     geom_histogram( color="#e9ecef", alpha=0.6, position = 'identity', bins = 30) +
     labs(x = "\nCover (%)", y = "Frequency\n") +
-    scale_fill_manual(values = c("#332288", "#DDCC77", "dark green"), name = "Species")+
+    scale_fill_manual(values = c("#332288", "#DDCC77", "dark green"), name = "SITE")+
     theme_shrub() +
     theme(legend.text = element_text(size=20),
           legend.title = element_text(size=25)) )
