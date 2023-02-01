@@ -1,0 +1,51 @@
+# Stem elongation vs mean july temperature
+#### Script by Erica Zaja, created 01/02/23
+### Last updated: 01/02/23
+
+# Common garden july mean surface temp: 17.97°C 
+# Based on 6 years data (TOMST+ HOBO)
+
+# KP july mean surface temp: 9.25 °C 
+# based on 2 years of data (TOMST)
+
+# QHI july mean surface temp: 9.10 °C 
+# based on 2022 TOMST and 2017 HOBO data 
+
+# libraries
+library(tidyverse)
+library(readr)
+
+# 1. Loading data ----
+all_CG_source_growth <- read_csv("data/common_garden_shrub_data/all_CG_source_growth.csv")
+
+# 2. Data wrangling -----
+# add temp column
+all_CG_source_growth_temp <- all_CG_source_growth %>%
+  mutate(july_mean_temp = case_when(Site == "Common_garden" ~ rep(17.97),
+                                    Site == "Kluane" ~ rep(9.25),
+                                    Site == "Qikiqtaruk" ~ rep(9.10)))
+
+unique(all_CG_source_growth_temp$july_mean_temp) # 17.97  9.25  9.10
+all_CG_source_growth_temp$Species <- as.factor(all_CG_source_growth_temp$Species)
+all_CG_source_growth_temp$Site <- as.factor(all_CG_source_growth_temp$Site)
+
+# 3. Data visualisation -----
+
+(scatter_elong_temp <- ggplot() +
+   geom_point(aes(x = july_mean_temp, y= mean_stem_elong, colour = Site, fill = Site), size = 3, alpha = 0.5, data = all_CG_source_growth_temp) +
+   geom_smooth(aes(x = july_mean_temp, y= mean_stem_elong, colour = Site, fill = Site), method = "lm", data =  all_CG_source_growth_temp) +
+   ylab("Mean stem elongation (mm))") +
+   xlab("\nMean july temperature (degC)") +
+   facet_wrap(~Species, scales = "free") +
+   scale_colour_viridis_d(begin = 0.1, end = 0.95) +
+   scale_fill_viridis_d(begin = 0.1, end = 0.95) + 
+   theme_shrub() +
+   theme(panel.border = element_blank(),
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         axis.line = element_line(colour = "black"),
+         axis.title = element_text(size = 14),
+         axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
+         axis.text.y = element_text(size = 12, colour = "black"))) 
+
+

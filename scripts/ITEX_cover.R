@@ -78,6 +78,10 @@ arctica <- lm(RelCover ~ YEAR + SITE, data = ITEX_arctica)
 tab_model(arctica)
 plot(arctica) # checking assumptions
 
+both_shrubs <- lmer(RelCover ~ YEAR + SPECIES_NAME + (1|SITE), data = ITEX_shrubs_msc)
+tab_model(both_shrubs)
+plot(both_shrubs) # checking assumptions
+
 
 # 4. DATA VISUALISATION ------
 
@@ -136,6 +140,23 @@ theme_shrub <- function(){ theme(legend.position = "right",
     ylab("Relative cover (%)") +
     xlab("\nYear") +
     #facet_wrap(~SITE, scales = "free") +
+    scale_colour_viridis_d(begin = 0.1, end = 0.95) +
+    scale_fill_viridis_d(begin = 0.1, end = 0.95) + 
+    theme_shrub() +
+    theme(panel.border = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.line = element_line(colour = "black"),
+          axis.title = element_text(size = 14),
+          axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
+          axis.text.y = element_text(size = 12, colour = "black"))) 
+
+(scatter_both <- ggplot() +
+    geom_point(aes(x = YEAR , y= RelCover, colour = SITE, fill = SITE), size = 3, alpha = 0.5, data = ITEX_shrubs_msc) +
+    geom_smooth(aes(x = YEAR , y= RelCover,  colour = SITE, fill = SITE), method = "lm", data = ITEX_shrubs_msc) +
+    ylab("Relative cover (%)") +
+    xlab("\nYear") +
+    facet_wrap(~SPECIES_NAME, scales = "free") +
     scale_colour_viridis_d(begin = 0.1, end = 0.95) +
     scale_fill_viridis_d(begin = 0.1, end = 0.95) + 
     theme_shrub() +
