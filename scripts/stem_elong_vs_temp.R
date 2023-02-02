@@ -71,6 +71,8 @@ max_cg_elong <- max_cg_elong %>%
  rename( "mean_stem_elong"="max_stem_elong")
 
 all_cg_max_source <- rbind(max_cg_elong,all_CG_source_growth_temp_edit_1)
+all_cg_max_source$Species <- as.factor(all_cg_max_source$Species)
+all_cg_max_source$july_mean_temp <- as.factor(all_cg_max_source$july_mean_temp)
 
 # creating overall mean stem elong value for each site
 all_CG_source_growth_means <- all_cg_max_source %>%
