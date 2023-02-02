@@ -46,10 +46,39 @@ all_CG_source_growth_temp_edit <- rbind(all_CG_source_growth_temp_edit_2, all_CG
 unique(all_CG_source_growth_temp_edit$Sample_age) # 3-6
 unique(all_CG_source_growth_temp_edit$Site)
 
-# creating mean stem elong value for each site
-all_CG_source_growth_means <- all_CG_source_growth_temp_edit %>%
+# extracting max values from only common garden data
+max_cg_elong <- all_CG_source_growth_temp %>% 
+  filter(Site == "Common_garden") %>% 
+  group_by(SampleID_standard) %>%
+  slice(which.max(mean_stem_elong)) %>% 
+  rename("max_stem_elong" = "mean_stem_elong")
+
+# reclassing Species as factor
+max_cg_elong$Species <- as.factor(max_cg_elong$Species)
+
+# mean max height per population and species
+max_cg_elog_spp <- max_cg_elong %>%
+  group_by(population,Species) %>%
+  summarise(mean_max_elong_mm = mean(max_stem_elong))
+
+range(max_cg_elog_spp$mean_max_elong_mm)
+# Artica (southern garden): 12.06384 mm
+# Pulchra (southern g.): 170.39277 mm
+# Rich (southern g.): 209.91390 mm
+
+# merging with source pop data
+max_cg_elong <- max_cg_elong %>%
+ rename( "mean_stem_elong"="max_stem_elong")
+
+all_cg_max_source <- rbind(max_cg_elong,all_CG_source_growth_temp_edit_1)
+
+# creating overall mean stem elong value for each site
+all_CG_source_growth_means <- all_cg_max_source %>%
   group_by(Site, Species) %>%
-  summarise(mean_elong=mean(mean_stem_elong, na.rm=TRUE))
+  summarise(mean_elong=mean(mean_stem_elong, na.rm=TRUE), 
+            n = n(),
+            sd=sd(mean_stem_elong,na.rm=TRUE)) %>%
+  mutate(se = sd / sqrt(n))  # Calculating standard error
 
 temps <- c(17.97, 17.97, 17.97, 9.25, 9.25, 9.10, 9.10, 9.10)
 
@@ -58,11 +87,12 @@ means_temps <- cbind(all_CG_source_growth_means, new_col = temps)
 means_temps <- means_temps %>%
   rename("july_temps"="new_col")
 
+view(means_temps)
 
 # 3. Data visualisation -----
 
-(box_elong_temp <- ggplot(all_CG_source_growth_temp) +
-   geom_point(aes(x = july_mean_temp, y= mean_stem_elong, colour = Site, fill = Site), size = 3, alpha = 0.1, data = all_CG_source_growth_temp) +
+(box_elong_temp <- ggplot(all_cg_max_source) +
+   geom_point(aes(x = july_mean_temp, y= mean_stem_elong, colour = Site, fill = Site), size = 3, alpha = 0.1) +
    # geom_smooth(aes(x = july_mean_temp, y= mean_stem_elong, colour = Site, fill = Site, method = "glm"),  size = 3, alpha = 0.5, data = all_CG_source_growth_temp) +
     geom_boxplot(aes(x = july_mean_temp, y= mean_stem_elong, colour = Site, fill = Site), size = 0.5, alpha = 0.5) +
    ylab("Mean stem elongation (mm)") +
@@ -79,7 +109,7 @@ means_temps <- means_temps %>%
          axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
          axis.text.y = element_text(size = 12, colour = "black"))) 
 
-(scatter_elong_temp <- ggplot(all_CG_source_growth_temp_edit) +
+(scatter_elong_temp <- ggplot(all_cg_max_source) +
     geom_point(aes(x = july_mean_temp, y= mean_stem_elong), size = 3, alpha = 0.1, data = all_CG_source_growth_temp_edit) +
     geom_smooth(aes(x = july_mean_temp, y= mean_stem_elong), method = "gam", data = all_CG_source_growth_temp) +
     ylab("Mean stem elongation (mm)") +
@@ -97,8 +127,8 @@ means_temps <- means_temps %>%
           axis.text.y = element_text(size = 12, colour = "black"))) 
 
 (scatter_elong_temp <- ggplot(means_temps) +
-    geom_point(aes(x = july_temps, y= mean_elong, colour = Site, fill = Site), size = 3, alpha = 0.5) +
-    geom_smooth(aes(x = july_temps, y= mean_elong), method = "lm")  +
+    geom_point(aes(x = july_temps, y= mean_elong, colour = Site, fill = Site, group = Site), size = 3, alpha = 0.8) +
+    geom_smooth(aes(x = july_temps, y= mean_elong), method = "lm",  colour = "black")  +
     ylab("Mean stem elongation (mm)") +
     xlab("\nMean july temperature (degC)") +
     facet_wrap(~Species, scales = "free") +
