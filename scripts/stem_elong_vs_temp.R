@@ -149,12 +149,23 @@ view(means_temps)
 # Modelling -----
 # NB with species doesnt run:    Hessian is numerically singular: parameters are not uniquely determined 
 # I think because I dont have arctica on KP!
-model_elong_temp <- lmer(mean_stem_elong ~ july_mean_temp + (1|Site) + (1|Species), data = all_cg_max_source)
+# so let's remove arctica
+
+all_cg_max_source_noarctica <- all_cg_max_source %>%
+  filter(Species %in% c("Salix richardsonii", "Salix pulchra"))
+str(all_cg_max_source_noarctica$Site)
+
+all_cg_max_source_noarctica$july_mean_temp <- as.numeric(all_cg_max_source_noarctica$july_mean_temp)
+all_cg_max_source_noarctica$Year <- as.factor(all_cg_max_source_noarctica$Year)
+
+# only 2 species, so spp cant be a random effect.
+# model with spp fixed effect and site random effect, no arctica.
+model_elong_temp <- lmer(mean_stem_elong ~ july_mean_temp + Species + (1|Site) + (1|Year), data = all_cg_max_source_noarctica)
 tab_model(model_elong_temp)
 plot(model_elong_temp)
 
-
-model_elong_temp_interaction <- lm(mean_stem_elong ~ july_mean_temp + Species*Site , data = all_cg_max_source)
+# model with site and spp interacting
+model_elong_temp_interaction <- lm(mean_stem_elong ~ july_mean_temp + Species*Site , data = all_cg_max_source_noarctica)
 tab_model(model_elong_temp_interaction)
 plot(model_elong_temp_interaction)
 

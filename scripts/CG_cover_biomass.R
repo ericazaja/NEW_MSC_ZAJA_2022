@@ -67,7 +67,19 @@ all_CG_growth_cover_biomass_SALARC <- all_CG_growth_cover %>%
          biomass_error_high = biomass_per_m2 + 28.46 ,
          biomass_error_low = biomass_per_m2 - 28.46  )
 
-# 3. Data visualisation -----
+# 3. Modelling growth over time
+all_CG_growth_cover$Species <- as.factor(all_CG_growth_cover$Species)
+all_CG_growth_cover$Year <- as.factor(all_CG_growth_cover$Year)
+unique(all_CG_growth_cover$population)
+
+all_CG_growth_cover_southern <- all_CG_growth_cover %>%
+  filter(population == "Southern")
+
+# cover in the garden over time, NB only southern population shrubs!
+cover_mod <- lmer(cover_percent ~ Sample_age + (1|Species), data = all_CG_growth_cover_southern)
+tab_model(cover_mod)
+
+# 4. Data visualisation -----
 
 # Cover over time CG (2013-2022) 
 (scatter_cover_CG <- ggplot(all_CG_growth_cover) +
