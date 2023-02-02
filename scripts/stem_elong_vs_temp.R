@@ -147,12 +147,16 @@ view(means_temps)
 
 
 # Modelling -----
-model_elong_temp <- lmer(mean_stem_elong ~ july_mean_temp + Species + (1|Site) , data = all_CG_source_growth_temp)
+# NB with species doesnt run:    Hessian is numerically singular: parameters are not uniquely determined 
+# I think because I dont have arctica on KP!
+model_elong_temp <- lmer(mean_stem_elong ~ july_mean_temp + (1|Site) + (1|Species), data = all_cg_max_source)
 tab_model(model_elong_temp)
 plot(model_elong_temp)
 
 
-model_elong_temp_interaction <- lm(mean_stem_elong ~ july_mean_temp + Species*Site , data = all_CG_source_growth_temp)
+model_elong_temp_interaction <- lm(mean_stem_elong ~ july_mean_temp + Species*Site , data = all_cg_max_source)
 tab_model(model_elong_temp_interaction)
 plot(model_elong_temp_interaction)
+
+
                         
