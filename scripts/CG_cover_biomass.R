@@ -67,7 +67,12 @@ all_CG_growth_cover_biomass_SALARC <- all_CG_growth_cover %>%
          biomass_error_high = biomass_per_m2 + 28.46 ,
          biomass_error_low = biomass_per_m2 - 28.46  )
 
+all_CG_growth_cover_biomass <- rbind(all_CG_growth_cover_biomass_SALARC, 
+                                     all_CG_growth_cover_biomass_SALPUL,
+                                     all_CG_growth_cover_biomass_SALRIC)
+
 # 3. Modelling growth over time
+# 3.1. COVER (only southern shrubs) over time -----
 all_CG_growth_cover$Species <- as.factor(all_CG_growth_cover$Species)
 all_CG_growth_cover$Year <- as.factor(all_CG_growth_cover$Year)
 unique(all_CG_growth_cover$population)
@@ -78,10 +83,16 @@ all_CG_growth_cover_southern <- all_CG_growth_cover %>%
 # cover in the garden over time, NB only southern population shrubs!
 cover_mod <- lmer(cover_percent ~ Sample_age + (1|Species), data = all_CG_growth_cover_southern)
 tab_model(cover_mod)
+plot(cover_mod)
+
+# 3.2. BIOMASS (only southern shrubs) over time -----
+biomass_mod <- lmer(biomass_per_m2 ~ Sample_age + (1|Species), data =all_CG_growth_cover_biomass)
+tab_model(biomass_mod)
+plot(biomass_mod)
 
 # 4. Data visualisation -----
 
-# Cover over time CG (2013-2022) 
+# Cover over time CG (2013-2022):both northern and southern shrubs
 (scatter_cover_CG <- ggplot(all_CG_growth_cover) +
    geom_smooth(aes(x = Sample_age, y =cover_percent, colour = population, fill = population, group = population, method = "glm")) +
    geom_point(aes(x = Sample_age, y= cover_percent, colour = population, group = population), size = 1.5, alpha = 0.5) +
@@ -102,6 +113,50 @@ tab_model(cover_mod)
          axis.title = element_text(size = 18),
          axis.text.x = element_text(angle = 0, vjust = 0.5, size = 15, colour = "black"),
          axis.text.y = element_text(size = 15, colour = "black")))
+
+# Cover over time CG (2013-2022):only southern shrubs
+(scatter_cover_CG <- ggplot(all_CG_growth_cover_southern) +
+    geom_smooth(aes(x = Sample_age, y =cover_percent, colour = Species, fill = Species, method = "glm")) +
+    geom_point(aes(x = Sample_age, y= cover_percent, colour = Species, fill = Species), size = 1.5, alpha = 0.5) +
+    # facet_grid(cols = vars(Species)) +
+    facet_wrap(~Species, scales = "free_y") +
+    ylab("Cover in 1m2 (%)") +
+    xlab("\n Sample age (n years)") +
+    scale_colour_viridis_d(begin = 0.1, end = 0.8) +
+    scale_fill_viridis_d(begin = 0.1, end = 0.8) +
+    theme_bw() +
+    theme(panel.border = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          strip.text = element_text(size = 15, color = "black", face = "italic"),
+          legend.title = element_text(size=15), #change legend title font size
+          legend.text = element_text(size=12),
+          axis.line = element_line(colour = "black"),
+          axis.title = element_text(size = 18),
+          axis.text.x = element_text(angle = 0, vjust = 0.5, size = 15, colour = "black"),
+          axis.text.y = element_text(size = 15, colour = "black")))
+
+# biomass over time CG (2013-2022) 
+(scatter_cover_CG <- ggplot(all_CG_growth_cover_biomass) +
+    geom_smooth(aes(x = Sample_age, y =biomass_per_m2, colour = Species, fill= Species, method = "glm")) +
+    geom_point(aes(x = Sample_age, y= biomass_per_m2, colour = Species, fill = Species), size = 1.5, alpha = 0.5) +
+    # facet_grid(cols = vars(Species)) +
+    facet_wrap(~Species, scales = "free_y") +
+    ylab("Biomass (g/m2)") +
+    xlab("\n Sample age (n years)") +
+    scale_colour_viridis_d(begin = 0.1, end = 0.8) +
+    scale_fill_viridis_d(begin = 0.1, end = 0.8) +
+    theme_bw() +
+    theme(panel.border = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          strip.text = element_text(size = 15, color = "black", face = "italic"),
+          legend.title = element_text(size=15), #change legend title font size
+          legend.text = element_text(size=12),
+          axis.line = element_line(colour = "black"),
+          axis.title = element_text(size = 18),
+          axis.text.x = element_text(angle = 0, vjust = 0.5, size = 15, colour = "black"),
+          axis.text.y = element_text(size = 15, colour = "black")))
 
 # predicted biomass: salix rich.
 (scatter_biomass_CG_SALRICH <- ggplot(all_CG_growth_cover_biomass_SALRIC) +
