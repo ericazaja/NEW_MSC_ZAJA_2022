@@ -47,12 +47,58 @@ unique(ITEX_veg_msc$gridcell) #"[1] "_68.5_-149.5" "_68.5_-149"   "_68_-149"
 # "_69.5_-143.5" "_69.5_-138.5"
 # 5 grid cells, could use as random effect?
 
+# Finding coordinates ------
+
+# TOOLIK -----
+ITEX_Toolik <- ITEX_veg_msc %>%
+  filter(SITE == "TOOLIK")
+
+unique(ITEX_Toolik$SUBSITE)
+#[1] "MOIST"       "DRY"         "IMNAVAIT"    "TUSSOCKGRID"
+unique(ITEX_Toolik$LAT)
+ITEX_IMNAVAIT <- ITEX_Toolik %>%
+  filter(SUBSITE == "IMNAVAIT")
+unique(ITEX_IMNAVAIT$LAT) #68.62
+unique(ITEX_IMNAVAIT$LONG) #-149.28
+
+ITEX_Tussok <- ITEX_Toolik %>%
+  filter(SUBSITE == "TUSSOCKGRID")
+unique(ITEX_Tussok$LAT) #68.62
+unique(ITEX_Tussok$LONG) #-149.61
+
+# ANWR -------
+ITEX_ANWR <- ITEX_veg_msc %>%
+  filter(SITE == "ANWR")
+
+unique(ITEX_ANWR$SUBSITE)
+# "ATIGUN-A" "ATIGUN-B" "ATIGUN-C" "JAGO-A"   "JAGO-B"  
+
+ITEX_ANWR_ATIGUN_B <- ITEX_ANWR %>%
+  filter(SUBSITE == "ATIGUN-B")
+
+unique(ITEX_ANWR_ATIGUN_B$LAT) # 68.47464
+unique(ITEX_ANWR_ATIGUN_B$LONG) # -149.3521
+
+ITEX_ANWR_JAGO_B <- ITEX_ANWR %>%
+  filter(SUBSITE == "JAGO-B") 
+
+unique(ITEX_ANWR_JAGO_B$LAT) # 69.70312
+unique(ITEX_ANWR_JAGO_B$LONG) # -143.6269
+
+# QHI -----
+ITEX_QHI <- ITEX_veg_msc %>%
+  filter(SITE == "QHI")
+
+unique(ITEX_QHI$SUBSITE)
+#  "HE" "KO"
+
 # Filtering shrub only data: salix arctica and pulchra, no rich.
 ITEX_shrubs_msc <-  ITEX_veg_msc %>% 
   filter (FuncGroup == "Shrub") %>% 
   filter(GENUS == "Salix") %>% 
   filter(SPECIES_NAME %in% c("Salix arctica", "Salix pulchra"))
 
+unique(ITEX_shrubs_msc$SiteSubsite)
 ITEX_shrubs_msc$SPECIES_NAME <- as.factor(ITEX_shrubs_msc$SPECIES_NAME )
 ITEX_shrubs_msc$SITE <- as.factor(ITEX_shrubs_msc$SITE)
 
