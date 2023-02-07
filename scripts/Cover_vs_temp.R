@@ -166,7 +166,34 @@ model_cover_precip <- lmer(cover_percent ~ mean_precip + Species + (1|Site) + (1
 tab_model(model_cover_precip)
 plot(model_cover_precip)
 
+# separate species
+all_cover_temps_arctica <- all_cover_temps_long %>%
+  filter(Species == "Salix arctica")
+
+model_cover_temp_arctica <- lmer(cover_percent ~ mean_temp + (1|Site) + (1|Year), data = all_cover_temps_arctica)
+tab_model(model_cover_temp_arctica)
+model_cover_precip_arctica <- lmer(cover_percent ~ mean_precip + (1|Site) + (1|Year), data = all_cover_temps_arctica)
+tab_model(model_cover_precip_arctica)
+
+all_cover_temps_rich <- all_cover_temps_long %>%
+  filter(Species == "Salix richardsonii")
+
+model_cover_temp_rich <- lmer(cover_percent ~ mean_temp + (1|Site) + (1|Year), data = all_cover_temps_rich)
+tab_model(model_cover_temp_rich) # significant 
+model_cover_precip_rich <- lmer(cover_percent ~ mean_precip + (1|Site) + (1|Year), data = all_cover_temps_rich)
+tab_model(model_cover_precip_rich)
+
+all_cover_temps_pulchra <- all_cover_temps_long %>%
+  filter(Species == "Salix pulchra")
+
+model_cover_temp_pulchra <- lmer(cover_percent ~ mean_temp + (1|Site) + (1|Year), data = all_cover_temps_pulchra)
+tab_model(model_cover_temp_pulchra)
+model_cover_precip_pulchra<- lmer(cover_percent ~ mean_precip + (1|Site) + (1|Year), data = all_cover_temps_pulchra)
+tab_model(model_cover_precip_pulchra)
+
+
 # DATA VISUALISATION -----
+# means 
 (scatter_cover_temp <- ggplot(all_cover_temps) +
    geom_point(aes(x = mean_temp, y= mean_cover, colour = Site, fill = Site, group = Site), size = 3, alpha = 0.8) +
    geom_smooth(aes(x = mean_temp, y= mean_cover), method = "lm",  colour = "black")  +
@@ -184,6 +211,7 @@ plot(model_cover_precip)
          axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
          axis.text.y = element_text(size = 12, colour = "black"))) 
 
+# means
 (scatter_cover_precip <- ggplot(all_cover_temps) +
     geom_point(aes(x = mean_precip, y= mean_cover, colour = Site, fill = Site, group = Site), size = 3, alpha = 0.8) +
     geom_smooth(aes(x = mean_precip, y= mean_cover), method = "lm",  colour = "black")  +
@@ -201,5 +229,19 @@ plot(model_cover_precip)
           axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
           axis.text.y = element_text(size = 12, colour = "black"))) 
 
-
+(scatter_all_cover_temp_rich <- ggplot(all_cover_temps_rich) +
+    geom_point(aes(x = mean_temp, y= cover_percent,colour = Site, fill = Site), size = 3) +
+    geom_smooth(aes(x = mean_temp, y= cover_percent), method = "lm") +
+    ylab("Cover (%)") +
+    xlab("\nMean july temperature (degC)") +
+    scale_colour_viridis_d(begin = 0.1, end = 0.95) +
+    scale_fill_viridis_d(begin = 0.1, end = 0.95) + 
+    theme_shrub() +
+    theme(panel.border = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.line = element_line(colour = "black"),
+          axis.title = element_text(size = 14),
+          axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
+          axis.text.y = element_text(size = 12, colour = "black"))) 
 
