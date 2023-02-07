@@ -16,6 +16,7 @@ library(tidyverse)
 library(readr)
 library(lme4)
 library(sjPlot)
+
 # 1. Loading data ----
 all_CG_source_growth <- read_csv("data/common_garden_shrub_data/all_CG_source_growth.csv")
 

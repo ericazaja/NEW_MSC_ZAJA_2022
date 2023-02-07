@@ -110,11 +110,96 @@ july_enviro_means <- july_enviro_means %>%
                       mean_temp = mean(mean_temp,na.rm=TRUE))  # so I only keep one value for toolik
 
 # SOURCE POP DATA ----
-# calculate cover based on widths
-all_CG_growth_cover <- all_CG_growth %>%
+# calculate cover based on widths for all CG and source pop shurbs
+all_CG_growth_cover <- all_CG_source_growth %>%
   mutate(cover = (Width_cm*Width_2_cm)/10000)%>%
   mutate(cover_percent = cover *100) %>%
   filter(cover_percent <=100) # setting max to 100% cover 
-# compare with cover ----
+
+# making summary data for cover
+CG_source_cover_summary <- all_CG_growth_cover %>%
+  group_by(Site, Species) %>% 
+  summarise(mean_cover = mean(cover_percent)) %>%
+  mutate(Site = case_when(Site == "Qikiqtaruk" ~ "QHI", # renaming so datasets match
+                          Site == "Common_garden" ~ "CG",
+                          Site == "Kluane" ~ "KP"))
+
+# ITEX COVER DATA -----
+ITEX_cover_summary <- ITEX_shrubs_msc %>%
+  group_by(SITE, SPECIES_NAME)%>%
+  summarise(mean_cover = mean(RelCover))  %>%
+  rename("Site" = "SITE",
+         "Species" = "SPECIES_NAME")  %>%
+  filter(Site!= "QHI") # I'm using the common garden data for QHI cover 
+
+# merge all cover and temp data into summary means dataset
+all_cover <- rbind (ITEX_cover_summary, CG_source_cover_summary)
+all_cover_temps <- full_join(all_cover, july_enviro_means)
+
+all_cover_temps$Site <- as.factor(all_cover_temps$Site)
+all_cover_temps$Species <- as.factor(all_cover_temps$Species)
+
+# merge full datasets for model
+ITEX_shrubs_edit <- ITEX_shrubs_msc %>%
+  dplyr::select(YEAR, SITE, SPECIES_NAME, RelCover) %>%
+  rename("Site" = "SITE",
+         "Species" = "SPECIES_NAME",
+         "Year" = "YEAR", 
+         "cover_percent" = "RelCover")  %>%
+  filter(Site!= "QHI") # I'm using the common garden data for QHI cover 
+
+all_CG_growth_cover_edit <- all_CG_growth_cover %>%
+  dplyr::select(Year, Site, Species, cover_percent) %>%
+  mutate(Site = case_when(Site == "Qikiqtaruk" ~ "QHI", # renaming so datasets match
+                          Site == "Common_garden" ~ "CG",
+                          Site == "Kluane" ~ "KP"))
+
+all_cover_long <- rbind(all_CG_growth_cover_edit, ITEX_shrubs_edit)
+all_cover_temps_long <- full_join(all_cover_long, july_enviro_means)
+
+# MODELLING cover vs temp and precip ----
+model_cover_temp <- lmer(cover_percent ~ mean_temp + Species + (1|Site) + (1|Year), data = all_cover_temps_long)
+tab_model(model_cover_temp)
+plot(model_cover_temp)
+
+model_cover_precip <- lmer(cover_percent ~ mean_precip + Species + (1|Site) + (1|Year), data = all_cover_temps_long)
+tab_model(model_cover_precip)
+plot(model_cover_precip)
+
+# DATA VISUALISATION -----
+(scatter_cover_temp <- ggplot(all_cover_temps) +
+   geom_point(aes(x = mean_temp, y= mean_cover, colour = Site, fill = Site, group = Site), size = 3, alpha = 0.8) +
+   geom_smooth(aes(x = mean_temp, y= mean_cover), method = "lm",  colour = "black")  +
+   ylab("Mean cover (%)") +
+   xlab("\nMean july temperature (degC)") +
+   facet_wrap(~Species, scales = "free") +
+   scale_colour_viridis_d(begin = 0.1, end = 0.95) +
+   scale_fill_viridis_d(begin = 0.1, end = 0.95) + 
+   theme_shrub() +
+   theme(panel.border = element_blank(),
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         axis.line = element_line(colour = "black"),
+         axis.title = element_text(size = 14),
+         axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
+         axis.text.y = element_text(size = 12, colour = "black"))) 
+
+(scatter_cover_precip <- ggplot(all_cover_temps) +
+    geom_point(aes(x = mean_precip, y= mean_cover, colour = Site, fill = Site, group = Site), size = 3, alpha = 0.8) +
+    geom_smooth(aes(x = mean_precip, y= mean_cover), method = "lm",  colour = "black")  +
+    ylab("Mean cover (%)") +
+    xlab("\nMean july precip ()") +
+    facet_wrap(~Species, scales = "free") +
+    scale_colour_viridis_d(begin = 0.1, end = 0.95) +
+    scale_fill_viridis_d(begin = 0.1, end = 0.95) + 
+    theme_shrub() +
+    theme(panel.border = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.line = element_line(colour = "black"),
+          axis.title = element_text(size = 14),
+          axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
+          axis.text.y = element_text(size = 12, colour = "black"))) 
+
 
 
