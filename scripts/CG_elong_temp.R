@@ -62,6 +62,10 @@ tab_model(elong_ground_temp_mod)
 elong_soil_temp_mod <- lmer(mean_stem_elong ~ mean_soil_temp  + (1|Year/SampleID_standard) + (1|Species/Sample_age), data = all_CG_growth_temps)
 tab_model(elong_soil_temp_mod)
 
+# with interaction
+elong_soil_temp_mod_interact <- lmer(mean_stem_elong ~ mean_soil_temp*Species + (1|Year/SampleID_standard) + (1|Sample_age), data = all_CG_growth_temps)
+tab_model(elong_soil_temp_mod_interact)
+
 (plot_elong_ground_temp <- ggplot() +
     geom_point(aes(x = mean_ground_temp , y= mean_stem_elong, colour = Species, fill = Species), size = 3, alpha = 0.5, data = all_CG_growth_temps) +
     geom_smooth(aes(x = mean_ground_temp, y= mean_stem_elong, colour = Species, fill = Species), method = "lm", data = all_CG_growth_temps) +
