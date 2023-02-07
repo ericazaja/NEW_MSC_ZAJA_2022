@@ -102,6 +102,9 @@ unique(ITEX_shrubs_msc$SiteSubsite)
 ITEX_shrubs_msc$SPECIES_NAME <- as.factor(ITEX_shrubs_msc$SPECIES_NAME )
 ITEX_shrubs_msc$SITE <- as.factor(ITEX_shrubs_msc$SITE)
 
+# saving
+write.csv(ITEX_shrubs_msc, "data/ITEX/ITEX_shrubs_msc.csv")
+
 # separating pulchra and arctica
 ITEX_pulchra <- ITEX_shrubs_msc %>%
   filter(SPECIES_NAME == "Salix pulchra")

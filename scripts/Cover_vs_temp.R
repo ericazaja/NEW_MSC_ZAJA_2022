@@ -2,12 +2,17 @@
 #### Script by Erica Zaja, created 01/02/23
 ### Last updated: 01/02/23
 
+# Libraries -----
+library(tidyverse)
 
-# Loading chelsa temperature and precipitation data -----
-july_enviro_chelsa <- read_csv("data/july_enviro_chelsa.csv")
-
+# 1. Loading data -----
+july_enviro_chelsa <- read_csv("data/july_enviro_chelsa.csv") # chelsa temperature and precipitation data 
+ITEX_shrubs_msc <- read_csv("data/ITEX/ITEX_shrubs_msc.csv") # ITEX cover data
+all_CG_source_growth <- read_csv("data/common_garden_shrub_data/all_CG_source_growth.csv")
 
 # DATA WRANGLE ------
+
+# 1. CHELSA data ---- 
 unique(july_enviro_chelsa$site)
 
 #rename column
@@ -84,5 +89,32 @@ CG_july_precip <- july_enviro_chelsa %>%
   select(site, year, PrecipMeanJuly)
 
 mean(CG_july_precip$PrecipMeanJuly, na.rm=TRUE) # 5287.333
+
+# making a summarised dataset
+july_enviro_means <- july_enviro_chelsa %>%
+  group_by(site) %>% 
+  summarise(mean_precip = mean(PrecipMeanJuly, na.rm=TRUE), 
+            mean_temp = mean(mean_temp_C,na.rm=TRUE)) 
+
+july_enviro_means$site <- as.factor(july_enviro_means$site)
+
+july_enviro_means <- july_enviro_means %>%
+  mutate(Site = case_when(site == "ATIGUN" ~ "ANWR",
+            site %in% c("IMNAVAIT", "TUSSOKGRID") ~ "TOOLIK", 
+            site == "QHI" ~ "QHI",
+            site == "Common_garden" ~ "CG",
+            site == "Kluane_plateau" ~ "KP")) %>%
+  select(Site, mean_precip, mean_temp) %>%
+  group_by(Site)  %>%
+  summarise(mean_precip = mean(mean_precip, na.rm=TRUE), 
+                      mean_temp = mean(mean_temp,na.rm=TRUE))  # so I only keep one value for toolik
+
+# SOURCE POP DATA ----
+# calculate cover based on widths
+all_CG_growth_cover <- all_CG_growth %>%
+  mutate(cover = (Width_cm*Width_2_cm)/10000)%>%
+  mutate(cover_percent = cover *100) %>%
+  filter(cover_percent <=100) # setting max to 100% cover 
+# compare with cover ----
 
 
