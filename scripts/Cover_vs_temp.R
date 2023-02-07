@@ -229,7 +229,8 @@ tab_model(model_cover_precip_pulchra)
           axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
           axis.text.y = element_text(size = 12, colour = "black"))) 
 
-(scatter_all_cover_temp_rich <- ggplot(all_cover_temps_rich) +
+# change spp. accordingly
+(scatter_all_cover_temp_arctica <- ggplot(all_cover_temps_arctica) +
     geom_point(aes(x = mean_temp, y= cover_percent,colour = Site, fill = Site), size = 3) +
     geom_smooth(aes(x = mean_temp, y= cover_percent), method = "lm") +
     ylab("Cover (%)") +

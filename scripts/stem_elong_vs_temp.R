@@ -129,6 +129,7 @@ view(means_temps)
           axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
           axis.text.y = element_text(size = 12, colour = "black"))) 
 
+# means
 (scatter_elong_temp <- ggplot(means_temps) +
     geom_point(aes(x = july_temps, y= mean_elong, colour = Site, fill = Site, group = Site), size = 3, alpha = 0.8) +
     geom_smooth(aes(x = july_temps, y= mean_elong), method = "lm",  colour = "black")  +
