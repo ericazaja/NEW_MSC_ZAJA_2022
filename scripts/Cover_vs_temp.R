@@ -110,23 +110,46 @@ july_enviro_means <- july_enviro_means %>%
                       mean_temp = mean(mean_temp,na.rm=TRUE))  # so I only keep one value for toolik
 
 # SOURCE POP DATA ----
+
 # calculate cover based on widths for all CG and source pop shurbs
-all_CG_growth_cover <- all_CG_source_growth %>%
+all_CG_source_growth$population <- as.factor(all_CG_source_growth$population)
+
+all_CG_growth_cover_southern <- all_CG_source_growth %>%
+  filter(population != "Northern") # removing northern common garden pop
+
+unique(all_CG_growth_cover_southern$population) #Southern     source_south source_north
+  
+all_CG_growth_cover <- all_CG_growth_cover_southern %>%
   mutate(cover = (Width_cm*Width_2_cm)/10000)%>%
   mutate(cover_percent = cover *100) %>%
   filter(cover_percent <=100) # setting max to 100% cover 
 
+# remove CG data from full dataset
+all_CG_growth_cover_edit <- all_CG_growth_cover %>%
+  filter(Site %in% c("Qikiqtaruk", "Kluane")) 
+
+# extracting max values from only common garden data
+all_max_CG_growth_cover_southern <- all_CG_growth_cover %>% 
+  filter(Site == "Common_garden") %>% 
+  group_by(SampleID_standard) %>%
+  slice(which.max(cover_percent)) %>% 
+  rename("cover_percent" = "cover_percent")
+
+# remerging data
+all_growth_cover <- rbind(all_max_CG_growth_cover_southern, all_CG_growth_cover_edit)
+
 # making summary data for cover
-CG_source_cover_summary <- all_CG_growth_cover %>%
+CG_source_cover_summary <- all_growth_cover %>%
   group_by(Site, Species) %>% 
   summarise(mean_cover = mean(cover_percent)) %>%
   mutate(Site = case_when(Site == "Qikiqtaruk" ~ "QHI", # renaming so datasets match
                           Site == "Common_garden" ~ "CG",
                           Site == "Kluane" ~ "KP"))
 
+
 # ITEX COVER DATA -----
 ITEX_cover_summary <- ITEX_shrubs_msc %>%
-  group_by(SITE, SPECIES_NAME)%>%
+  group_by(SITE, SPECIES_NAME) %>%
   summarise(mean_cover = mean(RelCover))  %>%
   rename("Site" = "SITE",
          "Species" = "SPECIES_NAME")  %>%
@@ -148,7 +171,7 @@ ITEX_shrubs_edit <- ITEX_shrubs_msc %>%
          "cover_percent" = "RelCover")  %>%
   filter(Site!= "QHI") # I'm using the common garden data for QHI cover 
 
-all_CG_growth_cover_edit <- all_CG_growth_cover %>%
+all_CG_growth_cover_edit <- all_growth_cover %>%
   dplyr::select(Year, Site, Species, cover_percent) %>%
   mutate(Site = case_when(Site == "Qikiqtaruk" ~ "QHI", # renaming so datasets match
                           Site == "Common_garden" ~ "CG",
@@ -156,6 +179,11 @@ all_CG_growth_cover_edit <- all_CG_growth_cover %>%
 
 all_cover_long <- rbind(all_CG_growth_cover_edit, ITEX_shrubs_edit)
 all_cover_temps_long <- full_join(all_cover_long, july_enviro_means)
+
+all_cover_temps_long$Year <- as.factor(all_cover_temps_long$Year)
+all_cover_temps_long$Site <- as.factor(all_cover_temps_long$Site)
+all_cover_temps_long$Species <- as.factor(all_cover_temps_long$Species)
+
 
 # MODELLING cover vs temp and precip ----
 model_cover_temp <- lmer(cover_percent ~ mean_temp + Species + (1|Site) + (1|Year), data = all_cover_temps_long)
@@ -170,17 +198,17 @@ plot(model_cover_precip)
 all_cover_temps_arctica <- all_cover_temps_long %>%
   filter(Species == "Salix arctica")
 
-model_cover_temp_arctica <- lmer(cover_percent ~ mean_temp + (1|Site) + (1|Year), data = all_cover_temps_arctica)
+model_cover_temp_arctica <- lmer(cover_percent ~ mean_temp + (1|Site), data = all_cover_temps_arctica)
 tab_model(model_cover_temp_arctica)
-model_cover_precip_arctica <- lmer(cover_percent ~ mean_precip + (1|Site) + (1|Year), data = all_cover_temps_arctica)
+model_cover_precip_arctica <- lmer(cover_percent ~ mean_precip + (1|Site), data = all_cover_temps_arctica)
 tab_model(model_cover_precip_arctica)
 
 all_cover_temps_rich <- all_cover_temps_long %>%
   filter(Species == "Salix richardsonii")
 
-model_cover_temp_rich <- lmer(cover_percent ~ mean_temp + (1|Site) + (1|Year), data = all_cover_temps_rich)
+model_cover_temp_rich <- lm(cover_percent ~ mean_temp + Site, data = all_cover_temps_rich)
 tab_model(model_cover_temp_rich) # significant 
-model_cover_precip_rich <- lmer(cover_percent ~ mean_precip + (1|Site) + (1|Year), data = all_cover_temps_rich)
+model_cover_precip_rich <- lm(cover_percent ~ mean_precip + Site, data = all_cover_temps_rich)
 tab_model(model_cover_precip_rich)
 
 all_cover_temps_pulchra <- all_cover_temps_long %>%
@@ -230,7 +258,7 @@ tab_model(model_cover_precip_pulchra)
           axis.text.y = element_text(size = 12, colour = "black"))) 
 
 # change spp. accordingly
-(scatter_all_cover_temp_arctica <- ggplot(all_cover_temps_arctica) +
+(scatter_all_cover_temp_rich <- ggplot(all_cover_temps_rich) +
     geom_point(aes(x = mean_temp, y= cover_percent,colour = Site, fill = Site), size = 3) +
     geom_smooth(aes(x = mean_temp, y= cover_percent), method = "lm") +
     ylab("Cover (%)") +
