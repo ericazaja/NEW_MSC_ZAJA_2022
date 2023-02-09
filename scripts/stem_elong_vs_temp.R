@@ -21,6 +21,10 @@ library(sjPlot)
 all_CG_source_growth <- read_csv("data/common_garden_shrub_data/all_CG_source_growth.csv")
 
 # 2. Data wrangling -----
+#all_CG_source_growth_arctica <- all_CG_source_growth %>%
+  #filter(Species == "Salix arctica") %>%
+  #filter(Site == "Qikiqtaruk")
+
 # add temp column
 all_CG_source_growth_temp <- all_CG_source_growth %>%
   mutate(july_mean_temp = case_when(Site == "Common_garden" ~ rep(17.97),
@@ -63,7 +67,7 @@ max_cg_elog_spp <- max_cg_elong %>%
   summarise(mean_max_elong_mm = mean(max_stem_elong))
 
 range(max_cg_elog_spp$mean_max_elong_mm)
-# Artica (southern garden): 12.06384 mm
+# Artica (southern garden): 15.13232 mm
 # Pulchra (southern g.): 170.39277 mm
 # Rich (southern g.): 209.91390 mm
 
@@ -81,7 +85,8 @@ all_CG_source_growth_means <- all_cg_max_source %>%
   summarise(mean_elong=mean(mean_stem_elong, na.rm=TRUE), 
             n = n(),
             sd=sd(mean_stem_elong,na.rm=TRUE)) %>%
-  mutate(se = sd / sqrt(n))  # Calculating standard error
+  mutate(se = sd / sqrt(n))  %>%# Calculating standard error
+  na.omit()
 
 temps <- c(17.97, 17.97, 17.97, 9.25, 9.25, 9.10, 9.10, 9.10)
 
@@ -132,7 +137,7 @@ view(means_temps)
 # means
 (scatter_elong_temp <- ggplot(means_temps) +
     geom_point(aes(x = july_temps, y= mean_elong, colour = Site, fill = Site, group = Site), size = 3, alpha = 0.8) +
-    geom_smooth(aes(x = july_temps, y= mean_elong), method = "lm",  colour = "black")  +
+    geom_smooth(aes(x = july_temps, y= mean_elong), method = "lm",  se = FALSE, colour = "black")  +
     ylab("Mean stem elongation (mm)") +
     xlab("\nMean july temperature (degC)") +
     facet_wrap(~Species, scales = "free") +
