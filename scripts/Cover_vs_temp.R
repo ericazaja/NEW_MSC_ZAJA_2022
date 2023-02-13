@@ -22,7 +22,7 @@ july_enviro_chelsa <- july_enviro_chelsa %>%
 # TOOLIK july mean temp and precip
 TOOLIK_july_temp <- july_enviro_chelsa %>%
   filter(site %in% c("TUSSOKGRID", "IMNAVAIT"))
-  select(site, year, mean_temp_C)
+  dplyr::select(site, year, mean_temp_C)
   
 mean(TOOLIK_july_temp$mean_temp_C, na.rm=TRUE) # 10.41667
   
@@ -118,49 +118,85 @@ all_CG_growth_cover_southern <- all_CG_source_growth %>%
   filter(population != "Northern") # removing northern common garden pop
 
 unique(all_CG_growth_cover_southern$population) #Southern     source_south source_north
-  
+unique(all_CG_growth_cover_southern$Site) # [1] "Common_garden" "Kluane"        "Qikiqtaruk"   
+
+# calculate percentage cover of all species in CG, Kluane and QHI
 all_CG_growth_cover <- all_CG_growth_cover_southern %>%
   mutate(cover = (Width_cm*Width_2_cm)/10000)%>%
   mutate(cover_percent = cover *100) %>%
   filter(cover_percent <=100) # setting max to 100% cover 
 
-# remove CG data from full dataset
-all_CG_growth_cover_edit <- all_CG_growth_cover %>%
-  filter(Site %in% c("Qikiqtaruk", "Kluane")) 
+# calculating cover change in the common garden from one year to the next
+all_CG_growth_cover_change <- all_CG_growth_cover %>%
+  filter(Site == "Common_garden") %>% 
+  group_by(Species, SampleID_standard) %>% 
+  arrange(Sample_age, .by_group = TRUE) %>%
+  mutate(cover_increase = cover_percent-lag(cover_percent)) %>%
+  mutate(cover_change_percent = (cover_increase/cover_percent)*100)
+  
+summary_all_CG_growth_cover_change <- all_CG_growth_cover_change %>%
+  group_by(Species) %>%
+  summarise(mean_cover_change = mean(cover_change_percent, na.rm=TRUE))%>%
+  na.omit() %>%
+  mutate(Site = rep("CG"))
+
+# calculating cover change in the source populations from one year to the next
+all_source_growth_cover_change <- all_CG_growth_cover %>%
+  filter(Site %in% c("Qikiqtaruk", "Kluane")) %>% 
+  group_by(Year, Species, Site) %>% 
+  arrange(Year, .by_group = TRUE) %>%
+  mutate(cover_increase = cover_percent-lag(cover_percent)) %>%
+  mutate(cover_change_percent = (cover_increase/cover_percent)*100)
+
+summary_all_source_growth_cover_change <- all_source_growth_cover_change %>%
+  group_by(Site, Species) %>%
+  summarise(mean_cover_change = mean(cover_change_percent, na.rm=TRUE))%>%
+  na.omit() %>%
+  mutate(Site = case_when(Site == "Kluane" ~ "KP", 
+                          Site == "Qikiqtaruk" ~ "QHI"))
+
 
 # extracting max values from only common garden data
-all_max_CG_growth_cover_southern <- all_CG_growth_cover %>% 
-  filter(Site == "Common_garden") %>% 
-  group_by(SampleID_standard) %>%
-  slice(which.max(cover_percent)) %>% 
-  rename("cover_percent" = "cover_percent")
+#all_max_CG_growth_cover_southern <- all_CG_growth_cover %>% 
+ # filter(Site == "Common_garden") %>% 
+ # group_by(SampleID_standard) %>%
+ # slice(which.max(cover_percent)) %>% 
+ # rename("cover_percent" = "cover_percent")
 
 # remerging data
-all_growth_cover <- rbind(all_max_CG_growth_cover_southern, all_CG_growth_cover_edit)
+all_growth_cover_change <- rbind(summary_all_source_growth_cover_change, summary_all_CG_growth_cover_change)
 
 # making summary data for cover
-CG_source_cover_summary <- all_growth_cover %>%
-  group_by(Site, Species) %>% 
-  summarise(mean_cover = mean(cover_percent)) %>%
-  mutate(Site = case_when(Site == "Qikiqtaruk" ~ "QHI", # renaming so datasets match
-                          Site == "Common_garden" ~ "CG",
-                          Site == "Kluane" ~ "KP"))
+#CG_source_cover_summary <- all_growth_cover %>%
+ # group_by(Year, Site, Species) %>% 
+ # summarise(mean_cover = mean(cover_percent)) %>%
+ # mutate(Site = case_when(Site == "Qikiqtaruk" ~ "QHI", # renaming so datasets match
+           #               Site == "Common_garden" ~ "CG",
+              #            Site == "Kluane" ~ "KP"))
 
 
 # ITEX COVER DATA -----
-ITEX_cover_summary <- ITEX_shrubs_msc %>%
+ITEX_shrubs_cover_change <- ITEX_shrubs_msc %>%
+  group_by(YEAR, SITE, SPECIES_NAME) %>%  
+  arrange(YEAR, .by_group = TRUE) %>%
+  mutate(cover_increase = RelCover-lag(RelCover)) %>%
+  mutate(cover_change_percent = (cover_increase/RelCover)*100)
+
+summary_ITEX_shrubs_cover_change <- ITEX_shrubs_cover_change %>%
   group_by(SITE, SPECIES_NAME) %>%
-  summarise(mean_cover = mean(RelCover))  %>%
+  summarise(mean_cover_change = mean(cover_change_percent, na.rm=TRUE))%>%
+  na.omit() %>%
+  filter(SITE!= "QHI") %>%# I'm using the common garden data for QHI cover 
   rename("Site" = "SITE",
-         "Species" = "SPECIES_NAME")  %>%
-  filter(Site!= "QHI") # I'm using the common garden data for QHI cover 
+         "Species" = "SPECIES_NAME")
 
 # merge all cover and temp data into summary means dataset
-all_cover <- rbind (ITEX_cover_summary, CG_source_cover_summary)
+all_cover <- rbind (summary_ITEX_shrubs_cover_change, all_growth_cover_change)
 all_cover_temps <- full_join(all_cover, july_enviro_means)
 
 all_cover_temps$Site <- as.factor(all_cover_temps$Site)
 all_cover_temps$Species <- as.factor(all_cover_temps$Species)
+
 
 # merge full datasets for model
 ITEX_shrubs_edit <- ITEX_shrubs_msc %>%
@@ -184,6 +220,11 @@ all_cover_temps_long$Year <- as.factor(all_cover_temps_long$Year)
 all_cover_temps_long$Site <- as.factor(all_cover_temps_long$Site)
 all_cover_temps_long$Species <- as.factor(all_cover_temps_long$Species)
 
+# make percentage cover change column
+all_cover_temps_long_change <- all_cover_temps_long %>%
+  group_by(Site, Species) %>% 
+  arrange(Year, .by_group = TRUE) %>%
+  mutate(pct_change = (cover_percent/lag(cover_percent) - 1) * 100)
 
 # MODELLING cover vs temp and precip ----
 model_cover_temp <- lmer(cover_percent ~ mean_temp + Species + (1|Site) + (1|Year), data = all_cover_temps_long)
@@ -220,14 +261,33 @@ model_cover_precip_pulchra<- lmer(cover_percent ~ mean_precip + (1|Site) + (1|Ye
 tab_model(model_cover_precip_pulchra)
 
 
+ 
 # DATA VISUALISATION -----
 
 # can visualise things but they are not comparable because
 # cover in the garden is since cuttings put down VS cover in source pops is of mature shurbs
-(box_cover_temp <- ggplot(all_cover_temps_long) +
-   geom_point(aes(x = mean_temp, y= cover_percent, colour = Site, fill = Site), size = 3, alpha = 0.1) +
-   geom_boxplot(aes(x = mean_temp, y= cover_percent, colour = Site, fill = Site), size = 0.5, alpha = 0.5) +
-   ylab("Cover (%)") +
+#(box_cover_temp <- ggplot(all_cover_temps_long) +
+#   geom_point(aes(x = mean_temp, y= cover_percent, colour = Site, fill = Site), size = 3, alpha = 0.1) +
+ #  geom_boxplot(aes(x = mean_temp, y= cover_percent, colour = Site, fill = Site), size = 0.5, alpha = 0.5) +
+  # ylab("Cover (%)") +
+   #xlab("\nMean july temperature (degC)") +
+   ##facet_wrap(~Species, scales = "free") +
+   #scale_colour_viridis_d(begin = 0.1, end = 0.95) +
+   #scale_fill_viridis_d(begin = 0.1, end = 0.95) + 
+   #theme_shrub() +
+  # theme(panel.border = element_blank(),
+     #    panel.grid.major = element_blank(),
+     ##    panel.grid.minor = element_blank(),
+       #  axis.line = element_line(colour = "black"),
+      #   axis.title = element_text(size = 14),
+        # axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
+        # axis.text.y = element_text(size = 12, colour = "black"))) 
+
+# means 
+(scatter_cover_temp <- ggplot(all_cover_temps) +
+   geom_point(aes(x = mean_temp, y= mean_cover_change, colour = Site, fill = Site, group = Site), size = 3, alpha = 0.8) +
+   geom_smooth(aes(x = mean_temp, y= mean_cover_change), method = "lm",  se=F, colour = "black")  +
+   ylab("Mean cover change (%)") +
    xlab("\nMean july temperature (degC)") +
    facet_wrap(~Species, scales = "free") +
    scale_colour_viridis_d(begin = 0.1, end = 0.95) +
@@ -241,23 +301,23 @@ tab_model(model_cover_precip_pulchra)
          axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
          axis.text.y = element_text(size = 12, colour = "black"))) 
 
-# means 
-(scatter_cover_temp <- ggplot(all_cover_temps) +
-   geom_point(aes(x = mean_temp, y= mean_cover, colour = Site, fill = Site, group = Site), size = 3, alpha = 0.8) +
-   geom_smooth(aes(x = mean_temp, y= mean_cover), method = "lm",  se=F, colour = "black")  +
-   ylab("Mean cover (%)") +
-   xlab("\nMean july temperature (degC)") +
-   facet_wrap(~Species, scales = "free") +
-   scale_colour_viridis_d(begin = 0.1, end = 0.95) +
-   scale_fill_viridis_d(begin = 0.1, end = 0.95) + 
-   theme_shrub() +
-   theme(panel.border = element_blank(),
-         panel.grid.major = element_blank(),
-         panel.grid.minor = element_blank(),
-         axis.line = element_line(colour = "black"),
-         axis.title = element_text(size = 14),
-         axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
-         axis.text.y = element_text(size = 12, colour = "black"))) 
+# mean cover change
+(scatter_cover_temp <- ggplot(all_cover_temps_change) +
+    geom_point(aes(x = mean_temp, y= mean_cover_change, colour = Site, fill = Site, group = Site), size = 3, alpha = 0.8) +
+    geom_smooth(aes(x = mean_temp, y= mean_cover_change), method = "lm",  se=F, colour = "black")  +
+    ylab("Mean cover change (%)") +
+    xlab("\nMean july temperature (degC)") +
+    facet_wrap(~Species, scales = "free") +
+    scale_colour_viridis_d(begin = 0.1, end = 0.95) +
+    scale_fill_viridis_d(begin = 0.1, end = 0.95) + 
+    theme_shrub() +
+    theme(panel.border = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.line = element_line(colour = "black"),
+          axis.title = element_text(size = 14),
+          axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
+          axis.text.y = element_text(size = 12, colour = "black"))) 
 
 # means
 (scatter_cover_precip <- ggplot(all_cover_temps) +
