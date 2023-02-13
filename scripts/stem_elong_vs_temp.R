@@ -101,8 +101,7 @@ view(means_temps)
 
 (box_elong_temp <- ggplot(all_cg_max_source) +
    geom_point(aes(x = july_mean_temp, y= mean_stem_elong, colour = Site, fill = Site), size = 3, alpha = 0.1) +
-   # geom_smooth(aes(x = july_mean_temp, y= mean_stem_elong, colour = Site, fill = Site, method = "glm"),  size = 3, alpha = 0.5, data = all_CG_source_growth_temp) +
-    geom_boxplot(aes(x = july_mean_temp, y= mean_stem_elong, colour = Site, fill = Site), size = 0.5, alpha = 0.5) +
+  geom_boxplot(aes(x = july_mean_temp, y= mean_stem_elong, colour = Site, fill = Site), size = 0.5, alpha = 0.5) +
    ylab("Mean stem elongation (mm)") +
    xlab("\nMean july temperature (degC)") +
    facet_wrap(~Species, scales = "free") +
@@ -117,6 +116,7 @@ view(means_temps)
          axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
          axis.text.y = element_text(size = 12, colour = "black"))) 
 
+# scatter that doesnt work
 (scatter_elong_temp <- ggplot(all_cg_max_source) +
     geom_point(aes(x = july_mean_temp, y= mean_stem_elong), size = 3, alpha = 0.1, data = all_CG_source_growth_temp_edit) +
     geom_smooth(aes(x = july_mean_temp, y= mean_stem_elong), method = "gam", data = all_CG_source_growth_temp) +

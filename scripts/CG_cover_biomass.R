@@ -84,12 +84,12 @@ all_CG_growth_cover_southern <- all_CG_growth_cover %>%
   filter(population == "Southern")
 
 # cover in the garden over time, NB only southern population shrubs!
-cover_mod <- lmer(cover_percent ~ Sample_age + (1|Species), data = all_CG_growth_cover_southern)
+cover_mod <- lmer(cover_percent ~ Sample_age + (1| Sample_age/Species), data = all_CG_growth_cover_southern)
 tab_model(cover_mod)
 plot(cover_mod)
 
 # 3.2. BIOMASS (only southern shrubs) over time -----
-biomass_mod <- lmer(biomass_per_m2 ~ Sample_age + (1|Species), data =all_CG_growth_cover_biomass)
+biomass_mod <- lmer(biomass_per_m2 ~ Sample_age + (1|Sample_age/Species), data =all_CG_growth_cover_biomass)
 tab_model(biomass_mod)
 plot(biomass_mod)
 
