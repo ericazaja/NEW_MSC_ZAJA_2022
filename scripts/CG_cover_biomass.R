@@ -51,21 +51,24 @@ all_CG_growth_cover_biomass_SALRIC <- all_CG_growth_cover %>%
   filter(Species == "Salix richardsonii" & population == "Southern") %>% # only keeping southern shrubs
   mutate(biomass_per_m2 = (17.971*Canopy_Height_cm) + (11.882*cover_percent), 
          biomass_error_high = biomass_per_m2 + 444.5,
-         biomass_error_low = biomass_per_m2 - 444.5)
+         biomass_error_low = biomass_per_m2 - 444.5)%>%
+  filter(biomass_per_m2 >= 0)
 
 # Salix pulchra: Biomass = -23.74*height + 61.75*cover +- 480.8
 all_CG_growth_cover_biomass_SALPUL <- all_CG_growth_cover %>%
   filter(Species == "Salix pulchra" & population == "Southern") %>% # only keeping southern shrubs
   mutate(biomass_per_m2 = (-23.74*Canopy_Height_cm) + (61.75*cover_percent), 
          biomass_error_high = biomass_per_m2 + 480.8,
-         biomass_error_low = biomass_per_m2 - 480.8)
+         biomass_error_low = biomass_per_m2 - 480.8)%>%
+  filter(biomass_per_m2 >= 0)
 
 # Salix arctica: Biomass = 2.10*height + 14.35*cover +- 28.46 
 all_CG_growth_cover_biomass_SALARC <- all_CG_growth_cover %>%
   filter(Species == "Salix arctica" & population == "Southern") %>% # only keeping southern shrubs
   mutate(biomass_per_m2 = (2.10*Canopy_Height_cm) + (14.35*cover_percent), 
          biomass_error_high = biomass_per_m2 + 28.46 ,
-         biomass_error_low = biomass_per_m2 - 28.46  )
+         biomass_error_low = biomass_per_m2 - 28.46 ) %>%
+  filter(biomass_per_m2 >= 0)
 
 all_CG_growth_cover_biomass <- rbind(all_CG_growth_cover_biomass_SALARC, 
                                      all_CG_growth_cover_biomass_SALPUL,
@@ -122,8 +125,10 @@ plot(biomass_mod)
     facet_wrap(~Species, scales = "free_y") +
     ylab("Cover in 1m2 (%)") +
     xlab("\n Sample age (n years)") +
+    # ylim(0, ) +
     scale_colour_viridis_d(begin = 0.1, end = 0.8) +
     scale_fill_viridis_d(begin = 0.1, end = 0.8) +
+    expand_limits(y=0) +
     theme_bw() +
     theme(panel.border = element_blank(),
           panel.grid.major = element_blank(),
@@ -146,6 +151,7 @@ plot(biomass_mod)
     xlab("\n Sample age (n years)") +
     scale_colour_viridis_d(begin = 0.1, end = 0.8) +
     scale_fill_viridis_d(begin = 0.1, end = 0.8) +
+   expand_limits(y=0) +
     theme_bw() +
     theme(panel.border = element_blank(),
           panel.grid.major = element_blank(),
@@ -166,6 +172,7 @@ plot(biomass_mod)
     xlab("\n Sample age (n years)") +
     scale_colour_viridis_d(begin = 0.1, end = 0.8) +
     scale_fill_viridis_d(begin = 0.1, end = 0.8) +
+  scale_y_continuous(limits = c(0, NA))+
     theme_bw() +
     theme(panel.border = element_blank(),
           panel.grid.major = element_blank(),
@@ -186,6 +193,7 @@ plot(biomass_mod)
   xlab("\n Sample age (n years)") +
   scale_colour_viridis_d(begin = 0.1, end = 0.8) +
   scale_fill_viridis_d(begin = 0.1, end = 0.8) +
+  scale_y_continuous(limits = c(0, NA)) +
   theme_bw() +
   theme(panel.border = element_blank(),
         panel.grid.major = element_blank(),
@@ -206,6 +214,7 @@ plot(biomass_mod)
   xlab("\n Sample age (n years)") +
   scale_colour_viridis_d(begin = 0.1, end = 0.8) +
   scale_fill_viridis_d(begin = 0.1, end = 0.8) +
+  #scale_y_continuous(limits = c(0, NA)) +
   theme_bw() +
   theme(panel.border = element_blank(),
         panel.grid.major = element_blank(),

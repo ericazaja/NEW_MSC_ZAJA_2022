@@ -127,9 +127,10 @@ arctica <- lm(RelCover ~ YEAR + SITE, data = ITEX_arctica)
 tab_model(arctica)
 plot(arctica) # checking assumptions
 
-both_shrubs <- lmer(RelCover ~ YEAR + SPECIES_NAME + (1|SITE), data = ITEX_shrubs_msc)
-tab_model(both_shrubs)
-plot(both_shrubs) # checking assumptions
+# dont keep the model below because I dont have all species and all sites
+# both_shrubs <- lmer(RelCover ~ YEAR + SPECIES_NAME + (1|SITE), data = ITEX_shrubs_msc)
+#tab_model(both_shrubs)
+#plot(both_shrubs) # checking assumptions
 
 
 # 4. DATA VISUALISATION ------

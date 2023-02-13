@@ -424,6 +424,7 @@ write.csv(all_shrubs_allom, "data/allometry/all_shrubs_allom.csv")
     ylab("Full shrub AGB (g/m2)") +
     xlab("\nCover (%)") +
     facet_wrap(~Species, scales = "free") +
+    scale_y_continuous(limits = c(0, NA))+
     # ggtitle("Salix richardsoni (black), Salix pulchra (brown), Salix arctica (green) ") +
     scale_colour_viridis_d(begin = 0.1, end = 0.95) +
     scale_fill_viridis_d(begin = 0.1, end = 0.95) + 
@@ -437,7 +438,7 @@ write.csv(all_shrubs_allom, "data/allometry/all_shrubs_allom.csv")
           axis.text.y = element_text(size = 12, colour = "black"))) 
 
 
-# visual assessment of 3 allometric equations: cover vs biomass
+# visual assessment of 3 allometric equations: cover vs height 
 (plot_all_allom_height_cover <- ggplot() +
     geom_point(aes(x = cover, y = height, colour = Species, fill = Species), size = 3, alpha = 0.5, data = all_shrubs_allom) +
     geom_smooth(aes(x = cover, y=height , colour = Species, fill = Species), method = "lm", data = all_shrubs_allom) +
