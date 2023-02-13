@@ -92,6 +92,7 @@ tab_model(elong_soil_temp_moist)
 elong_soil_temp_moist_interact<- lmer(mean_stem_elong ~ mean_soil_temp*mean_soil_moist*Species  + (1|Year/SampleID_standard) + (1|Sample_age), data = all_CG_growth_temps)
 tab_model(elong_soil_temp_moist_interact)
 
+
 # DATA VISUALISATION -----
 
 (plot_elong_ground_temp <- ggplot() +
