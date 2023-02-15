@@ -84,14 +84,31 @@ all_CG_growth_cover_southern <- all_CG_growth_cover %>%
   filter(population == "Southern")
 
 # cover in the garden over time, NB only southern population shrubs!
-cover_mod <- lmer(cover_percent ~ Sample_age + (1| Sample_age/Species), data = all_CG_growth_cover_southern)
+# all species
+cover_mod <- lmer(cover_percent ~ Sample_age + (1+Species|Sample_age), data = all_CG_growth_cover_southern)
 tab_model(cover_mod)
 plot(cover_mod)
+
+# separate spp: cover over time in the garden (southern shrubs)
+cover_mod_rich <- lmer(cover_percent ~ Sample_age + (1| Sample_age), data = all_CG_growth_cover_biomass_SALRIC)
+tab_model(cover_mod_rich)
+cover_mod_pulchra <- lmer(cover_percent ~ Sample_age + (1| Sample_age), data = all_CG_growth_cover_biomass_SALPUL)
+tab_model(cover_mod_pulchra)
+cover_mod_arctica <- lm(cover_percent ~ Sample_age , data = all_CG_growth_cover_biomass_SALARC)
+tab_model(cover_mod_arctica)
 
 # 3.2. BIOMASS (only southern shrubs) over time -----
 biomass_mod <- lmer(biomass_per_m2 ~ Sample_age + (1|Sample_age/Species), data =all_CG_growth_cover_biomass)
 tab_model(biomass_mod)
 plot(biomass_mod)
+
+# separate spp: biomass over time in the garden (southern shrubs)
+biomass_mod_rich <- lmer(biomass_per_m2 ~ Sample_age + (1| Sample_age), data = all_CG_growth_cover_biomass_SALRIC)
+tab_model(biomass_mod_rich)
+biomass_mod_pulchra <- lmer(biomass_per_m2 ~ Sample_age + (1| Sample_age), data = all_CG_growth_cover_biomass_SALPUL)
+tab_model(biomass_mod_pulchra)
+biomass_mod_arctica <- lm(biomass_per_m2 ~ Sample_age , data = all_CG_growth_cover_biomass_SALARC)
+tab_model(biomass_mod_arctica)
 
 # 4. Data visualisation -----
 
@@ -119,7 +136,7 @@ plot(biomass_mod)
 
 # Cover over time CG (2013-2022):only southern shrubs
 (scatter_cover_CG <- ggplot(all_CG_growth_cover_southern) +
-    geom_smooth(aes(x = Sample_age, y =cover_percent, colour = Species, fill = Species, method = "glm")) +
+    geom_smooth(aes(x = Sample_age, y = cover_percent, colour = Species, fill = Species, method = "glm")) +
     geom_point(aes(x = Sample_age, y= cover_percent, colour = Species, fill = Species), size = 1.5, alpha = 0.5) +
     # facet_grid(cols = vars(Species)) +
     facet_wrap(~Species, scales = "free_y") +
