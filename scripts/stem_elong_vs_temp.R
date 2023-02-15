@@ -116,24 +116,6 @@ view(means_temps)
          axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
          axis.text.y = element_text(size = 12, colour = "black"))) 
 
-# scatter that doesnt work
-(scatter_elong_temp <- ggplot(all_cg_max_source) +
-    geom_point(aes(x = july_mean_temp, y= mean_stem_elong), size = 3, alpha = 0.1, data = all_CG_source_growth_temp_edit) +
-    geom_smooth(aes(x = july_mean_temp, y= mean_stem_elong), method = "gam", data = all_CG_source_growth_temp) +
-    ylab("Mean stem elongation (mm)") +
-    xlab("\nMean july temperature (degC)") +
-    facet_wrap(~Species, scales = "free") +
-    scale_colour_viridis_d(begin = 0.1, end = 0.95) +
-    scale_fill_viridis_d(begin = 0.1, end = 0.95) + 
-    theme_shrub() +
-    theme(panel.border = element_blank(),
-          panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank(),
-          axis.line = element_line(colour = "black"),
-          axis.title = element_text(size = 14),
-          axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
-          axis.text.y = element_text(size = 12, colour = "black"))) 
-
 # means
 (scatter_elong_temp <- ggplot(means_temps) +
     geom_point(aes(x = july_temps, y= mean_elong, colour = Site, fill = Site, group = Site), size = 3, alpha = 0.8) +
@@ -154,27 +136,42 @@ view(means_temps)
 
 
 # Modelling -----
-# NB with species doesnt run:    Hessian is numerically singular: parameters are not uniquely determined 
-# I think because I dont have arctica on KP!
-# so let's remove arctica
+# I dont have arctica on KP!
+# so let's remove arctica and only look at 2 tall spp separately
 
-all_cg_max_source_noarctica <- all_cg_max_source %>%
-  filter(Species %in% c("Salix richardsonii", "Salix pulchra"))
-str(all_cg_max_source_noarctica$Site)
+all_cg_max_source_arctica <- all_cg_max_source %>%
+  filter(Species == ("Salix arctica"))
 
-all_cg_max_source_noarctica$july_mean_temp <- as.numeric(all_cg_max_source_noarctica$july_mean_temp)
-all_cg_max_source_noarctica$Year <- as.factor(all_cg_max_source_noarctica$Year)
+all_cg_max_source_rich <- all_cg_max_source %>%
+  filter(Species == ("Salix richardsonii"))
 
-# only 2 species, so spp cant be a random effect.
-# model with spp fixed effect and site random effect, no arctica.
-model_elong_temp <- lmer(mean_stem_elong ~ july_mean_temp + Species + (1|Site) + (1|Year), data = all_cg_max_source_noarctica)
-tab_model(model_elong_temp)
-plot(model_elong_temp)
+all_cg_max_source_pulchra <- all_cg_max_source %>%
+  filter(Species == ("Salix pulchra"))
 
-# model with site and spp interacting
-model_elong_temp_interaction <- lm(mean_stem_elong ~ july_mean_temp + Species*Site , data = all_cg_max_source_noarctica)
-tab_model(model_elong_temp_interaction)
-plot(model_elong_temp_interaction)
+all_cg_max_source_arctica$july_mean_temp <- as.numeric(all_cg_max_source_arctica$july_mean_temp)
+all_cg_max_source_arctica$Year <- as.factor(all_cg_max_source_arctica$Year)
+
+all_cg_max_source_rich$july_mean_temp <- as.numeric(all_cg_max_source_rich$july_mean_temp)
+all_cg_max_source_rich$Year <- as.factor(all_cg_max_source_rich$Year)
+
+all_cg_max_source_pulchra$july_mean_temp <- as.numeric(all_cg_max_source_pulchra$july_mean_temp)
+all_cg_max_source_pulchra$Year <- as.factor(all_cg_max_source_pulchra$Year)
+
+# Arctica -----
+# no site random effect because i dont have 3 levels (no arctica on KP)
+model_elong_temp_arctica <- lmer(mean_stem_elong ~ july_mean_temp + (1|Year), data = all_cg_max_source_arctica)
+tab_model(model_elong_temp_arctica) # not significant 
+plot(model_elong_temp_arctica)
+
+# Richardsonii ------
+model_elong_temp_rich <- lmer(mean_stem_elong ~ july_mean_temp + (1|Site) + (1|Year), data = all_cg_max_source_rich)
+tab_model(model_elong_temp_rich ) # significant 
+plot(model_elong_temp_rich )
+
+# Pulchra -------
+model_elong_temp_pulchra <- lmer(mean_stem_elong ~ july_mean_temp +  (1|Site) + (1|Year), data = all_cg_max_source_pulchra)
+tab_model(model_elong_temp_pulchra ) # significant 
+plot(model_elong_temp_pulchra )
 
 
                         
