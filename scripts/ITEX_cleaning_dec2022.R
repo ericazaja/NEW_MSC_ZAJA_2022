@@ -1,7 +1,12 @@
+## ERICA SCRIPT for itex data: adapted from
+
 ## Biodiversity dynamics across a warming tundra
 ## Mariana Garcia Criado
 ## ITEX data prep - updated ITEX as of June 2022
 ## December 2022 
+
+# ERICA LOAD THIS data, no need to run full script again
+# itex_EZ_shrubs_2023 <- read_csv("data/ITEX/itex_EZ_shrubs_2023.csv")
 
 
 ## PACKAGES ----

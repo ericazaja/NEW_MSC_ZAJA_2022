@@ -11,6 +11,7 @@ library(readr)
 # 1. Loading data -------
 # load("~/Desktop/Github_repos.tmp/NEW_MSC_ZAJA_2022/data/ITEX/ITEX_database.RData")
 ITEX_veg_msc <- read_csv("data/ITEX/ITEX_veg_msc.csv")
+itex_EZ_shrubs_2023 <- read_csv("data/ITEX/itex_EZ_shrubs_2023.csv")
 
 # 2. DATA WRANGLING ----
 
@@ -117,6 +118,17 @@ unique(ITEX_arctica$SITE)
 
 str(ITEX_arctica)
 
+# NEWEST dataset ----
+itex_EZ_shrubs_2023$SPECIES_NAME <- as.factor(itex_EZ_shrubs_2023$SPECIES_NAME )
+itex_EZ_shrubs_2023$SITE <- as.factor(itex_EZ_shrubs_2023$SITE)
+
+itex_pulchra <- itex_EZ_shrubs_2023 %>%
+  filter(SPECIES_NAME == "Salix pulchra")
+
+itex_arctica <- itex_EZ_shrubs_2023 %>%
+  filter(SPECIES_NAME == "Salix arctica") %>%
+  filter(SITE %in% c("ANWR", "QHI" ))
+
 # 3. MODELLING ------
 # shrub spp. cover change over time
 pulchra <- lm(RelCover ~ YEAR + SITE, data = ITEX_pulchra)
@@ -132,6 +144,14 @@ plot(arctica) # checking assumptions
 #tab_model(both_shrubs)
 #plot(both_shrubs) # checking assumptions
 
+# new models. Keeping models above for comparison
+pulchra_new <- lm(RelCover ~ YEAR + SITE, data = itex_pulchra)
+tab_model(pulchra_new)
+plot(pulchra_new) # checking assumptions
+
+arctica_new <- lm(RelCover ~ YEAR + SITE, data = itex_arctica)
+tab_model(arctica_new)
+plot(arctica_new) # checking assumptions
 
 # 4. DATA VISUALISATION ------
 
@@ -149,7 +169,7 @@ theme_shrub <- function(){ theme(legend.position = "right",
 
 
 # Visualising distribution with a histogram
-(hist_arctica <- ITEX_arctica %>%
+(hist_arctica <- itex_arctica %>%
     ggplot(aes(x = RelCover, fill = SITE)) +
     geom_histogram( color="#e9ecef", alpha=0.6, position = 'identity', bins = 30) +
     labs(x = "\nCover (%)", y = "Frequency\n") +
@@ -158,7 +178,7 @@ theme_shrub <- function(){ theme(legend.position = "right",
     theme(legend.text = element_text(size=20),
           legend.title = element_text(size=25)) )
 
-(hist_pulchra <- ITEX_pulchra %>%
+(hist_pulchra <- itex_pulchra %>%
     ggplot(aes(x = RelCover, fill = SITE)) +
     geom_histogram( color="#e9ecef", alpha=0.6, position = 'identity', bins = 30) +
     labs(x = "\nCover (%)", y = "Frequency\n") +
@@ -168,8 +188,8 @@ theme_shrub <- function(){ theme(legend.position = "right",
           legend.title = element_text(size=25)) )
 
 (scatter_arctica <- ggplot() +
-    geom_point(aes(x = YEAR , y= RelCover, colour = SITE, fill = SITE), size = 3, alpha = 0.5, data = ITEX_arctica) +
-    geom_smooth(aes(x = YEAR , y= RelCover,  colour = SITE, fill = SITE), method = "lm", data = ITEX_arctica) +
+    geom_point(aes(x = YEAR , y= RelCover, colour = SITE, fill = SITE), size = 3, alpha = 0.5, data = itex_arctica) +
+    geom_smooth(aes(x = YEAR , y= RelCover,  colour = SITE, fill = SITE), method = "lm", data = itex_arctica) +
     ylab("Relative cover (%)") +
     xlab("\nYear") +
     #facet_wrap(~SITE, scales = "free") +
@@ -185,8 +205,8 @@ theme_shrub <- function(){ theme(legend.position = "right",
           axis.text.y = element_text(size = 12, colour = "black"))) 
 
 (scatter_pulchra <- ggplot() +
-    geom_point(aes(x = YEAR , y= RelCover, colour = SITE, fill = SITE), size = 3, alpha = 0.5, data = ITEX_pulchra) +
-    geom_smooth(aes(x = YEAR , y= RelCover,  colour = SITE, fill = SITE), method = "lm", data = ITEX_pulchra) +
+    geom_point(aes(x = YEAR , y= RelCover, colour = SITE, fill = SITE), size = 3, alpha = 0.5, data = itex_pulchra) +
+    geom_smooth(aes(x = YEAR , y= RelCover,  colour = SITE, fill = SITE), method = "lm", data = itex_pulchra) +
     ylab("Relative cover (%)") +
     xlab("\nYear") +
     #facet_wrap(~SITE, scales = "free") +
