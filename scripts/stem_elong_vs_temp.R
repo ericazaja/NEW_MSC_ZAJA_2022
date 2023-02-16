@@ -137,7 +137,7 @@ view(means_temps)
 
 # Modelling -----
 # I dont have arctica on KP!
-# so let's remove arctica and only look at 2 tall spp separately
+# so let's look at the  spp separately
 
 all_cg_max_source_arctica <- all_cg_max_source %>%
   filter(Species == ("Salix arctica"))

@@ -197,6 +197,9 @@ all_cover_temps <- full_join(all_cover, july_enviro_means)
 all_cover_temps$Site <- as.factor(all_cover_temps$Site)
 all_cover_temps$Species <- as.factor(all_cover_temps$Species)
 
+all_cover_temps <- all_cover_temps %>%
+  mutate(mean_precip = mean_precip/100)
+
 # merge full ( non summarised data)
 all_CG_growth_cover_change_edit <- all_CG_growth_cover_change %>%
   dplyr::select(Year, Species, Site, cover_change_percent) %>%
@@ -225,6 +228,9 @@ all_cover_temps_long$Year <- as.factor(all_cover_temps_long$Year)
 all_cover_temps_long$Site <- as.factor(all_cover_temps_long$Site)
 all_cover_temps_long$Species <- as.factor(all_cover_temps_long$Species)
 
+all_cover_temps_long <- all_cover_temps_long %>%
+  mutate(mean_precip = mean_precip/100) # converting precip in mm
+
 # MODELLING cover vs temp and precip ----
 model_cover_temp <- lmer(cover_change_percent ~ mean_temp + Species + (1|Site), data = all_cover_temps_long)
 tab_model(model_cover_temp)
@@ -236,7 +242,7 @@ all_cover_temps_long_pulchra <- all_cover_temps_long %>%
   filter(Species == "Salix pulchra")
 
 model_cover_temp_pulchra <- lmer(cover_change_percent ~ mean_temp + (1|Site), data = all_cover_temps_long_pulchra)
-tab_model(model_cover_temp_pulchra)# 3.01 % cover change per unit temp
+tab_model(model_cover_temp_pulchra) # 3.01 % cover change per unit temp
 
 # richardsonii cover change per unit temp 
 all_cover_temps_long_rich <- all_cover_temps_long %>%
@@ -252,12 +258,26 @@ all_cover_temps_long_arctica <- all_cover_temps_long %>%
   filter(Species == "Salix arctica")
 
 model_cover_temp_arctica <- lmer(cover_change_percent ~ mean_temp + (1|Site), data = all_cover_temps_long_arctica)
-tab_model(model_cover_temp_arctica) # 0.62 % cover change per unit temp
+tab_model(model_cover_temp_arctica) # 8.46 % cover change per unit temp
 
 # can do same models but with precipitation
-model_cover_precip <- lmer(cover_change_percent ~ mean_precip + Species + (1|Site), data = all_cover_temps_long)
+# doesnt run but will try again when bayesian
+model_cover_precip <- lm(cover_change_percent ~ mean_precip + Species, data = all_cover_temps_long)
 tab_model(model_cover_precip)
 plot(model_cover_precip)
+
+# separate species models----
+# doesnt run with site random effect
+model_cover_precip_pulchra <- lm(cover_change_percent ~ mean_precip, data = all_cover_temps_long_pulchra)
+tab_model(model_cover_precip_pulchra) # -1.40 % cover change per unit precip
+
+model_cover_precip_rich <- lmer(cover_change_percent ~ mean_precip + (1|Site), data = all_cover_temps_long_rich)
+tab_model(model_cover_precip_rich) # -2.75 % cover change per unit precip
+
+# mean cover change pulchra + rich :  -2.075 % cover change per unit precip
+# doesnt run with site random effect
+model_cover_precip_arctica <- lm(cover_change_percent ~ mean_precip, data = all_cover_temps_long_arctica)
+tab_model(model_cover_precip_arctica) # -1.60	 % cover change per unit precip
 
 # DATA VISUALISATION -----
 
@@ -280,7 +300,7 @@ plot(model_cover_precip)
         # axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
         # axis.text.y = element_text(size = 12, colour = "black"))) 
 
-# means 
+# plotting means: cover change vs mean july temp
 (scatter_cover_temp <- ggplot(all_cover_temps) +
    geom_point(aes(x = mean_temp, y= mean_cover_change, colour = Site, fill = Site, group = Site), size = 3, alpha = 0.8) +
    geom_smooth(aes(x = mean_temp, y= mean_cover_change), method = "lm",  se=F, colour = "black")  +
@@ -298,12 +318,12 @@ plot(model_cover_precip)
          axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
          axis.text.y = element_text(size = 12, colour = "black"))) 
 
-# means
+# plotting means: cover change vs mean july precip 
 (scatter_cover_precip <- ggplot(all_cover_temps) +
     geom_point(aes(x = mean_precip, y= mean_cover_change, colour = Site, fill = Site, group = Site), size = 3, alpha = 0.8) +
     geom_smooth(aes(x = mean_precip, y= mean_cover_change), method = "lm",  se=F,colour = "black")  +
     ylab("Mean cover change (%)") +
-    xlab("\nMean july precip ()") +
+    xlab("\nMean july precip (mm)") +
     facet_wrap(~Species, scales = "free") +
     scale_colour_viridis_d(begin = 0.1, end = 0.95) +
     scale_fill_viridis_d(begin = 0.1, end = 0.95) + 
@@ -317,9 +337,9 @@ plot(model_cover_precip)
           axis.text.y = element_text(size = 12, colour = "black"))) 
 
 # change spp. accordingly
-(scatter_all_cover_temp_rich <- ggplot(all_cover_temps_rich) +
-    geom_point(aes(x = mean_temp, y= cover_percent,colour = Site, fill = Site), size = 3) +
-    geom_smooth(aes(x = mean_temp, y= cover_percent), method = "lm") +
+(scatter_all_cover_temp_rich <- ggplot(all_cover_temps_long_rich) +
+    geom_point(aes(x = mean_temp, y= cover_change_percent,colour = Site, fill = Site), size = 3) +
+    geom_smooth(aes(x = mean_temp, y= cover_change_percent), method = "lm") +
     ylab("Cover (%)") +
     xlab("\nMean july temperature (degC)") +
     scale_colour_viridis_d(begin = 0.1, end = 0.95) +
