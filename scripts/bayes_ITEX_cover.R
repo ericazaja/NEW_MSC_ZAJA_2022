@@ -1,0 +1,86 @@
+# BAYESIAN models for itex cover analysis
+# script by Erica
+# last update: 21/02/2023
+
+# libraries ------
+library(brms)
+library(tidybayes)
+library(bayesplot)
+
+# load data ------
+itex_EZ_shrubs_2023 <- read_csv("data/ITEX/itex_EZ_shrubs_2023.csv")
+
+# wrangle data -----
+itex_EZ_shrubs_2023 <- itex_EZ_shrubs_2023 %>%
+  mutate(cover_prop = RelCover/100)
+
+# divide species 
+itex_EZ_arctica <- itex_EZ_shrubs_2023 %>%
+  filter(SPECIES_NAME == "Salix arctica") %>%
+  filter(SITE %in% c("ANWR", "QHI" ))
+
+itex_EZ_pulchra <- itex_EZ_shrubs_2023 %>%
+  filter(SPECIES_NAME == "Salix pulchra")
+
+hist(itex_EZ_shrubs_2023$cover_prop, breaks = 30)
+hist(itex_EZ_arctica$cover_prop, breaks = 20) # NOT zero inflated
+hist(itex_EZ_pulchra$cover_prop, breaks = 30) # YES zero inflated
+range(itex_EZ_arctica$cover_prop) # 0.0078125 0.3861386
+range(itex_EZ_pulchra$cover_prop) #  0.006944444 0.769230769
+range(itex_EZ_shrubs_2023$cover_prop)
+# 0.006944444 0.769230769
+# values between 0.0001 and 0.9999 ! So beta distribution
+
+range(itex_EZ_pulchra$YEAR)
+range(itex_EZ_arctica$YEAR)
+
+# modelling -----
+
+# salix arctica -----
+arctica_cover <- brms::brm(cover_prop ~ I(YEAR-1996) + SITE,
+                           data = itex_EZ_arctica, family = gaussian(),
+                           iter = 2000, chains = 4, warmup = 400)
+
+summary(arctica_cover)
+plot(arctica_cover)
+pp_check(arctica_cover, type = "dens_overlay", nsamples = 100)
+
+# salix pulchra -----
+pulchra_cover <- brms::brm(cover_prop ~ I(YEAR-1988) + SITE,
+                      data = itex_EZ_pulchra, family = "beta",
+                      iter = 2000, chains = 4, warmup = 400)
+
+summary(pulchra_cover)
+plot(pulchra_cover)
+pp_check(pulchra_cover, type = "dens_overlay", nsamples = 100) 
+
+# data visualisation ------
+# one line per site
+(pulchra_cover_plot <- itex_EZ_pulchra %>%
+   group_by(SITE) %>%
+   add_predicted_draws(pulchra_cover) %>%
+   ggplot(aes(x = YEAR, y = cover_prop, color = ordered(SITE), fill = ordered(SITE))) +
+   stat_lineribbon(aes(y = .prediction), .width = .50, alpha = 1/4) +
+   geom_point(data = itex_EZ_pulchra) +
+   scale_fill_brewer(palette = "Set2") +
+   scale_color_brewer(palette = "Dark2") +
+   theme_bw() +
+   ylab("Salix pulchra cover \n") +
+   xlab("\nYear") +
+   theme_bw() +
+   theme(legend.title = element_blank()))
+
+(arctica_cover_plot <- itex_EZ_arctica %>%
+    group_by(SITE) %>%
+    add_predicted_draws(arctica_cover) %>%
+    ggplot(aes(x = YEAR, y = cover_prop, color = ordered(SITE), fill = ordered(SITE))) +
+    stat_lineribbon(aes(y = .prediction), .width = .50, alpha = 1/4) +
+    geom_point(data = itex_EZ_arctica) +
+    scale_fill_brewer(palette = "Set2") +
+    scale_color_brewer(palette = "Dark2") +
+    theme_bw() +
+    ylab("Salix arctica cover \n") +
+    xlab("\nYear") +
+    theme_bw() +
+    theme(legend.title = element_blank()))
+
