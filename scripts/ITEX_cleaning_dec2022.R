@@ -759,6 +759,7 @@ itex.full9 <- itex.full8 %>% filter(SiteSubsitePlotYear %notin% morpho10.vec)
 ## Save your file!
 
 view(itex.full9)
+write.csv(itex.full9, "data/ITEX/itex.full9.csv")
 
 # Filter my species and sites of interest
 itex_EZ <- itex.full9 %>%

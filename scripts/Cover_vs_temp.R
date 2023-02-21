@@ -4,10 +4,12 @@
 
 # Libraries -----
 library(tidyverse)
+library(sjPlot)
+library(lme4)
 
 # 1. Loading data -----
 july_enviro_chelsa <- read_csv("data/july_enviro_chelsa.csv") # chelsa temperature and precipitation data 
-ITEX_shrubs_msc <- read_csv("data/ITEX/ITEX_shrubs_msc.csv") # ITEX cover data
+ITEX_shrubs_msc <- read_csv("data/ITEX/itex_EZ_shrubs_2023.csv") # newest 
 all_CG_source_growth <- read_csv("data/common_garden_shrub_data/all_CG_source_growth.csv")
 
 # DATA WRANGLE ------
@@ -56,7 +58,7 @@ mean(QHI_july_temp$mean_temp_C, na.rm=TRUE) # 6.15
 
 QHI_july_precip <- july_enviro_chelsa %>%
   filter(site == "QHI")%>%
-  select(site, year, PrecipMeanJuly)
+  dplyr::select(site, year, PrecipMeanJuly)
 
 mean(QHI_july_precip$PrecipMeanJuly, na.rm=TRUE) # 9586.81
 # QHI july mean surface temp: 9.10 °C 
@@ -64,20 +66,20 @@ mean(QHI_july_precip$PrecipMeanJuly, na.rm=TRUE) # 9586.81
 # KP july mean temp and precip
 KP_july_temp <- july_enviro_chelsa %>%
   filter(site == "Kluane_plateau")%>%
-  select(site, year, mean_temp_C)
+  dplyr::select(site, year, mean_temp_C)
 
 mean(KP_july_temp$mean_temp_C, na.rm=TRUE) #7.311905
 
 KP_july_precip <- july_enviro_chelsa %>%
   filter(site == "Kluane_plateau")%>%
-  select(site, year, PrecipMeanJuly)
+  dplyr::select(site, year, PrecipMeanJuly)
 
 mean(KP_july_precip$PrecipMeanJuly, na.rm=TRUE) # 7123.429
 
 # CG july mean temp and precip
 CG_july_temp <- july_enviro_chelsa %>%
   filter(site == "Common_garden") %>%
-  select(site, year, mean_temp_C)
+  dplyr::select(site, year, mean_temp_C)
 
 mean(CG_july_temp$mean_temp_C, na.rm=TRUE) #13.67857
 
@@ -242,7 +244,7 @@ all_cover_temps_long_pulchra <- all_cover_temps_long %>%
   filter(Species == "Salix pulchra")
 
 model_cover_temp_pulchra <- lmer(cover_change_percent ~ mean_temp + (1|Site), data = all_cover_temps_long_pulchra)
-tab_model(model_cover_temp_pulchra) # 3.01 % cover change per unit temp
+tab_model(model_cover_temp_pulchra) # 3.62 % cover change per unit temp
 
 # richardsonii cover change per unit temp 
 all_cover_temps_long_rich <- all_cover_temps_long %>%
@@ -258,7 +260,7 @@ all_cover_temps_long_arctica <- all_cover_temps_long %>%
   filter(Species == "Salix arctica")
 
 model_cover_temp_arctica <- lmer(cover_change_percent ~ mean_temp + (1|Site), data = all_cover_temps_long_arctica)
-tab_model(model_cover_temp_arctica) # 8.46 % cover change per unit temp
+tab_model(model_cover_temp_arctica) # 10.30 % cover change per unit temp
 
 # can do same models but with precipitation
 # doesnt run but will try again when bayesian
