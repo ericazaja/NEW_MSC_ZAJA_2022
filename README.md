@@ -23,6 +23,16 @@
     
     
 - #### [scripts](https://github.com/ericazaja/MSc_ZAJA_2022/tree/main/scripts)
+  - [allometry.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/allometry.R): script to make allometric equations of 3 target speices.
+  - [CG_cover_biomass.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/CG_cover_biomass.R): script to calculate % cover of shrubs in the garden and convert to biomass using allometric equations.
+    - [CG_elong_temp.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/CG_elong_temp.R): script to model annual stem elongation as a function of annual temperature. INFORMATIVE analysis, not used in the allom. equations. Just to see if we see more growth in warmer years.
+    - [Cover_vs_temp.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/Cover_vs_temp.R): Mean cover change - temperature relationships. Cover vs mean july temperature at CG, QHI, KP, ANWR, TOOLIK.
+    - [ITEX_cleaning_dec2022.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/ITEX_cleaning_dec2022.R): cleaning script by Mariana updated in december 2022.
+    - [ITEX_cover.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/ITEX_cover.R): explorative analysis of ITEX cover over time
+    - [stem_elong_vs_temp.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/stem_elong_vs_temp.R): Stem elongation - temperature relationships. Mean stem elong vs mean july temperature at CG, QHI, KP, ANWR, TOOLIK.
+    - [carbon.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/carbon.R): script I will use to convert shrubs growth estimates to carbon content.
+    - [raster_starter.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/raster_starter.R): script to read and modify Katie's maps
+    
 - #### [img]()
 - #### [preregistration]()
 
