@@ -122,7 +122,7 @@ plot(elong_soiltemp_arc)
 pp_check(elong_soiltemp_arc) # beautiful
 
 
-# 4.4. Soil temperature*soil moisture ------
+# 4.4. Interact: Soil temperature*soil moisture ------
 # richardsonii -----
 elong_interact_rich <- brms::brm(log(mean_stem_elong) ~ mean_soil_temp*mean_soil_moist + (1|Year) + (1|Sample_age),
                                   data = all_CG_growth_temps_rich, family = gaussian(), chains = 3,
@@ -156,7 +156,7 @@ pp_check(elong_interact_arc)
 
 
 # 5. Data visualisation ------
-
+# Surface temp -----
 # Soil temp ------
 # Richardsonii -----
 ric_2 <- (conditional_effects(elong_soiltemp_rich))
@@ -211,8 +211,7 @@ amc_data <- arc_2[[1]]
     theme_shrub())
 
 
-
-
+# Soil moist ------
 
 
 
