@@ -37,7 +37,8 @@ hist(all_CG_growth_temps_rich$mean_stem_elong, breaks=10) # right skew
 # richardsonii -----
 elong_temp_rich <- brms::brm(log(mean_stem_elong) ~ mean_ground_temp + (1|Year) + (1|Sample_age),
                             data = all_CG_growth_temps_rich, family = gaussian(), chains = 3,
-                            iter = 3000, warmup = 1000)
+                            iter = 3000, warmup = 1000, 
+                            control = list(max_treedepth = 15, adapt_delta = 0.99))
 summary(elong_temp_rich) # not significant 
 plot(elong_temp_rich)
 pp_check(elong_temp_rich) # beautiful
@@ -45,7 +46,8 @@ pp_check(elong_temp_rich) # beautiful
 # pulchra ------
 elong_temp_pul <- brms::brm(log(mean_stem_elong) ~ mean_ground_temp + (1|Year) + (1|Sample_age),
                              data = all_CG_growth_temps_pul, family = gaussian(), chains = 3,
-                             iter = 3000, warmup = 1000)
+                             iter = 3000, warmup = 1000, 
+                            control = list(max_treedepth = 15, adapt_delta = 0.99))
 summary(elong_temp_pul) # not significant 
 plot(elong_temp_pul)
 pp_check(elong_temp_pul) # beautiful
@@ -54,7 +56,8 @@ pp_check(elong_temp_pul) # beautiful
 # arctica ------
 elong_temp_arc <- brms::brm(mean_stem_elong ~ mean_ground_temp + (1|Year) + (1|Sample_age),
                             data = all_CG_growth_temps_arc, family = gaussian(), chains = 3,
-                            iter = 3000, warmup = 1000)
+                            iter = 3000, warmup = 1000,
+                            control = list(max_treedepth = 15, adapt_delta = 0.99))
 summary(elong_temp_arc) # not significant 
 plot(elong_temp_arc)
 pp_check(elong_temp_arc)
@@ -117,9 +120,9 @@ elong_soilmoist_arc <- brms::brm(mean_stem_elong ~ mean_soil_moist + (1|Year) + 
                                 iter = 5000, warmup = 1000, 
                                 control = list(max_treedepth = 15, adapt_delta = 0.99))
 
-summary(elong_soiltemp_arc) # not significant 
-plot(elong_soiltemp_arc)
-pp_check(elong_soiltemp_arc) # beautiful
+summary(elong_soilmoist_arc) # not significant 
+plot(elong_soilmoist_arc)
+pp_check(elong_soilmoist_arc) # beautiful
 
 
 # 4.4. Interact: Soil temperature*soil moisture ------
@@ -156,7 +159,58 @@ pp_check(elong_interact_arc)
 
 
 # 5. Data visualisation ------
-# Surface temp -----
+# 5.1. Surface temp -----
+# Richardsonii -----
+ric_1 <- (conditional_effects(elong_temp_rich))
+ric_data_1 <- ric_1[[1]]
+
+(rich_plot_temp <-ggplot(ric_data_1) +
+    geom_point(data = all_CG_growth_temps_rich, aes(x = mean_ground_temp, y = log(mean_stem_elong)),
+               alpha = 0.5)+
+    geom_line(aes(x = effect1__, y = estimate__),
+              linewidth = 1.5) +
+    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
+                alpha = .1) +
+    ylab("Mean stem elongation (mm)\n") +
+    xlab("\n Mean ground temperature (degC)" ) +
+    scale_color_brewer(palette = "Greys")+
+    scale_fill_brewer(palette = "Greys")+
+    theme_shrub())
+
+# Pulchra -----
+pul_1 <- (conditional_effects(elong_temp_pul))
+pul_data_1 <- pul_1[[1]]
+
+(stemp2<-ggplot(pul_data_1) +
+    geom_point(data = all_CG_growth_temps_pul, aes(x = mean_ground_temp, y = log(mean_stem_elong)),
+               alpha = 0.5)+
+    geom_line(aes(x = effect1__, y = estimate__),
+              linewidth = 1.5) +
+    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
+                alpha = .1) +
+    ylab("Mean stem elongation (mm)\n") +
+    xlab("\n Mean ground temperature (degC)" ) +
+    scale_color_brewer(palette = "Greys")+
+    scale_fill_brewer(palette = "Greys")+
+    theme_shrub())
+
+# Arctica -----
+arc_1 <- (conditional_effects(elong_temp_arc))
+arc_data_1 <- arc_1[[1]]
+
+(stemp2<-ggplot(arc_data_1) +
+    geom_point(data = all_CG_growth_temps_arc, aes(x = mean_ground_temp, y = mean_stem_elong),
+               alpha = 0.5)+
+    geom_line(aes(x = effect1__, y = estimate__),
+              linewidth = 1.5) +
+    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
+                alpha = .1) +
+    ylab("Mean stem elongation (mm)\n") +
+    xlab("\n Mean ground temperature (degC)" ) +
+    scale_color_brewer(palette = "Greys")+
+    scale_fill_brewer(palette = "Greys")+
+    theme_shrub())
+
 # Soil temp ------
 # Richardsonii -----
 ric_2 <- (conditional_effects(elong_soiltemp_rich))
@@ -212,6 +266,56 @@ amc_data <- arc_2[[1]]
 
 
 # Soil moist ------
+# Richardsonii -----
+ric_3 <- (conditional_effects(elong_soilmoist_rich))
+ric_data_3 <- ric_3[[1]]
+
+(rich_plot <-ggplot(ric_data_3) +
+    geom_point(data = all_CG_growth_temps_rich, aes(x = mean_soil_moist, y = log(mean_stem_elong)),
+               alpha = 0.5)+
+    geom_line(aes(x = effect1__, y = estimate__),
+              linewidth = 1.5) +
+    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
+                alpha = .1) +
+    ylab("Mean stem elongation (mm)\n") +
+    xlab("\n Mean soil moisture (%)" ) +
+    scale_color_brewer(palette = "Greys")+
+    scale_fill_brewer(palette = "Greys")+
+    theme_shrub())
+
+# Pulchra -----
+pul_3 <- (conditional_effects(elong_soilmoist_pul))
+pul_data_3 <- pul_3[[1]]
+
+(stemp2<-ggplot(pul_data_3) +
+    geom_point(data = all_CG_growth_temps_pul, aes(x = mean_soil_moist, y = log(mean_stem_elong)),
+               alpha = 0.5)+
+    geom_line(aes(x = effect1__, y = estimate__),
+              linewidth = 1.5) +
+    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
+                alpha = .1) +
+    ylab("Mean stem elongation (mm)\n") +
+    xlab("\n Mean soil moist (%)" ) +
+    scale_color_brewer(palette = "Greys")+
+    scale_fill_brewer(palette = "Greys")+
+    theme_shrub())
+
+# Arctica -----
+arc_3 <- (conditional_effects(elong_soilmoist_arc))
+arc_data_3 <- arc_3[[1]]
+
+(stemp2<-ggplot(arc_data_3) +
+    geom_point(data = all_CG_growth_temps_arc, aes(x = mean_soil_moist, y = mean_stem_elong),
+               alpha = 0.5)+
+    geom_line(aes(x = effect1__, y = estimate__),
+              linewidth = 1.5) +
+    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
+                alpha = .1) +
+    ylab("Mean stem elongation (mm)\n") +
+    xlab("\n Mean soil temperature (degC)" ) +
+    scale_color_brewer(palette = "Greys")+
+    scale_fill_brewer(palette = "Greys")+
+    theme_shrub())
 
 
 
