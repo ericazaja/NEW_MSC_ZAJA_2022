@@ -34,10 +34,13 @@ range(itex_EZ_shrubs_2023$cover_prop)
 range(itex_EZ_pulchra$YEAR)
 range(itex_EZ_arctica$YEAR)
 
+itex_EZ_arctica$SITE <- as.factor(itex_EZ_arctica$SITE)
+itex_EZ_pulchra$SITE <- as.factor(itex_EZ_pulchra$SITE)
+
 # modelling -----
 
 # salix arctica -----
-arctica_cover <- brms::brm(cover_prop ~ I(YEAR-1996) + SITE,
+arctica_cover <- brms::brm(cover_prop ~ I(YEAR-1996)+SITE,
                            data = itex_EZ_arctica, family = gaussian(),
                            iter = 2000, chains = 4, warmup = 400)
 
@@ -46,7 +49,7 @@ plot(arctica_cover)
 pp_check(arctica_cover, type = "dens_overlay", nsamples = 100)
 
 # salix pulchra -----
-pulchra_cover <- brms::brm(cover_prop ~ I(YEAR-1988) + SITE,
+pulchra_cover <- brms::brm(cover_prop ~ I(YEAR-1988)+ SITE,
                       data = itex_EZ_pulchra, family = "beta",
                       iter = 2000, chains = 4, warmup = 400)
 
@@ -64,11 +67,16 @@ pp_check(pulchra_cover, type = "dens_overlay", nsamples = 100)
    geom_point(data = itex_EZ_pulchra) +
    scale_fill_brewer(palette = "Set2") +
    scale_color_brewer(palette = "Dark2") +
-   theme_bw() +
    ylab("Salix pulchra cover \n") +
    xlab("\nYear") +
-   theme_bw() +
-   theme(legend.title = element_blank()))
+   theme_shrub() +
+   theme(panel.border = element_blank(),
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         axis.line = element_line(colour = "black"),
+         axis.title = element_text(size = 14),
+         axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
+         axis.text.y = element_text(size = 12, colour = "black"))) 
 
 (arctica_cover_plot <- itex_EZ_arctica %>%
     group_by(SITE) %>%
@@ -78,9 +86,15 @@ pp_check(pulchra_cover, type = "dens_overlay", nsamples = 100)
     geom_point(data = itex_EZ_arctica) +
     scale_fill_brewer(palette = "Set2") +
     scale_color_brewer(palette = "Dark2") +
-    theme_bw() +
     ylab("Salix arctica cover \n") +
     xlab("\nYear") +
-    theme_bw() +
-    theme(legend.title = element_blank()))
+    theme_shrub() +
+    theme(panel.border = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.line = element_line(colour = "black"),
+          axis.title = element_text(size = 14),
+          axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
+          axis.text.y = element_text(size = 12, colour = "black"))) 
+
 
