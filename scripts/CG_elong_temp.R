@@ -60,6 +60,8 @@ all_CG_growth_temps <- all_CG_growth %>%
                                     Year == "2021" ~ 3.306678,
                                     Year == "2022" ~ 40.04))
 
+write.csv(all_CG_growth_temps, "data/all_CG_growth_temps.csv")
+
 # 4. Modelling ------
 # surface temperature  -----
 elong_ground_temp_mod <- lmer(mean_stem_elong ~ mean_ground_temp + (1|Year/SampleID_standard) + (1|Species/Sample_age), data = all_CG_growth_temps)
