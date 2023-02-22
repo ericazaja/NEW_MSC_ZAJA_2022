@@ -157,18 +157,63 @@ pp_check(elong_interact_arc)
 
 # 5. Data visualisation ------
 
-(elong_temp_pul_plot <- all_CG_growth_temps_rich %>%
-   add_predicted_draws(elong_soilmoist_rich) %>%  # adding the posterior distribution
-   ggplot(aes(x = mean_soil_moist, y = mean_stem_elong)) +  
-   stat_lineribbon(aes(y = .prediction), .width = c(.95, .80, .50),  # regression line and CI
-                   alpha = 0.5, colour = "black") +
-   geom_point(data = all_CG_growth_temps_rich, colour = "darkseagreen4", size = 3) +   # raw data
-   scale_fill_brewer(palette = "Greys") +
-   ylab("Mean stem elongation (mm)\n") +  # latin name for red knot
-   xlab("\nMean surface temperature (degC)") +
-   theme_shrub() +
-   theme(legend.title = element_blank(),
-         legend.position = c(0.15, 0.85)))
+# Soil temp ------
+# Richardsonii -----
+ric_2 <- (conditional_effects(elong_soiltemp_rich))
+ric_data <- ric_2[[1]]
 
-# make conidtional effect into df 
-# sf <- 
+(rich_plot <-ggplot(ric_data) +
+    geom_point(data = all_CG_growth_temps_rich, aes(x = mean_soil_temp, y = log(mean_stem_elong)),
+               alpha = 0.5)+
+    geom_line(aes(x = effect1__, y = estimate__),
+              linewidth = 1.5) +
+    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
+                alpha = .1) +
+    ylab("Mean stem elongation (mm)\n") +
+    xlab("\n Mean soil temperature (degC)" ) +
+    scale_color_brewer(palette = "Greys")+
+    scale_fill_brewer(palette = "Greys")+
+    theme_shrub())
+
+
+# Pulchra -----
+pul_2 <- (conditional_effects(elong_soiltemp_pul))
+pul_data <- pul_2[[1]]
+
+(stemp2<-ggplot(pul_data) +
+    geom_point(data = all_CG_growth_temps_pul, aes(x = mean_soil_temp, y = log(mean_stem_elong)),
+               alpha = 0.5)+
+    geom_line(aes(x = effect1__, y = estimate__),
+              linewidth = 1.5) +
+    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
+                alpha = .1) +
+    ylab("Mean stem elongation (mm)\n") +
+    xlab("\n Mean soil temperature (degC)" ) +
+    scale_color_brewer(palette = "Greys")+
+    scale_fill_brewer(palette = "Greys")+
+    theme_shrub())
+
+# Arctica -----
+arc_2 <- (conditional_effects(elong_soiltemp_arc))
+amc_data <- arc_2[[1]]
+
+(stemp2<-ggplot(amc_data) +
+    geom_point(data = all_CG_growth_temps_arc, aes(x = mean_soil_temp, y = mean_stem_elong),
+               alpha = 0.5)+
+    geom_line(aes(x = effect1__, y = estimate__),
+              linewidth = 1.5) +
+    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
+                alpha = .1) +
+    ylab("Mean stem elongation (mm)\n") +
+    xlab("\n Mean soil temperature (degC)" ) +
+    scale_color_brewer(palette = "Greys")+
+    scale_fill_brewer(palette = "Greys")+
+    theme_shrub())
+
+
+
+
+
+
+
+
