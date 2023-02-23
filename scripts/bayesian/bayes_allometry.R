@@ -61,16 +61,96 @@ pp_check(arc_allom) # meh
 # 4.1. Salix richardsonii -------
 rich <- (conditional_effects(rich_allom))
 rich_data <- rich[[1]]
+rich_data_2 <- rich[[2]]
 
-(stemp2<-ggplot(arc_data_3) +
-    geom_point(data = all_CG_growth_temps_arc, aes(x = mean_soil_moist, y = mean_stem_elong),
+(rich_height_allom <-ggplot(rich_data) +
+    geom_point(data = QHI_salric_shrub_biomass, aes(x = max_height, y = biomass_per_m2),
                alpha = 0.5)+
     geom_line(aes(x = effect1__, y = estimate__),
               linewidth = 1.5) +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
                 alpha = .1) +
-    ylab("Mean stem elongation (mm)\n") +
-    xlab("\n Mean soil temperature (degC)" ) +
+    ylab("Shrub biomass (g/m2)\n") +
+    xlab("\n Shrub height (cm)" ) +
+    scale_color_brewer(palette = "Greys")+
+    scale_fill_brewer(palette = "Greys")+
+    theme_shrub())
+
+(rich_cov_allom <-ggplot(rich_data_2) +
+    geom_point(data = QHI_salric_shrub_biomass, aes(x = percent_cover, y = biomass_per_m2),
+               alpha = 0.5)+
+    geom_line(aes(x = effect1__, y = estimate__),
+              linewidth = 1.5) +
+    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
+                alpha = .1) +
+    ylab("Shrub biomass (g/m2) \n") +
+    xlab("\n Cover (%)" ) +
+    scale_color_brewer(palette = "Greys")+
+    scale_fill_brewer(palette = "Greys")+
+    theme_shrub())
+
+# 4.2. Salix pulchra -------
+pul <- (conditional_effects(pul_allom))
+pul_data <- pul[[1]]
+pul_data_2 <- pul[[2]]
+
+(pul_height_allom <-ggplot(pul_data) +
+    geom_point(data = Pika_all_shrub_biomass, aes(x = Shrub_Height_cm, y = biomass_per_m2),
+               alpha = 0.5)+
+    geom_line(aes(x = effect1__, y = estimate__),
+              linewidth = 1.5) +
+    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
+                alpha = .1) +
+    ylab("Shrub biomass (g/m2)\n") +
+    xlab("\n Shrub height (cm)" ) +
+    ylim(0, 4000 ) +
+    scale_color_brewer(palette = "Greys")+
+    scale_fill_brewer(palette = "Greys")+
+    theme_shrub())
+
+(pul_cov_allom <-ggplot(pul_data_2) +
+    geom_point(data = Pika_all_shrub_biomass, aes(x = max_cover, y = biomass_per_m2),
+               alpha = 0.5)+
+    geom_line(aes(x = effect1__, y = estimate__),
+              linewidth = 1.5) +
+    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
+                alpha = .1) +
+    ylab("Shrub biomass (g/m2) \n") +
+    xlab("\n Cover (%)" ) +
+    ylim(0, 4000 ) +
+    scale_color_brewer(palette = "Greys")+
+    scale_fill_brewer(palette = "Greys")+
+    theme_shrub())
+
+# 4.2. Salix arctica -------
+arc <- (conditional_effects(arc_allom))
+arc_data <- arc[[1]]
+arc_data_2 <- arc[[2]]
+
+(arc_height_allom <-ggplot(arc_data) +
+    geom_point(data = QHI_salarc_shrub_biomass, aes(x = max_height, y = biomass_per_m2),
+               alpha = 0.5)+
+    geom_line(aes(x = effect1__, y = estimate__),
+              linewidth = 1.5) +
+    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
+                alpha = .1) +
+    ylab("Shrub biomass (g/m2)\n") +
+    xlab("\n Shrub height (cm)" ) +
+    ylim(0, 300) +
+    scale_color_brewer(palette = "Greys")+
+    scale_fill_brewer(palette = "Greys")+
+    theme_shrub())
+
+(arc_cov_allom <-ggplot(arc_data_2) +
+    geom_point(data = QHI_salarc_shrub_biomass, aes(x = percent_cover, y = biomass_per_m2),
+               alpha = 0.5)+
+    geom_line(aes(x = effect1__, y = estimate__),
+              linewidth = 1.5) +
+    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
+                alpha = .1) +
+    ylab("Shrub biomass (g/m2) \n") +
+    xlab("\n Cover (%)" ) +
+    ylim(0, 250) +
     scale_color_brewer(palette = "Greys")+
     scale_fill_brewer(palette = "Greys")+
     theme_shrub())
