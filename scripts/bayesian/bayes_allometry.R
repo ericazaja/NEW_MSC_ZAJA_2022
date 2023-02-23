@@ -74,7 +74,7 @@ rich_data_2 <- rich[[2]]
               linewidth = 1.5) +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
                 alpha = .1) +
-    ylab("Shrub biomass (g/m2)\n") +
+    ylab("Richardsonii shrub biomass (g/m2)\n") +
     xlab("\n Shrub height (cm)" ) +
     scale_color_brewer(palette = "Greys")+
     scale_fill_brewer(palette = "Greys")+
@@ -87,7 +87,7 @@ rich_data_2 <- rich[[2]]
               linewidth = 1.5) +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
                 alpha = .1) +
-    ylab("Shrub biomass (g/m2) \n") +
+    ylab("Richardsonii shrub biomass (g/m2) \n") +
     xlab("\n Cover (%)" ) +
     scale_color_brewer(palette = "Greys")+
     scale_fill_brewer(palette = "Greys")+
@@ -105,7 +105,7 @@ pul_data_2 <- pul[[2]]
               linewidth = 1.5) +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
                 alpha = .1) +
-    ylab("Shrub biomass (g/m2)\n") +
+    ylab("Pulchra shrub biomass (g/m2)\n") +
     xlab("\n Shrub height (cm)" ) +
     #ylim(0, 4000 ) +
     scale_color_brewer(palette = "Greys")+
@@ -119,9 +119,9 @@ pul_data_2 <- pul[[2]]
               linewidth = 1.5) +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
                 alpha = .1) +
-    ylab("Shrub biomass (g/m2) \n") +
+    ylab("Pulchra shrub biomass (g/m2) \n") +
     xlab("\n Cover (%)" ) +
-   # ylim(0, 4000 ) +
+   ylim(0, 1500) +
     scale_color_brewer(palette = "Greys")+
     scale_fill_brewer(palette = "Greys")+
     theme_shrub())
@@ -138,7 +138,7 @@ arc_data_2 <- arc[[2]]
               linewidth = 1.5) +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
                 alpha = .1) +
-    ylab("Shrub biomass (g/m2)\n") +
+    ylab("Arctica shrub biomass (g/m2)\n") +
     xlab("\n Shrub height (cm)" ) +
     ylim(0, 300) +
     scale_color_brewer(palette = "Greys")+
@@ -152,11 +152,20 @@ arc_data_2 <- arc[[2]]
               linewidth = 1.5) +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
                 alpha = .1) +
-    ylab("Shrub biomass (g/m2) \n") +
+    ylab("Arctica shrub biomass (g/m2) \n") +
     xlab("\n Cover (%)" ) +
     ylim(0, 250) +
     scale_color_brewer(palette = "Greys")+
     scale_fill_brewer(palette = "Greys")+
     theme_shrub())
+
+# panels ------
+height_all_allom <- grid.arrange(rich_height_allom,
+                                 pul_height_allom,
+                                 arc_height_allom, nrow = 1)
+
+cov_all_allom <- grid.arrange(rich_cov_allom,
+                                 pul_cov_allom,
+                                 arc_cov_allom, nrow = 1)
 
 
