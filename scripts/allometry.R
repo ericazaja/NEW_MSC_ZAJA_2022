@@ -247,6 +247,8 @@ zeros_pika <- data.frame(Plot, Shrub_Height_cm, max_biomass, max_cover, biomass_
 # adding zero vector to full dataset
 Pika_all_shrub_biomass <- rbind(Pika_all_shrub_biomass, zeros_pika)
 
+# saving
+write.csv(Pika_all_shrub_biomass, "data/allometry/Isla_phd/Pika_all_shrub_biomass.csv")
 # ISLA DATA DONE 
 
 # 4.1. MODELLING Part 1 ------ 
