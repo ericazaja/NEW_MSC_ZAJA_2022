@@ -89,4 +89,65 @@ plot(cover_arc)
 pp_check(cover_arc, type = "dens_overlay", nsamples = 100) 
 
 # 3.2. BIOMASS over time -----
+# Salix richardsonii -----
+# Salix pulchra -----
+# Salix arctica ------
+
+
+# 4. DATA VISUALISATION
+# 4.1 COVER -----
+# Salix richardsonii ------
+rich_cov_1 <- (conditional_effects(cover_rich))
+rich_cov_data_1 <- rich_cov_1[[1]]
+
+(rich_cover_plot <-ggplot(rich_cov_data_1) +
+    geom_point(data = CG_ric_cover_biomass, aes(x = Sample_age, y = (cover_percent/100)),
+               alpha = 0.5)+
+    geom_line(aes(x = effect1__, y = estimate__),
+              linewidth = 1.5) +
+    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
+                alpha = .1) +
+    ylab("Cover (prop.)\n") +
+    xlab("\n Sample age" ) +
+    scale_color_brewer(palette = "Greys")+
+    scale_fill_brewer(palette = "Greys")+
+    theme_shrub())
+
+# Salix pulchra ------
+pul_cov_1 <- (conditional_effects(cover_pul))
+pul_cov_data_1 <- pul_cov_1[[1]]
+
+(pul_cover_plot <-ggplot(pul_cov_data_1) +
+    geom_point(data = CG_pul_cover_biomass, aes(x = Sample_age, y = (cover_percent/100)),
+               alpha = 0.5)+
+    geom_line(aes(x = effect1__, y = estimate__),
+              linewidth = 1.5) +
+    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
+                alpha = .1) +
+    ylab("Cover (prop.)\n") +
+    xlab("\n Sample age" ) +
+    scale_color_brewer(palette = "Greys")+
+    scale_fill_brewer(palette = "Greys")+
+    theme_shrub())
+
+# Salix arctica ------
+arc_cov_1 <- (conditional_effects(cover_arc))
+arc_cov_data_1 <- arc_cov_1[[1]]
+
+(arc_cover_plot <-ggplot(arc_cov_data_1) +
+    geom_point(data = CG_arc_cover_biomass, aes(x = Sample_age, y = (cover_percent/100)),
+               alpha = 0.5)+
+    geom_line(aes(x = effect1__, y = estimate__),
+              linewidth = 1.5) +
+    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
+                alpha = .1) +
+    ylab("Cover (prop.)\n") +
+    xlab("\n Sample age" ) +
+    scale_color_brewer(palette = "Greys")+
+    scale_fill_brewer(palette = "Greys")+
+    theme_shrub())
+
+
+
+
 
