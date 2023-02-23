@@ -46,7 +46,7 @@ CG_arc_cover_biomass <- all_CG_growth_cover %>%
 range(CG_arc_cover_biomass$biomass_per_m2) # 9.60174 358.80240
 write.csv(CG_arc_cover_biomass, "data/common_garden_shrub_data/CG_arc_cover_biomass.csv")
 
-# 2. WRANGLE ------
+# 2. EXPLORE ------
 hist(CG_arc_cover_biomass$cover_percent, breaks = 30) # not normal
 hist(CG_pul_cover_biomass$cover_percent, breaks = 30)# not normal
 hist(CG_ric_cover_biomass$cover_percent, breaks = 30)# not normal
@@ -90,11 +90,36 @@ pp_check(cover_arc, type = "dens_overlay", nsamples = 100)
 
 # 3.2. BIOMASS over time -----
 # Salix richardsonii -----
+biom_rich <- brms::brm(log(biomass_per_m2) ~ Sample_age + (1|Sample_age),
+                        data = CG_ric_cover_biomass,  family = gaussian(), chains = 3,
+                        iter = 5000, warmup = 1000, 
+                        control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(biom_rich) # not significant cover growth over time
+plot(biom_rich)
+pp_check(biom_rich, type = "dens_overlay", nsamples = 100) 
+
 # Salix pulchra -----
+biom_pul <- brms::brm(log(biomass_per_m2) ~ Sample_age + (1|Sample_age),
+                       data = CG_pul_cover_biomass,  family = gaussian(), chains = 3,
+                       iter = 5000, warmup = 1000, 
+                       control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(biom_pul) # significant cover growth over time
+plot(biom_pul)
+pp_check(biom_pul, type = "dens_overlay", nsamples = 100) 
+
 # Salix arctica ------
+biom_arc <- brms::brm(log(biomass_per_m2) ~ Sample_age + (1|Sample_age),
+                      data = CG_arc_cover_biomass,  family = gaussian(), chains = 3,
+                      iter = 5000, warmup = 1000, 
+                      control = list(max_treedepth = 15, adapt_delta = 0.99))
 
+summary(biom_arc) # significant cover growth over time
+plot(biom_arc)
+pp_check(biom_arc, type = "dens_overlay", nsamples = 100) 
 
-# 4. DATA VISUALISATION
+# 4. DATA VISUALISATION ---------
 # 4.1 COVER -----
 # Salix richardsonii ------
 rich_cov_1 <- (conditional_effects(cover_rich))
@@ -107,7 +132,7 @@ rich_cov_data_1 <- rich_cov_1[[1]]
               linewidth = 1.5) +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
                 alpha = .1) +
-    ylab("Cover (prop.)\n") +
+    ylab("Richardsonii cover (prop.)\n") +
     xlab("\n Sample age" ) +
     scale_color_brewer(palette = "Greys")+
     scale_fill_brewer(palette = "Greys")+
@@ -124,7 +149,7 @@ pul_cov_data_1 <- pul_cov_1[[1]]
               linewidth = 1.5) +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
                 alpha = .1) +
-    ylab("Cover (prop.)\n") +
+    ylab("Pulchra cover (prop.)\n") +
     xlab("\n Sample age" ) +
     scale_color_brewer(palette = "Greys")+
     scale_fill_brewer(palette = "Greys")+
@@ -141,7 +166,7 @@ arc_cov_data_1 <- arc_cov_1[[1]]
               linewidth = 1.5) +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
                 alpha = .1) +
-    ylab("Cover (prop.)\n") +
+    ylab("Arctica cover (prop.)\n") +
     xlab("\n Sample age" ) +
     scale_color_brewer(palette = "Greys")+
     scale_fill_brewer(palette = "Greys")+
@@ -149,5 +174,65 @@ arc_cov_data_1 <- arc_cov_1[[1]]
 
 
 
+# 4.2 BIOMASS -----
+# Salix richardsonii ------
+rich_biom_1 <- (conditional_effects(biom_rich))
+rich_biom_data_1 <- rich_biom_1[[1]]
+
+(rich_biom_plot <-ggplot(rich_biom_data_1) +
+    geom_point(data = CG_ric_cover_biomass, aes(x = Sample_age, y = log(biomass_per_m2)),
+               alpha = 0.5)+
+    geom_line(aes(x = effect1__, y = estimate__),
+              linewidth = 1.5) +
+    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
+                alpha = .1) +
+    ylab("Richardsonii biomass (log g/m2)\n") +
+    xlab("\n Sample age" ) +
+    scale_color_brewer(palette = "Greys")+
+    scale_fill_brewer(palette = "Greys")+
+    theme_shrub())
+
+# Salix pulchra ------
+pul_biom_1 <- (conditional_effects(biom_pul))
+pul_biom_data_1 <- pul_biom_1[[1]]
+
+(pul_biom_plot <-ggplot(pul_biom_data_1) +
+    geom_point(data = CG_pul_cover_biomass, aes(x = Sample_age, y = log(biomass_per_m2)),
+               alpha = 0.5)+
+    geom_line(aes(x = effect1__, y = estimate__),
+              linewidth = 1.5) +
+    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
+                alpha = .1) +
+    ylab("Pulchra  biomass (log g/m2)\n") +
+    xlab("\n Sample age" ) +
+    scale_color_brewer(palette = "Greys")+
+    scale_fill_brewer(palette = "Greys")+
+    theme_shrub())
+
+# Salix arctica ------
+arc_biom_1 <- (conditional_effects(biom_arc))
+arc_biom_data_1 <- arc_biom_1[[1]]
+
+(arc_biom_plot <-ggplot(arc_biom_data_1) +
+    geom_point(data = CG_arc_cover_biomass, aes(x = Sample_age, y = log(biomass_per_m2)),
+               alpha = 0.5)+
+    geom_line(aes(x = effect1__, y = estimate__),
+              linewidth = 1.5) +
+    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
+                alpha = .1) +
+    ylab("Arctica cover  biomass (log g/m2)\n") +
+    xlab("\n Sample age" ) +
+    scale_color_brewer(palette = "Greys")+
+    scale_fill_brewer(palette = "Greys")+
+    theme_shrub())
+
+# panels -----
+CG_cov_panel <- grid.arrange(rich_cover_plot,
+                             pul_cover_plot, 
+                             arc_cover_plot, nrow = 1)
+
+CG_biom_panel <- grid.arrange(rich_biom_plot,
+                             pul_biom_plot, 
+                             arc_biom_plot, nrow = 1)
 
 
