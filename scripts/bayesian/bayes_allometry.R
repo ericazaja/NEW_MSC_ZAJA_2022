@@ -19,7 +19,7 @@ hist(QHI_salarc_shrub_biomass$biomass_per_m2, breaks = 10) # weird,not much data
 # removing an outlier from Pika data
 Pika_all_shrub_biomass_edit <- Pika_all_shrub_biomass %>%
   distinct()
-Pika_all_shrub_biomass_edit_2 <- Pika_all_shrub_biomass_edit[-1,]
+Pika_all_shrub_biomass_edit_2 <- Pika_all_shrub_biomass_edit[-1,] # plot 2a
 
 # 3.1. Salix richardsonii ------
 

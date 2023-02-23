@@ -37,6 +37,7 @@ unique(all_CG_growth$Site)
 unique(all_CG_growth$Species)
 view(all_CG_growth)
 
+# COVER ------
 # calculate cover based on widths
 all_CG_growth_cover <- all_CG_growth %>%
   mutate(cover = (Width_cm*Width_2_cm)/10000)%>%
@@ -45,6 +46,9 @@ all_CG_growth_cover <- all_CG_growth %>%
 
 all_CG_growth_cover$Sample_age <- as.numeric(all_CG_growth_cover$Sample_age )
 
+write.csv(all_CG_growth_cover, "data/all_CG_growth_cover.csv")
+
+# BIOMASS ------
 # calculate biomass for each species based on allometric equations
 # Salix richardsonii: Biomass =  17.971*height + 11.882*cover +- 444.5
 all_CG_growth_cover_biomass_SALRIC <- all_CG_growth_cover %>%
