@@ -10,7 +10,7 @@ library(brms)
 # DATA -----
 all_CG_growth_cover <- read_csv("data/all_CG_growth_cover.csv")
 
-# BIOMASS CG ------
+# 1. CG BIOMASS derivation from bayesian allom. equations ------
 # calculate biomass for each species based on BAYESIAN allometric equations
 
 # Salix richardsonii ------
@@ -45,4 +45,48 @@ CG_arc_cover_biomass <- all_CG_growth_cover %>%
 
 range(CG_arc_cover_biomass$biomass_per_m2) # 9.60174 358.80240
 write.csv(CG_arc_cover_biomass, "data/common_garden_shrub_data/CG_arc_cover_biomass.csv")
+
+# 2. WRANGLE ------
+hist(CG_arc_cover_biomass$cover_percent, breaks = 30) # not normal
+hist(CG_pul_cover_biomass$cover_percent, breaks = 30)# not normal
+hist(CG_ric_cover_biomass$cover_percent, breaks = 30)# not normal
+
+hist(CG_arc_cover_biomass$biomass_per_m2, breaks = 30) # not normal
+hist(CG_pul_cover_biomass$biomass_per_m2, breaks = 30)# not normal
+hist(CG_ric_cover_biomass$biomass_per_m2, breaks = 30) # almost normal
+
+# 3. MODELLING ------
+
+# 3.1. COVER over time ------
+# Salix richardsonii -------
+cover_rich <- brms::brm((cover_percent/100) ~ Sample_age + (1|Sample_age),
+                                 data = CG_ric_cover_biomass,  family = "beta", chains = 3,
+                                 iter = 5000, warmup = 1000, 
+                                 control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(cover_rich) # significant cover growth over time
+plot(cover_rich)
+pp_check(cover_rich, type = "dens_overlay", nsamples = 100) 
+
+# Salix pulchra -------
+cover_pul <- brms::brm((cover_percent/100) ~ Sample_age + (1|Sample_age),
+                        data = CG_pul_cover_biomass,  family = "beta", chains = 3,
+                        iter = 5000, warmup = 1000, 
+                        control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(cover_pul) # not significant cover growth over time
+plot(cover_pul)
+pp_check(cover_pul, type = "dens_overlay", nsamples = 100) 
+
+# Salix arctica -------
+cover_arc <- brms::brm((cover_percent/100) ~ Sample_age + (1|Sample_age),
+                       data = CG_arc_cover_biomass,  family = "beta", chains = 3,
+                       iter = 5000, warmup = 1000, 
+                       control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(cover_arc) #  significant cover growth over time
+plot(cover_arc)
+pp_check(cover_arc, type = "dens_overlay", nsamples = 100) 
+
+# 3.2. BIOMASS over time -----
 
