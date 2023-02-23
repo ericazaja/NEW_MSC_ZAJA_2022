@@ -119,6 +119,9 @@ all_CG_source_growth$population <- as.factor(all_CG_source_growth$population)
 all_CG_growth_cover_southern <- all_CG_source_growth %>%
   filter(population != "Northern") # removing northern common garden pop
 
+all_CG_growth_cover_southern$population <- as.character(all_CG_growth_cover_southern$population)
+all_CG_growth_cover_southern$population <- as.factor(all_CG_growth_cover_southern$population)
+
 unique(all_CG_growth_cover_southern$population) #Southern     source_south source_north
 unique(all_CG_growth_cover_southern$Site) # [1] "Common_garden" "Kluane"        "Qikiqtaruk"   
 
@@ -198,6 +201,7 @@ all_cover_temps <- full_join(all_cover, july_enviro_means)
 
 all_cover_temps$Site <- as.factor(all_cover_temps$Site)
 all_cover_temps$Species <- as.factor(all_cover_temps$Species)
+unique(all_cover_temps$Site) # ANWR   TOOLIK KP     QHI    CG    
 
 # converting precip to mm
 all_cover_temps <- all_cover_temps %>%
@@ -208,11 +212,11 @@ write.csv(all_cover_temps, "data/all_cover_temps.csv" )
 
 # merge full ( non summarised data)
 all_CG_growth_cover_change_edit <- all_CG_growth_cover_change %>%
-  dplyr::select(Year, Species, Site, cover_change_percent) %>%
+  dplyr::select(Year, Species, Site, Sample_age, cover_change_percent) %>%
   mutate(Site = rep("CG")) %>%
   na.omit()
 
-all_source_growth_cover_change_edit <- all_source_growth_cover_change%>%
+all_source_growth_cover_change_edit <- all_source_growth_cover_change %>%
   dplyr::select(Year, Species, Site, cover_change_percent) %>%
   mutate(Site = case_when(Site == "Kluane" ~ "KP", 
                           Site == "Qikiqtaruk" ~ "QHI")) %>%
@@ -237,8 +241,24 @@ all_cover_temps_long$Species <- as.factor(all_cover_temps_long$Species)
 all_cover_temps_long <- all_cover_temps_long %>%
   mutate(mean_precip = mean_precip/100) # converting precip in mm
 
+
 # saving full dataset 
 write.csv(all_cover_temps_long, "data/all_cover_temps_long.csv")
+
+# doing what diana said: merging all_cover_long with all years of temp data -----
+july_enviro_chelsa_new <- july_enviro_chelsa %>%
+  mutate(site = case_when(site == "ATIGUN" ~ "ANWR",
+                          site %in% c("IMNAVAIT", "TUSSOKGRID") ~ "TOOLIK", 
+                          site == "QHI" ~ "QHI",
+                          site == "Common_garden" ~ "CG",
+                          site == "Kluane_plateau" ~ "KP")) %>%
+  rename("Site"= "site", "Year"="year", "mean_precip"= "PrecipMeanJuly") %>%
+  dplyr:: select(Site, Year, mean_precip, mean_temp_C)
+
+
+all_cover_temps_new <- left_join(all_cover_long, july_enviro_chelsa_new, by=c('Site'='Site', 'Year'='Year'))
+
+write.csv(all_cover_temps_new, "data/all_cover_temps_new.csv")
 
 # MODELLING cover vs temp and precip ----
 model_cover_temp <- lmer(cover_change_percent ~ mean_temp + Species + (1|Site), data = all_cover_temps_long)

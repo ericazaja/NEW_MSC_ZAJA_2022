@@ -6,22 +6,27 @@
 library(tidyverse)
 library(brms)
 
+# REGRESSION yearly temp VS yearly cover change
+
 # 2. DATA ------
 all_cover_temps_long <- read_csv("data/all_cover_temps_long.csv")
 all_cover_temps <- read_csv("data/all_cover_temps.csv")
+all_cover_temps_new <- read_csv("data/all_cover_temps_new.csv")
+
 
 # 3. WRANGLE -----
 # sp - specific datasets
 
-all_cover_temps_long_pulchra <- all_cover_temps_long %>%
+all_cover_temps_long_pulchra <- all_cover_temps_new %>%
   filter(Species == "Salix pulchra")
 
-all_cover_temps_long_rich <- all_cover_temps_long %>%
+all_cover_temps_long_rich <- all_cover_temps_new %>%
   filter(Species == "Salix richardsonii") 
 
-all_cover_temps_long_arctica <- all_cover_temps_long %>%
+all_cover_temps_long_arctica <- all_cover_temps_new %>%
   filter(Species == "Salix arctica")
 
+# big means 
 all_cover_temps_means_pulchra <- all_cover_temps %>%
   filter(Species == "Salix pulchra")
 
@@ -44,7 +49,7 @@ all_cover_temps_long_arctica$cover_change_percent <- scale(all_cover_temps_long_
 # 4. MODELLING ------
 # Salix richardsonii -----
 # cover change per unit temp 
-cover_temp_rich <- brms::brm(cover_change_percent ~ mean_temp,
+cover_temp_rich <- brms::brm(cover_change_percent ~ mean_temp_C + (1|Site) + (1|Year),
                         data = all_cover_temps_long_rich,  family = skew_normal(), chains = 3,
                         iter = 5000, warmup = 1000, 
                         control = list(max_treedepth = 15, adapt_delta = 0.99))
@@ -59,13 +64,13 @@ cover_temp_rich_means <- brms::brm(mean_cover_change ~ mean_temp,
                              iter = 5000, warmup = 1000, 
                              control = list(max_treedepth = 15, adapt_delta = 0.99))
 
-summary(cover_temp_rich_means) # not significant cover change per unit temp
+summary(cover_temp_rich_means) # 14.20 
 plot(cover_temp_rich_means)
 pp_check(cover_temp_rich_means, type = "dens_overlay", nsamples = 100) 
 
 # Salix pulchra -----
 # cover change per unit temp 
-cover_temp_pul <- brms::brm(cover_change_percent ~ mean_temp + (1|Site),
+cover_temp_pul <- brms::brm(cover_change_percent ~ mean_temp_C + (1|Site) + (1|Year),
                              data = all_cover_temps_long_pulchra,  family = skew_normal(), chains = 3,
                              iter = 5000, warmup = 1000, 
                              control = list(max_treedepth = 15, adapt_delta = 0.99))
@@ -74,10 +79,19 @@ summary(cover_temp_pul) # not significant cover change per unit temp
 plot(cover_temp_pul)
 pp_check(cover_temp_pul, type = "dens_overlay", nsamples = 100) 
 
+# cover change per unit temp 
+cover_temp_pul_means <- brms::brm(mean_cover_change ~ mean_temp_C,
+                                   data = all_cover_temps_means_pulchra,  family = gaussian(), chains = 3,
+                                   iter = 5000, warmup = 1000, 
+                                   control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(cover_temp_pul_means) # 2.25 %
+plot(cover_temp_pul_means)
+pp_check(cover_temp_pul_means, type = "dens_overlay", nsamples = 100) 
 
 # Salix arctica -----
 # cover change per unit temp 
-cover_temp_arc <- brms::brm(cover_change_percent ~ mean_temp + (1|Site),
+cover_temp_arc <- brms::brm(cover_change_percent ~ mean_temp_C + (1|Site) + (1|Year)
                             data = all_cover_temps_long_arctica,  family = skew_normal(), chains = 3,
                             iter = 5000, warmup = 1000, 
                             control = list(max_treedepth = 15, adapt_delta = 0.99))
@@ -86,13 +100,23 @@ summary(cover_temp_arc) # not significant cover change per unit temp
 plot(cover_temp_arc)
 pp_check(cover_temp_arc, type = "dens_overlay", nsamples = 100) 
 
+# cover change per unit temp 
+cover_temp_arc_means <- brms::brm(mean_cover_change ~ mean_temp,
+                                  data = all_cover_temps_means_arc,  family = gaussian(), chains = 3,
+                                  iter = 5000, warmup = 1000, 
+                                  control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(cover_temp_arc_means) # 10.71  %
+plot(cover_temp_arc_means)
+pp_check(cover_temp_arc_means, type = "dens_overlay", nsamples = 100) 
+
 # DATA VISUALISATION ------
 # Salix richardsonii ------
 rich_covchange <- (conditional_effects(cover_temp_rich))
 rich_covchange_data <- rich_covchange[[1]]
 
 (rich_cover_plot <-ggplot(rich_covchange_data) +
-    geom_point(data = all_cover_temps_long_rich, aes(x = mean_temp, y = cover_change_percent, colour = Site),
+    geom_point(data = all_cover_temps_long_rich, aes(x = mean_temp_C, y = cover_change_percent, colour = Site),
                alpha = 0.5)+
     geom_line(aes(x = effect1__, y = estimate__),
               linewidth = 1.5) +
