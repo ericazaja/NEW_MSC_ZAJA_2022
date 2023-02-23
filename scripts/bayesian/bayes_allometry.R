@@ -16,6 +16,10 @@ hist(Pika_all_shrub_biomass$biomass_per_m2, breaks = 7) # weird, not much data
 hist(QHI_salric_shrub_biomass$biomass_per_m2, breaks = 20) # not super normal
 hist(QHI_salarc_shrub_biomass$biomass_per_m2, breaks = 10) # weird,not much data
 
+# removing an outlier from Pika data
+Pika_all_shrub_biomass_edit <- Pika_all_shrub_biomass %>%
+  distinct()
+Pika_all_shrub_biomass_edit_2 <- Pika_all_shrub_biomass_edit[-1,]
 
 # 3.1. Salix richardsonii ------
 
@@ -33,7 +37,7 @@ pp_check(rich_allom) # fine
 
 # 3.2. Salix pulchra -------
 pul_allom <- brms::brm(biomass_per_m2 ~ 0 + Shrub_Height_cm + max_cover,
-                        data = Pika_all_shrub_biomass, family = gaussian(), chains = 3,
+                        data = Pika_all_shrub_biomass_edit_2, family = gaussian(), chains = 3,
                         iter = 5000, warmup = 1000, 
                         control = list(max_treedepth = 15, adapt_delta = 0.99))
 # Adding the 0 term tells the model to fit the line through the origin
@@ -41,7 +45,7 @@ pul_allom <- brms::brm(biomass_per_m2 ~ 0 + Shrub_Height_cm + max_cover,
 summary(pul_allom) # not significant 
 plot(pul_allom) # great
 pp_check(pul_allom) # meh
-# Equation: Biomass =  ( -23.66 *height +-  5.48) + (61.66 *cover +-  6.58)
+# Equation: Biomass =  (1.08*height +-  5.17 ) + (18.16 *cover +-  8.42)
 
 # 3.3. Salix arctica -------
 arc_allom <- brms::brm(biomass_per_m2 ~ 0 + max_height + percent_cover,
@@ -95,7 +99,7 @@ pul_data <- pul[[1]]
 pul_data_2 <- pul[[2]]
 
 (pul_height_allom <-ggplot(pul_data) +
-    geom_point(data = Pika_all_shrub_biomass, aes(x = Shrub_Height_cm, y = biomass_per_m2),
+    geom_point(data = Pika_all_shrub_biomass_edit_2, aes(x = Shrub_Height_cm, y = biomass_per_m2),
                alpha = 0.5)+
     geom_line(aes(x = effect1__, y = estimate__),
               linewidth = 1.5) +
@@ -103,13 +107,13 @@ pul_data_2 <- pul[[2]]
                 alpha = .1) +
     ylab("Shrub biomass (g/m2)\n") +
     xlab("\n Shrub height (cm)" ) +
-    ylim(0, 4000 ) +
+    #ylim(0, 4000 ) +
     scale_color_brewer(palette = "Greys")+
     scale_fill_brewer(palette = "Greys")+
     theme_shrub())
 
 (pul_cov_allom <-ggplot(pul_data_2) +
-    geom_point(data = Pika_all_shrub_biomass, aes(x = max_cover, y = biomass_per_m2),
+    geom_point(data = Pika_all_shrub_biomass_edit_2, aes(x = max_cover, y = biomass_per_m2),
                alpha = 0.5)+
     geom_line(aes(x = effect1__, y = estimate__),
               linewidth = 1.5) +
@@ -117,7 +121,7 @@ pul_data_2 <- pul[[2]]
                 alpha = .1) +
     ylab("Shrub biomass (g/m2) \n") +
     xlab("\n Cover (%)" ) +
-    ylim(0, 4000 ) +
+   # ylim(0, 4000 ) +
     scale_color_brewer(palette = "Greys")+
     scale_fill_brewer(palette = "Greys")+
     theme_shrub())
