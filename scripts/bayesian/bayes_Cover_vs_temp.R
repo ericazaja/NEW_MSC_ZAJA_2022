@@ -22,16 +22,29 @@ all_cover_temps_long_rich <- all_cover_temps_long %>%
 all_cover_temps_long_arctica <- all_cover_temps_long %>%
   filter(Species == "Salix arctica")
 
-# explore 
-hist(all_cover_temps_long_arctica$cover_change_percent) # left skew
-hist(all_cover_temps_long_pulchra$cover_change_percent)# left skew
-hist(all_cover_temps_long_rich$cover_change_percent)# left skew
+all_cover_temps_means_pulchra <- all_cover_temps %>%
+  filter(Species == "Salix pulchra")
 
+all_cover_temps_means_rich <- all_cover_temps %>%
+  filter(Species == "Salix richardsonii")
+
+all_cover_temps_means_arc <- all_cover_temps %>%
+  filter(Species == "Salix arctica")
+
+# explore 
+hist(all_cover_temps_long_arctica$cover_change_percent,  breaks = 30) # left skew
+hist(all_cover_temps_long_pulchra$cover_change_percent, breaks = 30)# left skew
+hist(all_cover_temps_long_rich$cover_change_percent, breaks = 30)# left skew
+
+# trying to center cover change
+all_cover_temps_long_rich$cover_change_percent <- scale(all_cover_temps_long_rich$cover_change_percent, center = TRUE, scale = TRUE)
+all_cover_temps_long_pulchra$cover_change_percent <- scale(all_cover_temps_long_pulchra$cover_change_percent, center = TRUE, scale = TRUE)
+all_cover_temps_long_arctica$cover_change_percent <- scale(all_cover_temps_long_arctica$cover_change_percent, center = TRUE, scale = TRUE)
 
 # 4. MODELLING ------
 # Salix richardsonii -----
 # cover change per unit temp 
-cover_temp_rich <- brms::brm(cover_change_percent ~ mean_temp + (1|Site),
+cover_temp_rich <- brms::brm(cover_change_percent ~ mean_temp,
                         data = all_cover_temps_long_rich,  family = skew_normal(), chains = 3,
                         iter = 5000, warmup = 1000, 
                         control = list(max_treedepth = 15, adapt_delta = 0.99))
@@ -40,10 +53,89 @@ summary(cover_temp_rich) # not significant cover change per unit temp
 plot(cover_temp_rich)
 pp_check(cover_temp_rich, type = "dens_overlay", nsamples = 100) 
 
+# cover change per unit temp 
+cover_temp_rich_means <- brms::brm(mean_cover_change ~ mean_temp,
+                             data = all_cover_temps_means_rich,  family = gaussian(), chains = 3,
+                             iter = 5000, warmup = 1000, 
+                             control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(cover_temp_rich_means) # not significant cover change per unit temp
+plot(cover_temp_rich_means)
+pp_check(cover_temp_rich_means, type = "dens_overlay", nsamples = 100) 
 
 # Salix pulchra -----
 # cover change per unit temp 
+cover_temp_pul <- brms::brm(cover_change_percent ~ mean_temp + (1|Site),
+                             data = all_cover_temps_long_pulchra,  family = skew_normal(), chains = 3,
+                             iter = 5000, warmup = 1000, 
+                             control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(cover_temp_pul) # not significant cover change per unit temp
+plot(cover_temp_pul)
+pp_check(cover_temp_pul, type = "dens_overlay", nsamples = 100) 
+
 
 # Salix arctica -----
 # cover change per unit temp 
+cover_temp_arc <- brms::brm(cover_change_percent ~ mean_temp + (1|Site),
+                            data = all_cover_temps_long_arctica,  family = skew_normal(), chains = 3,
+                            iter = 5000, warmup = 1000, 
+                            control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(cover_temp_arc) # not significant cover change per unit temp
+plot(cover_temp_arc)
+pp_check(cover_temp_arc, type = "dens_overlay", nsamples = 100) 
+
+# DATA VISUALISATION ------
+# Salix richardsonii ------
+rich_covchange <- (conditional_effects(cover_temp_rich))
+rich_covchange_data <- rich_covchange[[1]]
+
+(rich_cover_plot <-ggplot(rich_covchange_data) +
+    geom_point(data = all_cover_temps_long_rich, aes(x = mean_temp, y = cover_change_percent, colour = Site),
+               alpha = 0.5)+
+    geom_line(aes(x = effect1__, y = estimate__),
+              linewidth = 1.5) +
+  #  geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
+    #            alpha = .1) +
+    ylab("Richardsonii cover change (centred)\n") +
+    xlab("\n Mean july temperature (degC)" ) +
+    scale_colour_viridis_d(begin = 0.1, end = 0.85) +
+    scale_fill_viridis_d(begin = 0.1, end = 0.85) +
+    theme_shrub())
+
+# Salix pulchra ------
+pul_covchange <- (conditional_effects(cover_temp_pul))
+pul_covchange_data <- pul_covchange[[1]]
+
+(pul_cover_plot <-ggplot(pul_covchange_data) +
+    geom_point(data = all_cover_temps_long_pulchra, aes(x = mean_temp, y = cover_change_percent, colour = Site),
+               alpha = 0.5)+
+    geom_line(aes(x = effect1__, y = estimate__),
+              linewidth = 1.5) +
+    #  geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
+    #            alpha = .1) +
+    ylab("Pulchra cover change (centred)\n") +
+    xlab("\n Mean july temperature (degC)" ) +
+    scale_colour_viridis_d(begin = 0.1, end = 0.85) +
+    scale_fill_viridis_d(begin = 0.1, end = 0.85) +
+    theme_shrub())
+
+# Salix arctica ------
+arc_covchange <- (conditional_effects(cover_temp_arc))
+arc_covchange_data <- arc_covchange[[1]]
+
+(arc_cover_plot <-ggplot(pul_covchange_data) +
+    geom_point(data = all_cover_temps_long_arctica, aes(x = mean_temp, y = cover_change_percent, colour = Site),
+               alpha = 0.5)+
+    geom_line(aes(x = effect1__, y = estimate__),
+              linewidth = 1.5) +
+    #  geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
+    #            alpha = .1) +
+    ylab("Arctica cover change (centred)\n") +
+    xlab("\n Mean july temperature (degC)" ) +
+    scale_colour_viridis_d(begin = 0.1, end = 0.85) +
+    scale_fill_viridis_d(begin = 0.1, end = 0.85) +
+    theme_shrub())
+
 
