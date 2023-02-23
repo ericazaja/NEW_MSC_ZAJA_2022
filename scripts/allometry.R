@@ -170,6 +170,10 @@ zeros_salarc <- data.frame(PlotID, max_height,
 QHI_salric_shrub_biomass <- rbind(QHI_salric_shrub_biomass, zeros_salric)
 QHI_salarc_shrub_biomass <- rbind(QHI_salarc_shrub_biomass, zeros_salarc)
 
+# saving data
+write.csv(QHI_salric_shrub_biomass, "data/allometry/Andy_paper/QHI_salric_shrub_biomass.csv")
+write.csv(QHI_salarc_shrub_biomass, "data/allometry/Andy_paper/QHI_salarc_shrub_biomass.csv")
+
 # ANDY DATA DONE
 
 # 3.2. PIKA SALIX PULCHRA (and SALIX RICHARDSONII) (Isla) ----
