@@ -199,8 +199,12 @@ all_cover_temps <- full_join(all_cover, july_enviro_means)
 all_cover_temps$Site <- as.factor(all_cover_temps$Site)
 all_cover_temps$Species <- as.factor(all_cover_temps$Species)
 
+# converting precip to mm
 all_cover_temps <- all_cover_temps %>%
   mutate(mean_precip = mean_precip/100)
+
+# saving the means dataset
+write.csv(all_cover_temps, "data/all_cover_temps.csv" )
 
 # merge full ( non summarised data)
 all_CG_growth_cover_change_edit <- all_CG_growth_cover_change %>%
@@ -232,6 +236,9 @@ all_cover_temps_long$Species <- as.factor(all_cover_temps_long$Species)
 
 all_cover_temps_long <- all_cover_temps_long %>%
   mutate(mean_precip = mean_precip/100) # converting precip in mm
+
+# saving full dataset 
+write.csv(all_cover_temps_long, "data/all_cover_temps_long.csv")
 
 # MODELLING cover vs temp and precip ----
 model_cover_temp <- lmer(cover_change_percent ~ mean_temp + Species + (1|Site), data = all_cover_temps_long)
@@ -282,26 +289,6 @@ model_cover_precip_arctica <- lm(cover_change_percent ~ mean_precip, data = all_
 tab_model(model_cover_precip_arctica) # -1.60	 % cover change per unit precip
 
 # DATA VISUALISATION -----
-
-# can visualise things but they are not comparable because
-# cover in the garden is since cuttings put down VS cover in source pops is of mature shurbs
-#(box_cover_temp <- ggplot(all_cover_temps_long) +
-#   geom_point(aes(x = mean_temp, y= cover_percent, colour = Site, fill = Site), size = 3, alpha = 0.1) +
- #  geom_boxplot(aes(x = mean_temp, y= cover_percent, colour = Site, fill = Site), size = 0.5, alpha = 0.5) +
-  # ylab("Cover (%)") +
-   #xlab("\nMean july temperature (degC)") +
-   ##facet_wrap(~Species, scales = "free") +
-   #scale_colour_viridis_d(begin = 0.1, end = 0.95) +
-   #scale_fill_viridis_d(begin = 0.1, end = 0.95) + 
-   #theme_shrub() +
-  # theme(panel.border = element_blank(),
-     #    panel.grid.major = element_blank(),
-     ##    panel.grid.minor = element_blank(),
-       #  axis.line = element_line(colour = "black"),
-      #   axis.title = element_text(size = 14),
-        # axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
-        # axis.text.y = element_text(size = 12, colour = "black"))) 
-
 # plotting means: cover change vs mean july temp
 (scatter_cover_temp <- ggplot(all_cover_temps) +
    geom_point(aes(x = mean_temp, y= mean_cover_change, colour = Site, fill = Site, group = Site), size = 3, alpha = 0.8) +
