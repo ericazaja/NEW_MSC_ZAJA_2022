@@ -53,7 +53,7 @@ pulchra_cover <- brms::brm(cover_prop ~ I(YEAR-1988)+ SITE,
                       data = itex_EZ_pulchra, family = "beta",
                       iter = 2000, chains = 4, warmup = 400)
 
-summary(pulchra_cover)
+summary(pulchra_cover) 
 plot(pulchra_cover)
 pp_check(pulchra_cover, type = "dens_overlay", nsamples = 100) 
 
