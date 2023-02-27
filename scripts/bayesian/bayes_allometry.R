@@ -2,6 +2,7 @@
 
 # 1. LOADING LIBRARIES -----
 library(tidyverse)
+library(brms)
 
 # 2. DATA -----
 # Andy Cunliffe data from QHI: S rich. and arctica
@@ -18,7 +19,10 @@ hist(QHI_salarc_shrub_biomass$biomass_per_m2, breaks = 10) # weird,not much data
 
 # removing an outlier from Pika data
 Pika_all_shrub_biomass_edit <- Pika_all_shrub_biomass %>%
-  distinct()
+  group_by(Plot) %>%
+  dplyr::distinct(Plot, Shrub_Height_cm, max_biomass, max_cover, Species, 
+                  biomass_per_m2)
+
 Pika_all_shrub_biomass_edit_2 <- Pika_all_shrub_biomass_edit[-1,] # plot 2a
 
 # 3.1. Salix richardsonii ------
@@ -31,9 +35,24 @@ rich_allom <- brms::brm(biomass_per_m2 ~ 0 + max_height + percent_cover,
 
 summary(rich_allom) # not significant 
 plot(rich_allom) # great
-pp_check(rich_allom) # fine
+pp_check(rich_allom, type = "dens_overlay", nsamples = 100) # fine
 # biomass increases with height
-# Equation: Biomass =  (18.05*height +- 5.11) + (11.55 *cover +-  18.07)
+
+# running the model 6 times, recording the estimates and errors each time, 
+# making a mean and rounding to one decimal
+heights_rich <- c(18.00, 17.96,  17.94, 17.99, 18.02, 17.89) 
+heights_errors_rich <- c( 5.09 ,5.25, 5.05, 5.09, 5.08, 5.25 )
+mean(heights_rich)# 17.96667
+round(17.96667, digits = 1) # 18.0
+mean(heights_errors_rich)# 5.135
+round(5.135, digits = 1) # 5.1
+covers_rich <- c(11.76, 11.96, 11.93, 11.80, 11.73, 12.18)
+covers_errors_rich <- c(17.91, 18.43, 17.75, 17.95, 17.72, 18.29)
+mean(covers_rich) 
+round(11.89333, digits = 1) # 11.9
+mean(covers_errors_rich) 
+round(18.00833, digits = 1) # 18.0
+# FINAL EQUATION: Biomass =  (18.0*height +- 5.1) + (11.9 *cover +-  18.0)
 
 # 3.2. Salix pulchra -------
 pul_allom <- brms::brm(biomass_per_m2 ~ 0 + Shrub_Height_cm + max_cover,
@@ -45,7 +64,23 @@ pul_allom <- brms::brm(biomass_per_m2 ~ 0 + Shrub_Height_cm + max_cover,
 summary(pul_allom) # not significant 
 plot(pul_allom) # great
 pp_check(pul_allom) # meh
-# Equation: Biomass =  (1.08*height +-  5.17 ) + (18.16 *cover +-  8.42)
+
+# running the model 6 times, recording the estimates and errors each time, 
+# making a mean and rounding to one decimal
+heights_pul <- c(0.91, 1.14, 1.04, 1.05, 1.46, 1.21) 
+heights_errors_pul <- c( 5.07, 5.01, 5.17,  4.91, 5.14, 4.95  )
+mean(heights_pul)# 1.135
+round(1.135, digits = 1) # 1.1
+mean(heights_errors_pul)#  5.041667
+round( 5.041667, digits = 1) # 5.0
+covers_pul <- c(18.46, 18.07, 18.26,  18.26,  17.58, 17.98  )
+covers_errors_pul <- c(8.19, 8.14,8.38, 7.96, 8.31, 8.03)
+mean(covers_pul) 
+round(18.10167, digits = 1) # 18.1
+mean(covers_errors_pul) 
+round(8.168333, digits = 1) # 8.2
+# FINAL EQUATION:  Biomass =  (1.1*height +-  5.0 ) + (18.1 *cover +-  8.2)
+
 
 # 3.3. Salix arctica -------
 arc_allom <- brms::brm(biomass_per_m2 ~ 0 + max_height + percent_cover,
