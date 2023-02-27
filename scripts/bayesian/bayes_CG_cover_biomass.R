@@ -119,36 +119,6 @@ summary(biom_arc) # significant cover growth over time
 plot(biom_arc)
 pp_check(biom_arc, type = "dens_overlay", nsamples = 100) 
 
-# 3.3. HEIGHTS ------
-# Salix richardsonii -------
-height_rich <- brms::brm(log(Canopy_Height_cm) ~ Sample_age,
-                       data = CG_ric_cover_biomass,  family = gaussian(), chains = 3,
-                       iter = 5000, warmup = 1000, 
-                       control = list(max_treedepth = 15, adapt_delta = 0.99))
-
-summary(height_rich) # significant cover growth over time
-plot(height_rich)
-pp_check(height_rich, type = "dens_overlay", nsamples = 100) 
-
-# Salix pulchra -----
-height_pul <- brms::brm(log(Canopy_Height_cm) ~ Sample_age,
-                         data = CG_pul_cover_biomass,  family = gaussian(), chains = 3,
-                         iter = 5000, warmup = 1000, 
-                         control = list(max_treedepth = 15, adapt_delta = 0.99))
-
-summary(height_pul) # not significant growth over time
-plot(height_pul)
-pp_check(height_pul, type = "dens_overlay", nsamples = 100) 
-
-# Salix arctica -------
-height_arc <- brms::brm(log(Canopy_Height_cm) ~ Sample_age,
-                        data = CG_arc_cover_biomass,  family = gaussian(), chains = 3,
-                        iter = 5000, warmup = 1000, 
-                        control = list(max_treedepth = 15, adapt_delta = 0.99))
-
-summary(height_arc) # significant growth over time
-plot(height_arc)
-pp_check(height_arc, type = "dens_overlay", nsamples = 100) 
 
 # 4. DATA VISUALISATION ---------
 theme_shrub <- function(){ theme(legend.position = "right",
@@ -268,58 +238,6 @@ arc_biom_data_1 <- arc_biom_1[[1]]
     scale_fill_brewer(palette = "Greys")+
     theme_shrub())
 
-# 4.3. HEIGHT -----
-# Salix richardsonii ------
-rich_height_1 <- (conditional_effects(height_rich))
-rich_height_data <- rich_height_1[[1]]
-
-(rich_height_plot <-ggplot(rich_height_data) +
-    geom_point(data = CG_ric_cover_biomass, aes(x = Sample_age, y = log(Canopy_Height_cm)),
-               alpha = 0.5)+
-    geom_line(aes(x = effect1__, y = estimate__),
-              linewidth = 1.5) +
-    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
-                alpha = .1) +
-    ylab("Richardsonii canopy height (log cm)\n") +
-    xlab("\n Sample age" ) +
-    scale_color_brewer(palette = "Greys")+
-    scale_fill_brewer(palette = "Greys")+
-    theme_shrub())
-
-# Salix pulchra ------
-pul_height_1 <- (conditional_effects(height_pul))
-pul_height_data <- pul_height_1[[1]]
-
-(pul_height_plot <-ggplot(pul_height_data) +
-    geom_point(data = CG_pul_cover_biomass, aes(x = Sample_age, y = log(Canopy_Height_cm)),
-               alpha = 0.5)+
-    geom_line(aes(x = effect1__, y = estimate__),
-              linewidth = 1.5) +
-    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
-                alpha = .1) +
-    ylab("Pulchra canopy height (log cm)\n") +
-    xlab("\n Sample age" ) +
-    scale_color_brewer(palette = "Greys")+
-    scale_fill_brewer(palette = "Greys")+
-    theme_shrub())
-
-# Salix arctica------
-arc_height_1 <- (conditional_effects(height_arc))
-arc_height_data <- arc_height_1[[1]]
-
-(arc_height_plot <-ggplot(arc_height_data) +
-    geom_point(data = CG_arc_cover_biomass, aes(x = Sample_age, y = log(Canopy_Height_cm)),
-               alpha = 0.5)+
-    geom_line(aes(x = effect1__, y = estimate__),
-              linewidth = 1.5) +
-    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
-                alpha = .1) +
-    ylab("Arctica canopy height (log cm)\n") +
-    xlab("\n Sample age" ) +
-    scale_color_brewer(palette = "Greys")+
-    scale_fill_brewer(palette = "Greys")+
-    theme_shrub())
-
 
 # panels -----
 CG_cov_panel <- grid.arrange(rich_cover_plot,
@@ -330,8 +248,5 @@ CG_biom_panel <- grid.arrange(rich_biom_plot,
                              pul_biom_plot, 
                              arc_biom_plot, nrow = 1)
 
-CG_height_panel <- grid.arrange(rich_height_plot,
-                              pul_height_plot, 
-                              arc_height_plot, nrow = 1)
 
 
