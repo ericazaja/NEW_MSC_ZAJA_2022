@@ -63,7 +63,7 @@ pul_allom <- brms::brm(biomass_per_m2 ~ 0 + Shrub_Height_cm + max_cover,
 
 summary(pul_allom) # not significant 
 plot(pul_allom) # great
-pp_check(pul_allom) # meh
+pp_check(pul_allom, type = "dens_overlay", nsamples = 100) # meh
 
 # running the model 6 times, recording the estimates and errors each time, 
 # making a mean and rounding to one decimal
@@ -91,8 +91,24 @@ arc_allom <- brms::brm(biomass_per_m2 ~ 0 + max_height + percent_cover,
 
 summary(arc_allom) # not significant 
 plot(arc_allom) # great
-pp_check(arc_allom) # meh
-# Equation: Biomass =  ( 1.51 *height +-  22.32) + (14.87 *cover +-  19.22)
+pp_check(arc_allom, type = "dens_overlay", nsamples = 100) # meh
+
+# running the model 6 times, recording the estimates and errors each time, 
+# making a mean and rounding to one decimal
+heights_arc <- c(2.67,  2.33, 2.13,2.00, 1.72, 2.64) 
+heights_errors_arc  <- c(  22.74, 23.38, 23.19, 26.92,23.28, 24.61 )
+mean(heights_arc)# 2.248333
+round(2.248333, digits = 1) # 2.2
+mean(heights_errors_arc)
+round( 24.02, digits = 1) # 24.0
+covers_arc  <- c(13.87, 14.11,14.29, 14.45, 14.65, 13.88)
+covers_errors_arc  <- c(19.63, 20.16, 19.95, 23.30, 20.05, 21.19)
+mean(covers_arc) 
+round(14.20833, digits = 1) # 14.2
+mean(covers_errors_arc) 
+round(20.71333, digits = 1) # 20.7
+# FINAL EQUATION:  # Equation: Biomass =  ( 2.2 *height +-  24.0) + (14.2 *cover +-  20.7)
+
 
 
 # 4.DATA VISUALISATION------
