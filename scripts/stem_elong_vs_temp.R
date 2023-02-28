@@ -307,4 +307,7 @@ tab_model(model_elong_temp_pulchra ) # 52.05
 plot(model_elong_temp_pulchra )
 
 
+# means rich + pulchra ----
+means_pulric <- c(69.11,52.05)
+mean(means_pulric) # 60.58
                         
