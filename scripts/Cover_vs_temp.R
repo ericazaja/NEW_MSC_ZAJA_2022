@@ -23,14 +23,14 @@ july_enviro_chelsa <- july_enviro_chelsa %>%
 
 # TOOLIK july mean temp and precip
 TOOLIK_july_temp <- july_enviro_chelsa %>%
-  filter(site %in% c("TUSSOKGRID", "IMNAVAIT"))
+  filter(site %in% c("TUSSOKGRID", "IMNAVAIT")) %>%
   dplyr::select(site, year, mean_temp_C)
   
 mean(TOOLIK_july_temp$mean_temp_C, na.rm=TRUE) # 10.41667
   
 TOOLIK_july_precip <- july_enviro_chelsa %>%
-    filter(site %in% c("TUSSOKGRID", "IMNAVAIT"))
-  select(site, year, PrecipMeanJuly)
+    filter(site %in% c("TUSSOKGRID", "IMNAVAIT"))%>%
+  dplyr::select(site, year, PrecipMeanJuly)
 
 mean(TOOLIK_july_precip$PrecipMeanJuly, na.rm=TRUE) # 16182.26
   
@@ -53,15 +53,12 @@ QHI_july_temp <- july_enviro_chelsa %>%
   select(site, year, mean_temp_C)
 
 mean(QHI_july_temp$mean_temp_C, na.rm=TRUE) # 6.15
-# QHI july mean surface temp: 9.10 °C 
-# based on 2022 TOMST and 2017 HOBO data 
 
 QHI_july_precip <- july_enviro_chelsa %>%
   filter(site == "QHI")%>%
   dplyr::select(site, year, PrecipMeanJuly)
 
 mean(QHI_july_precip$PrecipMeanJuly, na.rm=TRUE) # 9586.81
-# QHI july mean surface temp: 9.10 °C 
 
 # KP july mean temp and precip
 KP_july_temp <- july_enviro_chelsa %>%
@@ -82,9 +79,6 @@ CG_july_temp <- july_enviro_chelsa %>%
   dplyr::select(site, year, mean_temp_C)
 
 mean(CG_july_temp$mean_temp_C, na.rm=TRUE) #13.67857
-
-# Common garden july mean surface temp: 17.97°C 
-# Based on 6 years data (TOMST+ HOBO)
 
 CG_july_precip <- july_enviro_chelsa %>%
   filter(site == "Common_garden") %>%
@@ -245,22 +239,7 @@ all_cover_temps_long <- all_cover_temps_long %>%
 # saving full dataset 
 write.csv(all_cover_temps_long, "data/all_cover_temps_long.csv")
 
-# doing what diana said: merging all_cover_long with all years of temp data -----
-july_enviro_chelsa_new <- july_enviro_chelsa %>%
-  mutate(site = case_when(site == "ATIGUN" ~ "ANWR",
-                          site %in% c("IMNAVAIT", "TUSSOKGRID") ~ "TOOLIK", 
-                          site == "QHI" ~ "QHI",
-                          site == "Common_garden" ~ "CG",
-                          site == "Kluane_plateau" ~ "KP")) %>%
-  rename("Site"= "site", "Year"="year", "mean_precip"= "PrecipMeanJuly") %>%
-  dplyr:: select(Site, Year, mean_precip, mean_temp_C)
-
-
-all_cover_temps_new <- left_join(all_cover_long, july_enviro_chelsa_new, by=c('Site'='Site', 'Year'='Year'))
-
-write.csv(all_cover_temps_new, "data/all_cover_temps_new.csv")
-
-# MODELLING cover vs temp and precip ----
+# MODELLING cover vs temp ----
 model_cover_temp <- lmer(cover_change_percent ~ mean_temp + Species + (1|Site), data = all_cover_temps_long)
 tab_model(model_cover_temp)
 plot(model_cover_temp)
@@ -280,7 +259,10 @@ all_cover_temps_long_rich <- all_cover_temps_long %>%
 model_cover_temp_rich <- lmer(cover_change_percent ~ mean_temp + (1|Site), data = all_cover_temps_long_rich)
 tab_model(model_cover_temp_rich) # 13.81% cover change per unit temp
 
-# mean cover change for rich and pulchra = 8.41 %
+# mean cover change per temp unit for rich and pulchra = 8.41 %
+mean_richpul <- c(13.81,3.62)
+mean(mean_richpul) # 8.715
+sd(mean_richpul) # 7.20
 
 # arctica  cover change per unit temp 
 all_cover_temps_long_arctica <- all_cover_temps_long %>%
@@ -289,24 +271,22 @@ all_cover_temps_long_arctica <- all_cover_temps_long %>%
 model_cover_temp_arctica <- lmer(cover_change_percent ~ mean_temp + (1|Site), data = all_cover_temps_long_arctica)
 tab_model(model_cover_temp_arctica) # 10.30 % cover change per unit temp
 
-# can do same models but with precipitation
-# doesnt run but will try again when bayesian
-model_cover_precip <- lm(cover_change_percent ~ mean_precip + Species, data = all_cover_temps_long)
-tab_model(model_cover_precip)
-plot(model_cover_precip)
-
-# separate species models----
+# Modelling cover change vs precipitation ------
+# separate species models ----
 # doesnt run with site random effect
 model_cover_precip_pulchra <- lm(cover_change_percent ~ mean_precip, data = all_cover_temps_long_pulchra)
-tab_model(model_cover_precip_pulchra) # -1.40 % cover change per unit precip
+tab_model(model_cover_precip_pulchra) # -1.20 % cover change per unit precip
 
 model_cover_precip_rich <- lmer(cover_change_percent ~ mean_precip + (1|Site), data = all_cover_temps_long_rich)
 tab_model(model_cover_precip_rich) # -2.75 % cover change per unit precip
 
-# mean cover change pulchra + rich :  -2.075 % cover change per unit precip
-# doesnt run with site random effect
+# mean cover change per precipitation unit for rich and pulchra
+mean_richpul_precip <- c(-1.20,-2.75)
+mean(mean_richpul_precip) # -1.975
+sd(mean_richpul_precip) #  1.096016
+
 model_cover_precip_arctica <- lm(cover_change_percent ~ mean_precip, data = all_cover_temps_long_arctica)
-tab_model(model_cover_precip_arctica) # -1.60	 % cover change per unit precip
+tab_model(model_cover_precip_arctica) # -0.97	 % cover change per unit precip
 
 # DATA VISUALISATION -----
 # plotting means: cover change vs mean july temp
@@ -351,6 +331,40 @@ tab_model(model_cover_precip_arctica) # -1.60	 % cover change per unit precip
     geom_smooth(aes(x = mean_temp, y= cover_change_percent), method = "lm") +
     ylab("Cover (%)") +
     xlab("\nMean july temperature (degC)") +
+    scale_colour_viridis_d(begin = 0.1, end = 0.95) +
+    scale_fill_viridis_d(begin = 0.1, end = 0.95) + 
+    theme_shrub() +
+    theme(panel.border = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.line = element_line(colour = "black"),
+          axis.title = element_text(size = 14),
+          axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
+          axis.text.y = element_text(size = 12, colour = "black"))) 
+
+(scatter_cover_temp_2 <- ggplot(all_cover_temps_long) +
+    geom_point(aes(x = mean_temp, y= cover_change_percent, colour = Site, fill = Site, group = Site), size = 3, alpha = 0.8) +
+    geom_smooth(aes(x = mean_temp, y= cover_change_percent), method = "lm",  se=F, colour = "black")  +
+    ylab("Mean cover change (%)") +
+    xlab("\nMean july temperature (degC)") +
+    facet_wrap(~Species, scales = "free") +
+    scale_colour_viridis_d(begin = 0.1, end = 0.95) +
+    scale_fill_viridis_d(begin = 0.1, end = 0.95) + 
+    theme_shrub() +
+    theme(panel.border = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.line = element_line(colour = "black"),
+          axis.title = element_text(size = 14),
+          axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
+          axis.text.y = element_text(size = 12, colour = "black"))) 
+
+(scatter_cover_precip_2 <- ggplot(all_cover_temps_long) +
+    geom_point(aes(x = mean_precip, y= cover_change_percent, colour = Site, fill = Site, group = Site), size = 3, alpha = 0.8) +
+    geom_smooth(aes(x = mean_precip, y= cover_change_percent), method = "lm",  se=F,colour = "black")  +
+    ylab("Mean cover change (%)") +
+    xlab("\nMean july precip (mm)") +
+    facet_wrap(~Species, scales = "free") +
     scale_colour_viridis_d(begin = 0.1, end = 0.95) +
     scale_fill_viridis_d(begin = 0.1, end = 0.95) + 
     theme_shrub() +
