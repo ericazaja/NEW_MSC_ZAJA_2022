@@ -325,12 +325,31 @@ tab_model(model_cover_precip_arctica) # -0.97	 % cover change per unit precip
           axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
           axis.text.y = element_text(size = 12, colour = "black"))) 
 
-# change spp. accordingly
-(scatter_all_cover_temp_rich <- ggplot(all_cover_temps_long_rich) +
-    geom_point(aes(x = mean_temp, y= cover_change_percent,colour = Site, fill = Site), size = 3) +
-    geom_smooth(aes(x = mean_temp, y= cover_change_percent), method = "lm") +
-    ylab("Cover (%)") +
-    xlab("\nMean july temperature (degC)") +
+(scatter_all_cover_temp_means <- ggplot() +
+    geom_point(aes(x = mean_temp, y= cover_change_percent,colour = Site, fill = Site), size = 3, alpha = 0.4, data = all_cover_temps_long) +
+    geom_smooth(aes(x = mean_temp, y= cover_change_percent), method = "lm", se=F, colour = "black", data = all_cover_temps_long) +
+    geom_point(aes(x = mean_temp, y= mean_cover_change,colour = Site, fill = Site), size = 5, data = all_cover_temps) +  
+    facet_wrap(~Species, scales = "free") +
+    ylab("Mean cover change (%)") +
+    xlab("\nMean july temperature over last 20 years (degC)") +
+    scale_colour_viridis_d(begin = 0.1, end = 0.95) +
+    scale_fill_viridis_d(begin = 0.1, end = 0.95) + 
+    theme_shrub() +
+    theme(panel.border = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.line = element_line(colour = "black"),
+          axis.title = element_text(size = 14),
+          axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
+          axis.text.y = element_text(size = 12, colour = "black"))) 
+
+(scatter_all_cover_precip_means <- ggplot() +
+    geom_point(aes(x = mean_precip, y= cover_change_percent,colour = Site, fill = Site), size = 3, alpha = 0.4, data = all_cover_temps_long) +
+    geom_smooth(aes(x = mean_precip, y= cover_change_percent), method = "lm", se=F, colour = "black", data = all_cover_temps_long) +
+    geom_point(aes(x = mean_precip, y= mean_cover_change, colour = Site, fill = Site), size = 5, data = all_cover_temps) +  
+    facet_wrap(~Species, scales = "free") +
+    ylab("Mean cover change (%)") +
+    xlab("\nMean july precipitation over last 20 years (mm)") +
     scale_colour_viridis_d(begin = 0.1, end = 0.95) +
     scale_fill_viridis_d(begin = 0.1, end = 0.95) + 
     theme_shrub() +
