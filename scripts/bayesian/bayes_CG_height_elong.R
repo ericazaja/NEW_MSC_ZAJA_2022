@@ -5,6 +5,7 @@
 # Libraries ------
 library(tidybayes)
 library(brms)
+
 # DATA -------
 all_CG_growth <- read_csv("data/common_garden_shrub_data/all_CG_growth.csv")
 
@@ -30,6 +31,36 @@ all_CG_growth_arc <-all_CG_growth%>%
 # MODELLING 
 # 1. HEIGHTS over time ------
 # Salix richardsonii -------
+elong_rich <- brms::brm(log(mean_stem_elong) ~ Sample_age*population,
+                         data = all_CG_growth_ric,  family = gaussian(), chains = 3,
+                         iter = 5000, warmup = 1000, 
+                         control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(elong_rich) # significant height growth over time
+plot(elong_rich)
+pp_check(elong_rich, type = "dens_overlay", nsamples = 100) 
+
+# Salix pulchra -----
+elong_pul <- brms::brm(log(mean_stem_elong) ~ Sample_age*population,
+                        data = all_CG_growth_pul,  family = gaussian(), chains = 3,
+                        iter = 5000, warmup = 1000, 
+                        control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(elong_pul) # 
+plot(elong_pul)
+pp_check(elong_pul, type = "dens_overlay", nsamples = 100) 
+
+# Salix arctica -------
+elong_arc <- brms::brm(log(mean_stem_elong) ~ Sample_age*population,
+                        data = all_CG_growth_arc,  family = gaussian(), chains = 3,
+                        iter = 5000, warmup = 1000, 
+                        control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(elong_arc) # significant growth over time
+plot(elong_arc)
+pp_check(elong_arc, type = "dens_overlay", nsamples = 100) 
+
+# 2. STEM ELONGATION over time ------
 height_rich <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population,
                          data = all_CG_growth_ric,  family = gaussian(), chains = 3,
                          iter = 5000, warmup = 1000, 
@@ -59,8 +90,6 @@ summary(height_arc) # significant growth over time
 plot(height_arc)
 pp_check(height_arc, type = "dens_overlay", nsamples = 100) 
 
-# 2. STEM ELONGATION over time ------
-
 # DATA VISUALISATION -------
 # 1. HEIGHT -----
 # Salix richardsonii ------
@@ -69,11 +98,13 @@ rich_height_data <- rich_height_1[[1]]
 rich_height_data_2 <- rich_height_1[[2]]
 
 # this graph below only lets me plot one line
-(rich_height_plot <-ggplot(rich_height_data) +
+(rich_height_plot <-ggplot() +
     geom_point(data = all_CG_growth_ric, aes(x = Sample_age, y = log(Canopy_Height_cm), colour = population),
                alpha = 0.5)+
     geom_line(aes(x = effect1__, y = estimate__),
-              linewidth = 1.5) +
+              linewidth = 1.5, data = rich_height_data_2) +
+  geom_line(aes(x = effect1__, y = estimate__),
+                               linewidth = 1.5, data = rich_height_data) +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
                 alpha = .1) +
     ylab("Richardsonii canopy height (log cm)\n") +
@@ -127,4 +158,46 @@ CG_height_panel <- grid.arrange(rich_heights_plot_new,
                                 pul_heights_plot_new, 
                                 arc_heights_plot_new, nrow = 1)
 # 2.STEM ELONGATION -----
+# Salix richardsonii -------
+(rich_elong_plot_new <- all_CG_growth_ric %>%
+   group_by(population) %>%
+   add_predicted_draws(elong_rich) %>%
+   ggplot(aes(x = Sample_age, y = log(mean_stem_elong), color = ordered(population), fill = ordered(population))) +
+   stat_lineribbon(aes(y = .prediction), .width = c(.50), alpha = 1/4) +
+   geom_point(data = all_CG_growth_ric) +
+   scale_colour_viridis_d(begin = 0.1, end = 0.95) +
+   scale_fill_viridis_d(begin = 0.1, end = 0.95) +
+   theme_shrub() +
+   ylab("Richardsonii stem elongation (log mm)\n") +
+   xlab("\nSample age"))
 
+# Salix pulchra ------
+(pul_elong_plot_new <- all_CG_growth_pul %>%
+   group_by(population) %>%
+   add_predicted_draws(elong_pul) %>%
+   ggplot(aes(x = Sample_age, y = log(mean_stem_elong), color = ordered(population), fill = ordered(population))) +
+   stat_lineribbon(aes(y = .prediction), .width = c(.50), alpha = 1/4) +
+   geom_point(data = all_CG_growth_pul) +
+  scale_colour_viridis_d(begin = 0.1, end = 0.95) +
+  scale_fill_viridis_d(begin = 0.1, end = 0.95) +
+   theme_shrub() +
+   ylab("Pulchra stem elongation (log mm)\n") +
+   xlab("\nSample age"))
+
+
+# Salix arctica------
+(arc_elong_plot_new <- all_CG_growth_arc %>%
+   group_by(population) %>%
+   add_predicted_draws(elong_arc) %>%
+   ggplot(aes(x = Sample_age, y = log(mean_stem_elong), color = ordered(population), fill = ordered(population))) +
+   stat_lineribbon(aes(y = .prediction), .width = c(.50), alpha = 1/4) +
+   geom_point(data = all_CG_growth_arc) +
+   scale_colour_viridis_d(begin = 0.1, end = 0.95) +
+   scale_fill_viridis_d(begin = 0.1, end = 0.95) +
+   theme_shrub() +
+   ylab("Arctica stem elongation (log mm)\n") +
+   xlab("\nSample age"))
+
+CG_height_panel <- grid.arrange(rich_heights_plot_new,
+                                pul_heights_plot_new, 
+                                arc_heights_plot_new, nrow = 1)
