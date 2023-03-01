@@ -46,14 +46,20 @@ CG_arc_cover_biomass <- all_CG_growth_cover %>%
 range(CG_arc_cover_biomass$biomass_per_m2) # 10.9884 347.1840
 write.csv(CG_arc_cover_biomass, "data/common_garden_shrub_data/CG_arc_cover_biomass.csv")
 
+# merge all into one dataset 
+CG_ALL_cover_biomass <- rbind(CG_arc_cover_biomass, CG_pul_cover_biomass,
+                              CG_ric_cover_biomass)
+
 # 2. EXPLORE ------
 hist(CG_arc_cover_biomass$cover_percent, breaks = 30) # not normal
 hist(CG_pul_cover_biomass$cover_percent, breaks = 30)# not normal
 hist(CG_ric_cover_biomass$cover_percent, breaks = 30)# not normal
+hist(CG_ALL_cover_biomass$cover_percent, breaks = 30)# not normal
 
 hist(CG_arc_cover_biomass$biomass_per_m2, breaks = 30) # not normal
 hist(CG_pul_cover_biomass$biomass_per_m2, breaks = 30)# not normal
 hist(CG_ric_cover_biomass$biomass_per_m2, breaks = 30) # almost normal
+hist(CG_ALL_cover_biomass$biomass_per_m2, breaks = 30)# not normal
 
 # 3. MODELLING ------
 
@@ -88,6 +94,19 @@ summary(cover_arc) #  significant cover growth over time
 plot(cover_arc)
 pp_check(cover_arc, type = "dens_overlay", nsamples = 100) 
 
+
+# RANDOM SLOPE MODEL ------
+CG_ALL_cover_biomass$Species <- as.factor(CG_ALL_cover_biomass$Species)
+cover_random_slopes <- brms::brm((cover_percent/100) ~ Sample_age + (1+Sample_age|Species),
+                                 data = CG_ALL_cover_biomass,  family = "beta", chains = 3,
+                                 iter = 5000, warmup = 1000, 
+                                 control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(cover_random_slopes) #  significant cover growth over time
+plot(cover_random_slopes)
+pp_check(cover_random_slopes, type = "dens_overlay", nsamples = 100) 
+
+  
 # 3.2. BIOMASS over time -----
 # Salix richardsonii -----
 biom_rich <- brms::brm(log(biomass_per_m2) ~ Sample_age + (1|Sample_age),
@@ -119,6 +138,15 @@ summary(biom_arc) # significant cover growth over time
 plot(biom_arc)
 pp_check(biom_arc, type = "dens_overlay", nsamples = 100) 
 
+# RANDOM SLOPE MODEL ------
+biom_random_slopes <- brms::brm(log(biomass_per_m2) ~ Sample_age + (1+Sample_age|Species),
+                                 data = CG_ALL_cover_biomass,  family = gaussian(), chains = 3,
+                                 iter = 5000, warmup = 1000, 
+                                 control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(biom_random_slopes) #  significant cover growth over time
+plot(biom_random_slopes)
+pp_check(biom_random_slopes, type = "dens_overlay", nsamples = 100) 
 
 # 4. DATA VISUALISATION ---------
 theme_shrub <- function(){ theme(legend.position = "right",
@@ -184,7 +212,22 @@ arc_cov_data_1 <- arc_cov_1[[1]]
     scale_fill_brewer(palette = "Greys")+
     theme_shrub())
 
-
+# random slope model plot ----
+(cover_random_slopes_plot <- CG_ALL_cover_biomass %>%
+  bind_cols(as_tibble(fitted(cover_random_slopes))) %>%
+  group_by(Species) %>%
+  ggplot() +
+  geom_point(aes(x = Sample_age, y = (cover_percent/100)), size = 4, alpha = .75, color = "dodgerblue2") +
+  geom_point(aes(x = Sample_age, y = Estimate), shape = 1, size = 4, stroke = 1.5) +
+   geom_smooth(aes(x = Sample_age, y = (cover_percent/100), colour = Species, fill = Species)) +
+ labs(x = "Sample age", y = "Shrub cover (proportion)",
+   subtitle = "Blue points are observed values. Black circles are fitted values.") +
+ # scale_x_continuous(expand = c(.075, .075), breaks = 0:3) +
+  #facet_wrap(~Species, nrow = 1) +
+   scale_colour_viridis_d(begin = 0.1, end = 0.85) +
+   scale_fill_viridis_d(begin = 0.1, end = 0.85) +   
+  theme_shrub() +
+  theme(plot.title = element_text(hjust = .5)))
 
 # 4.2 BIOMASS -----
 # Salix richardsonii ------
@@ -237,6 +280,23 @@ arc_biom_data_1 <- arc_biom_1[[1]]
     scale_color_brewer(palette = "Greys")+
     scale_fill_brewer(palette = "Greys")+
     theme_shrub())
+
+# random slope model plot ----
+(biomass_random_slopes_plot <- CG_ALL_cover_biomass %>%
+   bind_cols(as_tibble(fitted(biom_random_slopes))) %>%
+   group_by(Species) %>%
+   ggplot() +
+   geom_point(aes(x = Sample_age, y = (log(biomass_per_m2)))) +
+   geom_point(aes(x = Sample_age, y = Estimate), shape = 1, size = 4, stroke = 1.5) +
+   geom_smooth(aes(x = Sample_age, y = (log(biomass_per_m2)), colour = Species, fill = Species)) +
+   labs(x = "Sample age", y = "Shrub biomass (log g/m2)",
+        subtitle = "Black points are observed values. Black circles are fitted values.") +
+   # scale_x_continuous(expand = c(.075, .075), breaks = 0:3) +
+   #facet_wrap(~Species, nrow = 1) +
+   scale_colour_viridis_d(begin = 0.1, end = 0.85) +
+   scale_fill_viridis_d(begin = 0.1, end = 0.85) +   
+   theme_shrub() +
+   theme(plot.title = element_text(hjust = .5)))
 
 
 # panels -----
