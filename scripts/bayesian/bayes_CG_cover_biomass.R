@@ -73,7 +73,7 @@ cover_rich <- brms::brm((cover_percent/100) ~ Sample_age + (1|Sample_age),
 summary(cover_rich) # significant cover growth over time
 plot(cover_rich)
 pp_check(cover_rich, type = "dens_overlay", nsamples = 100) 
-
+tab_model(cover_rich)
 # Salix pulchra -------
 cover_pul <- brms::brm((cover_percent/100) ~ Sample_age + (1|Sample_age),
                         data = CG_pul_cover_biomass,  family = "beta", chains = 3,

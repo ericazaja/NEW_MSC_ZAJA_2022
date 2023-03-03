@@ -4,7 +4,9 @@
 
 # Libraries ------
 library(tidybayes)
+library(readr)
 library(brms)
+library(tidyverse)
 
 # DATA -------
 all_CG_growth <- read_csv("data/common_garden_shrub_data/all_CG_growth.csv")
@@ -29,7 +31,7 @@ all_CG_growth_arc <-all_CG_growth%>%
   filter(Species == "Salix arctica")
 
 # MODELLING 
-# 1. HEIGHTS over time ------
+# 1.STEM ELONG over time ------
 # Salix richardsonii -------
 elong_rich <- brms::brm(log(mean_stem_elong) ~ Sample_age*population,
                          data = all_CG_growth_ric,  family = gaussian(), chains = 3,
@@ -60,25 +62,43 @@ summary(elong_arc) # significant growth over time
 plot(elong_arc)
 pp_check(elong_arc, type = "dens_overlay", nsamples = 100) 
 
-# 2. STEM ELONGATION over time ------
+# 2. HEIGHT over time ------
+all_CG_growth_ric_south <- all_CG_growth_ric %>%
+  filter(population == "Southern")
+
 height_rich <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population,
                          data = all_CG_growth_ric,  family = gaussian(), chains = 3,
                          iter = 5000, warmup = 1000, 
                          control = list(max_treedepth = 15, adapt_delta = 0.99))
 
-summary(height_rich) # significant height growth over time
-plot(height_rich)
-pp_check(height_rich, type = "dens_overlay", nsamples = 100) 
+# only southern
+height_rich_south <- brms::brm(log(Canopy_Height_cm) ~ Sample_age,
+                         data = all_CG_growth_ric_south,  family = gaussian(), chains = 3,
+                         iter = 5000, warmup = 1000, 
+                         control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(height_rich_south) # significant height growth over time
+plot(height_rich_south)
+pp_check(height_rich_south, type = "dens_overlay", nsamples = 100) 
 
 # Salix pulchra -----
+all_CG_growth_pul_south <- all_CG_growth_pul %>%
+  filter(population == "Southern")
+
 height_pul <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population,
                         data = all_CG_growth_pul,  family = gaussian(), chains = 3,
                         iter = 5000, warmup = 1000, 
                         control = list(max_treedepth = 15, adapt_delta = 0.99))
 
-summary(height_pul) # 
-plot(height_pul)
-pp_check(height_pul, type = "dens_overlay", nsamples = 100) 
+# only southern
+height_pul_south <- brms::brm(log(Canopy_Height_cm) ~ Sample_age,
+                               data = all_CG_growth_pul_south,  family = gaussian(), chains = 3,
+                               iter = 5000, warmup = 1000, 
+                               control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(height_pul_south) # 
+plot(height_pul_south)
+pp_check(height_pul_south, type = "dens_overlay", nsamples = 100) 
 
 # Salix arctica -------
 height_arc <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population,
