@@ -30,11 +30,25 @@ p50_2020 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_2020.tif")
 # 3. DATA EXPLORE  -----
 plot(p50_1985)
 
+class(p50_1985) # raster 
+
 # exploring resolution 
-res(sp50_1985) # resolution 30m x 30m
+res(p50_1985) # resolution 30m x 30m
 
 # exploring projection
-projection(p50_2020)
+projection(p50_1985)
+# "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"
+crs(p50_1985)
+
+# extent 
+extent(p50_1985)
+# class      : Extent 
+#xmin       : -2250120 
+#xmax       : -1499550 
+#ymin       : 2904500 
+#ymax       : 4038860 
+
+
 
 # setting a personalised theme 
 theme_shrub <- function(){ theme(legend.position = "right",
@@ -93,3 +107,4 @@ theme_shrub <- function(){ theme(legend.position = "right",
           axis.text.x = element_text(angle = 30, hjust = 1)))  # rotates x axis text
 
 grid.arrange(gplot_p50_1985, gplot_p50_2020, nrow=1)
+
