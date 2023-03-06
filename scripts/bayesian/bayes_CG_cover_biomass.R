@@ -21,7 +21,7 @@ CG_ric_cover_biomass <- all_CG_growth_cover %>%
          biomass_error_high = biomass_per_m2 + 5.1 + 18.0,
          biomass_error_low = biomass_per_m2 - 5.1 - 18.0)
 
-range(CG_ric_cover_biomass$biomass_per_m2) # 142.735 2709.216
+range(CG_ric_cover_biomass$biomass_per_m2) # 52.79184 2709.21600
 write.csv(CG_ric_cover_biomass, "data/common_garden_shrub_data/CG_ric_cover_biomass.csv")
 
 # Salix pulchra ------
@@ -43,7 +43,7 @@ CG_arc_cover_biomass <- all_CG_growth_cover %>%
          biomass_error_high = biomass_per_m2 + 24.0 + 20.7,
          biomass_error_low = biomass_per_m2 - 24.0 - 20.7)
 
-range(CG_arc_cover_biomass$biomass_per_m2) # 10.9884 347.1840
+range(CG_arc_cover_biomass$biomass_per_m2) # 8.5672 347.1840
 write.csv(CG_arc_cover_biomass, "data/common_garden_shrub_data/CG_arc_cover_biomass.csv")
 
 # merge all into one dataset 
@@ -74,6 +74,7 @@ summary(cover_rich) # significant cover growth over time
 plot(cover_rich)
 pp_check(cover_rich, type = "dens_overlay", nsamples = 100) 
 tab_model(cover_rich)
+
 # Salix pulchra -------
 cover_pul <- brms::brm((cover_percent/100) ~ Sample_age + (1|Sample_age),
                         data = CG_pul_cover_biomass,  family = "beta", chains = 3,

@@ -33,7 +33,7 @@ all_CG_growth_arc <-all_CG_growth%>%
 # MODELLING 
 # 1.STEM ELONG over time ------
 # Salix richardsonii -------
-elong_rich <- brms::brm(log(mean_stem_elong) ~ Sample_age*population,
+elong_rich <- brms::brm(log(mean_stem_elong) ~ Sample_age*population +(1|Year),
                          data = all_CG_growth_ric,  family = gaussian(), chains = 3,
                          iter = 5000, warmup = 1000, 
                          control = list(max_treedepth = 15, adapt_delta = 0.99))
@@ -43,7 +43,7 @@ plot(elong_rich)
 pp_check(elong_rich, type = "dens_overlay", nsamples = 100) 
 
 # Salix pulchra -----
-elong_pul <- brms::brm(log(mean_stem_elong) ~ Sample_age*population,
+elong_pul <- brms::brm(log(mean_stem_elong) ~ Sample_age*population+(1|Year),
                         data = all_CG_growth_pul,  family = gaussian(), chains = 3,
                         iter = 5000, warmup = 1000, 
                         control = list(max_treedepth = 15, adapt_delta = 0.99))
@@ -53,7 +53,7 @@ plot(elong_pul)
 pp_check(elong_pul, type = "dens_overlay", nsamples = 100) 
 
 # Salix arctica -------
-elong_arc <- brms::brm(log(mean_stem_elong) ~ Sample_age*population,
+elong_arc <- brms::brm(log(mean_stem_elong) ~ Sample_age*population+(1|Year),
                         data = all_CG_growth_arc,  family = gaussian(), chains = 3,
                         iter = 5000, warmup = 1000, 
                         control = list(max_treedepth = 15, adapt_delta = 0.99))
@@ -66,13 +66,13 @@ pp_check(elong_arc, type = "dens_overlay", nsamples = 100)
 all_CG_growth_ric_south <- all_CG_growth_ric %>%
   filter(population == "Southern")
 
-height_rich <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population,
+height_rich <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population+(1|Year),
                          data = all_CG_growth_ric,  family = gaussian(), chains = 3,
                          iter = 5000, warmup = 1000, 
                          control = list(max_treedepth = 15, adapt_delta = 0.99))
 
 # only southern
-height_rich_south <- brms::brm(log(Canopy_Height_cm) ~ Sample_age,
+height_rich_south <- brms::brm(log(Canopy_Height_cm) ~ Sample_age+(1|Year),
                          data = all_CG_growth_ric_south,  family = gaussian(), chains = 3,
                          iter = 5000, warmup = 1000, 
                          control = list(max_treedepth = 15, adapt_delta = 0.99))
@@ -85,13 +85,13 @@ pp_check(height_rich_south, type = "dens_overlay", nsamples = 100)
 all_CG_growth_pul_south <- all_CG_growth_pul %>%
   filter(population == "Southern")
 
-height_pul <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population,
+height_pul <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population+(1|Year),
                         data = all_CG_growth_pul,  family = gaussian(), chains = 3,
                         iter = 5000, warmup = 1000, 
                         control = list(max_treedepth = 15, adapt_delta = 0.99))
 
 # only southern
-height_pul_south <- brms::brm(log(Canopy_Height_cm) ~ Sample_age,
+height_pul_south <- brms::brm(log(Canopy_Height_cm) ~ Sample_age+(1|Year),
                                data = all_CG_growth_pul_south,  family = gaussian(), chains = 3,
                                iter = 5000, warmup = 1000, 
                                control = list(max_treedepth = 15, adapt_delta = 0.99))
@@ -101,7 +101,7 @@ plot(height_pul_south)
 pp_check(height_pul_south, type = "dens_overlay", nsamples = 100) 
 
 # Salix arctica -------
-height_arc <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population,
+height_arc <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population+(1|Year),
                         data = all_CG_growth_arc,  family = gaussian(), chains = 3,
                         iter = 5000, warmup = 1000, 
                         control = list(max_treedepth = 15, adapt_delta = 0.99))
@@ -133,7 +133,7 @@ rich_height_data_2 <- rich_height_1[[2]]
     scale_fill_viridis_d(begin = 0.1, end = 0.95) +
     theme_shrub())
 
-# this works well
+# this works well (but need to remove year from model)
 (rich_heights_plot_new <- all_CG_growth_ric %>%
     group_by(population) %>%
     add_predicted_draws(height_rich) %>%
