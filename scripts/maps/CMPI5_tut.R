@@ -10,16 +10,29 @@ library(magrittr)
 library(tidyverse)
 library(lubridate)
 library(RNetCDF)
-
-# setting working directory to my hard drive
-setwd("/Volumes/Kluane_22/CHELSA_CMIP5")
+library(sf)
+library(tsbox)
 
 # download data (from hard drive)
-nc = open.nc("tasmax_Amon_GFDL-ESM4_ssp126_r1i1p1f1_gr1_201501-210012.nc")
-nc_85 = open.nc("tasmax_Amon_GFDL-ESM4_ssp585_r1i1p1f1_gr1_201501-210012.nc")
+nc_26 = open.nc("data/CHELSA_CMPI5/tasmax_Amon_GFDL-ESM4_ssp126_r1i1p1f1_gr1_201501-210012.nc")
+nc_85 = open.nc("data/CHELSA_CMPI5/tasmax_Amon_GFDL-ESM4_ssp585_r1i1p1f1_gr1_201501-210012.nc")
 
+# # polygon of max and min lat long of caribou area
+lon <- c(-135.29,-149.9)
+lat <- c(70.1, 64.8)
+Poly_Coord_df = data.frame(lon, lat)
+poly <- Poly_Coord_df %>% 
+  sf::st_as_sf(coords = c("lon", "lat"), 
+               crs = 4326) %>% 
+  sf::st_bbox() %>% 
+  st_as_sfc()
+plot(poly, x = lon, y = lat)
+class(poly) #sfc_POLYGON
+nc_sp <- sf:::as_Spatial(poly) # This works
 
-tasmax.dates = as.Date(var.get.nc(nc, "time"), origin="1850-01-01 00:00:00")
+# Process the Data
+
+tasmax.dates = as.Date(var.get.nc(nc_26, "time"), origin="1850-01-01 00:00:00")
 tasmax.dates_2= as.Date(var.get.nc(nc_85, "time"), origin="1850-01-01 00:00:00")
 
 tasmax.scenes = sapply(1:length(tasmax.dates_2), function(z) {
@@ -33,17 +46,33 @@ tasmax.scenes = sapply(1:length(tasmax.dates_2), function(z) {
 close.nc(nc_85)
 
 plot(tasmax.scenes[[1000]], main=tasmax.dates_2[[1000]], 
-     col=colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+     col=colorRampPalette(c('navy', 'lightgray', 'red'))(30))
 
-tasmax_df <- as.data.frame(tasmax_df) # doesnt work
+# crop <- crop(tasmax.scenes, extent(nc_sp), xy = TRUE) # cant do this for list
+# STOP----
+
+# Aggregated Temperature
+
+indices = which((tasmax.dates_2 >= as.Date(paste0("2060-01-01"))) &
+(tasmax.dates_2 <= as.Date(paste0("2060-12-31"))))
+
+tasmax.2060 = tasmax.scenes[[indices[1]]]
+
+for (scene in tasmax.scenes[indices[2:length(indices)]]) {
+  values(tasmax.2060) = pmax(values(tasmax.2060), values(scene)) }
+
+plot(tasmax.2060, main="2060", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+
+
+# b <- brick(tasmax.scenes)
+
+# tasmax_df <- as.data.frame(tasmax.scenes) # doesnt work
 
 # Extract 
-library(sf)
-library(tsbox)
 
 weather_station = st_sfc(st_point(c(-88.27778, 40.03972)), crs=4326)
 
-y = sapply(tasmax.scenes, function(scene)  extract(scene, as_Spatial(weather_station)))
+y = sapply(tasmax.scenes, function(scene)  extract(scene, as_Spatial(poly)))
 
 x = 1970 + (as.numeric(tasmax.dates) / 365.25)
 
@@ -58,15 +87,64 @@ decomposition = stl(tasmax.series, s.window=240, t.window=120)
 
 plot(decomposition)
 
+# Aggregated Baseline Rasters (2020)
+
 indices = which((tasmax.dates <= as.Date(paste0("2020-12-31"))) & 
                   (tasmax.dates >= as.Date(paste0("2020-01-01"))))
 
 tasmax.2020 = tasmax.scenes[[indices[1]]]
 
-plot(tasmax.2020, main="2020", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+
+plot(hdd.cdd.2060, main="2020", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 
 for (scene in tasmax.scenes[indices[2:length(indices)]]) {
-  values(tasmax.2020) = pmax(values(tasmax.2020), values(scene)) }
+  values(tasmax.2020) = pmax(values(hdd.cdd.2060), values(scene)) }
+
+# START again -----
+# July 2023
+
+indices = which((tasmax.dates_2 <= as.Date(paste0("2023-07-31"))) & 
+                  (tasmax.dates_2 >= as.Date(paste0("2023-07-01"))))
+
+tasmax.2023 = tasmax.scenes[[indices[1]]] 
+res(tasmax.2023)
+projection(tasmax.2023) #"+proj=longlat +datum=WGS84 +no_defs"
+hdd.cdd.2023 = crop(tasmax.2023, extent(nc_sp)) # crop to the extent of the PCH range
+df_2023_july_85 <- as.data.frame(hdd.cdd.2023, xy=TRUE)
+
+plot(hdd.cdd.2023, main="July 2023", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+
+# july 2080
+indices = which((tasmax.dates_2 <= as.Date(paste0("2080-07-31"))) & 
+                  (tasmax.dates_2 >= as.Date(paste0("2080-07-01"))))
+
+tasmax.2080= tasmax.scenes[[indices[1]]] 
+hdd.cdd.2080 = crop(tasmax.2080, extent(nc_sp)) # crop to the extent of the PCH range
+df_2080_july_85 <- as.data.frame(hdd.cdd.2080, xy=TRUE)
+
+plot(hdd.cdd.2080, main="July 2080", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+
+# july 2100
+indices = which((tasmax.dates_2 <= as.Date(paste0("2100-07-31"))) & 
+                  (tasmax.dates_2 >= as.Date(paste0("2100-07-01"))))
+
+tasmax.2100= tasmax.scenes[[indices[1]]] 
+hdd.cdd.2100 = crop(tasmax.2100, extent(nc_sp)) # crop to the extent of the PCH range
+df_2100_july_85 <- as.data.frame(hdd.cdd.2100, xy=TRUE)
+
+plot(hdd.cdd.2100, main="July 2100", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 
 
 
+# STOP ----
+
+for (scene in tasmax.scenes[indices[2:length(indices)]]) {
+  values(tasmax.2023) = pmax(values(hdd.cdd.2023), values(scene)) }
+
+indices = which((pr.dates <= as.Date(paste0("2020-12-31"))) & 
+                  (pr.dates >= as.Date(paste0("2020-01-01"))))
+
+pr.2020 = pr.scenes[[indices[1]]]
+
+for (scene in pr.scenes[indices[2:length(indices)]]) {
+  pr.2020 = pr.2020 + scene }

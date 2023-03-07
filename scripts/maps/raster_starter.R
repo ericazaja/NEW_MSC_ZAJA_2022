@@ -39,8 +39,6 @@ res(p50_1985) # resolution 30m x 30m
 projection(p50_1985)
 # "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"
 crs(p50_1985)
-p50_1985_latlong <- projectRaster(p50_1985, crs="+init=EPSG:4326", xy = TRUE)
-
 
 # extent 
 extent(p50_1985)
@@ -50,7 +48,8 @@ extent(p50_1985)
 #ymin       : 2904500 
 #ymax       : 4038860 
 
-
+# p50_1985_latlong <- projectRaster(p50_1985, crs="+init=EPSG:4326", xy = TRUE) # doesnt run
+spts <- rasterToPoints(p50_1985, spatial = TRUE)
 
 # setting a personalised theme 
 theme_shrub <- function(){ theme(legend.position = "right",
