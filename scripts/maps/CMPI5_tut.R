@@ -58,3 +58,15 @@ decomposition = stl(tasmax.series, s.window=240, t.window=120)
 
 plot(decomposition)
 
+indices = which((tasmax.dates <= as.Date(paste0("2020-12-31"))) & 
+                  (tasmax.dates >= as.Date(paste0("2020-01-01"))))
+
+tasmax.2020 = tasmax.scenes[[indices[1]]]
+
+plot(tasmax.2020, main="2020", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+
+for (scene in tasmax.scenes[indices[2:length(indices)]]) {
+  values(tasmax.2020) = pmax(values(tasmax.2020), values(scene)) }
+
+
+
