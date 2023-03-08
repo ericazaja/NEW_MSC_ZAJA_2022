@@ -109,17 +109,27 @@ indices = which((tasmax.dates_2 <= as.Date(paste0("2023-07-31"))) &
 tasmax.2023 = tasmax.scenes[[indices[1]]] 
 res(tasmax.2023) # 1.25 1.00 degrees
 projection(tasmax.2023) #"+proj=longlat +datum=WGS84 +no_defs"
-hdd.cdd.2023 = crop(tasmax.2023, extent(nc_sp)) # crop to the extent of the PCH range
+hdd.cdd.2023 = crop(tasmax.2023, p50_2020) # crop to the extent of the PCH range
 df_2023_july_85 <- as.data.frame(hdd.cdd.2023, xy=TRUE)
 
 plot(hdd.cdd.2023, main="July 2023", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+
+# july 2050
+indices = which((tasmax.dates_2 <= as.Date(paste0("2050-07-31"))) & 
+                  (tasmax.dates_2 >= as.Date(paste0("2050-07-01"))))
+
+tasmax.2050= tasmax.scenes[[indices[1]]] 
+hdd.cdd.2050 = crop(tasmax.2050, p50_2020) # crop to the extent of the PCH range
+df_2050_july_85 <- as.data.frame(hdd.cdd.2050, xy=TRUE)
+
+plot(hdd.cdd.2050, main="July 2050", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 
 # july 2080
 indices = which((tasmax.dates_2 <= as.Date(paste0("2080-07-31"))) & 
                   (tasmax.dates_2 >= as.Date(paste0("2080-07-01"))))
 
 tasmax.2080= tasmax.scenes[[indices[1]]] 
-hdd.cdd.2080 = crop(tasmax.2080, extent(nc_sp)) # crop to the extent of the PCH range
+hdd.cdd.2080 = crop(tasmax.2080, p50_2020) # crop to the extent of the PCH range
 df_2080_july_85 <- as.data.frame(hdd.cdd.2080, xy=TRUE)
 
 plot(hdd.cdd.2080, main="July 2080", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
@@ -129,12 +139,14 @@ indices = which((tasmax.dates_2 <= as.Date(paste0("2100-07-31"))) &
                   (tasmax.dates_2 >= as.Date(paste0("2100-07-01"))))
 
 tasmax.2100= tasmax.scenes[[indices[1]]] 
-hdd.cdd.2100 = crop(tasmax.2100, extent(nc_sp)) # crop to the extent of the PCH range
+hdd.cdd.2100 = crop(tasmax.2100, p50_2020) # crop to the extent of the PCH range
 df_2100_july_85 <- as.data.frame(hdd.cdd.2100, xy=TRUE)
 
-plot(hdd.cdd.2100, main="July 2100", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+ plot(hdd.cdd.2100, main="July 2100", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 df_2080_july_85 <- as.data.frame(hdd.cdd.2080, xy=TRUE)
 
+library(gridExtra)
+grid.arrange(plot_2023, plot_2050, plot_2080, plot_2100, nrow=2)
 
 # STOP ----
 

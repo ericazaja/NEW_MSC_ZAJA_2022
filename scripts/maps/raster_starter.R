@@ -44,7 +44,6 @@ res(p50_2020) # resolution 0.000595209 0.000595209 degrees
 # exploring projection
 projection(p50_1985)
 projection(p50_2020) # "+proj=longlat +datum=WGS84 +no_defs"
-
 # "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"
 crs(p50_1985)
 
@@ -57,6 +56,12 @@ extent(p50_1985)
 #xmax       : -127.0697 
 #ymin       : 59.43991 
 #ymax       : 71.49051 
+extent(p50_2020)
+#class      : Extent 
+#xmin       : -154.8826 
+#xmax       : -127.0697 
+#ymin       : 59.43991 
+# ymax       : 71.49051 
 
 e <- extent(59.43991 ,71.49051,-154.8826 ,-127.0697 )
 extracted_p50_1985 <- extract(p50_1985, e)
