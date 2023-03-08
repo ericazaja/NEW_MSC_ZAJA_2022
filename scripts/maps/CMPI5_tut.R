@@ -107,7 +107,7 @@ indices = which((tasmax.dates_2 <= as.Date(paste0("2023-07-31"))) &
                   (tasmax.dates_2 >= as.Date(paste0("2023-07-01"))))
 
 tasmax.2023 = tasmax.scenes[[indices[1]]] 
-res(tasmax.2023)
+res(tasmax.2023) # 1.25 1.00 degrees
 projection(tasmax.2023) #"+proj=longlat +datum=WGS84 +no_defs"
 hdd.cdd.2023 = crop(tasmax.2023, extent(nc_sp)) # crop to the extent of the PCH range
 df_2023_july_85 <- as.data.frame(hdd.cdd.2023, xy=TRUE)

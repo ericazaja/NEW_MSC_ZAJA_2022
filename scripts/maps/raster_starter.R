@@ -11,12 +11,14 @@ library(rasterVis)
 library(gridExtra)
 library(terra)
 
+setwd("/Volumes/Kluane_22/Erica_masters_data_2022/katie_maps_wgs84")
+
 # 2. LOADING DATA ----
 
 # Loading rasters of shrub biomass (g/m2) in the PCH range from 1985-2020
 # Using the best-estimates: the 50th percentile of the 1,000 permutations
 
-p50_1985 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_1985.tif") 
+p50_1985 <- raster("pft_agb_deciduousshrub_p025_1985_wgs84.tif") 
 p50_1990 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_1990.tif") 
 p50_1995 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_1995.tif") 
 p50_2000 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_2000.tif") 
@@ -34,26 +36,28 @@ plot(p50_1985)
 class(p50_1985) # raster 
 
 # exploring resolution 
-res(p50_1985) # resolution 30m x 30m
+res(p50_1985) # resolution 0.000595209 0.000595209 degrees
 
 # exploring projection
 projection(p50_1985)
 # "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"
 crs(p50_1985)
 
+extracted_p50_1985 <- extract(p50_1985, xy = TRUE)
+
 # extent 
 extent(p50_1985)
 # class      : Extent 
-#xmin       : -2250120 
-#xmax       : -1499550 
-#ymin       : 2904500 
-#ymax       : 4038860 
+#xmin       : -154.8826 
+#xmax       : -127.0697 
+#ymin       : 59.43991 
+#ymax       : 71.49051 
 
-#p <- projectRaster(p50_1985, crs =4326 )
-#DTM_HARV_df <- as.data.frame(p50_1985, xy = TRUE)
+e <- extent(59.43991 ,71.49051,-154.8826 ,-127.0697 )
+extracted_p50_1985 <- extract(p50_1985, e)
 
-# p50_1985_latlong <- projectRaster(p50_1985, crs="+init=EPSG:4326", xy = TRUE) # doesnt run
-# spts <- rasterToPoints(p50_1985, spatial = TRUE)
+# p50_1985_latlong <- projectRaster(p50_1985, crs="+init=EPSG:4326", xy = TRUE) # doesnt run
+spts <- rasterToPoints(p50_1985, spatial = TRUE)
 
 # setting a personalised theme 
 theme_shrub <- function(){ theme(legend.position = "right",
