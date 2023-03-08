@@ -9,6 +9,7 @@ library(readr)
 library(raster)
 library(rasterVis)
 library(gridExtra)
+library(terra)
 
 # 2. LOADING DATA ----
 
@@ -48,8 +49,11 @@ extent(p50_1985)
 #ymin       : 2904500 
 #ymax       : 4038860 
 
+#p <- projectRaster(p50_1985, crs =4326 )
+#DTM_HARV_df <- as.data.frame(p50_1985, xy = TRUE)
+
 # p50_1985_latlong <- projectRaster(p50_1985, crs="+init=EPSG:4326", xy = TRUE) # doesnt run
-spts <- rasterToPoints(p50_1985, spatial = TRUE)
+# spts <- rasterToPoints(p50_1985, spatial = TRUE)
 
 # setting a personalised theme 
 theme_shrub <- function(){ theme(legend.position = "right",

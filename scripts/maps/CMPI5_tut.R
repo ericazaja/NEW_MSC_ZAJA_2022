@@ -13,7 +13,7 @@ library(RNetCDF)
 library(sf)
 library(tsbox)
 
-# download data (from hard drive)
+# download data
 nc_26 = open.nc("data/CHELSA_CMPI5/tasmax_Amon_GFDL-ESM4_ssp126_r1i1p1f1_gr1_201501-210012.nc")
 nc_85 = open.nc("data/CHELSA_CMPI5/tasmax_Amon_GFDL-ESM4_ssp585_r1i1p1f1_gr1_201501-210012.nc")
 
@@ -133,7 +133,7 @@ hdd.cdd.2100 = crop(tasmax.2100, extent(nc_sp)) # crop to the extent of the PCH 
 df_2100_july_85 <- as.data.frame(hdd.cdd.2100, xy=TRUE)
 
 plot(hdd.cdd.2100, main="July 2100", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
-
+df_2080_july_85 <- as.data.frame(hdd.cdd.2080, xy=TRUE)
 
 
 # STOP ----
