@@ -19,6 +19,8 @@ setwd("/Volumes/Kluane_22/Erica_masters_data_2022/katie_maps_wgs84")
 # Using the best-estimates: the 50th percentile of the 1,000 permutations
 
 p50_1985 <- raster("pft_agb_deciduousshrub_p025_1985_wgs84.tif") 
+p50_2020 <- raster("pft_agb_deciduousshrub_p50_2020_wgs84.tif") 
+
 p50_1990 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_1990.tif") 
 p50_1995 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_1995.tif") 
 p50_2000 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_2000.tif") 
@@ -32,14 +34,17 @@ p50_2020 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_2020.tif")
 
 # 3. DATA EXPLORE  -----
 plot(p50_1985)
+plot(p50_2020)
 
 class(p50_1985) # raster 
 
 # exploring resolution 
-res(p50_1985) # resolution 0.000595209 0.000595209 degrees
+res(p50_2020) # resolution 0.000595209 0.000595209 degrees
 
 # exploring projection
 projection(p50_1985)
+projection(p50_2020) # "+proj=longlat +datum=WGS84 +no_defs"
+
 # "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"
 crs(p50_1985)
 
