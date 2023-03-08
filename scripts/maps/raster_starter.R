@@ -11,23 +11,23 @@ library(rasterVis)
 library(gridExtra)
 library(terra)
 
-setwd("/Volumes/Kluane_22/Erica_masters_data_2022/katie_maps_wgs84")
-
 # 2. LOADING DATA ----
+boundary <- st_read("data/katie_map_border.shp") # loading data
+plot(boundary)
 
 # Loading rasters of shrub biomass (g/m2) in the PCH range from 1985-2020
 # Using the best-estimates: the 50th percentile of the 1,000 permutations
 
-p50_1985 <- raster("pft_agb_deciduousshrub_p025_1985_wgs84.tif") 
-p50_2020 <- raster("pft_agb_deciduousshrub_p50_2020_wgs84.tif") 
+p50_1985 <- raster("data/katie_maps/pft_agb_deciduousshrub_p025_1985_wgs84.tif") 
+p50_2020 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_2020_wgs84.tif") 
 
-p50_1990 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_1990.tif") 
-p50_1995 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_1995.tif") 
-p50_2000 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_2000.tif") 
-p50_2005 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_2005.tif") 
-p50_2010 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_2010.tif") 
-p50_2015 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_2015.tif") 
-p50_2020 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_2020.tif") 
+#p50_1990 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_1990.tif") 
+#p50_1995 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_1995.tif") 
+#p50_2000 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_2000.tif") 
+#p50_2005 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_2005.tif") 
+#p50_2010 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_2010.tif") 
+#p50_2015 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_2015.tif") 
+#p50_2020 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_2020.tif") 
 
 # Rasters tell us where there is shrub and where there isn't (cover)
 # if there is shrub, what is their biomass
@@ -63,12 +63,62 @@ extent(p50_2020)
 #ymin       : 59.43991 
 # ymax       : 71.49051 
 
-e <- extent(59.43991 ,71.49051,-154.8826 ,-127.0697 )
-extracted_p50_1985 <- extract(p50_1985, e)
+# trying to extract boundary of raster 
+e <- extent(p50_2020_resample)
+plot(e)
+poly_shrub_2020 <- as(e , 'SpatialPolygons')  
+plot(poly_shrub_2020)
+plot(p50_2020_resample)
+plot(poly_shrub_2020, lwd =3, border = "red", add = TRUE)
+r <- p50_2020_resample > -Inf
+pp <- rasterToPolygons(r,  dissolve = TRUE)
+plot(p50_2020_resample)
+plot(poly_shrub_2020, lwd =3, border = "red", add = TRUE)
+plot(pp, lwd =2, border = "blue", add = TRUE)
 
-# p50_1985_latlong <- projectRaster(p50_1985, crs="+init=EPSG:4326", xy = TRUE) # doesnt run
-spts <- rasterToPoints(p50_1985, spatial = TRUE)
+shapefile(pp, file = "data/katie_map_border.shp")
 
+#e <- extent(59.43991 ,71.49051,-154.8826 ,-127.0697 )
+#extracted_p50_1985 <- extract(p50_1985, e)
+
+# trying to aggregate pixels p50_2020
+# resolution of climate map / resolution of shrub raster
+#1/0.000595209 = 1680.082
+#1.25/0.000595209 = 2100.103
+# p50_2020_agg <- aggregate(p50_2020, fact=c(1680.082,2100.103), fun = mean, expand = TRUE) 
+p50_2020_resample <- resample(p50_2020, hdd.cdd.2050)
+plot(p50_2020_resample)
+writeRaster(p50_2020_resample, "data/p50_2020_resample.tif")
+res(p50_2020_resample) #1.25 1.00, same as climate!
+
+#p50_2020_resample_df <- extract(p50_2020_resample, xy, cellnumbers = T)
+#view(p50_2020_resample_df)
+
+#p50_2020_random <- as.data.frame(sampleRandom(p50_2020_resample, 264, na.rm=TRUE, ext=NULL, 
+ #                                           cells=TRUE, rowcol=FALSE, xy = TRUE)) 
+#view(p50_2020_random)
+#hist(p50_2020_random$pft_agb_deciduousshrub_p50_2020_wgs84)
+
+# extract points from raster -----
+extract <- raster::extract(p50_2020_resample, boundary, df = TRUE, cellnumbers = TRUE)
+
+# Order (for checking purposes)
+extract <- extract[order(extract$cell),]
+
+# Extract coordinates
+xy <- xyFromCell(p50_2020_resample, cell = extract$cell, spatial = FALSE)
+# Convert to df and add cellnumber
+xy <- as.data.frame(xy)
+xy$cell <- extract$cell
+
+# Merge two data frames
+extract_end <- merge(extract, xy)
+extract_end <- extract_end[order(extract_end$cell),]
+view(extract_end)
+hist(extract_end$pft_agb_deciduousshrub_p50_2020_wgs84)
+write.csv(extract_end, file = "data/extract_end.csv")
+
+# DATA VIS ------
 # setting a personalised theme 
 theme_shrub <- function(){ theme(legend.position = "right",
                                  axis.title.x = element_text(face="bold", size=20),
@@ -82,7 +132,7 @@ theme_shrub <- function(){ theme(legend.position = "right",
                                  plot.margin = unit(c(1,1,1,1), units = , "cm"))}
 
 # Plotting shrub raster (entire) with ggplot
-(gplot_p50_1985 <- gplot(p50_1985) +
+(gplot_p50_1985 <- gplot(p50_2020_resample) +
     geom_raster(aes(x = x, y = y, fill = value)) +
     # value is the specific value (of reflectance) each pixel is associated with
     scale_fill_viridis_c(rescaler = function(x, to = c(0, 1), from = NULL) {
@@ -91,14 +141,14 @@ theme_shrub <- function(){ theme(legend.position = "right",
     theme_shrub() +  # Remove ugly grey background
     xlab("\nLongitude") +
     ylab("Latitude\n") +
-    ggtitle("Shrub biomass (g/m2) in PCH range (1985)\n") +
+    ggtitle("Shrub biomass (g/m2) in PCH range (2020)\n") +
     theme(plot.title = element_text(hjust = 0.5),     # centres plot title
           text = element_text(size=15),		       	    # font size
           axis.text.x = element_text(angle = 30, hjust = 1)))  # rotates x axis text
 
 
 # Cropped map with personalised colour palette (low-mid-high) 
-(gplot_p50_1985_test_my_palette <- gplot(p50_1985) +
+(gplot_p50_1985_test_my_palette <- gplot(p50_2020_resample) +
     geom_raster(aes(x = x, y = y, fill = value)) +
     # value is the specific value (of reflectance) each pixel is associated with
     scale_fill_gradient2(low = "green4", mid = "green3", high = "brown", midpoint = 10,  na.value="white") +
@@ -111,7 +161,7 @@ theme_shrub <- function(){ theme(legend.position = "right",
           text = element_text(size=15),		       	    # font size
           axis.text.x = element_text(angle = 30, hjust = 1)))  # rotates x axis text
 
-(gplot_p50_2020 <- gplot(p50_2020) +
+(gplot_p50_2020 <- gplot(p50_2020_resample) +
     geom_raster(aes(x = x, y = y, fill = value)) +
     # value is the specific value (of reflectance) each pixel is associated with
     scale_fill_viridis_c(rescaler = function(x, to = c(0, 1), from = NULL) {
@@ -126,4 +176,6 @@ theme_shrub <- function(){ theme(legend.position = "right",
           axis.text.x = element_text(angle = 30, hjust = 1)))  # rotates x axis text
 
 grid.arrange(gplot_p50_1985, gplot_p50_2020, nrow=1)
+
+
 
