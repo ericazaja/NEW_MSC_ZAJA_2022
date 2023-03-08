@@ -30,6 +30,7 @@ plot(poly, x = lon, y = lat)
 class(poly) #sfc_POLYGON
 nc_sp <- sf:::as_Spatial(poly) # This works
 
+
 # Process the Data
 
 tasmax.dates = as.Date(var.get.nc(nc_26, "time"), origin="1850-01-01 00:00:00")
@@ -142,7 +143,7 @@ tasmax.2100= tasmax.scenes[[indices[1]]]
 hdd.cdd.2100 = crop(tasmax.2100, p50_2020) # crop to the extent of the PCH range
 df_2100_july_85 <- as.data.frame(hdd.cdd.2100, xy=TRUE)
 
- plot(hdd.cdd.2100, main="July 2100", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+plot(hdd.cdd.2100, main="July 2100", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 df_2080_july_85 <- as.data.frame(hdd.cdd.2080, xy=TRUE)
 
 library(gridExtra)
