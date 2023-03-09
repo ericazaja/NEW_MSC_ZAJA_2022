@@ -31,6 +31,9 @@ nc_MIROC_85 = open.nc("data/CMPI6/tasmax_Amon_MIROC-ES2L_ssp585_r2i1p1f2_gn_2015
 # Model 5:  CNRM-CERFACS | ssp585 | mon | tasmax
 nc_CNRM_85 = open.nc("data/CMPI6/tasmax_Amon_CNRM-CM6-1_ssp585_r1i1p1f2_gr_201501-210012.nc")
 
+# Model 6:  BCC | ssp585 | mon | tasmax (NOT DONE YET -----
+nc_BCC_85 = open.nc("data/CMPI6/tasmax_Amon_BCC-CSM2-MR_ssp585_r1i1p1f1_gn_201501-210012.nc")
+
 # Process the Data -----
 
 # Model 1: NOAA ------
@@ -210,9 +213,10 @@ tasmax.2020.5 = tasmax.scenes.5[[indices.5[1]]]
 res(tasmax.2020.5)# 1.40625 1.40625 degrees
 projection(tasmax.2020.5) #"+proj=longlat +datum=WGS84 +no_defs"
 # hdd.cdd.2023 = crop(tasmax.2023, boundary) # crop to the extent of the PCH range
+tasmax.2020.5.re <- resample(tasmax.2020.5, tasmax.2020.1) # hdd cdd is the climate raster
 
 ## crop and mask
-r2.5 <- crop(tasmax.2020.5, extent(boundary))
+r2.5 <- crop(tasmax.2020.5.re, extent(boundary))
 r3.5 <- mask(r2.5, boundary)
 
 ## Check that it worked
