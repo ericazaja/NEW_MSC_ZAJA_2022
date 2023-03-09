@@ -33,7 +33,7 @@ nc_sp <- sf:::as_Spatial(poly) # This works
 
 # Process the Data
 
-tasmax.dates = as.Date(var.get.nc(nc_26, "time"), origin="1850-01-01 00:00:00")
+# tasmax.dates = as.Date(var.get.nc(nc_26, "time"), origin="1850-01-01 00:00:00")
 tasmax.dates_2= as.Date(var.get.nc(nc_85, "time"), origin="1850-01-01 00:00:00")
 
 tasmax.scenes = sapply(1:length(tasmax.dates_2), function(z) {
@@ -122,7 +122,7 @@ indices = which((tasmax.dates_2 <= as.Date(paste0("2050-07-31"))) &
 tasmax.2050= tasmax.scenes[[indices[1]]] 
 hdd.cdd.2050 = crop(tasmax.2050, p50_2020) # crop to the extent of the PCH range
 df_2050_july_85 <- as.data.frame(hdd.cdd.2050, xy=TRUE)
-
+class(hdd.cdd.2050)
 plot(hdd.cdd.2050, main="July 2050", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 
 # july 2080

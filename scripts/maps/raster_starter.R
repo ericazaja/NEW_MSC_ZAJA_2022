@@ -77,6 +77,20 @@ plot(pp, lwd =2, border = "blue", add = TRUE)
 # saving as shapefile
 # shapefile(pp, file = "data/katie_map_border.shp")
 
+# AREA -----
+# Measuring area of raster
+# get sizes of all cells in raster [km2]
+cell_size <- raster::area(p50_2020_resample, na.rm = TRUE, weights = FALSE)
+# delete NAs from vector of all raster cells
+# NAs lie outside of the rastered region, can thus be omitted
+cell_size <- cell_size[!is.na(cell_size)] # 0.2815663
+#compute area [km2] of all cells in geo_raster
+raster_area <-length(cell_size)*median(cell_size)
+# print area of shrub map according to raster object
+print(paste("Area of PCH Alaskan range (raster)", round(raster_area, digits = 1),"km2"))
+# [1] "Area of PCH summer range (raster) is 793385.6 km2"
+# NB. PIXELS = CELLS
+
 # EXTRACTION ------
 # Extract points from raster 
 extract <- raster::extract(p50_2020_resample, boundary, df = TRUE, cellnumbers = TRUE)
@@ -138,28 +152,12 @@ theme_shrub <- function(){ theme(legend.position = "right",
     theme_shrub() +  # Remove ugly grey background
     xlab("\nLongitude") +
     ylab("Latitude\n") +
-    ggtitle("Shrub biomass cover (g/m2) of the PCH range (1985)\n") +
+    ggtitle("Shrub biomass cover (g/m2) of the PCH range (2020)\n") +
     theme(plot.title = element_text(hjust = 0.5),             # centres plot title
           text = element_text(size=15),		       	    # font size
           axis.text.x = element_text(angle = 30, hjust = 1)))  # rotates x axis text
 
-(gplot_p50_2020 <- gplot(p50_2020_resample) +
-    geom_raster(aes(x = x, y = y, fill = value)) +
-    # value is the specific value (of reflectance) each pixel is associated with
-    scale_fill_viridis_c(rescaler = function(x, to = c(0, 1), from = NULL) {
-      ifelse(x<500, scales::rescale(x, to = to, from = c(min(x, na.rm = TRUE), 500)),1)}, na.value="white") +
-    coord_quickmap()+
-    theme_shrub() +  # Remove ugly grey background
-    xlab("\nLongitude") +
-    ylab("Latitude\n") +
-    ggtitle("Shrub biomass (g/m2) in PCH range (2020)\n") +
-    theme(plot.title = element_text(hjust = 0.5),     # centres plot title
-          text = element_text(size=15),		       	    # font size
-          axis.text.x = element_text(angle = 30, hjust = 1)))  # rotates x axis text
-
-grid.arrange(gplot_p50_1985, gplot_p50_2020, nrow=1)
-
-# plotting raster with personalised colours
+# plotting raster with personalised colours from dataframe 
 (raster_my_palette_new <- ggplot(extract_end) + 
     geom_tile(aes(x=x,y=y,fill=pft_agb_deciduousshrub_p50_2020_wgs84)) + 
     # scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
@@ -167,18 +165,18 @@ grid.arrange(gplot_p50_1985, gplot_p50_2020, nrow=1)
     coord_quickmap()+
     theme_shrub() +  
     xlab("\nLongitude") +
-    ylab("Latitude\n") +
-    #xlim(-146.5, -141)+
-    #ylim(69.2,70.2)+ 
-    theme(plot.title = element_text(hjust = 0.5),      # centres plot title
-          text = element_text(size=40),	
-          axis.title.x =element_text(size=40),
-          axis.title.y =element_text(size=40),
-          axis.text.x = element_text(size=40, hjust = 1),
-          axis.text.y = element_text(size=40, hjust = 45),
-          legend.text = element_text(size=20),
-          legend.title = element_text(size=40),
-          legend.position ="right"))
+    ylab("Latitude\n"))
+   # xlim(-150, -130)+
+   # ylim(60,71)+ 
+    #theme(plot.title = element_text(hjust = 0.5),      # centres plot title
+     #     text = element_text(size=40),	
+     #     axis.title.x =element_text(size=40),
+      #    axis.title.y =element_text(size=40),
+      #    axis.text.x = element_text(size=40, hjust = 1),
+      #    axis.text.y = element_text(size=40, hjust = 45),
+       #   legend.text = element_text(size=20),
+       #   legend.title = element_text(size=40),
+        #  legend.position ="right"))
 
 # EXTRAS ----
 #p50_2020_resample_df <- extract(p50_2020_resample, xy, cellnumbers = T)
