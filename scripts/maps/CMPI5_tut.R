@@ -13,27 +13,22 @@ library(RNetCDF)
 library(sf)
 library(tsbox)
 
-# download data
-# nc_26 = open.nc("data/CHELSA_CMPI5/tasmax_Amon_GFDL-ESM4_ssp126_r1i1p1f1_gr1_201501-210012.nc")
-nc_85 = open.nc("data/CHELSA_CMPI5/tasmax_Amon_GFDL-ESM4_ssp585_r1i1p1f1_gr1_201501-210012.nc")
+# Download data ------
 
-# # polygon of max and min lat long of caribou area
-#lon <- c(-135.29,-149.9)
-#lat <- c(70.1, 64.8)
-#Poly_Coord_df = data.frame(lon, lat)
-#poly <- Poly_Coord_df %>% 
- # sf::st_as_sf(coords = c("lon", "lat"), 
-               #crs = 4326) %>% 
-  #sf::st_bbox() %>% 
-  #st_as_sfc()
-#plot(poly, x = lon, y = lat)
-#class(poly) #sfc_POLYGON
-#nc_sp <- sf:::as_Spatial(poly) # This works
+# Model 1: NOAA-GFDL Institution, experiment ssp585 (8.5 RCP), monthly (mon), tas max (tasmax daily-maximum near-surface (usually, 2 meter) air temperature (K))
+nc_85 = open.nc("data/CMPI6/tasmax_Amon_GFDL-ESM4_ssp585_r1i1p1f1_gr1_201501-210012.nc")
 
+# Model 2:  CMCC | ssp585 | mon | tasmax
+nc_CMCC_85 = open.nc("data/CMPI6/tasmax_Amon_CMCC-ESM2_ssp585_r1i1p1f1_gn_201501-210012.nc")
 
-# Process the Data
+# Model 3:  MRI | ssp585 | mon | tasmax 
+nc_MRI_85 = open.nc("data/CMPI6/tasmax_Amon_MRI-ESM2-0_ssp585_r1i2p1f1_gn_201501-210012.nc")
 
-# tasmax.dates = as.Date(var.get.nc(nc_26, "time"), origin="1850-01-01 00:00:00")
+# Model 4:   MIROC | ssp585 | mon | tasmax
+
+# Process the Data -----
+
+# Model 1: NOAA
 tasmax.dates_2= as.Date(var.get.nc(nc_85, "time"), origin="1850-01-01 00:00:00")
 
 tasmax.scenes = sapply(1:length(tasmax.dates_2), function(z) {
@@ -41,7 +36,7 @@ tasmax.scenes = sapply(1:length(tasmax.dates_2), function(z) {
   x = raster(grid, xmn=-90, xmx=90, ymn=0, ymx=360,
              crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
   x = rotate(flip(t(x), 2))
-  x = (x - 273.15)
+  x = (x - 273.15) # converting to celcius
   return(x) })
 
 close.nc(nc_85)
@@ -49,60 +44,42 @@ close.nc(nc_85)
 plot(tasmax.scenes[[1000]], main=tasmax.dates_2[[1000]], 
      col=colorRampPalette(c('navy', 'lightgray', 'red'))(30))
 
-# crop <- crop(tasmax.scenes, extent(nc_sp), xy = TRUE) # cant do this for list
-# STOP----
+# Model 2: CMCC
+tasmax.dates = as.Date(var.get.nc(nc_CMCC_85, "time"), origin="1850-01-01 00:00:00")
 
-# Aggregated Temperature
+tasmax.scenes.2 = sapply(1:length(tasmax.dates), function(z) {
+  grid = var.get.nc(nc_CMCC_85, "tasmax", start=c(NA, NA, z), count=c(NA, NA, 1))
+  x = raster(grid, xmn=-90, xmx=90, ymn=0, ymx=360,
+             crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+  x = rotate(flip(t(x), 2))
+  x = (x - 273.15) # converting to celcius
+  return(x) })
 
-indices = which((tasmax.dates_2 >= as.Date(paste0("2060-01-01"))) &
-(tasmax.dates_2 <= as.Date(paste0("2060-12-31"))))
+close.nc(nc_CMCC_85)
 
-tasmax.2060 = tasmax.scenes[[indices[1]]]
+plot(tasmax.scenes.2[[1000]], main=tasmax.dates[[1000]], 
+     col=colorRampPalette(c('navy', 'lightgray', 'red'))(30))
 
-for (scene in tasmax.scenes[indices[2:length(indices)]]) {
-  values(tasmax.2060) = pmax(values(tasmax.2060), values(scene)) }
+# Model 3: MRI
+tasmax.dates.3 = as.Date(var.get.nc(nc_MRI_85, "time"), origin="1850-01-01 00:00:00")
 
-plot(tasmax.2060, main="2060", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+tasmax.scenes.3 = sapply(1:length(tasmax.dates.3), function(z) {
+  grid = var.get.nc(nc_MRI_85, "tasmax", start=c(NA, NA, z), count=c(NA, NA, 1))
+  x = raster(grid, xmn=-90, xmx=90, ymn=0, ymx=360,
+             crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+  x = rotate(flip(t(x), 2))
+  x = (x - 273.15) # converting to celcius
+  return(x) })
 
+close.nc(nc_MRI_85)
 
-# b <- brick(tasmax.scenes)
+plot(tasmax.scenes.3[[1000]], main=tasmax.dates.3[[1000]], 
+     col=colorRampPalette(c('navy', 'lightgray', 'red'))(30))
 
-# tasmax_df <- as.data.frame(tasmax.scenes) # doesnt work
+# EXTRACTING rasters by year ------
 
-# Extract 
-
-weather_station = st_sfc(st_point(c(-88.27778, 40.03972)), crs=4326)
-
-y = sapply(tasmax.scenes, function(scene)  extract(scene, as_Spatial(poly)))
-
-x = 1970 + (as.numeric(tasmax.dates) / 365.25)
-
-tasmax.series = ts(y, start=floor(min(x)), end=floor(max(x)), deltat=1/12)
-
-plot(tasmax.series, col="darkred", ylab="Monthly Mean High Temperatures (F)",
-     type="l", lwd=3, bty="n", las=1, fg=NA)
-
-grid(nx=NA, ny=NULL, lty=1)
-
-decomposition = stl(tasmax.series, s.window=240, t.window=120)
-
-plot(decomposition)
-
-# Aggregated Baseline Rasters (2020)
-
-indices = which((tasmax.dates <= as.Date(paste0("2020-12-31"))) & 
-                  (tasmax.dates >= as.Date(paste0("2020-01-01"))))
-
-tasmax.2020 = tasmax.scenes[[indices[1]]]
-
-
-plot(hdd.cdd.2060, main="2020", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
-
-for (scene in tasmax.scenes[indices[2:length(indices)]]) {
-  values(tasmax.2020) = pmax(values(hdd.cdd.2060), values(scene)) }
-
-# START again -----
-# July 2023
+# 2023 ------
+# July 2023, MODEL 1 ----
 
 indices = which((tasmax.dates_2 <= as.Date(paste0("2023-07-31"))) & 
                   (tasmax.dates_2 >= as.Date(paste0("2023-07-01"))))
@@ -120,11 +97,74 @@ r3 <- mask(r2, boundary)
 plot(r3)
 plot(boundary, add=TRUE, lwd=2)
 
+plot(r3, main="July 2023, model 1", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+# df_2023_july_85 <- as.data.frame(r3, xy=TRUE)
+
+# July 2023, MODEL 2 ------
+
+indices = which((tasmax.dates <= as.Date(paste0("2023-07-31"))) & 
+                  (tasmax.dates >= as.Date(paste0("2023-07-01"))))
+
+tasmax.2023.2 = tasmax.scenes.2[[indices[1]]] 
+res(tasmax.2023.2)# 1.2500 0.9375 degrees
+projection(tasmax.2023.2) #"+proj=longlat +datum=WGS84 +no_defs"
+# hdd.cdd.2023 = crop(tasmax.2023, boundary) # crop to the extent of the PCH range
+
+## crop and mask
+r2 <- crop(tasmax.2023.2, extent(boundary))
+r3 <- mask(r2, boundary)
+
+## Check that it worked
+plot(r3)
+plot(boundary, add=TRUE, lwd=2)
+
 plot(r3, main="July 2023", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 # df_2023_july_85 <- as.data.frame(r3, xy=TRUE)
 
+# July 2023, MODEL 3 ------
 
-# july 2050
+indices.3  = which((tasmax.dates.3 <= as.Date(paste0("2023-07-31"))) & 
+                  (tasmax.dates.3 >= as.Date(paste0("2023-07-01"))))
+
+tasmax.2023.3 = tasmax.scenes.3[[indices.3[1]]] 
+res(tasmax.2023.3)# 1.125 1.125 degrees
+projection(tasmax.2023.3) #"+proj=longlat +datum=WGS84 +no_defs"
+# hdd.cdd.2023 = crop(tasmax.2023, boundary) # crop to the extent of the PCH range
+
+## crop and mask
+r2 <- crop(tasmax.2023.3, extent(boundary))
+r3 <- mask(r2, boundary)
+
+## Check that it worked
+plot(r3)
+plot(boundary, add=TRUE, lwd=2)
+
+plot(r3, main="July 2023, model 3", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+# df_2023_july_85 <- as.data.frame(r3, xy=TRUE)
+
+# 2040 -------
+# july 2040, MODEL 1 
+indices_2040 = which((tasmax.dates <= as.Date(paste0("2040-07-31"))) & 
+                  (tasmax.dates>= as.Date(paste0("2040-07-01"))))
+
+tasmax.2040 = tasmax.scenes.2[[indices[1]]] 
+res(tasmax.2040)# 1.25 1.00 degrees
+projection(tasmax.2040) #"+proj=longlat +datum=WGS84 +no_defs"
+# hdd.cdd.2023 = crop(tasmax.2023, boundary) # crop to the extent of the PCH range
+
+## crop and mask
+r2 <- crop(tasmax.2040, extent(boundary))
+r3 <- mask(r2, boundary)
+
+## Check that it worked
+plot(r3)
+plot(boundary, add=TRUE, lwd=2)
+
+plot(r3, main="July 2023, model 1", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+# df_2023_july_85 <- as.data.frame(r3, xy=TRUE)
+
+# 2050 -------
+# July 2050
 indices = which((tasmax.dates_2 <= as.Date(paste0("2050-07-31"))) & 
                   (tasmax.dates_2 >= as.Date(paste0("2050-07-01"))))
 
@@ -180,6 +220,55 @@ plot(r3, main="July 2100", col = colorRampPalette(c('navy', 'lightgray', 'red'))
 library(gridExtra)
 grid.arrange(plot_2023, plot_2050, plot_2080, plot_2100, nrow=2)
 
+# STOP----
+
+# Aggregated Temperature
+
+indices = which((tasmax.dates_2 >= as.Date(paste0("2060-01-01"))) &
+(tasmax.dates_2 <= as.Date(paste0("2060-12-31"))))
+
+tasmax.2060 = tasmax.scenes[[indices[1]]]
+
+for (scene in tasmax.scenes[indices[2:length(indices)]]) {
+  values(tasmax.2060) = pmax(values(tasmax.2060), values(scene)) }
+
+plot(tasmax.2060, main="2060", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+
+
+# Extract 
+
+weather_station = st_sfc(st_point(c(-88.27778, 40.03972)), crs=4326)
+
+y = sapply(tasmax.scenes, function(scene)  extract(scene, as_Spatial(poly)))
+
+x = 1970 + (as.numeric(tasmax.dates) / 365.25)
+
+tasmax.series = ts(y, start=floor(min(x)), end=floor(max(x)), deltat=1/12)
+
+plot(tasmax.series, col="darkred", ylab="Monthly Mean High Temperatures (F)",
+     type="l", lwd=3, bty="n", las=1, fg=NA)
+
+grid(nx=NA, ny=NULL, lty=1)
+
+decomposition = stl(tasmax.series, s.window=240, t.window=120)
+
+plot(decomposition)
+
+# Aggregated Baseline Rasters (2020)
+
+indices = which((tasmax.dates <= as.Date(paste0("2020-12-31"))) & 
+                  (tasmax.dates >= as.Date(paste0("2020-01-01"))))
+
+tasmax.2020 = tasmax.scenes[[indices[1]]]
+
+
+plot(hdd.cdd.2060, main="2020", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+
+for (scene in tasmax.scenes[indices[2:length(indices)]]) {
+  values(tasmax.2020) = pmax(values(hdd.cdd.2060), values(scene)) }
+
+# START again -----
+
 # STOP ----
 
 for (scene in tasmax.scenes[indices[2:length(indices)]]) {
@@ -192,3 +281,20 @@ pr.2020 = pr.scenes[[indices[1]]]
 
 for (scene in pr.scenes[indices[2:length(indices)]]) {
   pr.2020 = pr.2020 + scene }
+
+
+# extras ------
+# nc_26 = open.nc("data/CHELSA_CMPI5/tasmax_Amon_GFDL-ESM4_ssp126_r1i1p1f1_gr1_201501-210012.nc")
+
+# # polygon of max and min lat long of caribou area
+#lon <- c(-135.29,-149.9)
+#lat <- c(70.1, 64.8)
+#Poly_Coord_df = data.frame(lon, lat)
+#poly <- Poly_Coord_df %>% 
+# sf::st_as_sf(coords = c("lon", "lat"), 
+#crs = 4326) %>% 
+#sf::st_bbox() %>% 
+#st_as_sfc()
+#plot(poly, x = lon, y = lat)
+#class(poly) #sfc_POLYGON
+#nc_sp <- sf:::as_Spatial(poly) # This works
