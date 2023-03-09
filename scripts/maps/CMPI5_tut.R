@@ -1,5 +1,6 @@
-# CMPI5 explore script
+# CMPI6 dowload and average script 
 # Created on 06/03/2023 by Erica
+# following tutrial:
 # https://michaelminn.net/tutorials/r-climate/index.html
 
 # libraries -----
@@ -16,7 +17,7 @@ library(tsbox)
 # Download data ------
 
 # Model 1: NOAA-GFDL Institution, experiment ssp585 (8.5 RCP), monthly (mon), tas max (tasmax daily-maximum near-surface (usually, 2 meter) air temperature (K))
-nc_85 = open.nc("data/CMPI6/tasmax_Amon_GFDL-ESM4_ssp585_r1i1p1f1_gr1_201501-210012.nc")
+nc_NOAA_85 = open.nc("data/CMPI6/tasmax_Amon_GFDL-ESM4_ssp585_r1i1p1f1_gr1_201501-210012.nc")
 
 # Model 2:  CMCC | ssp585 | mon | tasmax
 nc_CMCC_85 = open.nc("data/CMPI6/tasmax_Amon_CMCC-ESM2_ssp585_r1i1p1f1_gn_201501-210012.nc")
@@ -25,26 +26,30 @@ nc_CMCC_85 = open.nc("data/CMPI6/tasmax_Amon_CMCC-ESM2_ssp585_r1i1p1f1_gn_201501
 nc_MRI_85 = open.nc("data/CMPI6/tasmax_Amon_MRI-ESM2-0_ssp585_r1i2p1f1_gn_201501-210012.nc")
 
 # Model 4:   MIROC | ssp585 | mon | tasmax
+nc_MIROC_85 = open.nc("data/CMPI6/tasmax_Amon_MIROC-ES2L_ssp585_r2i1p1f2_gn_201501-210012.nc")
+
+# Model 5:  CNRM-CERFACS | ssp585 | mon | tasmax
+nc_CNRM_85 = open.nc("data/CMPI6/tasmax_Amon_CNRM-CM6-1_ssp585_r1i1p1f2_gr_201501-210012.nc")
 
 # Process the Data -----
 
-# Model 1: NOAA
-tasmax.dates_2= as.Date(var.get.nc(nc_85, "time"), origin="1850-01-01 00:00:00")
+# Model 1: NOAA ------
+tasmax.dates.1= as.Date(var.get.nc(nc_NOAA_85, "time"), origin="1850-01-01 00:00:00")
 
-tasmax.scenes = sapply(1:length(tasmax.dates_2), function(z) {
-  grid = var.get.nc(nc_85, "tasmax", start=c(NA, NA, z), count=c(NA, NA, 1))
+tasmax.scenes.1 = sapply(1:length(tasmax.dates.1), function(z) {
+  grid = var.get.nc(nc_NOAA_85, "tasmax", start=c(NA, NA, z), count=c(NA, NA, 1))
   x = raster(grid, xmn=-90, xmx=90, ymn=0, ymx=360,
              crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
   x = rotate(flip(t(x), 2))
   x = (x - 273.15) # converting to celcius
   return(x) })
 
-close.nc(nc_85)
+close.nc(nc_NOAA_85)
 
-plot(tasmax.scenes[[1000]], main=tasmax.dates_2[[1000]], 
+plot(tasmax.scenes.1[[1000]], main="NOAA, RCP 8.5", sub =tasmax.dates.1[[1000]], 
      col=colorRampPalette(c('navy', 'lightgray', 'red'))(30))
 
-# Model 2: CMCC
+# Model 2: CMCC -------
 tasmax.dates = as.Date(var.get.nc(nc_CMCC_85, "time"), origin="1850-01-01 00:00:00")
 
 tasmax.scenes.2 = sapply(1:length(tasmax.dates), function(z) {
@@ -57,10 +62,10 @@ tasmax.scenes.2 = sapply(1:length(tasmax.dates), function(z) {
 
 close.nc(nc_CMCC_85)
 
-plot(tasmax.scenes.2[[1000]], main=tasmax.dates[[1000]], 
+plot(tasmax.scenes.2[[1000]], main="MRI, RCP 8.5",  sub=tasmax.dates[[1000]], 
      col=colorRampPalette(c('navy', 'lightgray', 'red'))(30))
 
-# Model 3: MRI
+# Model 3: MRI ------
 tasmax.dates.3 = as.Date(var.get.nc(nc_MRI_85, "time"), origin="1850-01-01 00:00:00")
 
 tasmax.scenes.3 = sapply(1:length(tasmax.dates.3), function(z) {
@@ -73,7 +78,39 @@ tasmax.scenes.3 = sapply(1:length(tasmax.dates.3), function(z) {
 
 close.nc(nc_MRI_85)
 
-plot(tasmax.scenes.3[[1000]], main=tasmax.dates.3[[1000]], 
+plot(tasmax.scenes.3[[1000]], main = "MRI, RCP 8.5", sub=tasmax.dates.3[[1000]], 
+     col=colorRampPalette(c('navy', 'lightgray', 'red'))(30))
+
+# Model 4: MIROC -------
+tasmax.dates.4 = as.Date(var.get.nc(nc_MIROC_85, "time"), origin="1850-01-01 00:00:00")
+
+tasmax.scenes.4 = sapply(1:length(tasmax.dates.4), function(z) {
+  grid = var.get.nc(nc_MIROC_85, "tasmax", start=c(NA, NA, z), count=c(NA, NA, 1))
+  x = raster(grid, xmn=-90, xmx=90, ymn=0, ymx=360,
+             crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+  x = rotate(flip(t(x), 2))
+  x = (x - 273.15) # converting to celcius
+  return(x) })
+
+close.nc(nc_MIROC_85)
+
+plot(tasmax.scenes.4[[1000]],main = "MIROC, RCP 8.5", sub=tasmax.dates.4[[1000]], 
+     col=colorRampPalette(c('navy', 'lightgray', 'red'))(30))
+
+# Model 5: CNRM -------
+tasmax.dates.5 = as.Date(var.get.nc(nc_CNRM_85, "time"), origin="1850-01-01 00:00:00")
+
+tasmax.scenes.5 = sapply(1:length(tasmax.dates.5), function(z) {
+  grid = var.get.nc(nc_CNRM_85, "tasmax", start=c(NA, NA, z), count=c(NA, NA, 1))
+  x = raster(grid, xmn=-90, xmx=90, ymn=0, ymx=360,
+             crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+  x = rotate(flip(t(x), 2))
+  x = (x - 273.15) # converting to celcius
+  return(x) })
+
+close.nc(nc_CNRM_85)
+
+plot(tasmax.scenes.5[[1000]], main = "CNRM, RCP 8.5",sub=tasmax.dates.4[[1000]], 
      col=colorRampPalette(c('navy', 'lightgray', 'red'))(30))
 
 # EXTRACTING rasters by year ------
@@ -267,7 +304,6 @@ plot(hdd.cdd.2060, main="2020", col = colorRampPalette(c('navy', 'lightgray', 'r
 for (scene in tasmax.scenes[indices[2:length(indices)]]) {
   values(tasmax.2020) = pmax(values(hdd.cdd.2060), values(scene)) }
 
-# START again -----
 
 # STOP ----
 

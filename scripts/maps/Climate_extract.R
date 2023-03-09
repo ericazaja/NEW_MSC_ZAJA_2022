@@ -11,6 +11,7 @@ coords <- shrub_map_extract %>%
 # Creating SpatialPoints (sp) object of unique coordinates
 coords_sp <- SpatialPoints(coords)
 
+# stack rasters of climate ? tasmax.2100.1, tasmax.2100.2, tasmax.2100.3...
 # Extracting variables values for each pair of coordinates
 chelsa.extract <- raster::extract(tasmax.2100, coords_sp, df = TRUE) # extract coords 
 
