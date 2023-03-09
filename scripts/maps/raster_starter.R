@@ -91,7 +91,7 @@ print(paste("Area of PCH Alaskan range (raster)", round(raster_area, digits = 1)
 # [1] "Area of PCH summer range (raster) is 793385.6 km2"
 # NB. PIXELS = CELLS
 
-# EXTRACTION ------
+# EXTRACTION of raster points ------
 # Extract points from raster 
 extract <- raster::extract(p50_2020_resample, boundary, df = TRUE, cellnumbers = TRUE)
 

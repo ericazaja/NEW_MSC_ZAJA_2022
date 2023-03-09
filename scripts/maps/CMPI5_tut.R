@@ -14,21 +14,21 @@ library(sf)
 library(tsbox)
 
 # download data
-nc_26 = open.nc("data/CHELSA_CMPI5/tasmax_Amon_GFDL-ESM4_ssp126_r1i1p1f1_gr1_201501-210012.nc")
+# nc_26 = open.nc("data/CHELSA_CMPI5/tasmax_Amon_GFDL-ESM4_ssp126_r1i1p1f1_gr1_201501-210012.nc")
 nc_85 = open.nc("data/CHELSA_CMPI5/tasmax_Amon_GFDL-ESM4_ssp585_r1i1p1f1_gr1_201501-210012.nc")
 
 # # polygon of max and min lat long of caribou area
-lon <- c(-135.29,-149.9)
-lat <- c(70.1, 64.8)
-Poly_Coord_df = data.frame(lon, lat)
-poly <- Poly_Coord_df %>% 
-  sf::st_as_sf(coords = c("lon", "lat"), 
-               crs = 4326) %>% 
-  sf::st_bbox() %>% 
-  st_as_sfc()
-plot(poly, x = lon, y = lat)
-class(poly) #sfc_POLYGON
-nc_sp <- sf:::as_Spatial(poly) # This works
+#lon <- c(-135.29,-149.9)
+#lat <- c(70.1, 64.8)
+#Poly_Coord_df = data.frame(lon, lat)
+#poly <- Poly_Coord_df %>% 
+ # sf::st_as_sf(coords = c("lon", "lat"), 
+               #crs = 4326) %>% 
+  #sf::st_bbox() %>% 
+  #st_as_sfc()
+#plot(poly, x = lon, y = lat)
+#class(poly) #sfc_POLYGON
+#nc_sp <- sf:::as_Spatial(poly) # This works
 
 
 # Process the Data
@@ -108,43 +108,74 @@ indices = which((tasmax.dates_2 <= as.Date(paste0("2023-07-31"))) &
                   (tasmax.dates_2 >= as.Date(paste0("2023-07-01"))))
 
 tasmax.2023 = tasmax.scenes[[indices[1]]] 
-res(tasmax.2023) # 1.25 1.00 degrees
+res(tasmax.2023)# 1.25 1.00 degrees
 projection(tasmax.2023) #"+proj=longlat +datum=WGS84 +no_defs"
-hdd.cdd.2023 = crop(tasmax.2023, p50_2020) # crop to the extent of the PCH range
-df_2023_july_85 <- as.data.frame(hdd.cdd.2023, xy=TRUE)
+# hdd.cdd.2023 = crop(tasmax.2023, boundary) # crop to the extent of the PCH range
 
-plot(hdd.cdd.2023, main="July 2023", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+## crop and mask
+r2 <- crop(tasmax.2023, extent(boundary))
+r3 <- mask(r2, boundary)
+
+## Check that it worked
+plot(r3)
+plot(boundary, add=TRUE, lwd=2)
+
+plot(r3, main="July 2023", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+# df_2023_july_85 <- as.data.frame(r3, xy=TRUE)
+
 
 # july 2050
 indices = which((tasmax.dates_2 <= as.Date(paste0("2050-07-31"))) & 
                   (tasmax.dates_2 >= as.Date(paste0("2050-07-01"))))
 
 tasmax.2050= tasmax.scenes[[indices[1]]] 
-hdd.cdd.2050 = crop(tasmax.2050, p50_2020) # crop to the extent of the PCH range
-df_2050_july_85 <- as.data.frame(hdd.cdd.2050, xy=TRUE)
+# hdd.cdd.2050 = crop(tasmax.2050, p50_2020) # crop to the extent of the PCH range
+# df_2050_july_85 <- as.data.frame(hdd.cdd.2050, xy=TRUE)
 class(hdd.cdd.2050)
-plot(hdd.cdd.2050, main="July 2050", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+
+## crop and mask
+r2 <- crop(tasmax.2050, extent(boundary))
+r3 <- mask(r2, boundary)
+
+## Check that it worked
+plot(r3)
+plot(boundary, add=TRUE, lwd=2)
+plot(r3, main="July 2050", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 
 # july 2080
 indices = which((tasmax.dates_2 <= as.Date(paste0("2080-07-31"))) & 
                   (tasmax.dates_2 >= as.Date(paste0("2080-07-01"))))
 
 tasmax.2080= tasmax.scenes[[indices[1]]] 
-hdd.cdd.2080 = crop(tasmax.2080, p50_2020) # crop to the extent of the PCH range
-df_2080_july_85 <- as.data.frame(hdd.cdd.2080, xy=TRUE)
+#hdd.cdd.2080 = crop(tasmax.2080, p50_2020) # crop to the extent of the PCH range
+#df_2080_july_85 <- as.data.frame(hdd.cdd.2080, xy=TRUE)
 
-plot(hdd.cdd.2080, main="July 2080", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+## crop and mask
+r2 <- crop(tasmax.2080, extent(boundary))
+r3 <- mask(r2, boundary)
+
+## Check that it worked
+plot(r3)
+plot(boundary, add=TRUE, lwd=2)
+plot(r3, main="July 2080", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 
 # july 2100
 indices = which((tasmax.dates_2 <= as.Date(paste0("2100-07-31"))) & 
                   (tasmax.dates_2 >= as.Date(paste0("2100-07-01"))))
 
 tasmax.2100= tasmax.scenes[[indices[1]]] 
-hdd.cdd.2100 = crop(tasmax.2100, p50_2020) # crop to the extent of the PCH range
-df_2100_july_85 <- as.data.frame(hdd.cdd.2100, xy=TRUE)
+#hdd.cdd.2100 = crop(tasmax.2100, p50_2020) # crop to the extent of the PCH range
+# df_2100_july_85 <- as.data.frame(hdd.cdd.2100, xy=TRUE)
 
-plot(hdd.cdd.2100, main="July 2100", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
-df_2080_july_85 <- as.data.frame(hdd.cdd.2080, xy=TRUE)
+## crop and mask
+r2 <- crop(tasmax.2100, extent(boundary))
+r3 <- mask(r2, boundary)
+
+## Check that it worked
+plot(r3)
+plot(boundary, add=TRUE, lwd=2)
+plot(r3, main="July 2100", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+# df_2080_july_85 <- as.data.frame(hdd.cdd.2080, xy=TRUE)
 
 library(gridExtra)
 grid.arrange(plot_2023, plot_2050, plot_2080, plot_2100, nrow=2)
