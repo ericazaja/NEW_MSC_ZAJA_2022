@@ -50,9 +50,9 @@ plot(tasmax.scenes.1[[1000]], main="NOAA, RCP 8.5", sub =tasmax.dates.1[[1000]],
      col=colorRampPalette(c('navy', 'lightgray', 'red'))(30))
 
 # Model 2: CMCC -------
-tasmax.dates = as.Date(var.get.nc(nc_CMCC_85, "time"), origin="1850-01-01 00:00:00")
+tasmax.dates.2 = as.Date(var.get.nc(nc_CMCC_85, "time"), origin="1850-01-01 00:00:00")
 
-tasmax.scenes.2 = sapply(1:length(tasmax.dates), function(z) {
+tasmax.scenes.2 = sapply(1:length(tasmax.dates.2), function(z) {
   grid = var.get.nc(nc_CMCC_85, "tasmax", start=c(NA, NA, z), count=c(NA, NA, 1))
   x = raster(grid, xmn=-90, xmx=90, ymn=0, ymx=360,
              crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
@@ -62,10 +62,10 @@ tasmax.scenes.2 = sapply(1:length(tasmax.dates), function(z) {
 
 close.nc(nc_CMCC_85)
 
-plot(tasmax.scenes.2[[1000]], main="MRI, RCP 8.5",  sub=tasmax.dates[[1000]], 
+plot(tasmax.scenes.2[[1000]], main="CMCC, RCP 8.5",  sub=tasmax.dates[[1000]], 
      col=colorRampPalette(c('navy', 'lightgray', 'red'))(30))
 
-# Model 3: MRI ------
+# Model 3: MRI (might remove this) ------
 tasmax.dates.3 = as.Date(var.get.nc(nc_MRI_85, "time"), origin="1850-01-01 00:00:00")
 
 tasmax.scenes.3 = sapply(1:length(tasmax.dates.3), function(z) {
@@ -115,72 +115,133 @@ plot(tasmax.scenes.5[[1000]], main = "CNRM, RCP 8.5",sub=tasmax.dates.4[[1000]],
 
 # EXTRACTING rasters by year ------
 
-# 2023 ------
-# July 2023, MODEL 1 ----
+# 2020 ------
 
-indices = which((tasmax.dates_2 <= as.Date(paste0("2023-07-31"))) & 
-                  (tasmax.dates_2 >= as.Date(paste0("2023-07-01"))))
+# July 2020, MODEL 1 ----
 
-tasmax.2023 = tasmax.scenes[[indices[1]]] 
-res(tasmax.2023)# 1.25 1.00 degrees
-projection(tasmax.2023) #"+proj=longlat +datum=WGS84 +no_defs"
+indices.1 = which((tasmax.dates.1 <= as.Date(paste0("2020-07-31"))) & 
+                  (tasmax.dates.1 >= as.Date(paste0("2020-07-01"))))
+
+tasmax.2020.1 = tasmax.scenes.1[[indices.1[1]]] 
+res(tasmax.2020.1)# 1.25 1.00 degrees
+projection(tasmax.2020.1) #"+proj=longlat +datum=WGS84 +no_defs"
+
+# crop and mask
+r2.1 <- crop(tasmax.2020.1, extent(boundary))
+r3.1 <- mask(r2.1, boundary)
+
+## Check that it worked
+plot(r3.1)
+plot(boundary, add=TRUE, lwd=2)
+
+plot(r3.1, main="July 2020, model 1", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+
+# July 2020, MODEL 2 ------
+
+indices.2 = which((tasmax.dates.2 <= as.Date(paste0("2020-07-31"))) & 
+                  (tasmax.dates.2 >= as.Date(paste0("2020-07-01"))))
+
+tasmax.2020.2 = tasmax.scenes.2[[indices.2[1]]] 
+res(tasmax.2020.2)# 1.2500 0.9375 degrees
+projection(tasmax.2020.2) #"+proj=longlat +datum=WGS84 +no_defs"
+# make size same as other climate raster (NOAA)
+tasmax.2020.2.re <- resample(tasmax.2020.2, tasmax.2020.1) # hdd cdd is the climate raster
+
+## crop and mask
+r2.2 <- crop(tasmax.2020.2.re, extent(boundary))
+r3.2 <- mask(r2.2, boundary)
+
+## Check that it worked
+plot(r3.2)
+plot(boundary, add=TRUE, lwd=2)
+
+plot(r3.2, main="July 2023, model 2", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+
+# July 2020, MODEL 3 ------
+
+indices.3  = which((tasmax.dates.3 <= as.Date(paste0("2020-07-31"))) & 
+                  (tasmax.dates.3 >= as.Date(paste0("2020-07-01"))))
+
+tasmax.2020.3 = tasmax.scenes.3[[indices.3[1]]] 
+res(tasmax.2020.3) # 1.125 1.125 degrees
+projection(tasmax.2020.3) #"+proj=longlat +datum=WGS84 +no_defs"
+# hdd.cdd.2023 = crop(tasmax.2023, boundary) # crop to the extent of the PCH range
+# make size same as other climate raster (NOAA)
+tasmax.2020.3.re <- resample(tasmax.2020.3, tasmax.2020.1) # hdd cdd is the climate raster
+
+## crop and mask
+r2.3 <- crop(tasmax.2020.3.re, extent(boundary))
+r3.3 <- mask(r2.3, boundary)
+
+## Check that it worked
+plot(r3.3)
+plot(boundary, add=TRUE, lwd=2)
+
+plot(r3.3, main="July 2023, model 3", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+
+# July 2020, MODEL 4 (might remove this because too coarse)------
+
+indices.4  = which((tasmax.dates.4 <= as.Date(paste0("2020-07-31"))) & 
+                     (tasmax.dates.4 >= as.Date(paste0("2020-07-01"))))
+
+tasmax.2020.4 = tasmax.scenes.4[[indices.4[1]]] 
+res(tasmax.2020.4)# 2.8125 2.8125 degrees
+projection(tasmax.2020.4) #"+proj=longlat +datum=WGS84 +no_defs"
+# hdd.cdd.2023 = crop(tasmax.2023, boundary) # crop to the extent of the PCH range
+# make size same as other climate raster (NOAA)
+tasmax.2020.4.re <- resample(tasmax.2020.4, tasmax.2020.1) # hdd cdd is the climate raster
+
+## crop and mask
+r2.4 <- crop(tasmax.2020.4.re, extent(boundary))
+r3.4 <- mask(r2.4, boundary)
+
+## Check that it worked
+plot(r3.4)
+plot(boundary, add=TRUE, lwd=2)
+
+plot(r3.4, main="July 2023, model 4", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+
+# July 2020, MODEL 5 ------
+
+indices.5  = which((tasmax.dates.5 <= as.Date(paste0("2020-07-31"))) & 
+                     (tasmax.dates.5 >= as.Date(paste0("2020-07-01"))))
+
+tasmax.2020.5 = tasmax.scenes.5[[indices.5[1]]] 
+res(tasmax.2020.5)# 1.40625 1.40625 degrees
+projection(tasmax.2020.5) #"+proj=longlat +datum=WGS84 +no_defs"
 # hdd.cdd.2023 = crop(tasmax.2023, boundary) # crop to the extent of the PCH range
 
 ## crop and mask
-r2 <- crop(tasmax.2023, extent(boundary))
-r3 <- mask(r2, boundary)
+r2.5 <- crop(tasmax.2020.5, extent(boundary))
+r3.5 <- mask(r2.5, boundary)
 
 ## Check that it worked
-plot(r3)
+plot(r3.5)
 plot(boundary, add=TRUE, lwd=2)
 
-plot(r3, main="July 2023, model 1", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
-# df_2023_july_85 <- as.data.frame(r3, xy=TRUE)
+plot(r3.5, main="July 2023, model 5", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 
-# July 2023, MODEL 2 ------
 
-indices = which((tasmax.dates <= as.Date(paste0("2023-07-31"))) & 
-                  (tasmax.dates >= as.Date(paste0("2023-07-01"))))
+# 2030 -------
+# July 2030, MODEL 1 ----
 
-tasmax.2023.2 = tasmax.scenes.2[[indices[1]]] 
-res(tasmax.2023.2)# 1.2500 0.9375 degrees
-projection(tasmax.2023.2) #"+proj=longlat +datum=WGS84 +no_defs"
-# hdd.cdd.2023 = crop(tasmax.2023, boundary) # crop to the extent of the PCH range
+indices.1.1 = which((tasmax.dates.1 <= as.Date(paste0("2030-07-31"))) & 
+                    (tasmax.dates.1 >= as.Date(paste0("2030-07-01"))))
 
-## crop and mask
-r2 <- crop(tasmax.2023.2, extent(boundary))
-r3 <- mask(r2, boundary)
+tasmax.2030.1.1 = tasmax.scenes.1[[indices.1.1[1]]] 
+
+# crop and mask
+r2.1.1 <- crop(tasmax.2020.1.1, extent(boundary))
+r3.1.1 <- mask(r2.1.1, boundary)
 
 ## Check that it worked
-plot(r3)
+plot(r3.1.1)
 plot(boundary, add=TRUE, lwd=2)
 
-plot(r3, main="July 2023", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
-# df_2023_july_85 <- as.data.frame(r3, xy=TRUE)
-
-# July 2023, MODEL 3 ------
-
-indices.3  = which((tasmax.dates.3 <= as.Date(paste0("2023-07-31"))) & 
-                  (tasmax.dates.3 >= as.Date(paste0("2023-07-01"))))
-
-tasmax.2023.3 = tasmax.scenes.3[[indices.3[1]]] 
-res(tasmax.2023.3)# 1.125 1.125 degrees
-projection(tasmax.2023.3) #"+proj=longlat +datum=WGS84 +no_defs"
-# hdd.cdd.2023 = crop(tasmax.2023, boundary) # crop to the extent of the PCH range
-
-## crop and mask
-r2 <- crop(tasmax.2023.3, extent(boundary))
-r3 <- mask(r2, boundary)
-
-## Check that it worked
-plot(r3)
-plot(boundary, add=TRUE, lwd=2)
-
-plot(r3, main="July 2023, model 3", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
-# df_2023_july_85 <- as.data.frame(r3, xy=TRUE)
+plot(r3.1.1, main="July 2030, model 1", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 
 # 2040 -------
-# july 2040, MODEL 1 
+# July 2040, MODEL 1-----
 indices_2040 = which((tasmax.dates <= as.Date(paste0("2040-07-31"))) & 
                   (tasmax.dates>= as.Date(paste0("2040-07-01"))))
 
@@ -219,7 +280,12 @@ plot(r3)
 plot(boundary, add=TRUE, lwd=2)
 plot(r3, main="July 2050", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 
-# july 2080
+# 2060 -------
+
+# 2070 -------
+
+# 2080 -------
+# July 2080
 indices = which((tasmax.dates_2 <= as.Date(paste0("2080-07-31"))) & 
                   (tasmax.dates_2 >= as.Date(paste0("2080-07-01"))))
 
@@ -236,7 +302,11 @@ plot(r3)
 plot(boundary, add=TRUE, lwd=2)
 plot(r3, main="July 2080", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 
-# july 2100
+# 2090 -------
+
+# 2100 ------
+
+# July 2100
 indices = which((tasmax.dates_2 <= as.Date(paste0("2100-07-31"))) & 
                   (tasmax.dates_2 >= as.Date(paste0("2100-07-01"))))
 
@@ -258,6 +328,8 @@ library(gridExtra)
 grid.arrange(plot_2023, plot_2050, plot_2080, plot_2100, nrow=2)
 
 # STOP----
+# hdd.cdd.2023 = crop(tasmax.2023, boundary) # crop to the extent of the PCH range
+# df_2023_july_85 <- as.data.frame(r3, xy=TRUE)
 
 # Aggregated Temperature
 
