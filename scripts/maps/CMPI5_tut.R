@@ -31,8 +31,7 @@ nc_MIROC_85 = open.nc("data/CMPI6/tasmax_Amon_MIROC-ES2L_ssp585_r2i1p1f2_gn_2015
 # Model 5:  CNRM-CERFACS | ssp585 | mon | tasmax
 nc_CNRM_85 = open.nc("data/CMPI6/tasmax_Amon_CNRM-CM6-1_ssp585_r1i1p1f2_gr_201501-210012.nc")
 
-# Model 6:  BCC | ssp585 | mon | tasmax (NOT DONE YET -----
-nc_BCC_85 = open.nc("data/CMPI6/tasmax_Amon_BCC-CSM2-MR_ssp585_r1i1p1f1_gn_201501-210012.nc")
+# Model 6:  
 
 # Process the Data -----
 
@@ -65,7 +64,7 @@ tasmax.scenes.2 = sapply(1:length(tasmax.dates.2), function(z) {
 
 close.nc(nc_CMCC_85)
 
-plot(tasmax.scenes.2[[1000]], main="CMCC, RCP 8.5",  sub=tasmax.dates[[1000]], 
+plot(tasmax.scenes.2[[1000]], main="CMCC, RCP 8.5",  sub=tasmax.dates.2[[1000]], 
      col=colorRampPalette(c('navy', 'lightgray', 'red'))(30))
 
 # Model 3: MRI (might remove this) ------
@@ -113,7 +112,23 @@ tasmax.scenes.5 = sapply(1:length(tasmax.dates.5), function(z) {
 
 close.nc(nc_CNRM_85)
 
-plot(tasmax.scenes.5[[1000]], main = "CNRM, RCP 8.5",sub=tasmax.dates.4[[1000]], 
+plot(tasmax.scenes.5[[1000]], main = "CNRM, RCP 8.5",sub=tasmax.dates.5[[1000]], 
+     col=colorRampPalette(c('navy', 'lightgray', 'red'))(30))
+
+# Model 6:
+tasmax.dates.6 = as.Date(var.get.nc(nc_BCC_85, "time"), origin="1850-01-01 00:00:00")
+
+tasmax.scenes.6 = sapply(1:length(tasmax.dates.6), function(z) {
+  grid = var.get.nc(nc_BCC_85, "tasmax", start=c(NA, NA, z), count=c(NA, NA, 1))
+  x = raster(grid, xmn=-90, xmx=90, ymn=0, ymx=360,
+             crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+  x = rotate(flip(t(x), 2))
+  x = (x - 273.15) # converting to celcius
+  return(x) })
+
+close.nc(nc_BCC_85)
+
+plot(tasmax.scenes.6[[1000]], main = "BCC, RCP 8.5",sub=tasmax.dates.6[[1030]], 
      col=colorRampPalette(c('navy', 'lightgray', 'red'))(30))
 
 # EXTRACTING rasters by year ------
@@ -211,6 +226,28 @@ indices.5  = which((tasmax.dates.5 <= as.Date(paste0("2020-07-31"))) &
 
 tasmax.2020.5 = tasmax.scenes.5[[indices.5[1]]] 
 res(tasmax.2020.5)# 1.40625 1.40625 degrees
+projection(tasmax.2020.5) #"+proj=longlat +datum=WGS84 +no_defs"
+# hdd.cdd.2023 = crop(tasmax.2023, boundary) # crop to the extent of the PCH range
+tasmax.2020.5.re <- resample(tasmax.2020.5, tasmax.2020.1) # hdd cdd is the climate raster
+
+## crop and mask
+r2.5 <- crop(tasmax.2020.5.re, extent(boundary))
+r3.5 <- mask(r2.5, boundary)
+
+## Check that it worked
+plot(r3.5)
+plot(boundary, add=TRUE, lwd=2)
+
+plot(r3.5, main="July 2023, model 5", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+
+
+# July 2020, MODEL 6 ------
+
+indices.6  = which((tasmax.dates.6 <= as.Date(paste0("2020-07-31"))) & 
+                     (tasmax.dates.6 >= as.Date(paste0("2020-07-01"))))
+
+tasmax.2020.6 = tasmax.scenes.6[[indices.6[1]]] 
+res(tasmax.2020.6)# 1.40625 1.40625 degrees
 projection(tasmax.2020.5) #"+proj=longlat +datum=WGS84 +no_defs"
 # hdd.cdd.2023 = crop(tasmax.2023, boundary) # crop to the extent of the PCH range
 tasmax.2020.5.re <- resample(tasmax.2020.5, tasmax.2020.1) # hdd cdd is the climate raster

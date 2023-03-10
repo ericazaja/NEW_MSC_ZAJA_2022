@@ -63,6 +63,7 @@ plot(elong_arc)
 pp_check(elong_arc, type = "dens_overlay", nsamples = 100) 
 
 # 2. HEIGHT over time ------
+# Salix richardsonii -------
 all_CG_growth_ric_south <- all_CG_growth_ric %>%
   filter(population == "Southern")
 
@@ -101,6 +102,9 @@ plot(height_pul_south)
 pp_check(height_pul_south, type = "dens_overlay", nsamples = 100) 
 
 # Salix arctica -------
+all_CG_growth_arc_south <- all_CG_growth_arc %>%
+  filter(population == "Southern")
+
 height_arc <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population+(1|Year),
                         data = all_CG_growth_arc,  family = gaussian(), chains = 3,
                         iter = 5000, warmup = 1000, 
@@ -109,6 +113,16 @@ height_arc <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population+(1|Year),
 summary(height_arc) # significant growth over time
 plot(height_arc)
 pp_check(height_arc, type = "dens_overlay", nsamples = 100) 
+
+# only southern
+height_arc_south <- brms::brm(log(Canopy_Height_cm) ~ Sample_age+(1|Year),
+                              data = all_CG_growth_arc_south,  family = gaussian(), chains = 3,
+                              iter = 5000, warmup = 1000, 
+                              control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(height_arc_south) # 
+plot(height_arc_south)
+pp_check(height_arc_south, type = "dens_overlay", nsamples = 100) 
 
 # DATA VISUALISATION -------
 # 1. HEIGHT -----

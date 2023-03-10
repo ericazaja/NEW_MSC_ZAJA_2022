@@ -61,5 +61,16 @@ coord.chelsa.combo.c <- coord.chelsa.combo.b %>%
 
 # do this for all years til 2100
 view(coord.chelsa.combo.c)
-# Exporting the dataframe to csv
-# write.csv(coord.chelsa.combo.b, "data/coord_chelsa_combo_b.csv")
+# Exporting the dataframe to csv 
+write.csv(coord.chelsa.combo.c, "data/coord_chelsa_combo_c.csv")
+
+# trying to plot 
+# plotting biomass in 2020 and multiplying by random numbers just to test
+(raster_test_temp <- ggplot(coord.chelsa.combo.c) + 
+    geom_tile(aes(x=x,y=y,fill=(biomass_per_m2)*4)) + 
+    # scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
+    scale_fill_gradient2(name = "Shrub biomass g/m2",high = "green4", mid = "green3", low = "brown", midpoint = 500,  na.value="white") +
+    coord_quickmap()+
+    theme_shrub() +  
+    xlab("\nLongitude") +
+    ylab("Latitude\n"))
