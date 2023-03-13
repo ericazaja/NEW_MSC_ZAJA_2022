@@ -81,7 +81,7 @@ cover_pul <- brms::brm((cover_percent/100) ~ Sample_age + (1|Sample_age),
                         iter = 5000, warmup = 1000, 
                         control = list(max_treedepth = 15, adapt_delta = 0.99))
 
-summary(cover_pul) # not significant cover growth over time
+summary(cover_pul) # significant cover growth over time
 plot(cover_pul)
 pp_check(cover_pul, type = "dens_overlay", nsamples = 100) 
 

@@ -110,7 +110,6 @@ round(20.71333, digits = 1) # 20.7
 # FINAL EQUATION:  # Equation: Biomass =  ( 2.2 *height +-  24.0) + (14.2 *cover +-  20.7)
 
 
-
 # 4.DATA VISUALISATION------
 
 # 4.1. Salix richardsonii -------

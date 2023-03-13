@@ -81,6 +81,8 @@ all_cg_max_source <- rbind(max_cg_elong,all_CG_source_growth_temp_edit_1)
 all_cg_max_source$Species <- as.factor(all_cg_max_source$Species)
 all_cg_max_source$july_mean_temp <- as.factor(all_cg_max_source$july_mean_temp)
 
+write.csv(all_cg_max_source, "data/all_cg_max_source.csv")
+
 # doing same but with chelsa 
 # add temp column
 all_CG_source_growth_temp_CHELSA <- all_CG_source_growth %>%
@@ -110,6 +112,7 @@ max_cg_elong_CHELSA <- max_cg_elong_CHELSA %>%
 
 all_cg_max_source_CHELSA <- rbind(max_cg_elong_CHELSA, all_CG_source_growth_temp_edit_2)
 # all_cg_max_source_CHELSA$july_mean_temp <- as.factor(all_cg_max_source_CHELSA$july_mean_temp)
+write.csv(all_cg_max_source_CHELSA, "data/all_cg_max_source_CHELSA.csv")
 
 # creating overall mean stem elong value for each site
 # in situ temps and chelsa temps -----
