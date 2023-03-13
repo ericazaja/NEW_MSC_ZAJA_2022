@@ -98,12 +98,27 @@ pp_check(cover_arc, type = "dens_overlay", nsamples = 100)
 
 # RANDOM SLOPE MODEL ------
 CG_ALL_cover_biomass$Species <- as.factor(CG_ALL_cover_biomass$Species)
+
+# all spp
 cover_random_slopes <- brms::brm((cover_percent/100) ~ Sample_age + (1+Sample_age|Species),
                                  data = CG_ALL_cover_biomass,  family = "beta", chains = 3,
                                  iter = 5000, warmup = 1000, 
                                  control = list(max_treedepth = 15, adapt_delta = 0.99))
 
 summary(cover_random_slopes) #  significant cover growth over time
+plot(cover_random_slopes)
+pp_check(cover_random_slopes, type = "dens_overlay", nsamples = 100) 
+
+# only tall shrubs
+pulchra_ric_cover_biomass <- CG_ALL_cover_biomass %>%
+  filter(Species %in% c("Salix pulchra", "Salix richardsonii"))
+
+tall_cover_random_slopes <- brms::brm((cover_percent/100) ~ Sample_age + (1+Sample_age|Species),
+                                 data = pulchra_ric_cover_biomass,  family = "beta", chains = 3,
+                                 iter = 5000, warmup = 1000, 
+                                 control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(tall_cover_random_slopes) #  significant cover growth over time
 plot(cover_random_slopes)
 pp_check(cover_random_slopes, type = "dens_overlay", nsamples = 100) 
 
@@ -140,6 +155,7 @@ plot(biom_arc)
 pp_check(biom_arc, type = "dens_overlay", nsamples = 100) 
 
 # RANDOM SLOPE MODEL ------
+# all spp.
 biom_random_slopes <- brms::brm(log(biomass_per_m2) ~ Sample_age + (1+Sample_age|Species),
                                  data = CG_ALL_cover_biomass,  family = gaussian(), chains = 3,
                                  iter = 5000, warmup = 1000, 
@@ -148,6 +164,17 @@ biom_random_slopes <- brms::brm(log(biomass_per_m2) ~ Sample_age + (1+Sample_age
 summary(biom_random_slopes) #  significant cover growth over time
 plot(biom_random_slopes)
 pp_check(biom_random_slopes, type = "dens_overlay", nsamples = 100) 
+
+# only tall shrubs
+tall_biom_random_slopes <- brms::brm(log(biomass_per_m2) ~ Sample_age + (1+Sample_age|Species),
+                                data = pulchra_ric_cover_biomass,  family = gaussian(), chains = 3,
+                                iter = 5000, warmup = 1000, 
+                                control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(tall_biom_random_slopes) #  significant cover growth over time
+plot(tall_biom_random_slopes)
+pp_check(tall_biom_random_slopes, type = "dens_overlay", nsamples = 100) 
+
 
 # 4. DATA VISUALISATION ---------
 theme_shrub <- function(){ theme(legend.position = "right",
@@ -230,6 +257,23 @@ arc_cov_data_1 <- arc_cov_1[[1]]
   theme_shrub() +
   theme(plot.title = element_text(hjust = .5)))
 
+# random slope model plot NO ARCTICA
+(tall_cover_random_slopes_plot <- pulchra_ric_cover_biomass %>%
+   bind_cols(as_tibble(fitted(tall_cover_random_slopes))) %>%
+   group_by(Species) %>%
+   ggplot() +
+   geom_point(aes(x = Sample_age, y = (cover_percent/100), colour = Species), size = 4, alpha = .75) +
+   geom_point(aes(x = Sample_age, y = Estimate), shape = 1, size = 4, stroke = 1.5) +
+   geom_smooth(aes(x = Sample_age, y = (cover_percent/100), colour = Species, fill = Species)) +
+   labs(x = "Sample age", y = "Shrub cover (proportion)",
+        subtitle = "Black circles are fitted values.") +
+   # scale_x_continuous(expand = c(.075, .075), breaks = 0:3) +
+   #facet_wrap(~Species, nrow = 1) +
+   scale_colour_viridis_d(begin = 0.1, end = 0.85) +
+   scale_fill_viridis_d(begin = 0.1, end = 0.85) +   
+   theme_shrub() +
+   theme(plot.title = element_text(hjust = .5)))
+
 # 4.2 BIOMASS -----
 # Salix richardsonii ------
 rich_biom_1 <- (conditional_effects(biom_rich))
@@ -299,6 +343,22 @@ arc_biom_data_1 <- arc_biom_1[[1]]
    theme_shrub() +
    theme(plot.title = element_text(hjust = .5)))
 
+# random slope model plot NO ARCTICA
+(tall_biom_random_slopes_plot <- pulchra_ric_cover_biomass %>%
+    bind_cols(as_tibble(fitted(tall_biom_random_slopes))) %>%
+    group_by(Species) %>%
+    ggplot() +
+    geom_point(aes(x = Sample_age, y = (log(biomass_per_m2)), colour = Species), size = 4, alpha = .75) +
+    geom_point(aes(x = Sample_age, y = Estimate), shape = 1, size = 4, stroke = 1.5) +
+    geom_smooth(aes(x = Sample_age, y = (log(biomass_per_m2)), colour = Species, fill = Species)) +
+    labs(x = "Sample age", y = "Shrub biomass (log, g/m2)",
+         subtitle = "Black circles are fitted values.") +
+    # scale_x_continuous(expand = c(.075, .075), breaks = 0:3) +
+    #facet_wrap(~Species, nrow = 1) +
+    scale_colour_viridis_d(begin = 0.1, end = 0.85) +
+    scale_fill_viridis_d(begin = 0.1, end = 0.85) +   
+    theme_shrub() +
+    theme(plot.title = element_text(hjust = .5)))
 
 # panels -----
 CG_cov_panel <- grid.arrange(rich_cover_plot,
