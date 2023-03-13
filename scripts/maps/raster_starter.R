@@ -88,7 +88,7 @@ cell_size <- cell_size[!is.na(cell_size)] # 0.2815663
 raster_area <-length(cell_size)*median(cell_size)
 # print area of shrub map according to raster object
 print(paste("Area of PCH Alaskan range (raster)", round(raster_area, digits = 1),"km2"))
-# [1] "Area of PCH summer range (raster) is 793385.6 km2"
+# [1] "Area of PCH summer range (raster) is 79,3385.6 km2"
 # NB. PIXELS = CELLS
 
 # EXTRACTION of raster points ------
@@ -110,7 +110,7 @@ extract_end <- merge(extract, xy)
 extract_end <- extract_end[order(extract_end$cell),]
 view(extract_end)
 hist(extract_end$pft_agb_deciduousshrub_p50_2020_wgs84)
-
+range(extract_end$pft_agb_deciduousshrub_p50_2020_wgs84) #  4.766095 495.623108
 # saving data as csv
 write.csv(extract_end, file = "data/extract_end.csv")
 

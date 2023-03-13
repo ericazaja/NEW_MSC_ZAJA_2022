@@ -299,7 +299,7 @@ r3 <- mask(r2, boundary)
 plot(r3)
 plot(boundary, add=TRUE, lwd=2)
 
-plot(r3, main="July 2023, model 1", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+plot(r3, main="July 2040, model 1", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 # df_2023_july_85 <- as.data.frame(r3, xy=TRUE)
 
 # 2050 -------
