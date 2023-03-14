@@ -126,7 +126,7 @@ mean(c_mean) # 354.4224 g/m2
 range(coord.chelsa.combo.c.biom.2030$biomass_per_m2) # 104.1922 722.9597
 
 # percentage difference
-(354.4224- 225.4707)/225.4707 
+(354.4224 - 225.4707)/225.4707 
 # =  0.5719222 
 # 57% increase in biomass
 
@@ -139,6 +139,10 @@ c_mean <- c(coord.chelsa.combo.c.biom.2040$biomass_per_m2)
 mean(c_mean) # 388.644 g/m2
 range(coord.chelsa.combo.c.biom.2040$biomass_per_m2) # 162.2563 735.7610
 
+# percentage difference
+(388.644- 354.4224)/354.4224 
+# =  0.09655597
+# 9.6% increase in biomass
 
 # rebind with 2020 data
 coord.chelsa.combo.c.all.biom <- rbind(coord.chelsa.combo.c.biom.2020, coord.chelsa.combo.c.biom.2030, coord.chelsa.combo.c.biom.2040)
@@ -146,7 +150,21 @@ coord.chelsa.combo.c.all.biom <- rbind(coord.chelsa.combo.c.biom.2020, coord.che
 # Exporting the dataframe to csv 
 write.csv(coord.chelsa.combo.c, "data/coord_chelsa_combo_c.csv")
 
+# Data visualisation -------
 # trying to plot 
+
+# plotting facet biomass (yellow-green)
+(raster_test_temp <- ggplot(coord.chelsa.combo.c.all.biom) + 
+    geom_tile(aes(x=x,y=y,fill=(biomass_per_m2))) + 
+    facet_grid(~year) +
+    #scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
+    scale_fill_gradient(name = "Shrub biomass g/m2",high = "green4", low = "yellow1",  na.value="white",
+                        breaks = c(0, 100, 200, 300, 400, 500, 600, 700, 800, 900)) +
+    coord_quickmap()+
+    theme_shrub() +  
+    xlab("\nLongitude") +
+    ylab("Latitude\n"))
+
 # plotting facet biomass!
 (raster_test_temp <- ggplot(coord.chelsa.combo.c.all.biom) + 
     geom_tile(aes(x=x,y=y,fill=(biomass_per_m2))) + 
@@ -158,6 +176,7 @@ write.csv(coord.chelsa.combo.c, "data/coord_chelsa_combo_c.csv")
     theme_shrub() +  
     xlab("\nLongitude") +
     ylab("Latitude\n"))
+
 
 # plotting biomass in 2030
 (raster_test_temp <- ggplot(coord.chelsa.combo.c.biom) + 
