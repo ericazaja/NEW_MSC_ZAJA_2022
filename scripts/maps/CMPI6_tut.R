@@ -3,7 +3,7 @@
 # following tutrial:
 # https://michaelminn.net/tutorials/r-climate/index.html
 
-# libraries -----
+# Libraries -----
 library(ncdf4)
 library(raster)
 library(tidyr)
@@ -31,7 +31,8 @@ nc_MIROC_85 = open.nc("data/CMPI6/tasmax_Amon_MIROC-ES2L_ssp585_r2i1p1f2_gn_2015
 # Model 5:  CNRM-CERFACS | ssp585 | mon | tasmax
 nc_CNRM_85 = open.nc("data/CMPI6/tasmax_Amon_CNRM-CM6-1_ssp585_r1i1p1f2_gr_201501-210012.nc")
 
-# Model 6:  
+# Model 6:   ACCESS-CM2 | ssp585 | mon | tasmax 
+nc_ACCESS_85 = open.nc("data/CMPI6/tasmax_Amon_ACCESS-CM2_ssp585_r2i1p1f1_gn_201501-210012.nc") 
 
 # Process the Data -----
 
@@ -115,8 +116,8 @@ close.nc(nc_CNRM_85)
 plot(tasmax.scenes.5[[1000]], main = "CNRM, RCP 8.5",sub=tasmax.dates.5[[1000]], 
      col=colorRampPalette(c('navy', 'lightgray', 'red'))(30))
 
-# Model 6:
-tasmax.dates.6 = as.Date(var.get.nc(nc_BCC_85, "time"), origin="1850-01-01 00:00:00")
+# Model 6: ACCESS ----
+tasmax.dates.6 = as.Date(var.get.nc(nc_ACCESS_85, "time"), origin="1850-01-01 00:00:00")
 
 tasmax.scenes.6 = sapply(1:length(tasmax.dates.6), function(z) {
   grid = var.get.nc(nc_BCC_85, "tasmax", start=c(NA, NA, z), count=c(NA, NA, 1))
@@ -126,16 +127,16 @@ tasmax.scenes.6 = sapply(1:length(tasmax.dates.6), function(z) {
   x = (x - 273.15) # converting to celcius
   return(x) })
 
-close.nc(nc_BCC_85)
+close.nc(nc_ACCESS_85)
 
-plot(tasmax.scenes.6[[1000]], main = "BCC, RCP 8.5",sub=tasmax.dates.6[[1030]], 
+plot(tasmax.scenes.6[[1000]], main = "ACCESS, RCP 8.5",sub=tasmax.dates.6[[1030]], 
      col=colorRampPalette(c('navy', 'lightgray', 'red'))(30))
 
 # EXTRACTING rasters by year ------
 
-# 2020 ------
+# JULY 2020 ------
 
-# July 2020, MODEL 1 ----
+# MODEL 1 July 2020 ----
 
 indices.1 = which((tasmax.dates.1 <= as.Date(paste0("2020-07-31"))) & 
                   (tasmax.dates.1 >= as.Date(paste0("2020-07-01"))))
@@ -154,7 +155,7 @@ plot(boundary, add=TRUE, lwd=2)
 
 plot(r3.1, main="July 2020, model 1", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 
-# July 2020, MODEL 2 ------
+#  MODEL 2, July 2020 ------
 
 indices.2 = which((tasmax.dates.2 <= as.Date(paste0("2020-07-31"))) & 
                   (tasmax.dates.2 >= as.Date(paste0("2020-07-01"))))
@@ -173,9 +174,9 @@ r3.2 <- mask(r2.2, boundary)
 plot(r3.2)
 plot(boundary, add=TRUE, lwd=2)
 
-plot(r3.2, main="July 2023, model 2", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+plot(r3.2, main="July 2020, model 2", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 
-# July 2020, MODEL 3 ------
+#  MODEL 3, July 2020 ------
 
 indices.3  = which((tasmax.dates.3 <= as.Date(paste0("2020-07-31"))) & 
                   (tasmax.dates.3 >= as.Date(paste0("2020-07-01"))))
@@ -195,9 +196,9 @@ r3.3 <- mask(r2.3, boundary)
 plot(r3.3)
 plot(boundary, add=TRUE, lwd=2)
 
-plot(r3.3, main="July 2023, model 3", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+plot(r3.3, main="July 2020, model 3", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 
-# July 2020, MODEL 4 (might remove this because too coarse)------
+# MODEL 4, July 2020 ------
 
 indices.4  = which((tasmax.dates.4 <= as.Date(paste0("2020-07-31"))) & 
                      (tasmax.dates.4 >= as.Date(paste0("2020-07-01"))))
@@ -217,9 +218,9 @@ r3.4 <- mask(r2.4, boundary)
 plot(r3.4)
 plot(boundary, add=TRUE, lwd=2)
 
-plot(r3.4, main="July 2023, model 4", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+plot(r3.4, main="July 2020, model 4", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 
-# July 2020, MODEL 5 ------
+# MODEL 5, July 2020  ------
 
 indices.5  = which((tasmax.dates.5 <= as.Date(paste0("2020-07-31"))) & 
                      (tasmax.dates.5 >= as.Date(paste0("2020-07-01"))))
@@ -241,38 +242,38 @@ plot(boundary, add=TRUE, lwd=2)
 plot(r3.5, main="July 2023, model 5", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 
 
-# July 2020, MODEL 6 ------
+# MODEL 6, July 2020 ------
 
 indices.6  = which((tasmax.dates.6 <= as.Date(paste0("2020-07-31"))) & 
                      (tasmax.dates.6 >= as.Date(paste0("2020-07-01"))))
 
 tasmax.2020.6 = tasmax.scenes.6[[indices.6[1]]] 
-res(tasmax.2020.6)# 1.40625 1.40625 degrees
-projection(tasmax.2020.5) #"+proj=longlat +datum=WGS84 +no_defs"
+res(tasmax.2020.6)# 1.125 1.125 degrees
+projection(tasmax.2020.6) #"+proj=longlat +datum=WGS84 +no_defs"
 # hdd.cdd.2023 = crop(tasmax.2023, boundary) # crop to the extent of the PCH range
-tasmax.2020.5.re <- resample(tasmax.2020.5, tasmax.2020.1) # hdd cdd is the climate raster
+tasmax.2020.6.re <- resample(tasmax.2020.6, tasmax.2020.1) # hdd cdd is the climate raster
 
 ## crop and mask
-r2.5 <- crop(tasmax.2020.5.re, extent(boundary))
-r3.5 <- mask(r2.5, boundary)
+r2.6 <- crop(tasmax.2020.6.re, extent(boundary))
+r3.6 <- mask(r2.6, boundary)
 
 ## Check that it worked
-plot(r3.5)
+plot(r3.6)
 plot(boundary, add=TRUE, lwd=2)
 
-plot(r3.5, main="July 2023, model 5", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+plot(r3.6, main="July 2023, model 6", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 
 
-# 2030 -------
-# July 2030, MODEL 1 ----
 
+# JULY 2030 -------
+# MODEL 1, July 2030 ----
 indices.1.1 = which((tasmax.dates.1 <= as.Date(paste0("2030-07-31"))) & 
                     (tasmax.dates.1 >= as.Date(paste0("2030-07-01"))))
 
-tasmax.2030.1.1 = tasmax.scenes.1[[indices.1.1[1]]] 
+tasmax.2030.1 = tasmax.scenes.1[[indices.1.1[1]]] 
 
 # crop and mask
-r2.1.1 <- crop(tasmax.2020.1.1, extent(boundary))
+r2.1.1 <- crop(tasmax.2030.1, extent(boundary))
 r3.1.1 <- mask(r2.1.1, boundary)
 
 ## Check that it worked
@@ -281,7 +282,106 @@ plot(boundary, add=TRUE, lwd=2)
 
 plot(r3.1.1, main="July 2030, model 1", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 
-# 2040 -------
+#  MODEL 2, July 2030 ------
+
+indices.2.2 = which((tasmax.dates.2 <= as.Date(paste0("2030-07-31"))) & 
+                    (tasmax.dates.2 >= as.Date(paste0("2030-07-01"))))
+
+tasmax.2030.2 = tasmax.scenes.2[[indices.2.2[1]]] 
+# make size same as other climate raster (NOAA)
+tasmax.2030.2.re <- resample(tasmax.2030.2, tasmax.2020.1) # hdd cdd is the climate raster
+
+## crop and mask
+r2.2030 <- crop(tasmax.2030.2.re, extent(boundary))
+r3.2030 <- mask(r2.2030, boundary)
+
+## Check that it worked
+plot(r3.2030)
+plot(boundary, add=TRUE, lwd=2)
+
+plot(r3.2030, main="July 2030, model 2", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+
+
+#  MODEL 3, July 2030 ------
+
+indices.3.3  = which((tasmax.dates.3 <= as.Date(paste0("2030-07-31"))) & 
+                     (tasmax.dates.3 >= as.Date(paste0("2030-07-01"))))
+
+tasmax.2030.3 = tasmax.scenes.3[[indices.3.3[1]]] 
+# make size same as other climate raster (NOAA)
+tasmax.2030.3.re <- resample(tasmax.2030.3, tasmax.2020.1) # hdd cdd is the climate raster
+
+## crop and mask
+r3.2030 <- crop(tasmax.2030.3.re, extent(boundary))
+r3.3.2030 <- mask(r3.2030, boundary)
+
+## Check that it worked
+plot(r3.3.2030)
+plot(boundary, add=TRUE, lwd=2)
+
+plot(r3.3.2030, main="July 2030, model 3", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+
+# MODEL 4, July 2030 ------
+
+indices.4.4  = which((tasmax.dates.4 <= as.Date(paste0("2030-07-31"))) & 
+                     (tasmax.dates.4 >= as.Date(paste0("2030-07-01"))))
+
+tasmax.2030.4 = tasmax.scenes.4[[indices.4.4[1]]] 
+# make size same as other climate raster (NOAA)
+tasmax.2030.4.re <- resample(tasmax.2030.4, tasmax.2020.1) # hdd cdd is the climate raster
+
+## crop and mask
+r2.4.2030 <- crop(tasmax.2030.4.re, extent(boundary))
+r3.4.2030 <- mask(r2.4.2030, boundary)
+
+## Check that it worked
+plot(r3.4.2030)
+plot(boundary, add=TRUE, lwd=2)
+
+plot(r3.4.2030, main="July 2030, model 4", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+
+# MODEL 5, July 2030  ------
+
+indices.5.5  = which((tasmax.dates.5 <= as.Date(paste0("2030-07-31"))) & 
+                     (tasmax.dates.5 >= as.Date(paste0("2030-07-01"))))
+
+tasmax.2030.5 = tasmax.scenes.5[[indices.5.5[1]]] 
+
+tasmax.2030.5.re <- resample(tasmax.2030.5, tasmax.2020.1) # hdd cdd is the climate raster
+
+## crop and mask
+r2.5.2030 <- crop(tasmax.2030.5.re, extent(boundary))
+r3.5.2030 <- mask(r2.5.2030, boundary)
+
+## Check that it worked
+plot(r3.5.2030)
+plot(boundary, add=TRUE, lwd=2)
+
+plot(r3.5.2030, main="July 2030, model 5", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+
+
+
+# MODEL 6, July 2030 ------
+
+indices.6.6  = which((tasmax.dates.6 <= as.Date(paste0("2030-07-31"))) & 
+                     (tasmax.dates.6 >= as.Date(paste0("2030-07-01"))))
+
+tasmax.2030.6 = tasmax.scenes.6[[indices.6.6[1]]] 
+tasmax.2030.6.re <- resample(tasmax.2030.6, tasmax.2020.1) # hdd cdd is the climate raster
+
+## crop and mask
+r2.6.2030 <- crop(tasmax.2030.6.re, extent(boundary))
+r3.6.2030 <- mask(r2.6.2030, boundary)
+
+## Check that it worked
+plot(r3.6.2030)
+plot(boundary, add=TRUE, lwd=2)
+
+plot(r3.6.2030, main="July 2030, model 6", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+
+
+
+# JULY 2040 -------
 # July 2040, MODEL 1-----
 indices_2040 = which((tasmax.dates <= as.Date(paste0("2040-07-31"))) & 
                   (tasmax.dates>= as.Date(paste0("2040-07-01"))))
