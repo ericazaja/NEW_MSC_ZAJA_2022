@@ -91,10 +91,24 @@ view(coord.chelsa.combo.c.delta)
 coord.chelsa.combo.c.biom.2020 <- coord.chelsa.combo.c.delta %>%
   filter(year == 2020)
 
+c_mean_2020 <- c(coord.chelsa.combo.c.biom.2020$biomass_per_m2)
+mean(c_mean_2020) # 225.4707 g/m2
+range(coord.chelsa.combo.c.biom.2020$biomass_per_m2) # 4.766095 495.623108
+
 # multiply by biomass increase
 coord.chelsa.combo.c.biom <- coord.chelsa.combo.c.delta %>%
   filter(year == 2030) %>% 
   mutate(biomass_per_m2 = biomass_per_m2 + (124.5*delta_2))
+
+c_mean <- c(coord.chelsa.combo.c.biom$biomass_per_m2)
+mean(c_mean) # 354.4224 g/m2
+range(coord.chelsa.combo.c.biom$biomass_per_m2) # 104.1922 722.9597
+
+# percentage difference
+(354.4224- 225.4707)/225.4707 
+# =  0.5719222 
+# 57% increase in biomass
+
 
 # rebind with 2020 data
 coord.chelsa.combo.c.2030.biom <- rbind(coord.chelsa.combo.c.biom.2020, coord.chelsa.combo.c.biom)
@@ -106,8 +120,9 @@ write.csv(coord.chelsa.combo.c, "data/coord_chelsa_combo_c.csv")
 # plotting biomass in 2020 
 (raster_test_temp <- ggplot(coord.chelsa.combo.c.biom.2020) + 
     geom_tile(aes(x=x,y=y,fill=(biomass_per_m2))) + 
-    # scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
-    scale_fill_gradient2(name = "Shrub biomass g/m2",high = "green4", mid = "yellow4", low = "brown", midpoint = 290,  na.value="white") +
+    #scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
+    scale_fill_gradient2(name = "Shrub biomass g/m2",high = "green4", mid = "yellow4", low = "yellow1", midpoint = 400,  na.value="white",
+                         breaks = c(0, 100, 200, 300, 400, 500, 600, 700, 800, 900)) +
     coord_quickmap()+
     theme_shrub() +  
     xlab("\nLongitude") +
@@ -117,7 +132,8 @@ write.csv(coord.chelsa.combo.c, "data/coord_chelsa_combo_c.csv")
 (raster_test_temp <- ggplot(coord.chelsa.combo.c.biom) + 
     geom_tile(aes(x=x,y=y,fill=(biomass_per_m2))) + 
     # scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
-    scale_fill_gradient2(name = "Shrub biomass g/m2",high = "green4", mid = "yellow4", low = "brown", midpoint = 290,  na.value="white") +
+    scale_fill_gradient2(name = "Shrub biomass g/m2",high = "green4", mid = "yellow4", low = "yellow1", midpoint = 400,  na.value="white", 
+                         breaks = c(0, 100, 200, 300, 400, 500, 600, 700, 800, 900)) +
     coord_quickmap()+
     theme_shrub() +  
     xlab("\nLongitude") +
