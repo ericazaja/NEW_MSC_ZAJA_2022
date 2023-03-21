@@ -7,6 +7,7 @@ library(tidybayes)
 library(readr)
 library(brms)
 library(tidyverse)
+library(gridExtra)
 
 # DATA -------
 all_CG_growth <- read_csv("data/common_garden_shrub_data/all_CG_growth.csv")
@@ -119,7 +120,7 @@ height_rich_south <- brms::brm(log(Canopy_Height_cm) ~ Sample_age+(1|Year),
 
 summary(height_rich_south) # significant height growth over time
 plot(height_rich_south)
-pp_check(height_rich_south, type = "dens_overlay", nsamples = 100) 
+pp_check(height_rich_south, type = "dens_overlay", ndraws = 100) 
 
 # Salix pulchra -----
 height_pul <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population+(1|Year),
@@ -135,7 +136,7 @@ height_pul_south <- brms::brm(log(Canopy_Height_cm) ~ Sample_age+(1|Year),
 
 summary(height_pul_south) # 
 plot(height_pul_south)
-pp_check(height_pul_south, type = "dens_overlay", nsamples = 100) 
+pp_check(height_pul_south, type = "dens_overlay", ndraws = 100) 
 
 # Salix arctica -------
 height_arc <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population+(1|Year),
@@ -155,7 +156,7 @@ height_arc_south <- brms::brm(log(Canopy_Height_cm) ~ Sample_age+(1|Year),
 
 summary(height_arc_south) # 
 plot(height_arc_south)
-pp_check(height_arc_south, type = "dens_overlay", nsamples = 100) 
+pp_check(height_arc_south, type = "dens_overlay", ndraws = 100) 
 
 # DATA VISUALISATION -------
 # 1. HEIGHT -----
@@ -181,49 +182,46 @@ rich_height_data_2 <- rich_height_1[[2]]
     theme_shrub())
 
 # this works well (but need to remove year from model)
-(rich_heights_plot_new <- all_CG_growth_ric %>%
+(rich_south_heights_plot_new <- all_CG_growth_ric_south %>%
     group_by(population) %>%
-    add_predicted_draws(height_rich) %>%
-    ggplot(aes(x = Sample_age, y = log(Canopy_Height_cm), color = ordered(population), fill = ordered(population))) +
+    add_predicted_draws(height_rich_south, allow_new_levels = TRUE) %>%
+    ggplot(aes(x = Sample_age, y = log(Canopy_Height_cm), colour = ordered(population))) +
     stat_lineribbon(aes(y = .prediction), .width = c(.50), alpha = 1/4) +
-    geom_point(data = all_CG_growth_ric) +
-    scale_colour_viridis_d(begin = 0.1, end = 0.95) +
-    scale_fill_viridis_d(begin = 0.1, end = 0.95) +
+    geom_point(data = all_CG_growth_ric_south) +
     theme_shrub() +
-    ylab("Richardsonii canopy height (log cm)\n") +
-    xlab("\nSample age"))
+    ylab("S. richardsonii (southern) canopy height (log cm)\n") +
+    xlab("\nSample age") +
+    theme(legend.position = "none"))
 
 # Salix pulchra ------
 
-(pul_heights_plot_new <- all_CG_growth_pul %>%
+(pul_south_heights_plot_new <- all_CG_growth_pul_south %>%
     group_by(population) %>%
-    add_predicted_draws(height_pul) %>%
-    ggplot(aes(x = Sample_age, y = log(Canopy_Height_cm), color = ordered(population), fill = ordered(population))) +
+    add_predicted_draws(height_pul_south, allow_new_levels = TRUE ) %>%
+    ggplot(aes(x = Sample_age, y = log(Canopy_Height_cm), color = ordered(population))) +
     stat_lineribbon(aes(y = .prediction), .width = c(.50), alpha = 1/4) +
-    geom_point(data = all_CG_growth_pul) +
-    scale_colour_viridis_d(begin = 0.1, end = 0.95) +
-    scale_fill_viridis_d(begin = 0.1, end = 0.95) +
+    geom_point(data = all_CG_growth_pul_south) +
     theme_shrub() +
-    ylab("Pulchra canopy height (log cm)\n") +
-    xlab("\nSample age"))
+    ylab("S. pulchra (southern) canopy height (log cm)\n") +
+    xlab("\nSample age")+
+   theme(legend.position = "none"))
 
 
 # Salix arctica------
-(arc_heights_plot_new <- all_CG_growth_arc %>%
-   group_by(population) %>%
-   add_predicted_draws(height_arc) %>%
-   ggplot(aes(x = Sample_age, y = log(Canopy_Height_cm), color = ordered(population), fill = ordered(population))) +
+(arc_south_heights_plot_new <- all_CG_growth_arc_south %>%
+  # group_by(population) %>%
+   add_predicted_draws(height_arc_south, allow_new_levels = TRUE ) %>%
+   ggplot(aes(x = Sample_age, y = log(Canopy_Height_cm), color = ordered(population))) +
    stat_lineribbon(aes(y = .prediction), .width = c(.50), alpha = 1/4) +
-   geom_point(data = all_CG_growth_arc) +
-   scale_colour_viridis_d(begin = 0.1, end = 0.95) +
-   scale_fill_viridis_d(begin = 0.1, end = 0.95) +
+   geom_point(data = all_CG_growth_arc_south) +
    theme_shrub() +
-   ylab("Arctica canopy height (log cm)\n") +
-   xlab("\nSample age"))
+   ylab("S. arctica (southern) canopy height (log cm)\n") +
+   xlab("\nSample age")+
+   theme(legend.position = "none"))
 
-CG_height_panel <- grid.arrange(rich_heights_plot_new,
-                                pul_heights_plot_new, 
-                                arc_heights_plot_new, nrow = 1)
+CG_height_panel_south <- grid.arrange(rich_south_heights_plot_new,
+                                pul_south_heights_plot_new, 
+                                arc_south_heights_plot_new, nrow = 1)
 # 2.STEM ELONGATION -----
 # Salix richardsonii -------
 (rich_elong_plot_new <- all_CG_growth_ric_south %>%

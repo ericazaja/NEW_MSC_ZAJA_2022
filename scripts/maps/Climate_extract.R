@@ -196,6 +196,17 @@ write.csv(coord.chelsa.combo.c, "data/coord_chelsa_combo_c.csv")
     xlab("\nLongitude") +
     ylab("Latitude\n"))
 
+# plotting facet climate (blue red)
+(raster_test_temp <- ggplot(coord.chelsa.combo.c.all.biom) + 
+    geom_tile(aes(x=x,y=y,fill=mean_temp_C)) + 
+    facet_grid(~year) +
+    #scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
+    scale_fill_gradient(name = "Mean july temperature (degC)",high = 'red', low = "blue4",  na.value="white") +
+    coord_quickmap()+
+    theme_shrub() +  
+    xlab("\nLongitude") +
+    ylab("Latitude\n"))
+
 # plotting facet biomass!
 (raster_test_temp <- ggplot(coord.chelsa.combo.c.all.biom) + 
     geom_tile(aes(x=x,y=y,fill=(biomass_per_m2))) + 
