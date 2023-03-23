@@ -219,6 +219,9 @@ c_mean_2020 <- c(coord.chelsa.combo.c.biom.2020$biomass_per_m2)
 mean(c_mean_2020) # 225.4707 g/m2
 range(coord.chelsa.combo.c.biom.2020$biomass_per_m2) # 4.766095 495.623108
 
+c_meantemp_2020 <- c(coord.chelsa.combo.c.biom.2020$mean_temp_C)
+mean(c_meantemp_2020) # 13.25012
+
 # July 2030 projection -------
 
 # multiply by biomass increase
@@ -397,10 +400,23 @@ range(coord.chelsa.combo.c.biom.2100.2$biomass_per_m2_2100) #681.9673 1212.9567
 (895.5671- 779.509 )/779.509
 #15%  increase
 
+c_meantemp_2100 <- c(coord.chelsa.combo.c.biom.2100$mean_temp_C)
+mean(c_meantemp_2100) # 18.63242
+
+# OVERALL SHRUB INCREASE----
 # mean in 2020: 225.4707
 # mean in 2100: 895.5671
 (895.5671-225.4707)/225.4707
-# 297.1989 % increase in shrub biomass ! 
+# 297.1989 % increase in shrub biomass !
+
+# OVERALL TEMP INCREASE ----
+# mean temp 2020: 13.25012
+# mean temp 2100: 18.63242
+(18.63242-13.25012)/13.25012
+# 40.6% temp difference
+
+
+
 
 # merge all data-----
 # rename all specific biomass_per_m2_YEAR to biomass_per_m2 
@@ -456,11 +472,13 @@ write.csv(coord.chelsa.combo.c.all.biom, "data/coord.chelsa.combo.c.all.biom.csv
 # plotting facet climate (blue red)
 (raster_test_temp <- ggplot(coord.chelsa.combo.c.all.biom) + 
     geom_tile(aes(x=x,y=y,fill=mean_temp_C)) + 
-    facet_grid(~year) +
+    facet_wrap(~year,  nrow = 3) +
     #scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
     scale_fill_gradient(name = "Mean july temperature (degC)",high = 'red', low = "blue4",  na.value="white") +
     coord_quickmap()+
     theme_shrub() +  
+    theme(axis.text.x  = element_text(vjust=0.5, size=10, colour = "black", angle = 45)) +
+    theme(axis.text.y  = element_text(vjust=0.5, size=10, colour = "black")) + 
     xlab("\nLongitude") +
     ylab("Latitude\n"))
 
