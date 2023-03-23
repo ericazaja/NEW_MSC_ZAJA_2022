@@ -30,6 +30,9 @@ stack.2060 <- stack(tasmax.2060.1, tasmax.2060.2.re,tasmax.2060.3.re,
 stack.2070 <- stack(tasmax.2070.1, tasmax.2070.2.re,tasmax.2070.3.re,
                     tasmax.2070.4.re, tasmax.2070.5.re, tasmax.2070.6.re)
 
+stack.2080 <- stack(tasmax.2080.1, tasmax.2080.2.re,tasmax.2080.3.re,
+                    tasmax.2080.4.re, tasmax.2080.5.re, tasmax.2080.6.re)
+
 
 # Extracting variables values for each pair of coordinates
 chelsa.extract.2020 <- raster::extract(stack.2020, coords_sp, df = TRUE) # extract coords 
@@ -50,6 +53,9 @@ view(chelsa.extract.2060)
 chelsa.extract.2070 <- raster::extract(stack.2070, coords_sp, df = TRUE) # extract coords 
 view(chelsa.extract.2070)
 
+chelsa.extract.2080 <- raster::extract(stack.2080, coords_sp, df = TRUE) # extract coords 
+view(chelsa.extract.2070)
+
 # Combining dataframes:
 # Converting the SpatialPoints (sp) object into a dataframe 
 coord.df <- as.data.frame(coords_sp)
@@ -65,6 +71,7 @@ coord.chelsa.combo.2040 <- left_join(chelsa.extract.2040, coord.df, by = c("ID" 
 coord.chelsa.combo.2050 <- left_join(chelsa.extract.2050, coord.df, by = c("ID" = "ID"))
 coord.chelsa.combo.2060 <- left_join(chelsa.extract.2060, coord.df, by = c("ID" = "ID"))
 coord.chelsa.combo.2070 <- left_join(chelsa.extract.2070, coord.df, by = c("ID" = "ID"))
+coord.chelsa.combo.2080 <- left_join(chelsa.extract.2080, coord.df, by = c("ID" = "ID"))
 
 # Loading the shrub biomass df
 biomass.df <- shrub_map_extract %>%
@@ -86,6 +93,8 @@ coord.chelsa.combo.a.2060 <- left_join(coord.chelsa.combo.2060, biomass.df, by =
   mutate(biomass_per_m2 = rep(NA))# only 2020 biomass data
 coord.chelsa.combo.a.2070 <- left_join(coord.chelsa.combo.2070, biomass.df, by = c("ID" = "ID")) %>%
   mutate(biomass_per_m2 = rep(NA))# only 2020 biomass data
+coord.chelsa.combo.a.2080 <- left_join(coord.chelsa.combo.2080, biomass.df, by = c("ID" = "ID")) %>%
+  mutate(biomass_per_m2 = rep(NA))# only 2020 biomass data
 
 
 #making a year column
@@ -106,6 +115,10 @@ coord.chelsa.combo.b.2060 <- coord.chelsa.combo.a.2060 %>%
 
 coord.chelsa.combo.b.2070 <- coord.chelsa.combo.a.2070 %>%
   mutate(year = rep(2070))
+
+coord.chelsa.combo.b.2080 <- coord.chelsa.combo.a.2080 %>%
+  mutate(year = rep(2080))
+
 
 # explore
 hist(coord.chelsa.combo.b.2020$layer.1, breaks = 20)
@@ -133,10 +146,14 @@ coord.chelsa.combo.c.2060 <- coord.chelsa.combo.b.2060 %>%
 coord.chelsa.combo.c.2070 <- coord.chelsa.combo.b.2070 %>%
   mutate(mean_temp_C = (layer.1 + layer.2 +layer.3 +layer.4+layer.5+layer.6)/6) # good! 
 
+coord.chelsa.combo.c.2080 <- coord.chelsa.combo.b.2080 %>%
+  mutate(mean_temp_C = (layer.1 + layer.2 +layer.3 +layer.4+layer.5+layer.6)/6) # good! 
+
 # rbind all data 
 coord.chelsa.combo.c.all <- rbind(coord.chelsa.combo.c.2020, coord.chelsa.combo.c.2030, 
                                   coord.chelsa.combo.c.2040, coord.chelsa.combo.c.2050,
-                                  coord.chelsa.combo.c.2060, coord.chelsa.combo.c.2070)
+                                  coord.chelsa.combo.c.2060, coord.chelsa.combo.c.2070,  
+                                  coord.chelsa.combo.c.2080)
 coord.chelsa.combo.c.all$year <- as.factor(coord.chelsa.combo.c.all$year)
 
 # calculate difference between temps in 2020 and 2030
@@ -147,13 +164,15 @@ coord.chelsa.combo.c.delta <- coord.chelsa.combo.c.all %>%
   mutate(delta.2 = mean_temp_C[year == 2050] - mean_temp_C[year == 2040])%>%
   mutate(delta.3 = mean_temp_C[year == 2060] - mean_temp_C[year == 2050])%>%
   mutate(delta.4 = mean_temp_C[year == 2070] - mean_temp_C[year == 2060])%>%
+  mutate(delta.5 = mean_temp_C[year == 2080] - mean_temp_C[year == 2070])%>%
    mutate(delta_2 = case_when(year == 2030 ~ delta,
                               year == 2040 ~ delta.1,
                               year == 2050 ~ delta.2,
                               year == 2060 ~ delta.3,
                               year == 2070 ~ delta.4,
+                              year == 2080 ~ delta.5,
                               FALSE ~ NA)) %>%
-  dplyr::select(- delta, -delta.1, -delta.2,  -delta.3,  -delta.4)
+  dplyr::select(- delta, -delta.1, -delta.2,  -delta.3,  -delta.4,  -delta.5)
 
 # do this for all years til 2100
 view(coord.chelsa.combo.c.delta)
@@ -278,6 +297,28 @@ range(coord.chelsa.combo.c.biom.2070.2$biomass_per_m2_2070) #520.6172 1053.3688
 # percentage difference
 (704.3320-415.2491)/415.2491 
 # 0.6961674, 69% increase
+
+# July 2080 projection ------
+# multiply by biomass increase
+coord.chelsa.combo.c.biom.2080 <- coord.chelsa.combo.c.delta %>%
+  filter(year == 2080) 
+
+coord.chelsa.combo.c.biom.2080.1 <- coord.chelsa.combo.c.biom.2080 %>% 
+  dplyr::left_join(coord.chelsa.combo.c.biom.2070.2 %>% 
+                     dplyr::select(biomass_per_m2_2070,by = c("ID" = "ID")))%>% 
+  dplyr::select(-biomass_per_m2)
+
+coord.chelsa.combo.c.biom.2080.2 <-coord.chelsa.combo.c.biom.2080.1 %>%
+  mutate(biomass_per_m2_2080 = biomass_per_m2_2070 + (124.5*delta_2)) %>%
+  dplyr::select(-biomass_per_m2_2070)
+
+c_mean_2080 <- c(coord.chelsa.combo.c.biom.2080.2$biomass_per_m2_2080)
+mean(c_mean_2080) #629.9409 g/m2
+range(coord.chelsa.combo.c.biom.2080.2$biomass_per_m2_2080) #442.5663 946.8586
+
+# percentage difference
+(629.9409 -704.3320)/704.3320
+# -10% 
 
 # merge all data-----
 # rename all specific biomass_per_m2_YEAR to biomass_per_m2 
