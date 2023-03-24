@@ -461,7 +461,7 @@ write.csv(coord.chelsa.combo.c.all.biom, "data/coord.chelsa.combo.c.all.biom.csv
     facet_wrap(~year, nrow = 3) +
     #scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
     scale_fill_gradient(name = "Shrub biomass g/m2",high = "green4", low = "yellow1",  na.value="white",
-                        breaks = c(0, 100, 200, 300, 400, 500, 600, 700, 800, 900)) +
+                        breaks = c(0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200)) +
     coord_quickmap()+
     theme_shrub() +  
    theme(axis.text.x  = element_text(vjust=0.5, size=10, colour = "black", angle = 45)) +
@@ -474,7 +474,8 @@ write.csv(coord.chelsa.combo.c.all.biom, "data/coord.chelsa.combo.c.all.biom.csv
     geom_tile(aes(x=x,y=y,fill=mean_temp_C)) + 
     facet_wrap(~year,  nrow = 3) +
     #scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
-    scale_fill_gradient(name = "Mean july temperature (degC)",high = 'red', low = "blue4",  na.value="white") +
+    scale_fill_gradient(name = "Mean july temperature (degC)",high = 'red', low = "blue4",  na.value="white",
+                        breaks = c(7.5, 9.5, 11.5,  13.5,15.5, 17.5, 19.5, 21.5))+
     coord_quickmap()+
     theme_shrub() +  
     theme(axis.text.x  = element_text(vjust=0.5, size=10, colour = "black", angle = 45)) +
