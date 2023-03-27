@@ -37,20 +37,20 @@ mean(TOOLIK_july_precip$PrecipMeanJuly, na.rm=TRUE) # 16182.26
 # ANWR july mean temp and precip
 ANWR_july_temp <- july_enviro_chelsa %>%
   filter(site == "ATIGUN") %>%
- select(site, year, mean_temp_C)
+ dplyr::select(site, year, mean_temp_C)
 
 mean(ANWR_july_temp$mean_temp_C, na.rm=TRUE) # 10.75
 
 ANWR_july_precip <- july_enviro_chelsa %>%
   filter(site == "ATIGUN") %>%
-select(site, year, PrecipMeanJuly)
+dplyr::select(site, year, PrecipMeanJuly)
 
 mean(ANWR_july_precip$PrecipMeanJuly, na.rm=TRUE) # 15193.14
 
 # QHI july mean temp and precip
 QHI_july_temp <- july_enviro_chelsa %>%
   filter(site == "QHI")%>%
-  select(site, year, mean_temp_C)
+  dplyr::select(site, year, mean_temp_C)
 
 mean(QHI_july_temp$mean_temp_C, na.rm=TRUE) # 6.15
 
@@ -82,7 +82,7 @@ mean(CG_july_temp$mean_temp_C, na.rm=TRUE) #13.67857
 
 CG_july_precip <- july_enviro_chelsa %>%
   filter(site == "Common_garden") %>%
-  select(site, year, PrecipMeanJuly)
+  dplyr::select(site, year, PrecipMeanJuly)
 
 mean(CG_july_precip$PrecipMeanJuly, na.rm=TRUE) # 5287.333
 
@@ -100,7 +100,7 @@ july_enviro_means <- july_enviro_means %>%
             site == "QHI" ~ "QHI",
             site == "Common_garden" ~ "CG",
             site == "Kluane_plateau" ~ "KP")) %>%
-  select(Site, mean_precip, mean_temp) %>%
+  dplyr::select(Site, mean_precip, mean_temp) %>%
   group_by(Site)  %>%
   summarise(mean_precip = mean(mean_precip, na.rm=TRUE), 
                       mean_temp = mean(mean_temp,na.rm=TRUE))  # so I only keep one value for toolik
@@ -132,7 +132,16 @@ all_CG_growth_cover_change <- all_CG_growth_cover %>%
   arrange(Sample_age, .by_group = TRUE) %>%
   mutate(cover_increase = cover_percent-lag(cover_percent)) %>%
   mutate(cover_change_percent = (cover_increase/cover_percent)*100)
-  
+
+#all_CG_growth_cover_change_minus_pul <- all_CG_growth_cover_change %>%
+  #filter(Species %in% c("Salix arctica", "Salix richardsonii"))
+
+#all_CG_growth_cover_change_pul <- all_CG_growth_cover_change %>%
+ # filter(Species == "Salix pulchra", 
+        # Sample_age <= 8)
+
+#all_CG_growth_cover_change <- rbind(all_CG_growth_cover_change_minus_pul,all_CG_growth_cover_change_pul)
+
 summary_all_CG_growth_cover_change <- all_CG_growth_cover_change %>%
   group_by(Species) %>%
   summarise(mean_cover_change = mean(cover_change_percent, na.rm=TRUE))%>%
@@ -140,9 +149,10 @@ summary_all_CG_growth_cover_change <- all_CG_growth_cover_change %>%
   mutate(Site = rep("CG"))
 
 # calculating cover change in the source populations from one year to the next
+all_CG_growth_cover$SampleID_standard <- as.factor(all_CG_growth_cover$SampleID_standard)
 all_source_growth_cover_change <- all_CG_growth_cover %>%
   filter(Site %in% c("Qikiqtaruk", "Kluane")) %>% 
-  group_by(Year, Species, Site) %>% 
+  group_by(Species,Site) %>% 
   arrange(Year, .by_group = TRUE) %>%
   mutate(cover_increase = cover_percent-lag(cover_percent)) %>%
   mutate(cover_change_percent = (cover_increase/cover_percent)*100)
@@ -175,14 +185,17 @@ all_growth_cover_change <- rbind(summary_all_source_growth_cover_change, summary
 
 
 # ITEX COVER DATA -----
+ITEX_shrubs_msc$SiteSubsitePlotYear <- as.factor(ITEX_shrubs_msc$SiteSubsitePlotYear)
 ITEX_shrubs_cover_change <- ITEX_shrubs_msc %>%
-  group_by(YEAR, SITE, SPECIES_NAME) %>%  
+  filter(SurveyedArea %in% c(1.0000, 1))%>% # keeping only 1m2 quadrat
+  group_by(SiteSubsitePlot, SPECIES_NAME) %>%  
   arrange(YEAR, .by_group = TRUE) %>%
   mutate(cover_increase = RelCover-lag(RelCover)) %>%
   mutate(cover_change_percent = (cover_increase/RelCover)*100)
+view(ITEX_shrubs_cover_change)
 
 summary_ITEX_shrubs_cover_change <- ITEX_shrubs_cover_change %>%
-  group_by(SITE, SPECIES_NAME) %>%
+  group_by(SiteSubsitePlot, SITE, SPECIES_NAME) %>%
   summarise(mean_cover_change = mean(cover_change_percent, na.rm=TRUE))%>%
   na.omit() %>%
   filter(SITE!= "QHI") %>%# I'm using the common garden data for QHI cover 
@@ -226,8 +239,8 @@ all_cover_long <- rbind(ITEX_shrubs_cover_change_edit, all_source_growth_cover_c
                         all_CG_growth_cover_change_edit) %>%
   dplyr::select(-SampleID_standard)
 
-all_cover_temps_long <- full_join(all_cover_long, july_enviro_means)
-
+all_cover_temps_long <- full_join(all_cover_long, july_enviro_means) 
+                                 
 all_cover_temps_long$Year <- as.factor(all_cover_temps_long$Year)
 all_cover_temps_long$Site <- as.factor(all_cover_temps_long$Site)
 all_cover_temps_long$Species <- as.factor(all_cover_temps_long$Species)
@@ -247,7 +260,8 @@ plot(model_cover_temp)
 # separate species models----
 # pulchra cover change per unit temp 
 all_cover_temps_long_pulchra <- all_cover_temps_long %>%
-  filter(Species == "Salix pulchra")
+  filter(Species == "Salix pulchra") 
+ # %>% filter(Sample_age <=8) # up to age 8, then things got trimmed
 
 model_cover_temp_pulchra <- lmer(cover_change_percent ~ mean_temp + (1|Site), data = all_cover_temps_long_pulchra)
 tab_model(model_cover_temp_pulchra) # 3.62 % cover change per unit temp

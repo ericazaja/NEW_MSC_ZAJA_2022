@@ -98,9 +98,11 @@ pp_check(cover_arc, type = "dens_overlay", nsamples = 100)
 
 # RANDOM SLOPE MODEL ------
 CG_ALL_cover_biomass$Species <- as.factor(CG_ALL_cover_biomass$Species)
+# different slopes of the fixed effect (the one at the top, sample age) 
+# per defined categorical group (the one at the bottom, species)
 
 # all spp
-cover_random_slopes <- brms::brm((cover_percent/100) ~ Sample_age + (1+Sample_age|Species),
+cover_random_slopes <- brms::brm((cover_percent/100) ~ Sample_age + (Sample_age|Species),
                                  data = CG_ALL_cover_biomass,  family = "beta", chains = 3,
                                  iter = 5000, warmup = 1000, 
                                  control = list(max_treedepth = 15, adapt_delta = 0.99))
@@ -113,7 +115,7 @@ pp_check(cover_random_slopes, type = "dens_overlay", nsamples = 100)
 pulchra_ric_cover_biomass <- CG_ALL_cover_biomass %>%
   filter(Species %in% c("Salix pulchra", "Salix richardsonii"))
 
-tall_cover_random_slopes <- brms::brm((cover_percent/100) ~ Sample_age + (1+Sample_age|Species),
+tall_cover_random_slopes <- brms::brm((cover_percent/100) ~ Sample_age + (Sample_age|Species),
                                  data = pulchra_ric_cover_biomass,  family = "beta", chains = 3,
                                  iter = 5000, warmup = 1000, 
                                  control = list(max_treedepth = 15, adapt_delta = 0.99))
@@ -156,7 +158,7 @@ pp_check(biom_arc, type = "dens_overlay", nsamples = 100)
 
 # RANDOM SLOPE MODEL ------
 # all spp.
-biom_random_slopes <- brms::brm(log(biomass_per_m2) ~ Sample_age + (1+Sample_age|Species),
+biom_random_slopes <- brms::brm(log(biomass_per_m2) ~ Sample_age + (Sample_age|Species),
                                  data = CG_ALL_cover_biomass,  family = gaussian(), chains = 3,
                                  iter = 5000, warmup = 1000, 
                                  control = list(max_treedepth = 15, adapt_delta = 0.99))
@@ -166,7 +168,7 @@ plot(biom_random_slopes)
 pp_check(biom_random_slopes, type = "dens_overlay", nsamples = 100) 
 
 # only tall shrubs
-tall_biom_random_slopes <- brms::brm(log(biomass_per_m2) ~ Sample_age + (1+Sample_age|Species),
+tall_biom_random_slopes <- brms::brm(log(biomass_per_m2) ~ Sample_age + (Sample_age|Species),
                                 data = pulchra_ric_cover_biomass,  family = gaussian(), chains = 3,
                                 iter = 5000, warmup = 1000, 
                                 control = list(max_treedepth = 15, adapt_delta = 0.99))
