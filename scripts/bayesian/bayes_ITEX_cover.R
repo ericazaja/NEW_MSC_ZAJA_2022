@@ -40,22 +40,34 @@ itex_EZ_pulchra$SITE <- as.factor(itex_EZ_pulchra$SITE)
 # modelling -----
 
 # salix arctica -----
-arctica_cover <- brms::brm(cover_prop ~ I(YEAR-1996)+SITE,
+arctica_cover <- brms::brm(cover_prop ~ I(YEAR-1996)+SITE+ (1|PLOT),
                            data = itex_EZ_arctica, family = gaussian(),
-                           iter = 2000, chains = 4, warmup = 400)
+                          chains = 3,iter = 5000, warmup = 1000, 
+                           control = list(max_treedepth = 15, adapt_delta = 0.99))
 
 summary(arctica_cover)
 plot(arctica_cover)
 pp_check(arctica_cover, type = "dens_overlay", nsamples = 100)
 
+cov_time_arc_fix <- as.data.frame(fixef(arctica_cover)) # extract fixed eff. slopes 
+cov_time_arc_random <- as.data.frame(ranef(arctica_cover)) # extract random eff. slopes 
+cov_time_arc_coef <- as.data.frame(coef(arctica_cover, summary = TRUE, robust = FALSE, 
+                                        probs = c(0.025, 0.975))) # extract combined coeff (random and fixed)
+
 # salix pulchra -----
-pulchra_cover <- brms::brm(cover_prop ~ I(YEAR-1988)+ SITE,
-                      data = itex_EZ_pulchra, family = "beta",
-                      iter = 2000, chains = 4, warmup = 400)
+pulchra_cover <- brms::brm(cover_prop ~ I(YEAR-1988)+ SITE + (1|PLOT),
+                      data = itex_EZ_pulchra, family = "beta", chains = 3,
+                      iter = 5000, warmup = 1000, 
+                      control = list(max_treedepth = 15, adapt_delta = 0.99))
 
 summary(pulchra_cover) 
 plot(pulchra_cover)
 pp_check(pulchra_cover, type = "dens_overlay", nsamples = 100) 
+cov_time_pul_fix <- as.data.frame(fixef(pulchra_cover)) # extract fixed eff. slopes 
+cov_time_pul_random <- as.data.frame(ranef(pulchra_cover)) # extract random eff. slopes 
+cov_time_pul_coef <- as.data.frame(coef(pulchra_cover, summary = TRUE, robust = FALSE, 
+                                        probs = c(0.025, 0.975))) # extract combined coeff (random and fixed)
+
 
 # data visualisation ------
 # one line per site

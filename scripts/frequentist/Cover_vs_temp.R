@@ -106,7 +106,7 @@ july_enviro_means <- july_enviro_means %>%
                       mean_temp = mean(mean_temp,na.rm=TRUE))  # so I only keep one value for toolik
 
 # SOURCE POP DATA ----
-
+ 
 # calculate cover based on widths for all CG and source pop shurbs
 all_CG_source_growth$population <- as.factor(all_CG_source_growth$population)
 
@@ -408,4 +408,5 @@ tab_model(model_cover_precip_arctica) # -0.97	 % cover change per unit precip
           axis.title = element_text(size = 14),
           axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
           axis.text.y = element_text(size = 12, colour = "black"))) 
+
 
