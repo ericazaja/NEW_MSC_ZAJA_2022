@@ -34,6 +34,21 @@ range(itex_EZ_shrubs_2023$cover_prop)
 range(itex_EZ_pulchra$YEAR)
 range(itex_EZ_arctica$YEAR)
 
+# filter out plots that dont have at least 3 years of repeat measure
+itex_EZ_arctica <- itex_EZ_arctica %>%
+  filter(PLOT <=6)
+
+itex_EZ_pulchra <- itex_EZ_pulchra %>%
+  filter(PLOT != 15)  %>%
+  filter(PLOT != 28)   %>%
+  filter(PLOT != 35)  %>%
+  filter(PLOT != 40) 
+filter(PLOT != 58)  %>%
+  filter(PLOT != 65)   %>%
+  filter(PLOT != 68)  %>%
+  filter(PLOT != 69)  %>%
+  filter(PLOT != 82)
+
 itex_EZ_arctica$SITE <- as.factor(itex_EZ_arctica$SITE)
 itex_EZ_pulchra$SITE <- as.factor(itex_EZ_pulchra$SITE)
 

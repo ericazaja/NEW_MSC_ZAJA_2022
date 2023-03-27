@@ -65,7 +65,7 @@ hist(CG_ALL_cover_biomass$biomass_per_m2, breaks = 30)# not normal
 
 # 3.1. COVER over time ------
 # Salix richardsonii -------
-cover_rich <- brms::brm((cover_percent/100) ~ Sample_age + (1|Sample_age),
+cover_rich <- brms::brm((cover_percent/100) ~ Sample_age + (1|SampleID_standard/Sample_age),
                                  data = CG_ric_cover_biomass,  family = "beta", chains = 3,
                                  iter = 5000, warmup = 1000, 
                                  control = list(max_treedepth = 15, adapt_delta = 0.99))

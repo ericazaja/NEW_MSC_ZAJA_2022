@@ -214,16 +214,24 @@ summary(temp_time)
     ylab("July temperature (degC, scaled) \n") +
     xlab("\nYear (scaled)")+ theme_shrub())
   
+# I think I only need the index_year estimates
 temp_time_random <- as.data.frame(ranef(temp_time)) # extract random eff. slopes 
-colnames(temp_time_random)[1] <- "Estimate" 
-colnames(temp_time_random)[2] <- "Est.Error" 
-colnames(temp_time_random)[3] <- "Q_25" 
-colnames(temp_time_random)[4] <- "Q_97" 
 temp_time_random$Site <- row.names(temp_time_random) # Apply row.names function
 rownames(temp_time_random) <- NULL
+colnames(temp_time_random)[5] <- "index_year_estimate" 
+colnames(temp_time_random)[6] <- "index_year_error" 
+colnames(temp_time_random)[7] <- "index_year_Q_25" 
+colnames(temp_time_random)[8] <- "index_year_Q_97"
 view(temp_time_random)
 
-# 2. cover over time
+temp_time_random_year <- temp_time_random %>%
+  dplyr::select("Site","index_year_estimate" ,"index_year_error", "index_year_Q_25",
+                "index_year_Q_97")
+view(temp_time_random_year)
+
+
+# IGNORE BELOW FOR NOW -----
+# 2. cover over time only CG 
 # calculate cover based on widths for all CG and source pop shurbs
 all_CG_source_growth$population <- as.factor(all_CG_source_growth$population)
 
@@ -263,8 +271,7 @@ ITEX_shrubs_cover <- ITEX_shrubs_msc %>%
 all_cover_long <- rbind(ITEX_shrubs_cover, all_CG_source_growth_cover)
 all_cover_long <- all_cover_long %>%
   mutate(cover_prop = cover_percent/100)%>%
-  filter(Site != "CG")%>%
-  mutate(index_year = I(Year-1987))
+  filter(Site == "CG")
 
 all_cover_long$Site <- as.factor(all_cover_long$Site)                    
 all_cover_long$Species <- as.factor(all_cover_long$Species)
@@ -278,8 +285,6 @@ all_cover_long_pul <- all_cover_long %>%
   filter(Species == "Salix pulchra")
 all_cover_long_arc <- all_cover_long %>%
   filter(Species == "Salix arctica")
-
-unique(all_cover_long_rich$Site)
 
 # richardsonii only in CG
 cov_time_rich <- brms::brm(cover_prop ~ Year + (1|Plot),
