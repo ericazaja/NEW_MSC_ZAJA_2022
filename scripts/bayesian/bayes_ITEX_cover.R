@@ -51,11 +51,14 @@ filter(PLOT != 58)  %>%
 
 itex_EZ_arctica$SITE <- as.factor(itex_EZ_arctica$SITE)
 itex_EZ_pulchra$SITE <- as.factor(itex_EZ_pulchra$SITE)
+itex_EZ_pulchra$SiteSubsitePlot <- as.factor(itex_EZ_pulchra$SiteSubsitePlot)
+itex_EZ_arctica$SiteSubsitePlot <- as.factor(itex_EZ_arctica$SiteSubsitePlot)
+
 
 # modelling -----
 
 # salix arctica -----
-arctica_cover <- brms::brm(cover_prop ~ I(YEAR-1996)+SITE+ (1|PLOT),
+arctica_cover <- brms::brm(cover_prop ~ I(YEAR-1996)+(I(YEAR-1996)|SiteSubsitePlot),
                            data = itex_EZ_arctica, family = gaussian(),
                           chains = 3,iter = 5000, warmup = 1000, 
                            control = list(max_treedepth = 15, adapt_delta = 0.99))
@@ -70,7 +73,7 @@ cov_time_arc_coef <- as.data.frame(coef(arctica_cover, summary = TRUE, robust = 
                                         probs = c(0.025, 0.975))) # extract combined coeff (random and fixed)
 
 # salix pulchra -----
-pulchra_cover <- brms::brm(cover_prop ~ I(YEAR-1988)+ SITE + (1|PLOT),
+pulchra_cover <- brms::brm(cover_prop ~ I(YEAR-1988)+ (I(YEAR-1988)|SiteSubsitePlot),
                       data = itex_EZ_pulchra, family = "beta", chains = 3,
                       iter = 5000, warmup = 1000, 
                       control = list(max_treedepth = 15, adapt_delta = 0.99))
@@ -89,7 +92,7 @@ cov_time_pul_coef <- as.data.frame(coef(pulchra_cover, summary = TRUE, robust = 
 (pulchra_cover_plot <- itex_EZ_pulchra %>%
    group_by(SITE) %>%
    add_predicted_draws(pulchra_cover) %>%
-   ggplot(aes(x = YEAR, y = cover_prop, color = ordered(SITE), fill = ordered(SITE))) +
+   ggplot(aes(x = YEAR, y = cover_prop, color = SITE, fill = SITE)) +
    stat_lineribbon(aes(y = .prediction), .width = .50, alpha = 1/4) +
    geom_point(data = itex_EZ_pulchra) +
    scale_fill_brewer(palette = "Set2") +
