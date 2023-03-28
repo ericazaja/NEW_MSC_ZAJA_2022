@@ -75,6 +75,10 @@ plot(cover_rich)
 pp_check(cover_rich, type = "dens_overlay", nsamples = 100) 
 tab_model(cover_rich)
 
+cover_rich_random <- as.data.frame(coef(cover_rich)) 
+cover_rich_random <- as.data.frame(coef(cover_rich, summary = TRUE, robust = FALSE, 
+                                        probs = c(0.025, 0.975)))
+
 # Salix pulchra -------
 cover_pul <- brms::brm((cover_percent/100) ~ Sample_age + (1|Sample_age),
                         data = CG_pul_cover_biomass,  family = "beta", chains = 3,
