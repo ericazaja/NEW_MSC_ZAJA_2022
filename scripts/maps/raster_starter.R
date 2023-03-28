@@ -14,11 +14,13 @@ library(terra)
 # 2. LOADING DATA ----
 # Shapefile of border of katie's map 
 boundary <- st_read("data/katie_map_border.shp") 
+boundary_test <- st_read("data/cells.shp") 
+p50_2020_resample <- rast("data/p50_2020_resample.tif") 
 
 # Rasters of shrub biomass (g/m2) in the PCH range in 2020 (relevant to me)
 # Using the best-estimates: the 50th percentile of the 1,000 permutations
-p50_2020 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_2020_wgs84.tif") 
-
+p50_2020 <- rast("data/katie_maps/pft_agb_deciduousshrub_p50_2020_wgs84.tif") 
+ncell(p50_2020)
 # all other rasters 1985-2020 (NB only 1985 and 2020 have right projection)
 # p50_1985 <- raster("data/katie_maps/pft_agb_deciduousshrub_p025_1985_wgs84.tif") 
 #p50_1990 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_1990.tif") 
@@ -73,6 +75,16 @@ pp <- rasterToPolygons(r,  dissolve = TRUE)
 plot(p50_2020_resample)
 plot(poly_shrub_2020, lwd =3, border = "red", add = TRUE)
 plot(pp, lwd =2, border = "blue", add = TRUE)
+
+# same thing but with terra 
+system.time(p <- as.polygons(p50_2020_resample))
+as.data.frame(p)
+writeVector(p, "data/cells.shp")
+
+system.time(p_large <- as.polygons(p50_2020))
+as.data.frame(p)
+writeVector(p, "data/cells.shp")
+
 
 # saving as shapefile
 # shapefile(pp, file = "data/katie_map_border.shp")
@@ -186,4 +198,36 @@ theme_shrub <- function(){ theme(legend.position = "right",
 #                                           cells=TRUE, rowcol=FALSE, xy = TRUE)) 
 #view(p50_2020_random)
 #hist(p50_2020_random$pft_agb_deciduousshrub_p50_2020_wgs84)
+gdal_polygonizeR <- function(inputraster, 
+                             outshape,
+                             gdalformat = 'ESRI Shapefile',
+                             pypath     = NULL,
+                             pyexe      = 'python',
+                             overwrite  = FALSE,
+                             directory  = "") {
+  
+  inputraster <- paste0(directory, inputraster)
+  outshape <- paste0(directory, outshape)
+  if (is.null(pypath)) {
+    pypath <- Sys.which('gdal_polygonize.py')
+  }
+  if (!file.exists(pypath)) stop("Can't find gdal_polygonize.py on your system.")
+  
+  if (!is.null(outshape)) {
+    outshape <- sub('\\.shp$', '', outshape)
+    f.exists <- file.exists(paste(outshape, c('shp', 'shx', 'dbf'), sep = '.'))
+    if (any(f.exists)) {
+      if (overwrite == FALSE) {
+        stop(sprintf('File already exists: %s',
+                     toString(paste(outshape, c('shp', 'shx', 'dbf'),
+                                    sep = '.')[f.exists])), call.=FALSE)
+      } else (
+        unlink(paste(outshape, c('shp', 'shx', 'dbf'), sep = '.'))
+      )
+    }
+    system("OSGeo4W", input = paste0(sprintf('%1$s "%2$s" "%3$s" -f "%4$s" "%5$s.shp"', pyexe, pypath, inputraster, gdalformat, outshape), " -fieldname id"))
+  }
+}
 
+
+poly_gdal <- polygonizer(p50_2020, r)
