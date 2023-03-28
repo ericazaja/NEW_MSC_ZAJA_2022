@@ -55,7 +55,7 @@ itex_EZ_pulchra$SiteSubsitePlot <- as.factor(itex_EZ_pulchra$SiteSubsitePlot)
 itex_EZ_arctica$SiteSubsitePlot <- as.factor(itex_EZ_arctica$SiteSubsitePlot)
 
 
-# modelling -----
+# modelling cover over time -----
 
 # salix arctica -----
 arctica_cover <- brms::brm(cover_prop ~ I(YEAR-1996)+(I(YEAR-1996)|SiteSubsitePlot),
@@ -67,10 +67,25 @@ summary(arctica_cover)
 plot(arctica_cover)
 pp_check(arctica_cover, type = "dens_overlay", nsamples = 100)
 
+# Extracting outputs
 cov_time_arc_fix <- as.data.frame(fixef(arctica_cover)) # extract fixed eff. slopes 
 cov_time_arc_random <- as.data.frame(ranef(arctica_cover)) # extract random eff. slopes 
 cov_time_arc_coef <- as.data.frame(coef(arctica_cover, summary = TRUE, robust = FALSE, 
                                         probs = c(0.025, 0.975))) # extract combined coeff (random and fixed)
+
+cov_time_arc_random$SiteSubsitePlot <- row.names(cov_time_arc_random) # Apply row.names function
+rownames(cov_time_arc_random) <- NULL
+colnames(cov_time_arc_random)[5] <- "sitesubsiteplot_index_year_estimate" 
+colnames(cov_time_arc_random)[6] <- "sitesubsiteplot_index_year_error" 
+colnames(cov_time_arc_random)[7] <- "sitesubsiteplot_index_year_Q_25" 
+colnames(cov_time_arc_random)[8] <- "sitesubsiteplot_index_year_Q_97"
+
+cov_time_arc_random_new <- cov_time_arc_random %>%
+  dplyr::select("SiteSubsitePlot","sitesubsiteplot_index_year_estimate" ,"sitesubsiteplot_index_year_error" ,
+                "sitesubsiteplot_index_year_Q_25" ,"sitesubsiteplot_index_year_Q_97")
+cov_time_arc_random_new$Site <- ifelse(grepl("QHI", cov_time_arc_random_new$SiteSubsitePlot), "QHI",
+                                       ifelse(grepl("ANWR", cov_time_arc_random_new$SiteSubsitePlot), "ANWR" , NA))
+view(cov_time_arc_random_new)
 
 # salix pulchra -----
 pulchra_cover <- brms::brm(cover_prop ~ I(YEAR-1988)+ (I(YEAR-1988)|SiteSubsitePlot),
@@ -81,11 +96,26 @@ pulchra_cover <- brms::brm(cover_prop ~ I(YEAR-1988)+ (I(YEAR-1988)|SiteSubsiteP
 summary(pulchra_cover) 
 plot(pulchra_cover)
 pp_check(pulchra_cover, type = "dens_overlay", nsamples = 100) 
+
+# Extracting outputs
 cov_time_pul_fix <- as.data.frame(fixef(pulchra_cover)) # extract fixed eff. slopes 
 cov_time_pul_random <- as.data.frame(ranef(pulchra_cover)) # extract random eff. slopes 
 cov_time_pul_coef <- as.data.frame(coef(pulchra_cover, summary = TRUE, robust = FALSE, 
                                         probs = c(0.025, 0.975))) # extract combined coeff (random and fixed)
 
+cov_time_pul_random$SiteSubsitePlot <- row.names(cov_time_pul_random) # Apply row.names function
+rownames(cov_time_pul_random) <- NULL
+colnames(cov_time_pul_random)[5] <- "sitesubsiteplot_index_year_estimate" 
+colnames(cov_time_pul_random)[6] <- "sitesubsiteplot_index_year_error" 
+colnames(cov_time_pul_random)[7] <- "sitesubsiteplot_index_year_Q_25" 
+colnames(cov_time_pul_random)[8] <- "sitesubsiteplot_index_year_Q_97"
+
+cov_time_pul_random_new <- cov_time_pul_random %>%
+  dplyr::select("SiteSubsitePlot","sitesubsiteplot_index_year_estimate" ,"sitesubsiteplot_index_year_error" ,
+                "sitesubsiteplot_index_year_Q_25" ,"sitesubsiteplot_index_year_Q_97")
+cov_time_pul_random_new$Site <- ifelse(grepl("QHI", cov_time_pul_random_new$SiteSubsitePlot), "QHI",
+                                                      ifelse(grepl("TOOLIK", cov_time_pul_random_new$SiteSubsitePlot), "TOOLIK" , NA))
+view(cov_time_pul_random_new)
 
 # data visualisation ------
 # one line per site

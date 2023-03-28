@@ -229,6 +229,63 @@ temp_time_random_year <- temp_time_random %>%
                 "index_year_Q_97")
 view(temp_time_random_year)
 
+# SLOPE vs slopes -----
+# S. Pulchra slope vs slope -----
+temp_time_pul <- temp_time_random_year %>%
+  filter(Site %in% c("QHI", "TOOLIK"))
+
+temp_cover_pul <- full_join(temp_time_pul, cov_time_pul_random_new, by = c("Site"="Site"))
+
+view(temp_cover_pul)
+
+temp_time <- brms::brm(sitesubsiteplot_index_year_estimate ~ index_year_estimate + (1|Site),
+                       data = temp_cover_pul,  family = gaussian(), chains = 3,
+                       iter = 5000, warmup = 1000, 
+                       control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(temp_time)
+pp_check(temp_time, type = "dens_overlay", nsamples = 100) 
+
+(temp_time_plot <- temp_cover_pul %>%
+    group_by(Site) %>%
+    add_predicted_draws(temp_time) %>%
+    ggplot(aes(x =index_year_estimate, y =sitesubsiteplot_index_year_estimate , color = Site, fill = Site)) +
+    stat_lineribbon(aes(y = .prediction), .width = .50, alpha = 1/4) +
+    geom_point(data = temp_cover_pul) +
+    scale_colour_viridis_d(begin = 0.1, end = 0.95) +
+    scale_fill_viridis_d(begin = 0.1, end = 0.95) +
+    ylab("Cover change (scaled) \n") +
+    xlab("\nTemperature change (scaled)")+ theme_shrub() +
+    labs(title = "Salix pulchra"))
+
+# S. arctica slope vs slope -----
+temp_time_arc <- temp_time_random_year %>%
+  filter(Site %in% c("QHI", "ANWR"))
+
+temp_cover_arc <- full_join(temp_time_arc, cov_time_arc_random_new, by = c("Site"="Site"))
+
+view(temp_cover_arc)
+
+temp_time_arc_mod <- brms::brm(sitesubsiteplot_index_year_estimate ~ index_year_estimate + (1|Site),
+                       data = temp_cover_arc,  family = gaussian(), chains = 3,
+                       iter = 5000, warmup = 1000, 
+                       control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(temp_time_arc_mod)
+pp_check(temp_time_arc_mod, type = "dens_overlay", nsamples = 100) 
+
+(temp_time_arc_plot <- temp_cover_arc %>%
+    group_by(Site) %>%
+    add_predicted_draws(temp_time_arc_mod) %>%
+    ggplot(aes(x =index_year_estimate, y =sitesubsiteplot_index_year_estimate , color = Site, fill = Site)) +
+    stat_lineribbon(aes(y = .prediction), .width = .50, alpha = 1/4) +
+    geom_point(data = temp_cover_arc) +
+    scale_colour_viridis_d(begin = 0.1, end = 0.95) +
+    scale_fill_viridis_d(begin = 0.1, end = 0.95) +
+    ylab("Cover change (scaled) \n") +
+    xlab("\nTemperature change (scaled)")+ theme_shrub() +
+    labs(title = "Salix arctica"))
+
 
 # IGNORE BELOW FOR NOW -----
 # 2. cover over time only CG 
