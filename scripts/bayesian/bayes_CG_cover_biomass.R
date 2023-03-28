@@ -65,7 +65,7 @@ hist(CG_ALL_cover_biomass$biomass_per_m2, breaks = 30)# not normal
 
 # 3.1. COVER over time ------
 # Salix richardsonii -------
-cover_rich <- brms::brm((cover_percent/100) ~ Sample_age + (1|SampleID_standard/Sample_age),
+cover_rich <- brms::brm((cover_percent/100) ~ Sample_age + (Sample_age|SampleID_standard),
                                  data = CG_ric_cover_biomass,  family = "beta", chains = 3,
                                  iter = 5000, warmup = 1000, 
                                  control = list(max_treedepth = 15, adapt_delta = 0.99))
@@ -76,11 +76,11 @@ pp_check(cover_rich, type = "dens_overlay", nsamples = 100)
 tab_model(cover_rich)
 
 cover_rich_random <- as.data.frame(coef(cover_rich)) 
-cover_rich_random <- as.data.frame(coef(cover_rich, summary = TRUE, robust = FALSE, 
+cover_rich_coef <- as.data.frame(coef(cover_rich, summary = TRUE, robust = FALSE, 
                                         probs = c(0.025, 0.975)))
 
 # Salix pulchra -------
-cover_pul <- brms::brm((cover_percent/100) ~ Sample_age + (1|Sample_age),
+cover_pul <- brms::brm((cover_percent/100) ~ Sample_age + (Sample_age|SampleID_standard),
                         data = CG_pul_cover_biomass,  family = "beta", chains = 3,
                         iter = 5000, warmup = 1000, 
                         control = list(max_treedepth = 15, adapt_delta = 0.99))
@@ -89,8 +89,10 @@ summary(cover_pul) # significant cover growth over time
 plot(cover_pul)
 pp_check(cover_pul, type = "dens_overlay", nsamples = 100) 
 
+cover_pul_random <- as.data.frame(coef(cover_pul)) 
+
 # Salix arctica -------
-cover_arc <- brms::brm((cover_percent/100) ~ Sample_age + (1|Sample_age),
+cover_arc <- brms::brm((cover_percent/100) ~ Sample_age + (Sample_age|SampleID_standard),
                        data = CG_arc_cover_biomass,  family = "beta", chains = 3,
                        iter = 5000, warmup = 1000, 
                        control = list(max_treedepth = 15, adapt_delta = 0.99))
@@ -98,6 +100,7 @@ cover_arc <- brms::brm((cover_percent/100) ~ Sample_age + (1|Sample_age),
 summary(cover_arc) #  significant cover growth over time
 plot(cover_arc)
 pp_check(cover_arc, type = "dens_overlay", nsamples = 100) 
+cover_arc_random <- as.data.frame(coef(cover_arc)) 
 
 
 # RANDOM SLOPE MODEL ------
