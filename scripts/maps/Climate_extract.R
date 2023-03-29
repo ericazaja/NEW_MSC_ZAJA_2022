@@ -2,6 +2,7 @@
 
 # Load data -----
 shrub_map_extract <- read.csv("data/extract_end.csv") 
+shrub_map_extract_high <- read.csv("data/extract_end_high.csv") 
 
 # EXTRACTION ------
 # Loading the coordinates of the cropped shrub map

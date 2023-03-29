@@ -16,6 +16,8 @@ library(terra)
 boundary <- st_read("data/katie_map_border.shp") 
 boundary_test <- st_read("data/cells.shp") 
 p50_2020_resample <- rast("data/p50_2020_resample.tif") 
+boundary_high <- st_read("data/katie_map_border_high.shp")
+p50_2020_resample_test <- rast("data/p50_2020_resample_test.tif") 
 
 # Rasters of shrub biomass (g/m2) in the PCH range in 2020 (relevant to me)
 # Using the best-estimates: the 50th percentile of the 1,000 permutations
@@ -57,40 +59,43 @@ extent(p50_2020)
 # creating raster with resolution I want
 x <- raster()
 x <- raster(xmn=-154.8826 , xmx=-127.0697, ymn=59.43991 , ymx=71.49051)
-res(x) <- 0.5
+res(x) <- 0.1
 res(x)
 projection(x) <- "+proj=longlat +datum=WGS84 +no_defs"
 
 # alternative way
-library(terra)
-a <- aggregate(p50_2020, 3, mean)
-res(a) # [1] 0.001785627 0.001785627
+#library(terra)
+#a <- aggregate(p50_2020, 3, mean)
+#res(a) # [1] 0.001785627 0.001785627
 
-plot(a)
-rr <- raster(crs="+proj=longlat +datum=WGS84 +no_defs", resolution=1000, xmn=-154.8826 , xmx=-127.0697, ymn=59.43991 , ymx=71.49051)
+#plot(a)
+#rr <- raster(crs="+proj=longlat +datum=WGS84 +no_defs", resolution=1000, xmn=-154.8826 , xmx=-127.0697, ymn=59.43991 , ymx=71.49051)
 
 # AGGREGATE PIXELS -----
 # Aggregate pixels of shrub map p50_2020 to climate raster size (1.25 x 1 degree)
 p50_2020_resample <- resample(p50_2020, hdd.cdd.2050) # hdd cdd is the climate raster
-p50_2020_resample_test <- resample(p50_2020, rr) # x is the raster I made 
+p50_2020_resample_test <- resample(p50_2020, x) # x is the raster I made 
 plot(p50_2020_resample_test)
 res(p50_2020_resample_test) #1.25 1.00, same as climate!
 # saving raster 
 writeRaster(p50_2020_resample, "data/p50_2020_resample.tif")
+writeRaster(p50_2020_resample_test, "data/p50_2020_resample_test.tif")
 
 # BOUNDARY SHP ------
 # Extracting boundary of caribou map to make shapefile 
-e <- extent(p50_2020_resample)
+e <- extent(p50_2020_resample_test)
 plot(e)
 poly_shrub_2020 <- as(e , 'SpatialPolygons')  
 plot(poly_shrub_2020)
-plot(p50_2020_resample)
+plot(p50_2020_resample_test)
 plot(poly_shrub_2020, lwd =3, border = "red", add = TRUE)
-r <- p50_2020_resample > -Inf
-pp <- rasterToPolygons(r,  dissolve = TRUE)
-plot(p50_2020_resample)
+r <- p50_2020_resample_test > -Inf
+pp_2 <- rasterToPolygons(r,  dissolve = TRUE)
+plot(p50_2020_resample_test)
 plot(poly_shrub_2020, lwd =3, border = "red", add = TRUE)
 plot(pp, lwd =2, border = "blue", add = TRUE)
+
+shapefile(pp_2, file = "data/katie_map_border_high.shp")
 
 # same thing but with terra 
 system.time(p <- as.polygons(p50_2020_resample))
@@ -108,7 +113,7 @@ writeVector(p, "data/cells.shp")
 # AREA -----
 # Measuring area of raster
 # get sizes of all cells in raster [km2]
-cell_size <- raster::area(p50_2020_resample, na.rm = TRUE, weights = FALSE)
+cell_size <- raster::area(p50_2020_resample_test, na.rm = TRUE, weights = FALSE)
 # delete NAs from vector of all raster cells
 # NAs lie outside of the rastered region, can thus be omitted
 cell_size <- cell_size[!is.na(cell_size)] # 0.2815663
@@ -122,25 +127,29 @@ print(paste("Area of PCH Alaskan range (raster)", round(raster_area, digits = 1)
 # EXTRACTION of raster points ------
 # Extract points from raster 
 extract <- raster::extract(p50_2020_resample, boundary, df = TRUE, cellnumbers = TRUE)
+extract <- raster::extract(p50_2020_resample_test, pp_2, df = TRUE, cellnumbers = TRUE)
 
 # Order (for checking purposes)
-extract <- extract[order(extract$cell),]
+extract_high <- extract[order(extract$cell),]
+extract_high <- extract[order(extract$cell),]
 
 # Extract coordinates
-xy <- xyFromCell(p50_2020_resample, cell = extract$cell, spatial = FALSE)
+xy <- xyFromCell(p50_2020_resample_test, cell = extract$cell, spatial = FALSE)
 
 # Convert to df and add cellnumber
 xy <- as.data.frame(xy)
 xy$cell <- extract$cell
 
 # Merge two data frames
-extract_end <- merge(extract, xy)
+extract_end <- merge(extract_high, xy)
 extract_end <- extract_end[order(extract_end$cell),]
 view(extract_end)
 hist(extract_end$pft_agb_deciduousshrub_p50_2020_wgs84)
 range(extract_end$pft_agb_deciduousshrub_p50_2020_wgs84) #  4.766095 495.623108
 # saving data as csv
 write.csv(extract_end, file = "data/extract_end.csv")
+
+write.csv(extract_end, file = "data/extract_end_high.csv")
 
 # DATA VIS ------
 # setting a personalised theme 
@@ -156,7 +165,7 @@ theme_shrub <- function(){ theme(legend.position = "right",
                                  plot.margin = unit(c(1,1,1,1), units = , "cm"))}
 
 # Plotting shrub raster (entire) with ggplot
-(gplot_p50_1985 <- gplot(p50_2020_resample) +
+(gplot_p50_1985 <- gplot(p50_2020_resample_test) +
     geom_raster(aes(x = x, y = y, fill = value)) +
     # value is the specific value (of reflectance) each pixel is associated with
     scale_fill_viridis_c(rescaler = function(x, to = c(0, 1), from = NULL) {
@@ -172,7 +181,7 @@ theme_shrub <- function(){ theme(legend.position = "right",
 
 
 # Cropped map with personalised colour palette (low-mid-high) 
-(gplot_p50_1985_test_my_palette <- gplot(p50_2020_resample) +
+(gplot_p50_1985_test_my_palette <- gplot(p50_2020_resample_test) +
     geom_raster(aes(x = x, y = y, fill = value)) +
     # value is the specific value (of reflectance) each pixel is associated with
     scale_fill_gradient2(low = "green4", mid = "green3", high = "brown", midpoint = 10,  na.value="white") +
@@ -188,8 +197,8 @@ theme_shrub <- function(){ theme(legend.position = "right",
 # plotting raster with personalised colours from dataframe 
 (raster_my_palette_new <- ggplot(extract_end) + 
     geom_tile(aes(x=x,y=y,fill=pft_agb_deciduousshrub_p50_2020_wgs84)) + 
-    # scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
-    scale_fill_gradient2(name = "Shrub biomass g/m2",high = "green4", mid = "green3", low = "brown", midpoint = 350,  na.value="white") +
+    scale_fill_gradient(name = "Shrub biomass g/m2",high = "green4", low = "yellow1",  na.value="white",
+                        breaks = c(0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200)) +
     coord_quickmap()+
     theme_shrub() +  
     xlab("\nLongitude") +
