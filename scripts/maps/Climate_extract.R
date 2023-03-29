@@ -6,17 +6,17 @@ shrub_map_extract_high <- read.csv("data/extract_end_high.csv")
 
 # EXTRACTION ------
 # Loading the coordinates of the cropped shrub map
-coords <- shrub_map_extract %>% 
+coords <- shrub_map_extract_high %>% 
   dplyr::select(x, y) # keeping lat and long
 
 # Creating SpatialPoints (sp) object of unique coordinates
 coords_sp <- SpatialPoints(coords)
 
 # stack rasters of climate ? tasmax.2100.1, tasmax.2100.2, tasmax.2100.3...
-stack.2020 <- stack(tasmax.2020.1, tasmax.2020.2.re,tasmax.2020.3.re,
+stack.2020 <- stack(tasmax.2020.1.re, tasmax.2020.2.re,tasmax.2020.3.re,
                     tasmax.2020.4.re, tasmax.2020.5.re, tasmax.2020.6.re)
 
-stack.2030 <- stack(tasmax.2030.1, tasmax.2030.2.re,tasmax.2030.3.re,
+stack.2030 <- stack(tasmax.2030.1.re, tasmax.2030.2.re,tasmax.2030.3.re,
                     tasmax.2030.4.re, tasmax.2030.5.re, tasmax.2030.6.re)
 
 stack.2040 <- stack(tasmax.2040.1, tasmax.2040.2.re,tasmax.2040.3.re,
@@ -89,7 +89,7 @@ coord.chelsa.combo.2090 <- left_join(chelsa.extract.2090, coord.df, by = c("ID" 
 coord.chelsa.combo.2100 <- left_join(chelsa.extract.2100, coord.df, by = c("ID" = "ID"))
 
 # Loading the shrub biomass df
-biomass.df <- shrub_map_extract %>%
+biomass.df <- shrub_map_extract_high %>%
   dplyr::select(-ID)%>%
   rename("ID" = "X", 
         "biomass_per_m2" = "pft_agb_deciduousshrub_p50_2020_wgs84") %>%

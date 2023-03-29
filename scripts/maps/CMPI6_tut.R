@@ -120,7 +120,7 @@ plot(tasmax.scenes.5[[1000]], main = "CNRM, RCP 8.5",sub=tasmax.dates.5[[1000]],
 tasmax.dates.6 = as.Date(var.get.nc(nc_ACCESS_85, "time"), origin="1850-01-01 00:00:00")
 
 tasmax.scenes.6 = sapply(1:length(tasmax.dates.6), function(z) {
-  grid = var.get.nc(nc_BCC_85, "tasmax", start=c(NA, NA, z), count=c(NA, NA, 1))
+  grid = var.get.nc(nc_ACCESS_85, "tasmax", start=c(NA, NA, z), count=c(NA, NA, 1))
   x = raster(grid, xmn=-90, xmx=90, ymn=0, ymx=360,
              crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
   x = rotate(flip(t(x), 2))
@@ -134,6 +134,13 @@ plot(tasmax.scenes.6[[1000]], main = "ACCESS, RCP 8.5",sub=tasmax.dates.6[[1030]
 
 # EXTRACTING rasters by year ------
 
+# # creating raster with resolution I want
+x <- raster()
+x <- raster(xmn=-154.8826 , xmx=-127.0697, ymn=59.43991 , ymx=71.49051)
+res(x) <- 0.1
+res(x)
+projection(x) <- "+proj=longlat +datum=WGS84 +no_defs"
+
 #.--------
 
 # JULY 2020 ------
@@ -145,14 +152,15 @@ indices.1 = which((tasmax.dates.1 <= as.Date(paste0("2020-07-31"))) &
 tasmax.2020.1 = tasmax.scenes.1[[indices.1[1]]] 
 res(tasmax.2020.1)# 1.25 1.00 degrees
 projection(tasmax.2020.1) #"+proj=longlat +datum=WGS84 +no_defs"
+tasmax.2020.1.re <- resample(tasmax.2020.1, x) # x is the raster I made 
 
 # crop and mask
-r2.1 <- crop(tasmax.2020.1, extent(boundary))
-r3.1 <- mask(r2.1, boundary)
+r2.1 <- crop(tasmax.2020.1.re, extent(boundary_high))
+r3.1 <- mask(r2.1, boundary_high)
 
 ## Check that it worked
 plot(r3.1)
-plot(boundary, add=TRUE, lwd=2)
+plot(boundary_high, add=TRUE, lwd=2)
 
 plot(r3.1, main="July 2020, model 1", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 
@@ -165,11 +173,12 @@ tasmax.2020.2 = tasmax.scenes.2[[indices.2[1]]]
 res(tasmax.2020.2)# 1.2500 0.9375 degrees
 projection(tasmax.2020.2) #"+proj=longlat +datum=WGS84 +no_defs"
 # make size same as other climate raster (NOAA)
-tasmax.2020.2.re <- resample(tasmax.2020.2, tasmax.2020.1) # hdd cdd is the climate raster
+tasmax.2020.2.re <- resample(tasmax.2020.2, x) # hdd cdd is the climate raster
+res(tasmax.2020.2.re) 
 
 ## crop and mask
-r2.2 <- crop(tasmax.2020.2.re, extent(boundary))
-r3.2 <- mask(r2.2, boundary)
+r2.2 <- crop(tasmax.2020.2.re, extent(boundary_high))
+r3.2 <- mask(r2.2, boundary_high)
 
 ## Check that it worked
 plot(r3.2)
@@ -187,11 +196,11 @@ res(tasmax.2020.3) # 1.125 1.125 degrees
 projection(tasmax.2020.3) #"+proj=longlat +datum=WGS84 +no_defs"
 # hdd.cdd.2023 = crop(tasmax.2023, boundary) # crop to the extent of the PCH range
 # make size same as other climate raster (NOAA)
-tasmax.2020.3.re <- resample(tasmax.2020.3, tasmax.2020.1) # hdd cdd is the climate raster
+tasmax.2020.3.re <- resample(tasmax.2020.3, x) # hdd cdd is the climate raster
 
 ## crop and mask
-r2.3 <- crop(tasmax.2020.3.re, extent(boundary))
-r3.3 <- mask(r2.3, boundary)
+r2.3 <- crop(tasmax.2020.3.re, extent(boundary_high))
+r3.3 <- mask(r2.3, boundary_high)
 
 ## Check that it worked
 plot(r3.3)
@@ -209,11 +218,11 @@ res(tasmax.2020.4)# 2.8125 2.8125 degrees
 projection(tasmax.2020.4) #"+proj=longlat +datum=WGS84 +no_defs"
 # hdd.cdd.2023 = crop(tasmax.2023, boundary) # crop to the extent of the PCH range
 # make size same as other climate raster (NOAA)
-tasmax.2020.4.re <- resample(tasmax.2020.4, tasmax.2020.1) # hdd cdd is the climate raster
+tasmax.2020.4.re <- resample(tasmax.2020.4, x) # hdd cdd is the climate raster
 
 ## crop and mask
-r2.4 <- crop(tasmax.2020.4.re, extent(boundary))
-r3.4 <- mask(r2.4, boundary)
+r2.4 <- crop(tasmax.2020.4.re, extent(boundary_high))
+r3.4 <- mask(r2.4, boundary_high)
 
 ## Check that it worked
 plot(r3.4)
@@ -230,11 +239,11 @@ tasmax.2020.5 = tasmax.scenes.5[[indices.5[1]]]
 res(tasmax.2020.5)# 1.40625 1.40625 degrees
 projection(tasmax.2020.5) #"+proj=longlat +datum=WGS84 +no_defs"
 # hdd.cdd.2023 = crop(tasmax.2023, boundary) # crop to the extent of the PCH range
-tasmax.2020.5.re <- resample(tasmax.2020.5, tasmax.2020.1) # hdd cdd is the climate raster
+tasmax.2020.5.re <- resample(tasmax.2020.5, x) # hdd cdd is the climate raster
 
 ## crop and mask
-r2.5 <- crop(tasmax.2020.5.re, extent(boundary))
-r3.5 <- mask(r2.5, boundary)
+r2.5 <- crop(tasmax.2020.5.re, extent(boundary_high))
+r3.5 <- mask(r2.5, boundary_high)
 
 ## Check that it worked
 plot(r3.5)
@@ -252,17 +261,25 @@ tasmax.2020.6 = tasmax.scenes.6[[indices.6[1]]]
 res(tasmax.2020.6)# 1.125 1.125 degrees
 projection(tasmax.2020.6) #"+proj=longlat +datum=WGS84 +no_defs"
 # hdd.cdd.2023 = crop(tasmax.2023, boundary) # crop to the extent of the PCH range
-tasmax.2020.6.re <- resample(tasmax.2020.6, tasmax.2020.1) # hdd cdd is the climate raster
+tasmax.2020.6.re <- resample(tasmax.2020.6, x) # hdd cdd is the climate raster
 
 ## crop and mask
-r2.6 <- crop(tasmax.2020.6.re, extent(boundary))
-r3.6 <- mask(r2.6, boundary)
+r2.6 <- crop(tasmax.2020.6.re, extent(boundary_high))
+r3.6 <- mask(r2.6, boundary_high)
 
 ## Check that it worked
 plot(r3.6)
-plot(boundary, add=TRUE, lwd=2)
+plot(boundary_high, add=TRUE, lwd=2)
 
 plot(r3.6, main="July 2023, model 6", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+
+# saving all rasters
+writeRaster(tasmax.2020.1.re, "outputs/CMPI6_rasters/tasmax.2020.1.re.tif")
+writeRaster(tasmax.2020.2.re, "outputs/CMPI6_rasters/tasmax.2020.2.re.tif")
+writeRaster(tasmax.2020.3.re, "outputs/CMPI6_rasters/tasmax.2020.3.re.tif")
+writeRaster(tasmax.2020.4.re, "outputs/CMPI6_rasters/tasmax.2020.4.re.tif")
+writeRaster(tasmax.2020.5.re, "outputs/CMPI6_rasters/tasmax.2020.5.re.tif")
+writeRaster(tasmax.2020.6.re, "outputs/CMPI6_rasters/tasmax.2020.6.re.tif")
 
 #.--------
 
@@ -272,10 +289,11 @@ indices.1.1 = which((tasmax.dates.1 <= as.Date(paste0("2030-07-31"))) &
                     (tasmax.dates.1 >= as.Date(paste0("2030-07-01"))))
 
 tasmax.2030.1 = tasmax.scenes.1[[indices.1.1[1]]] 
+tasmax.2030.1.re <- resample(tasmax.2030.1, x) # hdd cdd is the climate raster
 
 # crop and mask
-r2.1.1 <- crop(tasmax.2030.1, extent(boundary))
-r3.1.1 <- mask(r2.1.1, boundary)
+r2.1.1 <- crop(tasmax.2030.1.re, extent(boundary_high))
+r3.1.1 <- mask(r2.1.1, boundary_high)
 
 ## Check that it worked
 plot(r3.1.1)
@@ -290,11 +308,11 @@ indices.2.2 = which((tasmax.dates.2 <= as.Date(paste0("2030-07-31"))) &
 
 tasmax.2030.2 = tasmax.scenes.2[[indices.2.2[1]]] 
 # make size same as other climate raster (NOAA)
-tasmax.2030.2.re <- resample(tasmax.2030.2, tasmax.2020.1) # hdd cdd is the climate raster
+tasmax.2030.2.re <- resample(tasmax.2030.2, x) # hdd cdd is the climate raster
 
 ## crop and mask
-r2.2030 <- crop(tasmax.2030.2.re, extent(boundary))
-r3.2030 <- mask(r2.2030, boundary)
+r2.2030 <- crop(tasmax.2030.2.re, extent(boundary_high))
+r3.2030 <- mask(r2.2030, boundary_high)
 
 ## Check that it worked
 plot(r3.2030)
@@ -309,11 +327,11 @@ indices.3.3  = which((tasmax.dates.3 <= as.Date(paste0("2030-07-31"))) &
 
 tasmax.2030.3 = tasmax.scenes.3[[indices.3.3[1]]] 
 # make size same as other climate raster (NOAA)
-tasmax.2030.3.re <- resample(tasmax.2030.3, tasmax.2020.1) # hdd cdd is the climate raster
+tasmax.2030.3.re <- resample(tasmax.2030.3, x) # hdd cdd is the climate raster
 
 ## crop and mask
-r3.2030 <- crop(tasmax.2030.3.re, extent(boundary))
-r3.3.2030 <- mask(r3.2030, boundary)
+r3.2030 <- crop(tasmax.2030.3.re, extent(boundary_high))
+r3.3.2030 <- mask(r3.2030, boundary_high)
 
 ## Check that it worked
 plot(r3.3.2030)
@@ -328,15 +346,16 @@ indices.4.4  = which((tasmax.dates.4 <= as.Date(paste0("2030-07-31"))) &
 
 tasmax.2030.4 = tasmax.scenes.4[[indices.4.4[1]]] 
 # make size same as other climate raster (NOAA)
-tasmax.2030.4.re <- resample(tasmax.2030.4, tasmax.2020.1) # hdd cdd is the climate raster
+tasmax.2030.4.re <- resample(tasmax.2030.4, x) # hdd cdd is the climate raster
+writeRaster(tasmax.2030.4.re, "outputs/CMPI6_rasters/tasmax.2030.4.re.tif")
 
 ## crop and mask
-r2.4.2030 <- crop(tasmax.2030.4.re, extent(boundary))
-r3.4.2030 <- mask(r2.4.2030, boundary)
+r2.4.2030 <- crop(tasmax.2030.4.re, extent(boundary_high))
+r3.4.2030 <- mask(r2.4.2030, boundary_high)
 
 ## Check that it worked
 plot(r3.4.2030)
-plot(boundary, add=TRUE, lwd=2)
+plot(boundary_high, add=TRUE, lwd=2)
 
 plot(r3.4.2030, main="July 2030, model 4", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 
@@ -347,18 +366,17 @@ indices.5.5  = which((tasmax.dates.5 <= as.Date(paste0("2030-07-31"))) &
 
 tasmax.2030.5 = tasmax.scenes.5[[indices.5.5[1]]] 
 
-tasmax.2030.5.re <- resample(tasmax.2030.5, tasmax.2020.1) # hdd cdd is the climate raster
+tasmax.2030.5.re <- resample(tasmax.2030.5, x) # hdd cdd is the climate raster
 
 ## crop and mask
-r2.5.2030 <- crop(tasmax.2030.5.re, extent(boundary))
-r3.5.2030 <- mask(r2.5.2030, boundary)
+r2.5.2030 <- crop(tasmax.2030.5.re, extent(boundary_high))
+r3.5.2030 <- mask(r2.5.2030, boundary_high)
 
 ## Check that it worked
 plot(r3.5.2030)
-plot(boundary, add=TRUE, lwd=2)
+plot(boundary_high, add=TRUE, lwd=2)
 
 plot(r3.5.2030, main="July 2030, model 5", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
-
 
 
 # MODEL 6, July 2030 ------
@@ -367,17 +385,24 @@ indices.6.6  = which((tasmax.dates.6 <= as.Date(paste0("2030-07-31"))) &
                      (tasmax.dates.6 >= as.Date(paste0("2030-07-01"))))
 
 tasmax.2030.6 = tasmax.scenes.6[[indices.6.6[1]]] 
-tasmax.2030.6.re <- resample(tasmax.2030.6, tasmax.2020.1) # hdd cdd is the climate raster
-
+tasmax.2030.6.re <- resample(tasmax.2030.6, x) # hdd cdd is the climate raster
 ## crop and mask
-r2.6.2030 <- crop(tasmax.2030.6.re, extent(boundary))
-r3.6.2030 <- mask(r2.6.2030, boundary)
+r2.6.2030 <- crop(tasmax.2030.6.re, extent(boundary_high))
+r3.6.2030 <- mask(r2.6.2030, boundary_high)
 
 ## Check that it worked
 plot(r3.6.2030)
-plot(boundary, add=TRUE, lwd=2)
+plot(boundary_high, add=TRUE, lwd=2)
 
 plot(r3.6.2030, main="July 2030, model 6", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+
+# saving all rasters
+writeRaster(tasmax.2030.1.re, "outputs/CMPI6_rasters/tasmax.2030.1.re.tif")
+writeRaster(tasmax.2030.2.re, "outputs/CMPI6_rasters/tasmax.2030.2.re.tif")
+writeRaster(tasmax.2030.3.re, "outputs/CMPI6_rasters/tasmax.2030.3.re.tif")
+writeRaster(tasmax.2030.4.re, "outputs/CMPI6_rasters/tasmax.2030.4.re.tif")
+writeRaster(tasmax.2030.5.re, "outputs/CMPI6_rasters/tasmax.2030.5.re.tif")
+writeRaster(tasmax.2030.6.re, "outputs/CMPI6_rasters/tasmax.2030.6.re.tif")
 
 #.--------
 
