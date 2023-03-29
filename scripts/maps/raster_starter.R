@@ -19,7 +19,7 @@ p50_2020_resample <- rast("data/p50_2020_resample.tif")
 
 # Rasters of shrub biomass (g/m2) in the PCH range in 2020 (relevant to me)
 # Using the best-estimates: the 50th percentile of the 1,000 permutations
-p50_2020 <- rast("data/katie_maps/pft_agb_deciduousshrub_p50_2020_wgs84.tif") 
+p50_2020 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_2020_wgs84.tif") 
 ncell(p50_2020)
 # all other rasters 1985-2020 (NB only 1985 and 2020 have right projection)
 # p50_1985 <- raster("data/katie_maps/pft_agb_deciduousshrub_p025_1985_wgs84.tif") 
@@ -54,11 +54,27 @@ extent(p50_2020)
 #ymin       : 59.43991 
 #ymax       : 71.49051 
 
+# creating raster with resolution I want
+x <- raster()
+x <- raster(xmn=-154.8826 , xmx=-127.0697, ymn=59.43991 , ymx=71.49051)
+res(x) <- 0.5
+res(x)
+projection(x) <- "+proj=longlat +datum=WGS84 +no_defs"
+
+# alternative way
+library(terra)
+a <- aggregate(p50_2020, 3, mean)
+res(a) # [1] 0.001785627 0.001785627
+
+plot(a)
+rr <- raster(crs="+proj=longlat +datum=WGS84 +no_defs", resolution=1000, xmn=-154.8826 , xmx=-127.0697, ymn=59.43991 , ymx=71.49051)
+
 # AGGREGATE PIXELS -----
 # Aggregate pixels of shrub map p50_2020 to climate raster size (1.25 x 1 degree)
 p50_2020_resample <- resample(p50_2020, hdd.cdd.2050) # hdd cdd is the climate raster
-plot(p50_2020_resample)
-res(p50_2020_resample) #1.25 1.00, same as climate!
+p50_2020_resample_test <- resample(p50_2020, rr) # x is the raster I made 
+plot(p50_2020_resample_test)
+res(p50_2020_resample_test) #1.25 1.00, same as climate!
 # saving raster 
 writeRaster(p50_2020_resample, "data/p50_2020_resample.tif")
 
