@@ -1,0 +1,314 @@
+SITE,SUBSITE,Updated Data?,MOISTURE,LAT,LONG,Checked_Coords,Coord per plot?,ELEV,AZONE,Data Contributor,NonVascularIncluded,NonVascularToSpecies,OTCtreatment,Date OTC added (month-year),OTCtype,SurveyedArea,PlotSize_m2,Plots permanent?,SurveyMethod,PointsPerPlot,Multiple hits per point possible?,Comments,DomGrazer,GrazerIntensity,CAVM,CAVMBROAD
+ABISKO,PEATLAND,yes,MOIST,68.358087,18.812886,x,,340,LOW,"Cornelissen, Aerts, Lang",sometimes,sometimes,yes,,,0.25,4.5,yes,point_frame_all_plot,121,yes,"Non-vascular plants included in first surveys but not last survey, litter recorded in last but not first survey.",large,high,G3,G
+ABISKO,ABISKODRY_PADDUS,yes,MOIST,68.1933,18.5115,x,,544,LOW,Michelsen,,,yes,1989,,0.25,,yes,point_frame_all_plot,100,,Previously called AbiskoDry,birds,low,,
+ABISKO,ABISKOWET_MULTE,no,WET,68.20462,18.49582,x,,420,LOW,Michelsen,,,yes,1999,,0.25,,yes,point_frame_all_plot,100,,,birds,low,,
+ABISKO,ABISKOWET_FLUX,new,,68.20462,18.49582,,,400,LOW,Rinnan,yes,no,yes,1999,,0.0484,,yes,point_frame_all_plot,100,yes,"Plots are same as ABISKOWET but different part of plot surveyed. Some plots had only 49 points, these have been converted to equivalent of 100. Plot names ending in X had OTCs added later. Litter only recorded in later years.",,,,
+ABISKO,lower_forest,new,,68.3284,18.8356,,,523,LOW,"Kaarlejärvi, Khitun, Sjogersten",yes,yes,yes,1998,year-round,1,"control plots 1 m2, OTCs diameter 146 cm",yes,point_frame_all_plot,87,yes,,,,,
+ABISKO,upper_forest,new,,68.3145,18.858,,,600,LOW,"Kaarlejärvi, Khitun, Sjogersten",yes,yes,yes,1998,year-round,1,"control plots 1 m2, OTCs diameter 146 cm",yes,point_frame_all_plot,87,yes,,,,,
+ABISKO,lower_tundra,new,,68.3244,18.8417,,,545,LOW,"Kaarlejärvi, Khitun, Sjogersten",yes,yes,yes,1998,year-round,1,"control plots 1 m2, OTCs diameter 146 cm",yes,point_frame_all_plot,87,yes,,,,,
+ABISKO,upper_tundra,new,,68.3133,18.863,,,616,LOW,"Kaarlejärvi, Khitun, Sjogersten",yes,yes,yes,1998,year-round,1,"control plots 1 m2, OTCs diameter 146 cm",yes,point_frame_all_plot,87,yes,,,,,
+ADVENT,ADVENT_1,new,,78.174119,16.018237,,yes,,HIGH,Matteo Petit Bon,yes,no,yes,,,0.0625,0.64,,point_frame_all_plot,"VARIABLE - 12 in 2016, 25 in 2017",,"Live hits only (leaf and woody); bottom hit always one of (litter, moss, soil or lichen); subsites chosen to include 2-3 different community types",,,,
+ADVENT,ADVENT_2,new,,78.17192,16.021313,,yes,,HIGH,Matteo Petit Bon,yes,no,yes,,,0.0625,0.64,,point_frame_all_plot,"VARIABLE - 12 in 2016, 25 in 2017",,"Live hits only (leaf and woody); bottom hit always one of (litter, moss, soil or lichen); subsites chosen to include 2-3 different community types",,,,
+ADVENT,ADVENT_3,new,,78.171112,16.029034,,yes,,HIGH,Matteo Petit Bon,yes,no,yes,,,0.0625,0.64,,point_frame_all_plot,"VARIABLE - 12 in 2016, 25 in 2017",,"Live hits only (leaf and woody); bottom hit always one of (litter, moss, soil or lichen); subsites chosen to include 2-3 different community types",,,,
+ADVENT,ADVENT_4,new,,78.168357,16.054887,,yes,,HIGH,Matteo Petit Bon,yes,no,yes,,,0.0625,0.64,,point_frame_all_plot,"VARIABLE - 12 in 2016, 25 in 2017",,"Live hits only (leaf and woody); bottom hit always one of (litter, moss, soil or lichen); subsites chosen to include 2-3 different community types",,,,
+ADVENT,ADVENT_5,new,,78.170617,16.052656,,yes,,HIGH,Matteo Petit Bon,yes,no,yes,,,0.0625,0.64,,point_frame_all_plot,"VARIABLE - 12 in 2016, 25 in 2017",,"Live hits only (leaf and woody); bottom hit always one of (litter, moss, soil or lichen); subsites chosen to include 2-3 different community types",,,,
+ADVENT,ADVENT_6,new,,78.171784,16.061398,,yes,,HIGH,Matteo Petit Bon,yes,no,yes,,,0.0625,0.64,,point_frame_all_plot,"VARIABLE - 12 in 2016, 25 in 2017",,"Live hits only (leaf and woody); bottom hit always one of (litter, moss, soil or lichen); subsites chosen to include 2-3 different community types",,,,
+ADVENT,ADVENT_7,new,,78.172873,16.067786,,yes,,HIGH,Matteo Petit Bon,yes,no,yes,,,0.0625,0.64,,point_frame_all_plot,"VARIABLE - 12 in 2016, 25 in 2017",,"Live hits only (leaf and woody); bottom hit always one of (litter, moss, soil or lichen); subsites chosen to include 2-3 different community types",,,,
+AKUREYRI,GA66,yes,MOIST,65.59293,-17.97208,x,,190,LOW,Magnusson,,,no,,,0.25,,no,BraunBlanquet,NA,,,,,,
+AKUREYRI,HR58,yes,DRY,65.56427,-18.1559,,,250,LOW,Magnusson,,,no,,,0.25,,no,BraunBlanquet,NA,,,,,,
+AKUREYRI,MD72,yes,MOIST,65.51392,-18.0768,x,,190,LOW,Magnusson,,,no,,,0.25,,no,BraunBlanquet,NA,,,large,low,G4,G
+AKUREYRI,SB63,yes,MOIST,65.44984,-18.24216,x,,370,LOW,Magnusson,,,no,,,0.25,,no,BraunBlanquet,NA,,,large,low,P1,P
+AKUREYRI,SY59,yes,MOIST,65.50548,-18.22637,x,,320,LOW,Magnusson,,,no,,,0.25,,no,BraunBlanquet,NA,,,LARGE,LOW,P2,P
+ALEXFIORD,A,no,WET,78.87,-75.67,,,30,HIGH,Henry,,,no,,,0.1,,no,biomass,,,,LARGE,LOW,P2,P
+ALEXFIORD,B,no,WET,78.87,-75.67,,,30,HIGH,Henry,,,no,,,0.1,,no,biomass,,,,LARGE,LOW,P2,P
+ALEXFIORD,C,no,WET,78.87,-75.67,,,30,HIGH,Henry,,,no,,,0.1,,no,biomass,,,,LARGE,LOW,W1,W
+ALEXFIORD,CASSIOPE,yes,MOIST,78.87448,-75.78341,x,,30,HIGH,Henry,,,yes,,,1,,yes,point_frame_all_xy,100,,,LARGE,LOW,W1,W
+ALEXFIORD,CASSIOPE_BIOMASS,no,MOIST,78.87674,-75.78042,x,,30,HIGH,Henry,,,no,,,0.0625,,no,biomass,,,,LARGE,LOW,W1,W
+ALEXFIORD,CASSIOPE_COVER,yes,MOIST,78.87448,-75.78341,x,,30,HIGH,Henry,,,no,,,0.25,,,percent_cover,,,,small,low,W3,W
+ALEXFIORD,D,no,WET,78.87,-75.67,,,30,HIGH,Henry,,,no,,,0.1,,no,biomass,,,,none ,low,S1,S
+ALEXFIORD,DOMEDOLOMITE,,DRY,78.86221,-75.90053,x,,540,HIGH,Henry,,,yes,,,1,,yes,point_frame_all_xy,100,,,none ,low,S1,S
+ALEXFIORD,DOMEGRANITE,,DRY,78.86192,-75.90385,x,,540,HIGH,Henry,,,yes,,,1,,yes,point_frame_all_xy,100,,,NA,NA,B4,B
+ALEXFIORD,DRYAS,yes,MOIST,78.8719,-75.7826,x,,30,HIGH,Henry,,,yes,,,1,,yes,point_frame_all_xy,100,,,NA,NA,B4,B
+ALEXFIORD,E,no,WET,78.87,-75.67,,,30,HIGH,Henry,,,no,,,0.1,,no,biomass,,,,NA,NA,G1,G
+ALEXFIORD,FERT,yes,MOIST,78.87107,-75.79107,x,,30,HIGH,Henry,,,yes,,,1,,yes,point_frame_all_xy,Email,,,NA,NA,S2,S
+ALEXFIORD,MEADOW,yes,WET,78.87558,-75.80909,x,,30,HIGH,Henry,,,yes,,,1,,yes,point_frame_all_xy,100,,,NA,NA,W1,W
+ALEXFIORD,WILLOW,yes,DRY,78.87421,-75.79867,x,,30,HIGH,Henry,,,yes,,,1,,yes,point_frame_all_xy,100,,in 1996 hits by plot only,NA,NA,W1,W
+ALEXFIORD,LEVDOLOMITE,no,DRY,78.86221,-75.90053,x,,540,HIGH,"Levesque, Boulanger-Lapointe",yes,no,no,,,mixed,mixed,no,DominKrajina,NA,,"0.25 m2 plots in 1992, 0.49 m2 in 2009",large,high,G2,G
+ALEXFIORD,LEVGRANITE,corrected,DRY,78.86192,-75.90385,x,,540,HIGH,"Levesque, Boulanger-Lapointe",yes,no,no,,,mixed,mixed,no,DominKrajina,NA,,"0.25 m2 plots in 1992, 0.49 m2 in 2009; ""lichen"" a mix of lichen and crust; ""rock"" recorded only in 2009",insects,low,P2,P
+ANWR,ATIGUN-A,,DRY,68.4746405,-149.3521345,,,1190,LOW,Jorgenson,,,no,,,1,,,point_frame_all_xy,100,,,NA,NA,G4,G
+ANWR,ATIGUN-B,,MOIST,68.4759725,-149.352222,,,1210,LOW,Jorgenson,,,no,,,1,,,point_frame_all_xy,100,,,small,low,P2,P
+ANWR,ATIGUN-C,,MOIST,68.454758,-149.319503,,,885,LOW,Jorgenson,,,no,,,1,,,point_frame_all_xy,100,,,small,low,G4,G
+ANWR,C2,,MOIST,69.9535,-144.8089944,,,33,NA,Jorgenson,,,no,,,120,,,point_frame_all_plot,200,,,NA,NA,S1/S2,S
+ANWR,H1,,MOIST,69.656,-144.1926883,,,258,NA,Jorgenson,,,no,,,120,,,point_frame_all_plot,200,,,none,low,W2,W
+ANWR,H3,,MOIST,69.8501,-144.1083833,,,101,NA,Jorgenson,,,no,,,120,,,point_frame_all_plot,200,,,none,low,W2,W
+ANWR,H4,,DRY,69.9599,-144.0597167,,,43,NA,Jorgenson,,,no,,,120,,,point_frame_all_plot,200,,,none,low,W2,W
+ANWR,H5,,DRY,69.9467,-144.0644667,,,50,NA,Jorgenson,,,no,,,120,,,point_frame_all_plot,200,,,none,low,P2,P
+ANWR,JAGO-A,,MOIST,69.70312,-143.626875,,,198,LOW,Jorgenson,,,no,,,1,,,point_frame_all_xy,100,,,none,low,P2,P
+ANWR,JAGO-B,,MOIST,69.71159,-143.616045,,,168,LOW,Jorgenson,,,no,,,1,,,point_frame_all_xy,100,,,none,low,P2,P
+ANWR,K1,,MOIST,70.0803,-143.1433333,,,7,NA,Jorgenson,,,no,,,120,,,point_frame_all_plot,200,,,none,low,W2,W
+ANWR,K2,,MOIST,70.083556,-143.141944,,,5,NA,Jorgenson,,,no,,,120,,,point_frame_all_plot,200,,,none,low,B4,B
+ANWR,K3,,MOIST,70.084,-143.1358333,,,5,NA,Jorgenson,,,no,,,120,,,point_frame_all_plot,200,,,none,low,B3,B
+ANWR,M10,,MOIST,69.7958,-144.809025,,,210,NA,Jorgenson,,,no,,,120,,,point_frame_all_plot,200,,,none,low,G2,G
+ANWR,M11,,MOIST,69.7977,-144.8061194,,,214,NA,Jorgenson,,,no,,,120,,,point_frame_all_plot,200,,,none,low,W2,W
+ANWR,M4,,MOIST,69.789,-144.81572,,,212,NA,Jorgenson,,,no,,,120,,,point_frame_all_plot,200,,,none,low,P2,P
+ANWR,M7S,,MOIST,69.7981,-144.83792,,,207,NA,Jorgenson,,,no,,,120,,,point_frame_all_plot,200,,,none,low,W2,W
+ANWR,N11,,MOIST,69.8937,-142.8705,,,83,NA,Jorgenson,,,no,,,120,,,point_frame_all_plot,200,,,insects,low,P2,P
+ANWR,O11,,WET,69.9711,-143.90396,,,37,NA,Jorgenson,,,no,,,120,,,point_frame_all_plot,200,,,large,medium,,
+ANWR,O12,,MOIST,69.971,-143.90482,,,37,NA,Jorgenson,,,no,,,120,,,point_frame_all_plot,200,,,large,medium,S1,S
+ANWR,O13,,MOIST,69.8307,-143.7787667,,,98,NA,Jorgenson,,,no,,,120,,,point_frame_all_plot,200,,,large,medium,G4,G
+ANWR,O15,,MOIST,69.8269,-143.7653167,,,101,NA,Jorgenson,,,no,,,120,,,point_frame_all_plot,200,,,large,low,,
+ANWR,O18,,MOIST,69.9699,-143.94212,,,38,NA,Jorgenson,,,no,,,120,,,point_frame_all_plot,200,,,large,low,,
+ANWR,O19,,MOIST,69.97,-143.9387361,,,38,NA,Jorgenson,,,no,,,120,,,point_frame_all_plot,200,,,large,high,S1,S
+ANWR,O3,,MOIST,69.9698,-143.9126,,,36,NA,Jorgenson,,,no,,,120,,,point_frame_all_plot,200,,,birds,low,P2,P
+ANWR,O6,,DRY,69.9754,-144.05095,,,35,NA,Jorgenson,,,no,,,120,,,point_frame_all_plot,200,,,,,,
+ANWR,O7,,MOIST,69.9775,-144.01674,,,32,NA,Jorgenson,,,no,,,120,,,point_frame_all_plot,200,,,large,low,W2,W
+ANWR,S1,,MOIST,69.6954,-144.3603167,,,275,NA,Jorgenson,,,no,,,120,,,point_frame_all_plot,200,,,small,low,G2,G
+ANWR,S4,,MOIST,69.7059,-144.3684167,,,232,NA,Jorgenson,,,no,,,120,,,point_frame_all_plot,200,,,,,,
+ANWR,S5,,MOIST,69.7101,-144.37575,,,225,NA,Jorgenson,,,no,,,120,,,point_frame_all_plot,200,,,small,medium,W1,W
+ANWR,S6,,MOIST,69.7327,-144.3397667,,,202,NA,Jorgenson,,,no,,,120,,,point_frame_all_plot,200,,,large,high,S1,S
+ANWR,S8,,MOIST,69.7304,-144.3366167,,,206,NA,Jorgenson,,,no,,,120,,,point_frame_all_plot,200,,,large,medium,W1,W
+ATQASUK,AD,yes,DRY,70.45373011,-157.4073879,x,,22,LOW,Hollister,,,yes,,,0.75,1,,point_frame_all_xy,100,,Note from Joe: only did top and bottom hits in first two survey periods (1995-97 and 2000) but done all hits since (as per email chain),large,medium,W1,W
+ATQASUK,AG,yes,MOIST,70.451449,-157.403942,x,,23,LOW,Hollister,,,no,,,0.75,1,,point_frame_all_xy,100,,Note from Joe: only did top and bottom hits in first two survey periods (1995-97 and 2000) but done all hits since (as per email chain),large,medium,P2,P
+ATQASUK,AW,yes,WET,70.45303348,-157.4003018,x,,17,LOW,Hollister,,,yes,,,0.75,1,,point_frame_all_xy,100,,Note from Joe: only did top and bottom hits in first two survey periods (1995-97 and 2000) but done all hits since (as per email chain),large,medium,P2,P
+ATQASUK,RATE_BETULA_SHRUB,,MOIST,70.456021,-157.414293,,,29,LOW,"Tweedie, Webber",,,no,,,1,,,percent_cover,NA,,average of 10 1m x 10cm subplots,large,medium,P1,P
+ATQASUK,RATE_CAREX_ WET_MEADOW,,WET,70.456021,-157.414293,,,29,LOW,"Tweedie, Webber",,,no,,,1,,,percent_cover,NA,,average of 10 1m x 10cm subplots,large,medium,P1,P
+ATQASUK,RATE_DRYAS_HEATH,,DRY,70.456021,-157.414293,,,29,LOW,"Tweedie, Webber",,,no,,,1,,,percent_cover,NA,,average of 10 1m x 10cm subplots,large,high,G3,G
+ATQASUK,RATE_ERIOPHORUM_WET_MEADOW,,WET,70.456021,-157.414293,,,29,LOW,"Tweedie, Webber",,,no,,,1,,,percent_cover,NA,,average of 10 1m x 10cm subplots,insects,low,NONEAPPLICABLE,
+ATQASUK,RATE_HIEROCHLOE_DRY_MEADOW,,DRY,70.456021,-157.414293,,,29,LOW,"Tweedie, Webber",,,no,,,1,,,percent_cover,NA,,average of 10 1m x 10cm subplots,large,medium,P2,P
+AUDKULUHEIDI,BETULAHEATH,yes,MOIST,65.21748,-19.71319,x,,480,LOW,Jonsdottir,,,yes,,,0.5625,,,point_frame_tb_xy,Email,,,large,medium,G3,G
+AUYUITTUQ,OWL RIVER,new,,66.88,-64.69,,yes,140,,Maryse Mahy; Florence Lapierre Poulin,yes,no,no,NA,NA,,1,,point_frame_all_xy,,,Taxonomic resolution is much higher in 2012 than other years,,,,
+BILLEFJORDEN,AWS,new,,78.71061,16.45535,,,,HIGH,Petr Macek,yes,no,planned,,,0.1,,yes,percent_cover,NA,NA,OTCs were added after initial survey,,,,
+BARROW,BD,yes,MOIST,71.31502696,-156.6010247,x,,5,HIGH,Hollister,yes,yes,yes,,,0.75,1,,point_frame_all_xy,100,,Note from Joe: only did top and bottom hits in first two survey periods (1995-97 and 2000) but done all hits since (as per email chain),,medium,P2,P
+BARROW,BG,yes,MOIST,71.310312,-156.592799,x,,4,HIGH,Hollister,yes,yes,no,,,0.75,1,,point_frame_all_xy,100,,Note from Joe: only did top and bottom hits in first two survey periods (1995-97 and 2000) but done all hits since (as per email chain),large,medium,G3,G
+BARROW,BW,yes,WET,71.31051842,-156.5978987,x,,3,HIGH,Hollister,yes,yes,yes,,,0.75,1,,point_frame_all_xy,100,,Note from Joe: only did top and bottom hits in first two survey periods (1995-97 and 2000) but done all hits since (as per email chain),large,medium,RIPARIANSHRUB,RIPARIAN
+BARROW,ARCTOPHILA_POND_ORDINATION,,WET,71.29,-156.64,,,9,HIGH,"Tweedie, Webber",,,no,,,1,,,percent_cover,NA,,average of 10 1m x 10cm subplots,large,medium,RIPARIANSHRUB,RIPARIAN
+BARROW,CAREX WET MEADOW_ORDINATION,,WET,71.29,-156.64,,,9,HIGH,"Tweedie, Webber",,,no,,,1,,,percent_cover,NA,,average of 10 1m x 10cm subplots,large,medium,DRYAS TERRACE,RIPARIAN
+BARROW,CAREX_MESIC MEADOW_ORDINATION,,MOIST,71.29,-156.64,,,9,HIGH,"Tweedie, Webber",,,no,,,1,,,percent_cover,NA,,average of 10 1m x 10cm subplots,large,medium,DRYAS TERRACE,RIPARIAN
+BARROW,CAREX_MOIST MEADOW_ORDINATION,,MOIST,71.29,-156.64,,,9,HIGH,"Tweedie, Webber",,,no,,,1,,,percent_cover,NA,,average of 10 1m x 10cm subplots,large,medium,G4,G
+BARROW,CAREX_MOIST_MEADOW_MICROTOPO,,MOIST,71.29,-156.64,,,9,HIGH,"Tweedie, Webber",,,no,,,0.5,,,percent_cover,NA,,,large,medium,G3,G
+BARROW,CAREX_WET_MEADOW_MICROTOPO,,WET,71.29,-156.64,,,9,HIGH,"Tweedie, Webber",,,no,,,0.5,,,percent_cover,NA,,,large,medium,G3,G
+BARROW,DRY_HEATH_ORDINATION,,DRY,71.29,-156.64,,,9,HIGH,"Tweedie, Webber",,,no,,,1,,,percent_cover,NA,,average of 10 1m x 10cm subplots,large,medium,G3,G
+BARROW,DUPONTIA WET MEADOW_ORDINATION,,WET,71.29,-156.64,,,9,HIGH,"Tweedie, Webber",,,no,,,1,,,percent_cover,NA,,average of 10 1m x 10cm subplots,large,medium,G3,G
+BARROW,DUPONTIA_WET MEADOW_ORDINATION,,WET,71.29,-156.64,,,9,HIGH,"Tweedie, Webber",,,no,,,1,,,percent_cover,NA,,average of 10 1m x 10cm subplots,large,medium,G4,G
+BARROW,DUPONTIA_WET_MEADOW_MICROTOPO,,WET,71.29,-156.64,,,9,HIGH,"Tweedie, Webber",,,no,,,0.5,,,percent_cover,NA,,,large,medium,G4,G
+BLONDUOS,SD33,yes,MOIST,65.50305,-20.22768,x,,350,LOW,Magnusson,,,no,,,0.25,,,BraunBlanquet,NA,,,large,medium,RIPARIANSHRUB,RIPARIAN
+BLONDUOS,SD34,yes,MOIST,65.50146,-20.22503,x,,350,LOW,Magnusson,,,no,,,0.25,,,BraunBlanquet,NA,,,large,medium,G4,G
+BROOKS,SHEEN-B,,MOIST,68.5734993,-143.7246513,,,1002,NA,Jorgenson,,,,,,1,,,point_frame_all_xy,100,,,large,medium,G3,G
+BYLOT,MESPOLYGON,yes,MOIST,73.1682958,-79.9044525,x,,70,HIGH,Levesque,yes,no,no,,,0.49,,yes,point_frame_all_xy,mixed,yes,100 hits per plot in first year; 81 hits per plot in 2008,large,medium,W2,W
+BYLOT,MESPRAIRIE,yes,MOIST,73.1399267,-79.9843858,x,,70,HIGH,Levesque,yes,no,no,,,0.49,,yes,point_frame_all_xy,mixed,yes,100 hits per plot in first year; 81 hits per plot in 2008,large,medium,G3,G
+CHANGBAI,ELEVATION_GRADIENT_LOW,new,,41.99086,128.00474,,,2089,ALPINE,Shengwei Zong,no,no,no,NA,NA,,1,,number_shoots,NA,,"No resurvey, different plots measured in 2014 and 2015; plots along three elevational transects (A,B,C), plots have been grouped into subsites post-hoc based on spacial clustering",,,,
+CHANGBAI,ELEVATION_GRADIENT_MED,new,,41.99377,128.0193,,,2311,ALPINE,Shengwei Zong,no,no,no,NA,NA,,1,,number_shoots,NA,,"No resurvey, different plots measured in 2014 and 2015; plots along three elevational transects (A,B,C), plots have been grouped into subsites post-hoc based on spacial clustering",,,,
+CHANGBAI,ELEVATION_GRADIENT_HIGH,new,,41.99724,128.02368,,,2484,ALPINE,Shengwei Zong,no,no,no,NA,NA,,1,,number_shoots,NA,,"No resurvey, different plots measured in 2014 and 2015; plots along three elevational transects (A,B,C), plots have been grouped into subsites post-hoc based on spacial clustering",,,,
+DALSMYNNI,AG4,yes,MOIST,65.78468,-19.30559,x,,40,LOW,Magnusson,,,no,,,0.25,,,BraunBlanquet,NA,,,large,medium,G3,G
+DALSMYNNI,KD24,yes,MOIST,65.77321,-19.02952,x,,180,LOW,Magnusson,,,no,,,0.25,,,BraunBlanquet,NA,,,large,medium,RIPARIANSHRUB,RIPARIAN
+DALSMYNNI,KD25,yes,MOIST,65.77286,-19.04222,x,,160,LOW,Magnusson,,,no,,,0.25,,,BraunBlanquet,NA,,,large,medium,G3,G
+DALSMYNNI,KK5,yes,MOIST,65.80262,-19.36136,x,,10,LOW,Magnusson,,,no,,,0.25,,,BraunBlanquet,NA,,,large,medium,G3,G
+DARING,GREENHOUSE,,,64.86666667,-111.5666667,,,200,LOW,Henry,,,,,,1,,,Email,Email,,,large,medium,G3,G
+DARING,DARINGOTCB,,MOIST,64.86666667,-111.5666667,,,200,LOW,Henry,,,yes,,,1,,,Email,Email,,,large,medium,DRYAS TERRACE,RIPARIAN
+DARING,DARINGOTCF,,WET,64.86666667,-111.5666667,,,200,LOW,Henry,,,yes,,,1,,,Email,Email,,,large,medium,G3,G
+DISKO,DISTURBANCE,new,,69.27,-53.45,,yes,202,,"Aastrup, Normand, Strandberg",,,no,,,1,1.5625,,point_frame,100,,,,,,
+DISKO,DRYHEATH_FLUX,new,,,,,,,,Rinnan,yes,yes,yes,,,0.0484,,yes,point_frame_all_plot,49,yes,,,,,
+DISKO,WETFEN_FLUX,new,,,,,,,,Rinnan,yes,yes,yes,,,0.0484,,yes,point_frame_all_plot,49,yes,,,,,
+DOVRE,KUNTSHOE,yes,DRY,62.3,9.62,x,,1090,ALPINE,"Hofgaard, Løkken",yes,yes,yes,,,0.0279,,yes,subplots,9,,"9 subplots per plot (plot names in form of PLOT_SUBPLOT); each plot is 50 x 50, each subplot is 16.7 x 16.7 cm; grazing treatment also included because it might be a more appropriate control",large,medium,G4,G
+ENDALEN,BIS-H,no,MOIST,78.18557,15.74496,x,,120,HIGH,Jonsdottir,,,yes,,,0.5625,,yes,Email,Email,,,large,medium,S1,S
+ENDALEN,BIS-L,yes,MOIST,78.18557,15.74496,x,,100,HIGH,Jonsdottir,,,yes,,,0.5625,,yes,Email,Email,,,large,medium,RIPARIANSHRUB,RIPARIAN
+ENDALEN,CAS-H,no,MOIST,78.18557,15.74496,x,,120,HIGH,Jonsdottir,,,yes,,,0.5625,,yes,Email,Email,,,large,medium,S1,S
+ENDALEN,CAS-L,yes,DRY,78.18557,15.74496,x,,100,HIGH,Jonsdottir,,,yes,,,0.5625,,yes,Email,Email,,,large,medium,G4,G
+ENDALEN,DRY-H,no,DRY,78.18557,15.74496,x,,120,HIGH,Jonsdottir,,,yes,,,0.5625,,yes,Email,Email,,,large,medium,S2,S
+ENDALEN,DRY-L,yes,DRY,78.18557,15.74496,x,,100,HIGH,Jonsdottir,,,yes,,,0.5625,,yes,Email,Email,,,small,low,P1,P
+FAROE,SORNFELLI,no,DRY,62.066667,-6.95,x,,600,ALPINE,"Fosaa, Gaard",,,yes,,,0.25,,,subplots,25,,25 subplots per plot,small,low,P1,P
+FINSE,RIDGE,,MOIST,60.37,7.32,,,1550,ALPINE,"Klanderud, Totland",,,,,,0.18,,,subplots,18,,18 10x10cm subplots per plot; given value 0-3 abund rating in each subplot but here pres/abs,small,low,P1,P
+FINSE,RIDGE_COVER,,MOIST,60.37,7.32,,,1550,ALPINE,"Klanderud, Totland",,,,,,NA,,,NA,NA,,"Note from Joe: as per email and metadata from Klanderud, it appears that only subplots were used at the FINSE:RIDGE site, and no point framing was ever undertaken",small,low,P1,P
+FINSE,SLOPE,,MOIST,60.37,7.32,,,1550,ALPINE,"Klanderud, Totland",,,,,,0.36,,,subplots,36,,36 10x10cm subplots per plot; given value 0-3 abund rating in each subplot but here pres/abs,large,high,Gsomething,G
+FINSE,SLOPE_BIOMASS,,MOIST,60.37,7.32,,,1550,ALPINE,"Klanderud, Totland",,,,,,0.36,,,biomass,NA,,Note from Joe: as per email and metadata from Klanderud,large,high,Ssomething,S
+FINSE,NFINSE,,MOIST,60.61497203,7.5197935,x,,1500,ALPINE,"Klanderud, Totland",,,,,,0.36,,,percent_cover,NA,,,small,low,G3,G
+FURI,FURI4,yes,DRY,61.63542,12.6375,x,,922,LOW,"Vowles, Björk",,,no,,,1,,,percent_cover,NA,,,insects small,low,S1,S
+FURI,FURI5,yes,DRY,61.63542,12.6375,x,,922,LOW,"Vowles, Björk",,,no,,,1,,,percent_cover,NA,,,insects small,low,P2,P
+FURI,FURI6,yes,DRY,61.63542,12.6375,x,,922,LOW,"Vowles, Björk",,,no,,,1,,,percent_cover,NA,,,insects small,low,G3,G
+GARIBALDI,Salix,,MOIST,49.927275,-122.992919,,,1470,ALPINE,"Elphinstone, Collins, Chardon",,yes,yes,2022,summer-only,0.7,0.7,yes,point_frame_top_bottom,70,,,started surveying 100 points but then switched to 70 points per plot,low,,
+GARIBALDI,Meadow,,WET,49.949109,-123.177812,,,1476,ALPINE,"Elphinstone, Collins, Chardon",,yes,yes,2022,summer-only,0.7,0.7,yes,point_frame_top_bottom,70,,2022: started surveying 100 points but then switched to 70 points per plot,large,low,,
+GARIBALDI,Cassiope,,DRY,49.929371,-122.993207,,,1472,ALPINE,"Elphinstone, Collins, Chardon",,yes,yes,2022,summer-only,0.7,0.7,yes,point_frame_top_bottom,70,,,large,low,,
+GAVIA,POL,yes,MOIST,46.340556,10.499167,x,,2700,ALPINE,"Carbognani, Petraglia",no,no,yes,,,0.04,,yes,point_frame_all_xy,36,,Hits summed per point (no hit order),insects small,low,G3,G
+GAVIA,SAL,yes,MOIST,46.340556,10.499167,x,,2700,ALPINE,"Carbognani, Petraglia",no,no,yes,,,0.04,,yes,point_frame_all_xy,36,,Hits summed per point (no hit order),insects,low,B4,B
+HJARDARLAND,HA75,yes,WET,64.06638,-20.26565,x,,120,LOW,Magnusson,,,no,,,0.25,,no,BraunBlanquet,NA,,,insects,low,B3,B
+HJARDARLAND,HF73,yes,DRY,64.03843,-20.27764,x,,80,LOW,Magnusson,,,no,,,0.25,,no,BraunBlanquet,NA,,,birds,medium,G2,G
+HJARDARLAND,LH92,yes,WET,64.22035,-20.59859,x,,80,LOW,Magnusson,,,no,,,0.25,,no,BraunBlanquet,NA,,,birds,medium,G2,G
+HJARDARLAND,SH90,yes,MOIST,63.97814,-20.56942,x,,60,LOW,Magnusson,,,no,,,0.25,,no,BraunBlanquet,NA,,,large,high,P1,P
+HOL,EAST,new,,60.7,7.95,,yes,1200,ALPINE,Speed; Austrheim,yes,no,no,NA,NA,,0.25,yes,subplots,16,,,,,,
+HOL,WEST,new,,60.7,7.93,,yes,1200,APLINE,Speed; Austrheim,yes,no,no,NA,NA,,0.25,yes,subplots,16,,,,,,
+HOLTAVORDUHEIDI,AH36,yes,WET,65.08352,-20.54624,x,,450,LOW,Magnusson,,,no,,,0.25,,no,BraunBlanquet,NA,,,small,low,P1,P
+HOLTAVORDUHEIDI,AH37,yes,MOIST,65.06794,-20.58339,x,,450,LOW,Magnusson,,,no,,,0.25,,no,BraunBlanquet,NA,,,large,medium,G3,G
+HOLTAVORDUHEIDI,AH38,yes,MOIST,65.07728,-20.58907,x,,450,LOW,Magnusson,,,no,,,0.25,,no,BraunBlanquet,NA,,,large,low,,
+HOLTAVORDUHEIDI,VH49,yes,MOIST,65.22778,-20.43913,x,,400,LOW,Magnusson,,,no,,,0.25,,no,BraunBlanquet,NA,,,large,high,G3,G
+HOLTAVORDUHEIDI,VH50,yes,WET,65.23772,-20.4487,x,,400,LOW,Magnusson,,,no,,,0.25,,no,BraunBlanquet,NA,,,large,low,G3,G
+IGLOOLIK,IGLOOLIK,new,,69.389,-81.53,,yes,,,"Lecomte, Boulanger-Lapointe",yes,no,yes,,,0.49,0.49,yes,point_frame_all_xy,100,,"no hit order. Note from Joe: the PI sent the following re SurveyedArea/Plot Size - ""the plot and surveyed area are both 70 cm2 (70cm x 70 cm). Do not hesitate if you have any other questions!"". We have assumed that the 70cm x 70cm is correct here, and hence the area is 0.49m2, rather than 70cm2 as stated.",,,,
+JAKOBSHORN,AGOJAK,no,DRY,46.78,9.84,,,2320,ALPINE,Wipf,,,no,,,16,,,BraunBlanquet,NA,,,large,medium,G3,G
+JAKOBSHORN,AUOJAK,no,DRY,46.78,9.84,,,2205,ALPINE,Wipf,,,no,,,16,,,BraunBlanquet,NA,,,large,medium,W2,W
+JAKOBSHORN,NGOBRAEM,no,DRY,46.78,9.84,,,2130,ALPINE,Wipf,,,no,,,16,,,BraunBlanquet,NA,,,large,low,W2,W
+JAKOBSHORN,NGOFUX,no,DRY,46.78,9.84,,,2035,ALPINE,Wipf,,,no,,,16,,,BraunBlanquet,NA,,,large,high,G3,G
+JAMESONLAND,COLORADO,new,,71.58566298,-23.97807302,,yes,,,"Aastrup, Stewart",,,,,,0.2178,,,,25,,Surveyed Area calculations: https://docs.google.com/document/d/1o33xniuTSc8-7FdZm-btz6GSM8mLy7qy0wnPjPUNJl8/edit?usp=sharing,,,,
+JAMESONLAND,LODIN,new,,71.39768296,-24.05517697,,yes,,,"Aastrup, Stewart",,,,,,0.2178,,,,25,,Surveyed Area calculations: https://docs.google.com/document/d/1o33xniuTSc8-7FdZm-btz6GSM8mLy7qy0wnPjPUNJl8/edit?usp=sharing,,,,
+JAMESONLAND,MAJOR,new,,71.49365399,-24.34597897,,yes,,,"Aastrup, Stewart",,,,,,0.2178,,,,25,,Surveyed Area calculations: https://docs.google.com/document/d/1o33xniuTSc8-7FdZm-btz6GSM8mLy7qy0wnPjPUNJl8/edit?usp=sharing,,,,
+JAMESONLAND,TYSKIT,new,,71.05257704,-24.225714,,yes,,,"Aastrup, Stewart",,,,,,0.1089 or 0.2178,,,,25,,Surveyed Area calculations: https://docs.google.com/document/d/1o33xniuTSc8-7FdZm-btz6GSM8mLy7qy0wnPjPUNJl8/edit?usp=sharing,,,,
+JOATKA,lower_forest,new,,69.74879,23.98744,,,416,,"Kaarlejärvi, Khitun, Sjogersten",,,yes,,,1.3845,,,,87,,Joe added SurveyedArea and PointsPerPlot (03/11/2022); he has calculations for these values,,,,
+JOATKA,upper_forest,new,,69.74737,23.99619,,,446,,"Kaarlejärvi, Khitun, Sjogersten",,,yes,,,1.3845,,,,87,,Joe added SurveyedArea and PointsPerPlot (03/11/2022); he has calculations for these values,,,,
+JOATKA,lower_tundra,new,,69.75137,23.98674,,,507,,"Kaarlejärvi, Khitun, Sjogersten",,,yes,,,1.3845,,,,87,,Joe added SurveyedArea and PointsPerPlot (03/11/2022); he has calculations for these values,,,,
+JOATKA,upper_tundra,new,,69.75033,23.99425,,,431,,"Kaarlejärvi, Khitun, Sjogersten",,,yes,,,1.3845,,,,87,,Joe added SurveyedArea and PointsPerPlot (03/11/2022); he has calculations for these values,,,,
+KANGER,BASHFUL,yes,MOIST,67.10809,-50.3505,x,,276,LOW,Post,,,yes,,,0.25,,,point_frame_all_plot,20,,,large,high,G3,G
+KANGER,DOPEY,yes,MOIST,67.1103,-50.344,x,,287,LOW,Post,,,yes,,,0.25,,,point_frame_all_plot,20,,,large,medium,W2,W
+KANGER,SNEEZY,yes,MOIST,67.11377,-50.337,x,,301,LOW,Post,,,yes,,,0.25,,,point_frame_all_plot,20,,,large,low,,
+KASHMIR,KASHMIR_HIGH,new,,34.049953,74.398083,x,no,2600,ALPINE,"Shah, Shaheen",no,no,planned,,,,,,,NA,,,,,,
+KILPISJARVI,KILPISJARVI,yes,MOIST,69.068,20.8199,,yes,670,ALPINE,Tolvanen,yes,yes,yes,,,0.25,,,point_frame_all_plot,100,,species present but not hit given value of 0.25,large,low,,
+KLUANE,PIKA,,DRY,61.21666667,-138.2666667,x,,1700,ALPINE,Hik,,,yes,,,0.25,,,BraunBlanquet,NA,,,large,low,,
+KRKONOSE,KRKONOSE,new,,50.73,15.71,,,,,Hedl et al.,,,no,,,,,,,,,,,,,
+KYTALYK,LAKEBED,yes,MOIST,,147.475778,x,,50,LOW,"Heijmans, Blok",,,no,,,78.54,314,,point_frame_all_xy,121,no,circular plot w 10 m diameter; bare ground may be recorded inconsistently,large,low,W2,W
+KYTALYK,RIDGE,,MOIST,70.826777,147.468277,x,,20,LOW,"Heijmans, Blok",,,,,,78.54,314,,point_frame_all_xy,121,no,circular plot w 10 m diameter,large,high,G3,G
+LAAX,AGOLAAX,no,DRY,46.83,9.21,,,2095,ALPINE,Wipf,,,no,,,16,,,BraunBlanquet,NA,,,large,medium,,
+LAAX,AUOLAAX,no,DRY,46.83,9.21,,,2160,ALPINE,Wipf,,,no,,,16,,,BraunBlanquet,NA,,,large,medium,G3,G
+LAAX,NGOLAAX,no,DRY,46.88,9.18,,,2400,ALPINE,Wipf,,,no,,,16,,,BraunBlanquet,NA,,,large,medium,G3,G
+LAAX,NUOLAAX,no,DRY,46.83,9.21,,,2145,ALPINE,Wipf,,,no,,,16,,,BraunBlanquet,NA,,,large,medium,G3,G
+LATNJA,PAPP,no,WET,68.35,18.65,,,1000,LOW,"Alatalo, Jagerbrand",,,,,,1,,,Email,90-100,,Joe comment: the number of points varies between control (100) and OTC (90) due to corners being cut off. Literature source: https://www.tandfonline.com/doi/full/10.1080/17550874.2010.487548?scroll=top&needAccess=true,large,high,,
+LATNJA,CAREX,no,MOIST,68.35,18.65,,,1000,LOW,"Jonsdottir, Stenström",,,,,,1,,,point_frame_top_xy,Email,,number of points varies between control and OTC,large,medium,W2,W
+LATNJA,DRY_HEATH,yes,DRY,68.35572,18.49531,x,,1000,LOW,"Molau, Björk, Björkman",,,yes,,,1,,,point_frame_tb_xy,100,,number of points varies between control and OTC,large,medium,,
+LATNJA,DRY_MEADOW,yes,DRY,68.35683,18.49756,x,,1000,LOW,"Molau, Björk, Björkman",,,yes,,,1,,,point_frame_tb_xy,100,,number of points varies between control and OTC,large,low,W2,W
+LATNJA,POOR_HEATH,yes,DRY,68.35,18.49,,,1000,LOW,"Alatalo, Jagerbrand",,,yes,,,1,,,point_frame_tb_xy,100,,number of points varies between control and OTC,large,low,G3,G
+LATNJA,RICH_MEADOW,yes,MOIST,68.35,18.65,,,1000,LOW,"Alatalo, Jagerbrand",,,yes,,,1,,,point_frame_tb_xy,100,,number of points varies between control and OTC,large,medium,G3,G
+LATNJA,MESIC_MEADOW,yes,MOIST,68.2,18.3,,,1000,LOW,"Molau, Björk, Björkman",,,yes,,,1,,,point_frame_tb_xy,100,,number of points varies between control and OTC,large,medium,G3,G
+LATNJA,TUSSOCK_TUNDRA,yes,WET,68.3551536,18.4913635,x,,1000,LOW,"Molau, Björk, Björkman",,,yes,,,1,,,point_frame_tb_xy,100,,number of points varies between control and OTC,large,low,G3,G
+LATNJA,WET_MEADOW,yes,WET,68.3551536,18.4913635,x,,1000,LOW,"Molau, Björk, Björkman",,,yes,,,1,,,point_frame_tb_xy,100,,number of points varies between control and OTC,large,low,G3,G
+LENZERHEIDE,AGOHEIM,no,DRY,46.75,9.58,,,1955,ALPINE,Wipf,,,no,,,16,,,BraunBlanquet,NA,,,large,medium,G3,G
+LENZERHEIDE,AGOSCHARM,no,DRY,46.74,9.57,,,1960,ALPINE,Wipf,,,no,,,16,,,BraunBlanquet,NA,,,large,medium,W2,W
+LENZERHEIDE,AUOLENZ,no,DRY,46.75,9.58,,,1970,ALPINE,Wipf,,,no,,,16,,,BraunBlanquet,NA,,,insects,low,S1,S
+LOGH,LOGH2,yes,DRY,62.10253,12.34458,x,,994,LOW,"Vowles, Björk",,,no,,,1,,,percent_cover,NA,,,insects,low,W3,W
+LOGH,LOGH4,yes,DRY,62.10253,12.34458,x,,994,LOW,"Vowles, Björk",,,no,,,1,,,percent_cover,NA,,,large,medium,S1,S
+LOGH,LOGH5,yes,DRY,62.10253,12.34458,x,,994,LOW,"Vowles, Björk",,,no,,,1,,,percent_cover,NA,,,large,medium,G3,G
+LORI,LORI1,yes,DRY,62.11508,12.27236,x,,856,LOW,"Vowles, Björk",,,no,,,1,,,percent_cover,NA,,,large,medium,S1,S
+LORI,LORI3,yes,DRY,62.11508,12.27236,x,,856,LOW,"Vowles, Björk",,,no,,,1,,,percent_cover,NA,,,large,high,G3,G
+LORI,LORI4,yes,DRY,62.11508,12.27236,x,,856,LOW,"Vowles, Björk",,,no,,,1,,,percent_cover,NA,,,large,medium,G3,G
+MALAYA,ALPINE_SNOWBED_SBC,,MOIST,43.447222,41.691389,x,,2750,ALPINE,"Onipchenko, Soudzilovskaia",,,no,,,1,,,number_shoots,NA,,number of generative shoots per plot,large,medium,G4,G
+MALAYA,FVG-LOW_GHM,,MOIST,43.445,41.690278,x,,2710,ALPINE,"Onipchenko, Soudzilovskaia",,,no,,,1,,,number_shoots,NA,,number of generative shoots per plot,large,high,W1,W
+MALAYA,FVG-UPPER,,MOIST,43.445278,41.693889,x,,2710,ALPINE,"Onipchenko, Soudzilovskaia",,,no,,,0.0625,,,number_shoots,NA,,number of generative shoots per plot,small,medium,B3,B
+MALAYA,LICHEN_HEATH_ALH,,MOIST,43.4475,41.6925,x,,2750,ALPINE,"Onipchenko, Soudzilovskaia",,,no,,,0.0625,,,number_shoots,NA,,number of generative shoots per plot,large,low,B3,B
+MODRUVELLIR,LH69,yes,MOIST,65.93894,-18.10823,x,,90,LOW,Magnusson,,,no,,,0.25,,,BraunBlanquet,NA,,,large,low,B3,B
+MODRUVELLIR,ML54,yes,MOIST,65.73728,-18.21928,,,240,LOW,Magnusson,,,no,,,0.25,,,BraunBlanquet,NA,,,large,LOW,B3,B
+MODRUVELLIR,MV51,yes,MOIST,65.77726,-18.27375,x,,160,LOW,Magnusson,,,no,,,0.25,,,BraunBlanquet,NA,,,large,medium,STILLNEED,
+MODRUVELLIR,MV52,yes,MOIST,65.76853,-18.28029,x,,160,LOW,Magnusson,,,no,,,0.25,,,BraunBlanquet,NA,,,large,medium,STILLNEED,
+MONTANA,AUOMONT,no,DRY,46.32,7.48,,,1920,ALPINE,Wipf,,,no,,,16,,,BraunBlanquet,NA,,,large,medium,STILLNEED,
+MONTANA,AUOSIGN,no,DRY,46.32,7.48,,,1920,ALPINE,Wipf,,,no,,,16,,,BraunBlanquet,NA,,,large,low,G2,G
+MORGINS,AUOMORG,no,MOIST,46.22,6.86,,,1810,ALPINE,Wipf,,,no,,,16,,,BraunBlanquet,NA,,,large,medium,P2,P
+NAKKALA,8,new,,68.837306,23.80475,,,,,"Kolari, Tahvanainen",yes,yes,no,,,0.25,25,semi,point_frame_all_plot,100,yes for Salix and Betula only (all others only one hit per point),"Each plot is one 5x5m area, but surveys were completed in 4, 0.5x0.5m subplots that were randomly situated in each plot. PLOT column is a combination of plot and subplot name. Plots are permanent but subplots might not be the same over time. Winter grazing by reindeer.",large (reindeer),,,
+NAKKALA,9,new,,68.835083,23.821889,,,,,"Kolari, Tahvanainen",yes,yes,no,,,0.25,25,semi,point_frame_all_plot,100,yes for Salix and Betula only (all others only one hit per point),"Each plot is one 5x5m area, but surveys were completed in 4, 0.5x0.5m subplots that were randomly situated in each plot. PLOT column is a combination of plot and subplot name. Plots are permanent but subplots might not be the same over time. Winter grazing by reindeer.",large (reindeer),,,
+NAKKALA,10,new,,68.834417,23.845139,,,,,"Kolari, Tahvanainen",yes,yes,no,,,0.25,25,semi,point_frame_all_plot,100,yes for Salix and Betula only (all others only one hit per point),"Each plot is one 5x5m area, but surveys were completed in 4, 0.5x0.5m subplots that were randomly situated in each plot. PLOT column is a combination of plot and subplot name. Plots are permanent but subplots might not be the same over time. Winter grazing by reindeer.",large (reindeer),,,
+NARSARSUAQ,HIGH_ELEVATION,new,,,,,,,,Høye,yes,no,yes,,,0.25,0.25,yes,point_frame_all_xy,16,no,,,,,
+NENDAZ,AGONEND,no,DRY,46.16,7.29,,,2125,ALPINE,Wipf,,,no,,,16,,,BraunBlanquet,NA,,,large,medium,P2,P
+NIWOT,ORDINATION_DRYMEADOW,no,DRY,40.05473,-105.58621,,,3505,ALPINE,Ebert-May,,,no,,,1,,,percent_cover,NA,,average of 10 1m x 10cm subplots,large,medium,,
+NIWOT,ORDINATION_FELLFIELD,no,DRY,40.052,-105.58599,,,3505,ALPINE,Ebert-May,,,no,,,1,,,percent_cover,NA,,average of 10 1m x 10cm subplots,large,medium,P2,P
+NIWOT,ORDINATION_MOISTMEADOW,no,MOIST,40.052286,-105.589487,,,3505,ALPINE,Ebert-May,,,no,,,1,,,percent_cover,NA,,average of 10 1m x 10cm subplots,large,medium,P2,P
+NIWOT,ORDINATION_MOISTSHRUB,no,MOIST,40.0533568,-105.5874753,,,3505,ALPINE,Ebert-May,,,no,,,1,,,percent_cover,NA,,average of 10 1m x 10cm subplots,large,medium,P2,P
+NIWOT,ORDINATION_SNOWBANK,no,WET,40.05363,-105.589306,,,3505,ALPINE,Ebert-May,,,no,,,1,,,percent_cover,NA,,average of 10 1m x 10cm subplots,large,medium,P2,P
+NIWOT,ORDINATION_WETMEADOW,no,WET,40.054382,-105.58743,,,3505,ALPINE,Ebert-May,,,no,,,1,,,percent_cover,NA,,average of 10 1m x 10cm subplots,large,medium,P2,P
+NIWOT,SADDLE_BARREN,yes,DRY,40.052686,-105.58884,x,,3528,ALPINE,Spasojevic,,,no,,,1,,,point_frame_tb_xy,100,,Middle hits never recorded in the barren plots,large,medium,,
+NIWOT,SADDLE_DRY MEADOW,yes,DRY,40.05473,-105.58621,x,,3528,ALPINE,Spasojevic,,,no,,,1,,,point_frame_tb_xy,100,,"Middle hits also recorded in 2006, 2008, 2010-2019",large,medium,P2,P
+NIWOT,SADDLE_FELLFIELD,yes,DRY,40.052,-105.58599,x,,3528,ALPINE,Spasojevic,,,no,,,1,,,point_frame_tb_xy,100,,"Middle hits also recorded in 2006, 2008, 2010-2019",large,NA,P2,P
+NIWOT,SADDLE_MOIST MEADOW,yes,MOIST,40.052286,-105.589487,x,,3528,ALPINE,Spasojevic,,,no,,,1,,,point_frame_tb_xy,100,,"Middle hits also recorded in 1989, 2006, 2008, 2010-2019",small,NA,G4,G
+NIWOT,SADDLE_SNOWBANK,yes,WET,40.05363,-105.589306,x,,3528,ALPINE,Spasojevic,,,no,,,1,,,point_frame_tb_xy,100,,"Middle hits also recorded in 1989, 2006, 2008, 2010-2019",small,NA,STILLNEED,
+NIWOT,SADDLE_SHRUB_TUNDRA,yes,,40.05616,-105.5897,x,,3538,ALPINE,Spasojevic,,,no,,,1,,,point_frame_tb_xy,100,,"Middle hits also recorded in 2008, 2010-2019",small,NA,W1,W
+NIWOT,SADDLE_WET MEADOW,yes,WET,40.054382,-105.58743,x,,3528,ALPINE,Spasojevic,,,no,,,1,,,point_frame_tb_xy,100,,"Middle hits also recorded in 2006, 2008, 2010-2019",small,NA,W1,W
+NIWOT,ITEX_NUT_SNOW,yes,MOIST,40.06,-105.589,,,3475,ALPINE,Suding,,,yes,,,1,,,point_frame_top,100,,"100 hit points, then from 2016 onwards 90 hits. Plot size is 1m2 except from 2006 when they are missing a 10cm strip. Elevation is 3478 for block1, 3472m for block 2 and 3476m for block 3. I added the mean here in the ELEV column.",small,NA,G4,G
+NIWOT,WALKER_KLEIN,yes,MOIST,40.0533568,-105.5874753,,,3500,ALPINE,"Walker, Klein",,,yes,,,1,,,point_frame_tb_xy,100,,Added xy but in reality there were only X points,Small,LOW,B1,B
+NUUK,KOBBEFJORD,new,,64.1361,-51.3831,,,,,"Raundrup, Jacobsen",yes,no,yes,2008,summer_only,0.1225,0.1225,yes,point_frame_all_xy,16,no,LG and SG plots are planned for future treatments,,,,
+NYALESUND,SVALBARD,no,DRY,78.93,11.83,,,22,HIGH,Wookey,,,yes,,,2.25,,,point_frame_top,,,,Small,LOW,B4,B
+OXNADALSHEIDI,SA16,yes,MOIST,65.46684,-18.69754,x,,580,LOW,Magnusson,,,no,,,0.25,,,BraunBlanquet,NA,,,Small,LOW,B4,B
+OXNADALSHEIDI,SA17,yes,MOIST,65.46596,-18.69386,x,,590,LOW,Magnusson,,,no,,,0.25,,,BraunBlanquet,NA,,,Small,LOW,G1,G
+OXNADALSHEIDI,SA19,yes,MOIST,65.48131,-18.90435,x,,510,LOW,Magnusson,,,no,,,0.25,,,BraunBlanquet,NA,,,Small,LOW,W1,W
+OZALPINE,COPECK_G,no,DRY,-36.9,147.27,,,1690,ALPINE,Wahren,,,,,,1,,,point_frame_all_xy,100,,"Note from Mariana: the metadata from ATEX says: ""Every second year vegetation is sampled by point quadrats using a 4 mm diameter steel pin, inserted vertically at 10 cm intervals within a grid of 100 points defined by a 1 m2 point-frame. At each point the top, intermediate and bottom species"" so not sure about the different number of points mentioned below? https://www.ltern.org.au/knb/metacat/ltern.200/html ",Small,LOW,,
+OZALPINE,COPEHUT_G,no,DRY,-36.9,147.27,,,1690,ALPINE,Wahren,,,,,,1,,,point_frame_all_xy,100,,"Note from Mariana: the metadata from ATEX says: ""Every second year vegetation is sampled by point quadrats using a 4 mm diameter steel pin, inserted vertically at 10 cm intervals within a grid of 100 points defined by a 1 m2 point-frame. At each point the top, intermediate and bottom species"" so not sure about the different number of points mentioned below? https://www.ltern.org.au/knb/metacat/ltern.200/html ",Small,LOW,W1,W
+OZALPINE,CULTIVATION_G,no,DRY,-36.9,147.27,,,1680,ALPINE,Wahren,,,,,,1,,,point_frame_all_xy,100,,"Note from Mariana: the metadata from ATEX says: ""Every second year vegetation is sampled by point quadrats using a 4 mm diameter steel pin, inserted vertically at 10 cm intervals within a grid of 100 points defined by a 1 m2 point-frame. At each point the top, intermediate and bottom species"" so not sure about the different number of points mentioned below? https://www.ltern.org.au/knb/metacat/ltern.200/html ",small,low,,
+OZALPINE,EASTBASE_G,no,DRY,-36.9,147.27,,,1645,ALPINE,Wahren,,,,,,1,,,point_frame_all_xy,100,,"Note from Mariana: the metadata from ATEX says: ""Every second year vegetation is sampled by point quadrats using a 4 mm diameter steel pin, inserted vertically at 10 cm intervals within a grid of 100 points defined by a 1 m2 point-frame. At each point the top, intermediate and bottom species"" so not sure about the different number of points mentioned below? https://www.ltern.org.au/knb/metacat/ltern.200/html ",birds,low,G2,G
+OZALPINE,FAINTER_G,no,DRY,-36.9,147.27,,,1770,ALPINE,Wahren,,,,,,1,,,point_frame_all_xy,100,,"Note from Mariana: the metadata from ATEX says: ""Every second year vegetation is sampled by point quadrats using a 4 mm diameter steel pin, inserted vertically at 10 cm intervals within a grid of 100 points defined by a 1 m2 point-frame. At each point the top, intermediate and bottom species"" so not sure about the different number of points mentioned below? https://www.ltern.org.au/knb/metacat/ltern.200/html ",birds,low,S1,S
+OZALPINE,JOHNSTONS_G,no,DRY,-36.9,147.27,,,1750,ALPINE,Wahren,,,,,,1,,,point_frame_all_xy,100,,"Note from Mariana: the metadata from ATEX says: ""Every second year vegetation is sampled by point quadrats using a 4 mm diameter steel pin, inserted vertically at 10 cm intervals within a grid of 100 points defined by a 1 m2 point-frame. At each point the top, intermediate and bottom species"" so not sure about the different number of points mentioned below? https://www.ltern.org.au/knb/metacat/ltern.200/html ",large,medium,S1,S
+OZALPINE,PV_IN_G,no,DRY,-36.9,147.27,,,NA,ALPINE,Wahren,,,,,,1,,,point_frame_all_xy,100,,transects of varying length with different num of points in diff years,small,low,G1,G
+OZALPINE,PV_NEW_G,no,DRY,-36.9,147.27,,,NA,ALPINE,Wahren,,,,,,1,,,point_frame_all_xy,100,,transects of varying length with different num of points in diff years,small,low,P2,P
+OZALPINE,PV_OUT_G,no,DRY,-36.9,147.27,,,NA,ALPINE,Wahren,,,,,,1,,,point_frame_all_xy,100,,transects of varying length with different num of points in diff years,small,low,P2,P
+OZALPINE,RVPOA_IN_OH,no,DRY,-36.9,147.27,,,NA,ALPINE,Wahren,,,,,,1,,,point_frame_all_xy,100,,transects of varying length with different num of points in diff years,small,low,P2,P
+OZALPINE,RVPOA_OUT_OH,no,DRY,-36.9,147.27,,,NA,ALPINE,Wahren,,,,,,1,,,point_frame_all_xy,100,,transects of varying length with different num of points in diff years,large,medium,P1,P
+OZALPINE,TADGELL_G,no,DRY,-36.9,147.27,,,NA,ALPINE,Wahren,,,,,,1,,,point_frame_all_xy,100,,"Note from Mariana: the metadata from ATEX says: ""Every second year vegetation is sampled by point quadrats using a 4 mm diameter steel pin, inserted vertically at 10 cm intervals within a grid of 100 points defined by a 1 m2 point-frame. At each point the top, intermediate and bottom species"" so not sure about the different number of points mentioned below? https://www.ltern.org.au/knb/metacat/ltern.200/html ",large,medium,P1,P
+OZTEX,OZ1U,no,DRY,-36.9,147.27,,,1700,ALPINE,Wahren,,,yes,,,1,,,point_frame_all_xy,100,,,large,medium,P1,P
+OZTEX,OZ2U,no,DRY,-36.9,147.27,,,1700,ALPINE,Wahren,,,yes,,,1,,,point_frame_all_xy,100,,,large,medium,P2,P
+PARSENN,AGOPARS,no,DRY,46.82,9.82,,,2255,ALPINE,Wipf,,,no,,,16,,,BraunBlanquet,NA,,,large,medium,P2,P
+PARSENN,AUOPARS,no,DRY,46.82,9.82,,,2195,ALPINE,Wipf,,,no,,,16,,,BraunBlanquet,NA,,,large,medium,P2,P
+PARSENN,NGOPARS,no,DRY,46.82,9.82,,,2265,ALPINE,Wipf,,,no,,,16,,,BraunBlanquet,NA,,,large,medium,P2,P
+PYRAMIDEN,PYR,new,,78.64935,16.19464,,,,HIGH,Petr Macek,yes,no,planned,,,0.1,,yes,percent_cover,NA,NA,OTCs were added after initial survey,,,,
+QHI,HE,yes,MOIST,69.57488,-138.86347,x,yes,76,LOW,Myers-Smith,,,no,,,1,,,point_frame_all_xy,100,,,large,medium,P2,P
+QHI,KO,yes,DRY,69.57646,-138.86774,x,yes,73,LOW,Myers-Smith,,,no,,,1,,,point_frame_all_xy,100,,,large,medium,P2,P
+QUTTINIRPAAQ,TANQUARY_FIORD,new,,81.39631,-76.48755,,yes,85,HIGH,Maryse Mahy; Florence Lapierre Poulin,yes,no,no,NA,NA,1,1,yes,point_frame_all_xy,100,,No re-survey,,,,
+RINERHORN,AUORINER,no,MOIST,46.74,9.8,,,1965,ALPINE,Wipf,,,no,,,16,,,BraunBlanquet,NA,,,insects,medium,STILLNEED,
+RINERHORN,NUORINER,no,MOIST,46.74,9.8,,,1980,ALPINE,Wipf,,,no,,,16,,,BraunBlanquet,NA,,,insects,medium,STILLNEED,
+RIRI,RIRI2,yes,DRY,67.77306,17.53611,x,,849,LOW,"Vowles, Björk",,,no,,,1,,,percent_cover,NA,,,insects,medium,STILLNEED,
+RIRI,RIRI4,yes,DRY,67.77306,17.53611,x,,849,LOW,"Vowles, Björk",,,no,,,1,,,percent_cover,NA,,,insects,medium,STILLNEED,
+RIRI,RIRI6,yes,DRY,67.77306,17.53611,x,,849,LOW,"Vowles, Björk",,,no,,,1,,,percent_cover,NA,,,insects,medium,STILLNEED,
+RMBL,RMBL,no,MIXED,37.95,-106.98,,,2920,ALPINE,Harte,,,yes,,,30,,,biomass,NA,,growth form only,insects,medium,STILLNEED,
+SADVENT,MES_COVER,no,MOIST,78.19,15.934,x,,30,HIGH,Cooper,,,yes,,,0.5625,,,percent_cover,,,,insects,medium,STILLNEED,
+SADVENT,MES_PHOTO,no,MOIST,78.19,15.934,x,,30,HIGH,Cooper,,,yes,,,0.5625,,,percent_cover,,,coarse ID categories; est from photos,insects,medium,STILLNEED,
+SADVENT,MES_POINTFRAME,yes,MOIST,78.19,15.93,,,30,HIGH,Cooper,,,yes,,,0.5625,,,point_frame_all_plot,100,,"total hits per plot only. From Chelsea's metadata: """"Cover"" = total hits of all layers at each pin point, down to the first moss or lichen encountered (or bare ground, black crust, rock, etc). therefore sum of vascular plant cover can be >100 (# grid points) but sum (lichen+moss+fungi+crust) must be = or <100"". Every year between 2003 and 2014, OTCs were placed at the site in late spring and removed each autumn. 2014 data used from Dryad repository (https://datadryad.org/stash/dataset/doi:10.5061/dryad.2m1k2) and not from data sent from Chelsea since the Dryad data included dead/alive information. Tissue values not specified. Within each block, plots were also randomly distributed between three levels of a grazing treatment by captive Barnacle Geese in 2003-2005: no grazing (UG), intermediate (low) grazing (LG), and high grazing, (HG). Grazing levels are specific to each plot: ""plot: first letter (D) = mesic site; second letter (C,D,E,F,G) = block; third letter = grazing treatment (U=ungrazed, L=low grazing, H=high grazing); fourth letter = warming treatment (T=warmed, A=ambient)."" Grazing treatment discontinued after 2005, but still listed here for reference in case it is of interest.",insects,medium,STILLNEED,
+SADVENT,WET_COVER,no,WET,78.1899916,15.934124,x,,25,HIGH,Cooper,,,yes,,,0.5625,,,percent_cover,,,coarse ID categories; est from photos,insects,medium,,
+SADVENT,WET_PHOTO,no,WET,78.1899916,15.934124,x,,25,HIGH,Cooper,,,yes,,,0.5625,,,percent_cover,,,,insects,medium,,
+SADVENT,WET_POINTFRAME,no,WET,78.1,16.04,,,25,HIGH,Cooper,,,yes,,,0.5625,,,point_frame_all_?,100,,total hits per plot only,insects,medium,STILLNEED,
+SCUOL,AUOSCUOL,no,DRY,46.82,10.27,,,2230,ALPINE,Wipf,,,no,,,16,,,BraunBlanquet,NA,,,insects,medium,STILLNEED,
+SCUOL,NUOSCUOL,no,DRY,46.82,10.27,,,2260,ALPINE,Wipf,,,no,,,16,,,BraunBlanquet,NA,,,insects,medium,STILLNEED,
+STEPSTONES,TUNDRA1,no,MOIST,-64.7641737,-64.026947,,,30,ANT,Day,,,yes,,,0.0531,,,percent_cover,NA,,estimated from photos,small,low,G1,G
+STEPSTONES,TUNDRA2,no,MOIST,-64.7641737,-64.026947,,,30,ANT,Day,,,yes,,,0.0531,,,percent_cover,NA,,estimated from photos,small,medium,G4,G
+STILLBERG,SNOWEXP,no,DRY,46.77,9.87,,,2200,ALPINE,Wipf,,,no,,,0.25,1,,subplots,25,,,small,medium,W2,W
+STMORITZ,AGOHIGH,no,DRY,46.43,9.82,,,2505,ALPINE,Wipf,,,no,,,16,,,BraunBlanquet,NA,,,,low,P2,P
+STMORITZ,AGOLOW,no,DRY,46.26,9.49,,,2360,ALPINE,Wipf,,,no,,,16,,,BraunBlanquet,NA,,,small,medium,W2,W
+STMORITZ,AUOSTM,no,DRY,46.43,9.82,,,2445,ALPINE,Wipf,,,no,,,16,,,BraunBlanquet,NA,,,,low,P2,P
+SVERDRUP,SVERDRUP,no,DRY,79.13658,-79.61922,x,,461,HIGH,"Levesque, Boulanger-Lapointe",,,no,,,mixed,,,DominKrajina,NA,,0.25 m2 plots in 1992; 0.49 m2 in 2009,small,low,W1,W
+TAISETSU,F1,no,DRY,43.54,142.87,,,1710,ALPINE,Kudo,,,yes,,,0.25,,,point_frame_all_xy,Email,,,small,medium,W1,W
+TAISETSU,F2,no,DRY,43.55,142.86,,,1910,ALPINE,Kudo,,,yes,,,0.25,,,point_frame_all_xy,Email,,,small,low,G3,G
+TAISETSU,S1,no,MOIST,43.55,142.87,,,1820,ALPINE,Kudo,,,yes,,,0.25,,,point_frame_all_xy,Email,,,small,medium,G3,G
+TAISETSU,S2,no,MOIST,43.55,142.86,,,1820,ALPINE,Kudo,,,yes,,,0.25,,,point_frame_all_xy,Email,,,small,low,G3,G
+THINGVELLIR,MOSS HEATH,,MOIST,64.28083,-21.06941,x,,120,LOW,Jonsdottir,,,yes,,,0.5625,,,point_frame_tb_plot,100,,A 75 cm x 75 cm frame with 100 equally distributed points was used at all occasions except at Thingvellir in 1995 where a 50 cm x 50 cm frame also with 100 points was used,small,low,W1,W
+THUFUVER,PALSA,no,DRY,64.57,-18.6,,,600,LOW,Thorhallsdottir,,,no,,,0.25,,,point_frame_all_plot,100,,"From Thora Ellen: The number of quadrats varied between palsas:
+For palsas no 1, 4 and 5 = 10 quadrats 
+For palsas no 2, 3, 8, 9 an 10 = 20. ",small,low,G2,G
+THUFUVER,SALIXHEATH,no,DRY,64.57,-18.6,,,600,LOW,Thorhallsdottir,,,no,,,0.25,,,point_frame_all_plot,100,,"3 transects, each with 20 quadrats.",small,medium,W1,W
+THYKKVIBAER,HH100,yes,MOIST,63.5641,-20.16786,x,,5,LOW,Magnusson,,,no,,,0.25,,,BraunBlanquet,NA,,,,,W1,W
+THYKKVIBAER,RT81,yes,MOIST,63.98622,-21.15821,x,,30,LOW,Magnusson,,,no,,,0.25,,,BraunBlanquet,NA,,,small,low,W1,W
+THYKKVIBAER,VE82,yes,WET,63.97085,-21.16772,x,,15,LOW,Magnusson,,,no,,,0.25,,,BraunBlanquet,NA,,,large,medium,,
+TIBET,MEADOW,no,MOIST,37.6,101.3,,,3200,ALPINE,Klein,,,yes,,,0.5625,,,point_frame_all_xy,Email,,"Note from Joe: these plots appear to have had three survey periods, 1998-2000, 2001 and 2014-2015. The survey method changed between them, but as per the following paper, there were 100 hits per plot for the 2001 survey using a 0.75 x 0.75 m quadrat, recording all hits (https://www.sciencedirect.com/science/article/pii/S0006320717302550?casa_token=kzV_33nNgJAAAAAA:PGBygSOoFBcFbKnJ9R3qLrDFqJ0W0cdyNSw8arQ3bIvCmi1uCfS_E7u_aGCpf_y4cwybiVB3cg9s).",large,medium,,
+TIBET,SHRUB,no,MOIST,37.6,101.3,,,3260,ALPINE,Klein,,,yes,,,0.5625,,,point_frame_all_xy,Email,,"Note from Joe: these plots appear to have had three survey periods, 1998-2000, 2001 and 2014-2015. The survey method changed between them, but as per the following paper, there were 100 hits per plot for the 2001 survey using a 0.75 x 0.75 m quadrat, recording all hits (https://www.sciencedirect.com/science/article/pii/S0006320717302550?casa_token=kzV_33nNgJAAAAAA:PGBygSOoFBcFbKnJ9R3qLrDFqJ0W0cdyNSw8arQ3bIvCmi1uCfS_E7u_aGCpf_y4cwybiVB3cg9s).",large,medium,,
+TOOLIK,DRY,,DRY,68.62,-149.61,x,,720,LOW,Gould,,,,,,0.5625,,,point_frame_tb_xy,100,,,large,medium,,
+TOOLIK,IMNAVAIT,,MOIST,68.62,-149.28,,,899,LOW,Gould,,,,,,1,,,point_frame_tb_xy,100,,,large,medium,,
+TOOLIK,MOIST,,MOIST,68.62,-149.61,x,,720,LOW,Gould,,,,,,0.5625,,,point_frame_tb_xy,100,,,large,medium,,
+TOOLIK,TUSSOCKGRID,,MOIST,68.62,-149.61,x,,731,LOW,Gould,,,,,,1,,,point_frame_tb_xy,100,,,large,medium,,
+TOOLIK,LTER_HEATH,,DRY,68.6,-149.6,,,745,LOW,"Shaver, Gough",,,,,,0.04,,,biomass,,,species lumped in some years,large,medium,,
+TOOLIK,LTER_MOISTACIDICTUSSOCK,,MOIST,68.6,-149.6,,,745,LOW,"Shaver, Gough",,,,,,0.04,,,biomass,,,species lumped in some years,large,medium,,
+TOOLIK,LTER_NONACIDICTUSSOCK,,MOIST,68.6,-149.6,,,745,LOW,"Shaver, Gough",,,,,,0.04,,,biomass,,,species lumped in some years,large,medium,,
+TOOLIK,LTER_WETSEDGE,,WET,68.6,-149.6,,,745,LOW,"Shaver, Gough",,,,,,0.04,,,biomass,,,species lumped in some years,large,medium,,
+TOOLIK,SAG_WETSEDGE2,,WET,68.6,-149.6,,,745,LOW,"Shaver, Gough",,,,,,0.04,,,biomass,,,species lumped in some years,large,medium,,
+TOOLIK,TUSSOCK_1981PLOTS,,MOIST,68.6295,-149.578,,,745,LOW,"Shaver, Gough",,,,,,0.04,,,biomass,,,species lumped in some years,large,medium,,
+TORNGATS,NAKVAKDRY,yes,DRY,58.63917,-63.375,,,424,LOW,"Hermanutz, Cuerrier, Siegwart Collier",yes,yes,yes,,,1,,yes,point_frame_all_xy,100,yes,Literature source: https://link.springer.com/article/10.1007/s10021-020-00577-6#Sec4,large,medium,,
+TORNGATS,NAKVAKWET,yes,WET,58.63917,-63.375,,,424,LOW,"Hermanutz, Cuerrier, Siegwart Collier",yes,yes,yes,,,1,,yes,point_frame_all_xy,100,yes,Literature source: https://link.springer.com/article/10.1007/s10021-020-00577-6#Sec5,large,medium,,
+VALBERCLA,ALPINE,yes,MOIST,46.4758,9.5842,x,,2490,ALPINE,Rixen,,,yes,,,0.8,,,BraunBlanquet,NA,,,large,medium,,
+WOLFCREEK,WOLFCREEK,,DRY,61.56,-135.13,,,1526,ALPINE,Johnstone,,,yes,,,1,,,point_frame_all_plot,100,,Literature source: https://www.tandfonline.com/doi/pdf/10.1657/1938-4246-43.3.442?needAccess=true,large,medium,,
+YAMAL,Obskaya_Labytnangi,new,,66.733,66.25,,,,,Forbes,yes,yes,no,,,1,1,no,,,,,,,,
+YAMAL,km143,new,,67.667,68,,,,,Forbes,yes,yes,no,,,1,1,no,,,,,,,,
+YAMAL,Paijuta,new,,68.183,68.5,,,,,Forbes,yes,yes,no,,,1,1,no,,,,,,,,
+YAMAL,YuribeiRiver,new,,68.9,69.95,,,,,Forbes,yes,yes,no,,,1,1,no,,,,,,,,
+YAMAL,Bovanenkovo,new,,70.283,68.9,,,,,Forbes,yes,yes,no,,,1,1,no,,,,,,,,
+YAMAL,Kharasavei,new,,71.1,66.716,,,,,Forbes,yes,yes,no,,,1,1,no,,,,,,,,
+ZACKENBERG,ABRASION PLATEAU,,DRY,74.29,-20.31,,,80,HIGH,Schmidt,,,,,,0.5625,,,point_frame_top,100,,,large,medium,,
+ZACKENBERG,CASSIOPE TETRAGONA HEATH,,MOIST,74.28,-20.33,,,35,HIGH,Schmidt,,,,,,0.5625,,,point_frame_top,100,,,large,medium,,
+ZACKENBERG,CASSIOPE_SITE,no,MOIST,74.47510333,-20.54284746,,,40,HIGH,Schmidt,,,yes,,,0.25,,yes,point_frame_all_plot,100,,in 2009 only first hit recorded,large,medium,,
+ZACKENBERG,CASSIOPE_SITE_FLUX,new,MOIST,74.47510333,-20.54284746,,,40,HIGH,Riikka Rinnan,yes,no,yes,,,0.0484,,yes,point_frame_all_plot,49,yes,Plots are same as CASSIOPE_SITE but different part of plot surveyed.,large,medium,,
+ZACKENBERG,DRYAS HEATH,,DRY,74.29,-20.29,,,150,HIGH,Schmidt,,,,,,0.5625,,,point_frame_top,100,,,large,medium,,
+ZACKENBERG,FEN,,WET,74.28,-20.33,,,30,HIGH,Schmidt,,,,,,0.5625,,,point_frame_top,100,,,large,medium,,
+ZACKENBERG,GRASSLAND,,MOIST,74.28,-20.33,,,45,HIGH,Schmidt,,,,,,0.5625,,,point_frame_top,100,,,insects,low,,
+ZACKENBERG,OPEN DRYAS VEGETATION,,DRY,74.28,-20.31,,,30,HIGH,Schmidt,,,,,,0.5625,,,point_frame_top,100,,,large,low,,
+ZACKENBERG,SALIX ARCTICA SNOWBED,,MOIST,74.28,-20.32,,,45,HIGH,Schmidt,,,,,,0.5625,,,point_frame_top,100,,,large,medium,,
+ZACKENBERG,SALIX_SITE,no,MOIST,74.47508063,-20.54053855,,,40,HIGH,Schmidt,,,yes,,,0.25,,yes,point_frame_all_plot,100,,in 2009 only first hit recorded,large,low,,
+ZACKENBERG,SALIX_SITE_FLUX,new,MOIST,74.47508063,-20.54053855,,,40,HIGH,Riikka Rinnan,yes,no,yes,,,0.0484,,yes,point_frame_all_plot,49,yes,Plots are same as SALIX_SITE but different part of plot surveyed.,large,low,,
+ZACKENBERG,VACCINIUM ULIGONOSUM HEATH,,MOIST,74.28,-20.38,,,10,HIGH,Schmidt,,,,,,0.5625,,,point_frame_top,100,,,large,low,,
+ZACKENBERG,ZEROLINE,new,,,,,,,,Schmidt,,,no,,,,,after 1992,,,,Plots permanent after 1992; see Zackenberg Zero Line 1997 report for methods details,,,,
+ZERMATT,AGOZERM,no,DRY,46,7.7,,,2480,ALPINE,Wipf,,,no,,,16,,,BraunBlanquet,NA,,4x4m plots,large,low,,
+ZERMATT,NGOZERM,no,DRY,45.98,7.71,,,2555,ALPINE,Wipf,,,no,,,16,,,BraunBlanquet,NA,,4x4m plots,NA,NA,P1,P
