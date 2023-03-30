@@ -95,7 +95,7 @@ plot(p50_2020_resample_test)
 plot(poly_shrub_2020, lwd =3, border = "red", add = TRUE)
 plot(pp, lwd =2, border = "blue", add = TRUE)
 
-shapefile(pp_2, file = "data/katie_map_border_high.shp")
+shapefile(pp_2, file = "data/shapefiles/katie_map_border_high.shp")
 
 # same thing but with terra 
 system.time(p <- as.polygons(p50_2020_resample))
