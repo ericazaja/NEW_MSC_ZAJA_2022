@@ -1,8 +1,8 @@
 # EXTRACTION FUTURE CLIMATE PROJECTIONS -----
 
 # Load data -----
-shrub_map_extract <- read.csv("data/extract_end.csv") 
-shrub_map_extract_high <- read.csv("data/extract_end_high.csv") 
+shrub_map_extract <- read.csv("data/extract_end.csv") # low res map
+shrub_map_extract_high <- read.csv("data/extract_end_high.csv") # high res map
 
 # EXTRACTION ------
 # Loading the coordinates of the cropped shrub map
@@ -19,25 +19,25 @@ stack.2020 <- stack(tasmax.2020.1.re, tasmax.2020.2.re,tasmax.2020.3.re,
 stack.2030 <- stack(tasmax.2030.1.re, tasmax.2030.2.re,tasmax.2030.3.re,
                     tasmax.2030.4.re, tasmax.2030.5.re, tasmax.2030.6.re)
 
-stack.2040 <- stack(tasmax.2040.1, tasmax.2040.2.re,tasmax.2040.3.re,
+stack.2040 <- stack(tasmax.2040.1.re, tasmax.2040.2.re,tasmax.2040.3.re,
                     tasmax.2040.4.re, tasmax.2040.5.re, tasmax.2040.6.re)
 
-stack.2050 <- stack(tasmax.2050.1, tasmax.2050.2.re,tasmax.2050.3.re,
+stack.2050 <- stack(tasmax.2050.1.re, tasmax.2050.2.re,tasmax.2050.3.re,
                     tasmax.2050.4.re, tasmax.2050.5.re, tasmax.2050.6.re)
 
-stack.2060 <- stack(tasmax.2060.1, tasmax.2060.2.re,tasmax.2060.3.re,
+stack.2060 <- stack(tasmax.2060.1.re, tasmax.2060.2.re,tasmax.2060.3.re,
                     tasmax.2060.4.re, tasmax.2060.5.re, tasmax.2060.6.re)
 
-stack.2070 <- stack(tasmax.2070.1, tasmax.2070.2.re,tasmax.2070.3.re,
+stack.2070 <- stack(tasmax.2070.1.re, tasmax.2070.2.re,tasmax.2070.3.re,
                     tasmax.2070.4.re, tasmax.2070.5.re, tasmax.2070.6.re)
 
-stack.2080 <- stack(tasmax.2080.1, tasmax.2080.2.re,tasmax.2080.3.re,
+stack.2080 <- stack(tasmax.2080.1.re, tasmax.2080.2.re,tasmax.2080.3.re,
                     tasmax.2080.4.re, tasmax.2080.5.re, tasmax.2080.6.re)
 
-stack.2090 <- stack(tasmax.2090.1, tasmax.2090.2.re,tasmax.2090.3.re,
+stack.2090 <- stack(tasmax.2090.1.re, tasmax.2090.2.re,tasmax.2090.3.re,
                     tasmax.2090.4.re, tasmax.2090.5.re, tasmax.2090.6.re)
 
-stack.2100 <- stack(tasmax.2100.1, tasmax.2100.2.re,tasmax.2100.3.re,
+stack.2100 <- stack(tasmax.2100.1.re, tasmax.2100.2.re,tasmax.2100.3.re,
                     tasmax.2100.4.re, tasmax.2100.5.re, tasmax.2100.6.re)
 
 
@@ -95,7 +95,7 @@ biomass.df <- shrub_map_extract_high %>%
         "biomass_per_m2" = "pft_agb_deciduousshrub_p50_2020_wgs84") %>%
   dplyr::select(ID, biomass_per_m2, cell)
 
-hist(biomass.df$biomass_per_m2) # normal distribution
+hist(biomass.df$biomass_per_m2) # a little bit right skewed distribution
 
 # Merging biomass df with climate df
 coord.chelsa.combo.a.2020 <- left_join(coord.chelsa.combo.2020, biomass.df, by = c("ID" = "ID")) # only 2020 biomass data
@@ -211,6 +211,8 @@ coord.chelsa.combo.c.delta <- coord.chelsa.combo.c.all %>%
 # do this for all years til 2100
 view(coord.chelsa.combo.c.delta)
 
+write.csv(coord.chelsa.combo.c.delta, "data/coord.chelsa.combo.c.delta.csv")
+
 # Static biomass in july 2020 -----
 # filter only 2020
 coord.chelsa.combo.c.biom.2020 <- coord.chelsa.combo.c.delta %>%
@@ -306,7 +308,7 @@ dplyr::select(-biomass_per_m2_2050)
 
 c_mean_2060 <- c(coord.chelsa.combo.c.biom.2060.2$biomass_per_m2_2060)
 mean(c_mean_2060) # 415.2491 g/m2
-range(coord.chelsa.combo.c.biom.2060$biomass_per_m2) #224.3679 724.0134
+range(coord.chelsa.combo.c.biom.2060.2$biomass_per_m2_2060) #224.3679 724.0134
 
 # percentage difference
 (415.2491-430.9143)/430.9143 
@@ -416,9 +418,6 @@ mean(c_meantemp_2100) # 18.63242
 (18.63242-13.25012)/13.25012
 # 40.6% temp difference
 
-
-
-
 # merge all data-----
 # rename all specific biomass_per_m2_YEAR to biomass_per_m2 
 coord.chelsa.combo.c.biom.2030.3 <- coord.chelsa.combo.c.biom.2030 %>%
@@ -462,7 +461,7 @@ write.csv(coord.chelsa.combo.c.all.biom, "data/coord.chelsa.combo.c.all.biom.csv
     facet_wrap(~year, nrow = 3) +
     #scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
     scale_fill_gradient(name = "Shrub biomass g/m2",high = "green4", low = "yellow1",  na.value="white",
-                        breaks = c(0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200)) +
+                        breaks = c(0, 200, 400,600,  800, 1000, 1200, 1400, 1600, 1800)) +
     coord_quickmap()+
     theme_shrub() +  
    theme(axis.text.x  = element_text(vjust=0.5, size=10, colour = "black", angle = 45)) +

@@ -59,7 +59,7 @@ extent(p50_2020)
 # creating raster with resolution I want
 x <- raster()
 x <- raster(xmn=-154.8826 , xmx=-127.0697, ymn=59.43991 , ymx=71.49051)
-res(x) <- 0.1
+res(x) <- 0.1 # 0.1 x 0.1 degrees which is 10km x 10km
 res(x)
 projection(x) <- "+proj=longlat +datum=WGS84 +no_defs"
 
