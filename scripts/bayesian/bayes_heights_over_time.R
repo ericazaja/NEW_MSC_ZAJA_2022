@@ -9,6 +9,7 @@ center_scale <- function(x) {
 # libraries
 library(tidyverse)
 library(brms)
+library(readxl)
 
 # Data-----
 # data 1999-2019
@@ -17,32 +18,69 @@ QHI_1999_2019 <- read_csv("data/ITEX/pointfr_1999-2019_sas.csv")
 QHI_2022 <- read_excel("data/ITEX/qhi_Point_Framing_Longform_2022_inprogress.xlsx")
 
 # Wrangle ------
-QHI_2022_salix <- QHI_2022 %>%
-  filter(SPP == "Salix pulchra") %>%
-        # TISSUE == "Live")%>%
-  rename("Height_cm"="Height")%>%
-  dplyr::select(SITE, SUBSITE, PLOT, YEAR, PlotN, SPP, TISSUE, STATUS, Height_cm)
+QHI_2022$SubsitePlotYearXY<- with(QHI_2022, paste0(SUBSITE, PLOT, YEAR, X, Y))
+QHI_1999_2019$SubsitePlotYearXY<- with(QHI_1999_2019, paste0(SUBSITE, PLOT, YEAR, X, Y))
 
-QHI_1999_2019_salix <- QHI_1999_2019 %>%
-  filter(SPP == "Salix pulchra")%>%
-  # TISSUE == "Live")%>% 
-  mutate(Height_cm = Height..cm./100) %>%
-  dplyr::select(SITE, SUBSITE, PLOT, YEAR, SPP, TISSUE, STATUS, Height_cm)%>%
-  mutate(PlotN = "HE5")
+QHI_2022_max <- QHI_2022 %>%
+  group_by(SubsitePlotYearXY) %>%
+  mutate(max_heights_cm = max(Height))%>%
+  filter(SPP == "Salix pulchra",
+  TISSUE == "Live")%>%
+  dplyr::select(X, Y, SITE, SUBSITE, PLOT, YEAR, PlotN, SPP, 
+                TISSUE,max_heights_cm, SubsitePlotYearXY)
+
+QHI_2022_max <- QHI_2022_max %>%
+  group_by(SubsitePlotYearXY)%>%
+  distinct()
+
+range(QHI_2022_max$max_heights_cm) # 10.9 41.0
+
+
+QHI_1999_2019$PlotN<- with(QHI_1999_2019, paste0(SUBSITE, PLOT))
+QHI_2019_max <- QHI_1999_2019 %>%
+  group_by(SubsitePlotYearXY) %>%
+  mutate(max_heights = max(Height..cm.))
+
+QHI_2019_max <- QHI_2019_max %>%
+  filter(SPP %in% c("Salix pulchra", "SALPUL"),
+         STATUS != "Standing dead", 
+         STATUS != "STANDINGDEAD", 
+         TISSUE != "Standing dead")%>%
+  dplyr::select(X, Y, SITE, SUBSITE, PLOT, YEAR, PlotN, SPP, 
+                TISSUE,max_heights, SubsitePlotYearXY)
+
+view(QHI_2019_max)
+
+QHI_2019_max <- QHI_2019_max %>%
+  group_by(SubsitePlotYearXY)%>%
+  distinct()
+
+range(QHI_2019_max$max_heights) #  1 393
+
+QHI_2019_max <- QHI_2019_max %>%
+  mutate(max_heights_cm = case_when(max_heights> 41 ~ (max_heights/10), # im assuming anything above 30 is in mm
+                                    max_heights<= 41 ~ max_heights))
+
+range(QHI_2019_max$max_heights_cm) #  1 41
+
+unique(QHI_2019_max$PlotN)
 
 # merge 
-QHI_1999_2022 <- rbind(QHI_1999_2019_salix, QHI_2022_salix)
+QHI_1999_2022 <- rbind(QHI_2019_max, QHI_2022_max)
 
 # Model QHI pulchra heights over time-----
 unique(QHI_1999_2022$YEAR)
 QHI_1999_2022 <-QHI_1999_2022 %>%
-  mutate(Year_index = I(YEAR - 2014))
+  mutate(Year_index = I(YEAR - 1998))
 
-QHI_1999_2022$height_scale <- center_scale(QHI_1999_2022$Height_cm)
+range(QHI_1999_2022$max_heights_cm) #  0.0 39.3
+hist(QHI_1999_2022$max_heights_cm)
+
+QHI_1999_2022$height_scale <- center_scale(QHI_1999_2022$max_heights_cm)
 QHI_1999_2022$PlotN <- as.factor(QHI_1999_2022$PlotN)
 unique(QHI_1999_2022$PlotN)
 
-QHI_height_time <- brms::brm( height_scale ~ Year_index + (Year_index|PlotN),
+QHI_height_time <- brms::brm(max_heights_cm ~ Year_index + (Year_index|PlotN),
                                data = QHI_1999_2022,  family = gaussian(), chains = 3,
                                iter = 5000, warmup = 1000, 
                                control = list(max_treedepth = 15, adapt_delta = 0.99))
@@ -51,13 +89,14 @@ summary(QHI_height_time)
 pp_check(QHI_height_time, type = "dens_overlay", ndraws = 100) 
 
 (pulchra_height_plot <- QHI_1999_2022 %>%
+    group_by(PlotN)%>%
     add_predicted_draws(QHI_height_time) %>%
-    ggplot(aes(x = Year_index, y = height_scale)) +
+    ggplot(aes(x = Year_index, y = max_heights_cm)) +
     stat_lineribbon(aes(y = .prediction), .width = .50, alpha = 1/4) +
     geom_point(data = QHI_1999_2022) +
     scale_fill_brewer(palette = "Set2") +
     scale_color_brewer(palette = "Dark2") +
-    ylab("Salix pulchra height (cm, scaled) \n") +
+    ylab("Salix pulchra height (cm) \n") +
     xlab("\nYear (scaled)") +
     theme_shrub())
 
