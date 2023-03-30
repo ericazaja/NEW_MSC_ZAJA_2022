@@ -10,16 +10,24 @@ library(raster)
 library(rasterVis)
 library(gridExtra)
 library(terra)
+library(sf)
 
 # 2. LOADING DATA ----
-# Shapefile of border of katie's map 
+# Shapefile of border of katie's map  (different resolutions)
 boundary <- st_read("data/katie_map_border.shp") 
 boundary_test <- st_read("data/cells.shp") 
-p50_2020_resample <- rast("data/p50_2020_resample.tif") 
 boundary_high <- st_read("data/katie_map_border_high.shp")
-p50_2020_resample_test <- rast("data/p50_2020_resample_test.tif") 
+boundary_highest <- st_read("data/shapefiles/katie_map_border_highest.shp")
 
-# Rasters of shrub biomass (g/m2) in the PCH range in 2020 (relevant to me)
+# raster biomass 2020  (different resolutions)
+p50_2020_resample <- rast("data/p50_2020_resample.tif") 
+p50_2020_resample_test <- rast("data/p50_2020_resample_test.tif") 
+p50_2020_resample_highest <- raster("data/p50_2020_resample_highest.tiff") 
+
+# extracted raster values 
+extract_end_highest <- read_csv("data/extract_end_highest.csv")
+
+# ORIGINAL rasters of shrub biomass (g/m2) in the PCH range in 2020 (relevant to me) 
 # Using the best-estimates: the 50th percentile of the 1,000 permutations
 p50_2020 <- raster("data/katie_maps/pft_agb_deciduousshrub_p50_2020_wgs84.tif") 
 ncell(p50_2020)
@@ -42,11 +50,12 @@ class(p50_2020) # raster
 
 # exploring resolution 
 res(p50_2020) # resolution 0.000595209 0.000595209 degrees
-
+res(p50_2020_resample_highest) # 0.01 0.01 i.e 1km by 1km
 # exploring projection
 projection(p50_2020) # "+proj=longlat +datum=WGS84 +no_defs"
 # Previous proj was aea: "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"
 crs(p50_2020)
+projection(p50_2020_resample_highest) #  "+proj=longlat +datum=WGS84 +no_defs"
 
 # extent 
 extent(p50_2020)
@@ -165,7 +174,7 @@ theme_shrub <- function(){ theme(legend.position = "right",
                                  plot.margin = unit(c(1,1,1,1), units = , "cm"))}
 
 # Plotting shrub raster (entire) with ggplot
-(gplot_p50_1985 <- gplot(p50_2020_resample_test) +
+(gplot_p50_1985 <- gplot(p50_2020_resample_highest) +
     geom_raster(aes(x = x, y = y, fill = value)) +
     # value is the specific value (of reflectance) each pixel is associated with
     scale_fill_viridis_c(rescaler = function(x, to = c(0, 1), from = NULL) {
@@ -181,7 +190,7 @@ theme_shrub <- function(){ theme(legend.position = "right",
 
 
 # Cropped map with personalised colour palette (low-mid-high) 
-(gplot_p50_1985_test_my_palette <- gplot(p50_2020_resample_test) +
+(gplot_p50_1985_test_my_palette <- gplot(p50_2020_resample_highest) +
     geom_raster(aes(x = x, y = y, fill = value)) +
     # value is the specific value (of reflectance) each pixel is associated with
     scale_fill_gradient2(low = "green4", mid = "green3", high = "brown", midpoint = 10,  na.value="white") +
@@ -195,7 +204,7 @@ theme_shrub <- function(){ theme(legend.position = "right",
           axis.text.x = element_text(angle = 30, hjust = 1)))  # rotates x axis text
 
 # plotting raster with personalised colours from dataframe 
-(raster_my_palette_new <- ggplot(extract_end) + 
+(raster_my_palette_new <- ggplot(extract_end_highest) + 
     geom_tile(aes(x=x,y=y,fill=pft_agb_deciduousshrub_p50_2020_wgs84)) + 
     scale_fill_gradient(name = "Shrub biomass g/m2",high = "green4", low = "yellow1",  na.value="white",
                         breaks = c(0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200)) +
