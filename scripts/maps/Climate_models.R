@@ -3,9 +3,29 @@
 # libraries ----
 library(bayesplot)
 library(brms)
+library(tidybayes)
+library(tidyverse)
+
 
 # data ------
 coord.chelsa.combo.c.2020 <- read.csv("data/coord.chelsa.combo.c.2020")
+coord.chelsa.combo.c.all.biom <- read.csv("data/coord.chelsa.combo.c.all.biom.csv")
+
+
+# temp over time (2020-2100)-------
+hist(coord.chelsa.combo.c.all.biom$mean_temp_C) # normal
+unique(coord.chelsa.combo.c.all.biom$year_index) # I want 2020 as year 0
+coord.chelsa.combo.c.all.biom <- coord.chelsa.combo.c.all.biom %>%
+  mutate(year_index= I(year-2020))
+
+temp_time_future <- brms::brm(mean_temp_C ~ year_index, 
+                        data = coord.chelsa.combo.c.all.biom, family = gaussian(), chains = 3,
+                        iter = 5000, warmup = 1000, 
+                        control = list(max_treedepth = 15, adapt_delta = 0.99))
+summary(temp_time_future) #significant ! 
+plot(temp_time_future) # great
+pp_check(temp_time_future, type = "dens_overlay", ndraws  = 100) 
+
 
 # model: 2020 only----
 # biomass in 2020 ~ temp in 2020 
@@ -35,3 +55,23 @@ mod_data <- mod[[1]]
     scale_color_brewer(palette = "Greys")+
     scale_fill_brewer(palette = "Greys")+
     theme_shrub())
+
+# Quick data viz
+future_time <- (conditional_effects(temp_time_future))
+future_time_dat <- future_time[[1]]
+
+(future_temps_plot <-ggplot(future_time_dat) +
+    geom_point(data = coord.chelsa.combo.c.all.biom, aes(x =year_index, y =mean_temp_C ),
+               alpha = 0.02)+
+    geom_line(aes(x = effect1__, y = estimate__),
+              linewidth = 1.5,colour = "red") +
+    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
+                alpha = 0.4) +
+    ylab("Temperature (degC) \n") +
+    xlab("\n Year (scaled)" ) +
+    # ylim(0, 1500) +
+    scale_color_brewer(palette = "Greys")+
+    scale_fill_brewer(palette = "Greys")+
+    theme_shrub())
+
+
