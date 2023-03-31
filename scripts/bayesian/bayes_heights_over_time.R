@@ -27,7 +27,7 @@ QHI_2022_max <- QHI_2022 %>%
   filter(SPP == "Salix pulchra",
   TISSUE == "Live")%>%
   dplyr::select(X, Y, SITE, SUBSITE, PLOT, YEAR, PlotN, SPP, 
-                TISSUE,max_heights_cm, SubsitePlotYearXY)
+                max_heights_cm, SubsitePlotYearXY)
 
 QHI_2022_max <- QHI_2022_max %>%
   group_by(SubsitePlotYearXY)%>%
@@ -47,7 +47,7 @@ QHI_2019_max <- QHI_2019_max %>%
          STATUS != "STANDINGDEAD", 
          TISSUE != "Standing dead")%>%
   dplyr::select(X, Y, SITE, SUBSITE, PLOT, YEAR, PlotN, SPP, 
-                TISSUE,max_heights, SubsitePlotYearXY)
+                max_heights, SubsitePlotYearXY)
 
 view(QHI_2019_max)
 
@@ -59,7 +59,10 @@ range(QHI_2019_max$max_heights) #  1 393
 
 QHI_2019_max <- QHI_2019_max %>%
   mutate(max_heights_cm = case_when(max_heights> 41 ~ (max_heights/10), # im assuming anything above 30 is in mm
-                                    max_heights<= 41 ~ max_heights))
+                                    max_heights<= 41 ~ max_heights)) %>%
+  mutate(max_heights_cm= case_when(max_heights_cm <= 1 ~ (max_heights_cm*10), # im assuming anything above 30 is in mm
+                                   max_heights_cm > 1 ~ max_heights_cm))%>%
+  dplyr::select(-max_heights)
 
 range(QHI_2019_max$max_heights_cm) #  1 41
 
@@ -67,6 +70,7 @@ unique(QHI_2019_max$PlotN)
 
 # merge 
 QHI_1999_2022 <- rbind(QHI_2019_max, QHI_2022_max)
+view(QHI_1999_2022)
 
 # Model QHI pulchra heights over time-----
 unique(QHI_1999_2022$YEAR)

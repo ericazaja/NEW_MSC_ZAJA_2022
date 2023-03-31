@@ -3,10 +3,21 @@
 # Load data -----
 shrub_map_extract <- read.csv("data/extract_end.csv") # low res map
 shrub_map_extract_high <- read.csv("data/extract_end_high.csv") # high res map
+shrub_map_extract_highest <- read.csv("data/extract_end_highest.csv") # high res map
+
+# Loading climate rasters
+rastlist <- list.files(path = "outputs/CMPI6_rasters", pattern='.tif', all.files=TRUE, 
+                       full.names=TRUE)
+
+rasters <- lapply(rastlist, raster)
+r_stack <- stack(rasters)
+r_unstack <-unstack(r_stack)
+b <- brick(r_stack)
+climate_rast <- unstack(b)
 
 # EXTRACTION ------
 # Loading the coordinates of the cropped shrub map
-coords <- shrub_map_extract_high %>% 
+coords <- shrub_map_extract_highest %>% 
   dplyr::select(x, y) # keeping lat and long
 
 # Creating SpatialPoints (sp) object of unique coordinates
@@ -89,13 +100,14 @@ coord.chelsa.combo.2090 <- left_join(chelsa.extract.2090, coord.df, by = c("ID" 
 coord.chelsa.combo.2100 <- left_join(chelsa.extract.2100, coord.df, by = c("ID" = "ID"))
 
 # Loading the shrub biomass df
-biomass.df <- shrub_map_extract_high %>%
+biomass.df <- shrub_map_extract_highest %>%
   dplyr::select(-ID)%>%
   rename("ID" = "X", 
         "biomass_per_m2" = "pft_agb_deciduousshrub_p50_2020_wgs84") %>%
   dplyr::select(ID, biomass_per_m2, cell)
 
-hist(biomass.df$biomass_per_m2) # a little bit right skewed distribution
+hist(biomass.df$biomass_per_m2) # right skewed distribution
+range(biomass.df$biomass_per_m2) # 0 2126
 
 # Merging biomass df with climate df
 coord.chelsa.combo.a.2020 <- left_join(coord.chelsa.combo.2020, biomass.df, by = c("ID" = "ID")) # only 2020 biomass data

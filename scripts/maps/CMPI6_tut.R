@@ -34,6 +34,9 @@ nc_CNRM_85 = open.nc("data/CMPI6/tasmax_Amon_CNRM-CM6-1_ssp585_r1i1p1f2_gr_20150
 # Model 6:   ACCESS-CM2 | ssp585 | mon | tasmax 
 nc_ACCESS_85 = open.nc("data/CMPI6/tasmax_Amon_ACCESS-CM2_ssp585_r2i1p1f1_gn_201501-210012.nc") 
 
+# boundary of Katie's maps
+boundary_highest <- st_read("data/shapefiles/katie_map_border_highest.shp")
+
 # Process the Data -----
 
 # Model 1: NOAA ------
@@ -137,7 +140,7 @@ plot(tasmax.scenes.6[[1000]], main = "ACCESS, RCP 8.5",sub=tasmax.dates.6[[1030]
 # # creating raster with resolution I want
 x <- raster()
 x <- raster(xmn=-154.8826 , xmx=-127.0697, ymn=59.43991 , ymx=71.49051)
-res(x) <- 0.1
+res(x) <- 0.01 # 1 km x 1km 
 res(x)
 projection(x) <- "+proj=longlat +datum=WGS84 +no_defs"
 
@@ -155,8 +158,8 @@ projection(tasmax.2020.1) #"+proj=longlat +datum=WGS84 +no_defs"
 tasmax.2020.1.re <- resample(tasmax.2020.1, x) # x is the raster I made 
 
 # crop and mask
-r2.1 <- crop(tasmax.2020.1.re, extent(boundary_high))
-r3.1 <- mask(r2.1, boundary_high)
+r2.1 <- crop(tasmax.2020.1.re, extent(boundary_highest))
+r3.1 <- mask(r2.1, boundary_highest)
 
 ## Check that it worked
 plot(r3.1)
@@ -274,12 +277,12 @@ plot(boundary_high, add=TRUE, lwd=2)
 plot(r3.6, main="July 2023, model 6", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 
 # saving all rasters
-writeRaster(tasmax.2020.1.re, "outputs/CMPI6_rasters/tasmax.2020.1.re.tif")
-writeRaster(tasmax.2020.2.re, "outputs/CMPI6_rasters/tasmax.2020.2.re.tif")
-writeRaster(tasmax.2020.3.re, "outputs/CMPI6_rasters/tasmax.2020.3.re.tif")
-writeRaster(tasmax.2020.4.re, "outputs/CMPI6_rasters/tasmax.2020.4.re.tif")
-writeRaster(tasmax.2020.5.re, "outputs/CMPI6_rasters/tasmax.2020.5.re.tif")
-writeRaster(tasmax.2020.6.re, "outputs/CMPI6_rasters/tasmax.2020.6.re.tif")
+writeRaster(tasmax.2020.1.re, "outputs/CMPI6_rasters/tasmax.2020.1.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2020.2.re, "outputs/CMPI6_rasters/tasmax.2020.2.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2020.3.re, "outputs/CMPI6_rasters/tasmax.2020.3.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2020.4.re, "outputs/CMPI6_rasters/tasmax.2020.4.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2020.5.re, "outputs/CMPI6_rasters/tasmax.2020.5.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2020.6.re, "outputs/CMPI6_rasters/tasmax.2020.6.re.tif", overwrite = TRUE)
 
 #.--------
 
@@ -347,7 +350,6 @@ indices.4.4  = which((tasmax.dates.4 <= as.Date(paste0("2030-07-31"))) &
 tasmax.2030.4 = tasmax.scenes.4[[indices.4.4[1]]] 
 # make size same as other climate raster (NOAA)
 tasmax.2030.4.re <- resample(tasmax.2030.4, x) # hdd cdd is the climate raster
-writeRaster(tasmax.2030.4.re, "outputs/CMPI6_rasters/tasmax.2030.4.re.tif")
 
 ## crop and mask
 r2.4.2030 <- crop(tasmax.2030.4.re, extent(boundary_high))
@@ -397,12 +399,12 @@ plot(boundary_high, add=TRUE, lwd=2)
 plot(r3.6.2030, main="July 2030, model 6", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 
 # saving all rasters
-writeRaster(tasmax.2030.1.re, "outputs/CMPI6_rasters/tasmax.2030.1.re.tif")
-writeRaster(tasmax.2030.2.re, "outputs/CMPI6_rasters/tasmax.2030.2.re.tif")
-writeRaster(tasmax.2030.3.re, "outputs/CMPI6_rasters/tasmax.2030.3.re.tif")
-writeRaster(tasmax.2030.4.re, "outputs/CMPI6_rasters/tasmax.2030.4.re.tif")
-writeRaster(tasmax.2030.5.re, "outputs/CMPI6_rasters/tasmax.2030.5.re.tif")
-writeRaster(tasmax.2030.6.re, "outputs/CMPI6_rasters/tasmax.2030.6.re.tif")
+writeRaster(tasmax.2030.1.re, "outputs/CMPI6_rasters/tasmax.2030.1.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2030.2.re, "outputs/CMPI6_rasters/tasmax.2030.2.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2030.3.re, "outputs/CMPI6_rasters/tasmax.2030.3.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2030.4.re, "outputs/CMPI6_rasters/tasmax.2030.4.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2030.5.re, "outputs/CMPI6_rasters/tasmax.2030.5.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2030.6.re, "outputs/CMPI6_rasters/tasmax.2030.6.re.tif", overwrite = TRUE)
 
 #.--------
 
@@ -521,12 +523,12 @@ plot(boundary, add=TRUE, lwd=2)
 plot(r3.6.2040, main="July 2040, model 6", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 
 # saving all rasters
-writeRaster(tasmax.2040.1.re, "outputs/CMPI6_rasters/tasmax.2040.1.re.tif")
-writeRaster(tasmax.2040.2.re, "outputs/CMPI6_rasters/tasmax.2040.2.re.tif")
-writeRaster(tasmax.2040.3.re, "outputs/CMPI6_rasters/tasmax.2040.3.re.tif")
-writeRaster(tasmax.2040.4.re, "outputs/CMPI6_rasters/tasmax.2040.4.re.tif")
-writeRaster(tasmax.2040.5.re, "outputs/CMPI6_rasters/tasmax.2040.5.re.tif")
-writeRaster(tasmax.2040.6.re, "outputs/CMPI6_rasters/tasmax.2040.6.re.tif")
+writeRaster(tasmax.2040.1.re, "outputs/CMPI6_rasters/tasmax.2040.1.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2040.2.re, "outputs/CMPI6_rasters/tasmax.2040.2.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2040.3.re, "outputs/CMPI6_rasters/tasmax.2040.3.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2040.4.re, "outputs/CMPI6_rasters/tasmax.2040.4.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2040.5.re, "outputs/CMPI6_rasters/tasmax.2040.5.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2040.6.re, "outputs/CMPI6_rasters/tasmax.2040.6.re.tif", overwrite = TRUE)
 
 #.--------
 
@@ -641,12 +643,12 @@ plot(boundary, add=TRUE, lwd=2)
 plot(r3.6.2050, main="July 2050, model 6", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 
 # saving all rasters
-writeRaster(tasmax.2050.1.re, "outputs/CMPI6_rasters/tasmax.2050.1.re.tif")
-writeRaster(tasmax.2050.2.re, "outputs/CMPI6_rasters/tasmax.2050.2.re.tif")
-writeRaster(tasmax.2050.3.re, "outputs/CMPI6_rasters/tasmax.2050.3.re.tif")
-writeRaster(tasmax.2050.4.re, "outputs/CMPI6_rasters/tasmax.2050.4.re.tif")
-writeRaster(tasmax.2050.5.re, "outputs/CMPI6_rasters/tasmax.2050.5.re.tif")
-writeRaster(tasmax.2050.6.re, "outputs/CMPI6_rasters/tasmax.2050.6.re.tif")
+writeRaster(tasmax.2050.1.re, "outputs/CMPI6_rasters/tasmax.2050.1.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2050.2.re, "outputs/CMPI6_rasters/tasmax.2050.2.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2050.3.re, "outputs/CMPI6_rasters/tasmax.2050.3.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2050.4.re, "outputs/CMPI6_rasters/tasmax.2050.4.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2050.5.re, "outputs/CMPI6_rasters/tasmax.2050.5.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2050.6.re, "outputs/CMPI6_rasters/tasmax.2050.6.re.tif", overwrite = TRUE)
 
 #.--------
 # JULY 2060 -------
@@ -761,12 +763,12 @@ plot(boundary, add=TRUE, lwd=2)
 plot(r3.6.2060, main="July 2050, model 6", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 
 # saving all rasters
-writeRaster(tasmax.2060.1.re, "outputs/CMPI6_rasters/tasmax.2060.1.re.tif")
-writeRaster(tasmax.2060.2.re, "outputs/CMPI6_rasters/tasmax.2060.2.re.tif")
-writeRaster(tasmax.2060.3.re, "outputs/CMPI6_rasters/tasmax.2060.3.re.tif")
-writeRaster(tasmax.2060.4.re, "outputs/CMPI6_rasters/tasmax.2060.4.re.tif")
-writeRaster(tasmax.2060.5.re, "outputs/CMPI6_rasters/tasmax.2060.5.re.tif")
-writeRaster(tasmax.2060.6.re, "outputs/CMPI6_rasters/tasmax.2060.6.re.tif")
+writeRaster(tasmax.2060.1.re, "outputs/CMPI6_rasters/tasmax.2060.1.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2060.2.re, "outputs/CMPI6_rasters/tasmax.2060.2.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2060.3.re, "outputs/CMPI6_rasters/tasmax.2060.3.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2060.4.re, "outputs/CMPI6_rasters/tasmax.2060.4.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2060.5.re, "outputs/CMPI6_rasters/tasmax.2060.5.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2060.6.re, "outputs/CMPI6_rasters/tasmax.2060.6.re.tif", overwrite = TRUE)
 
 # . ------
 # JULY 2070 -------
@@ -880,12 +882,12 @@ plot(boundary, add=TRUE, lwd=2)
 plot(r3.6.2070, main="July 2070, model 6", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 
 # saving all rasters
-writeRaster(tasmax.2070.1.re, "outputs/CMPI6_rasters/tasmax.2070.1.re.tif")
-writeRaster(tasmax.2070.2.re, "outputs/CMPI6_rasters/tasmax.2070.2.re.tif")
-writeRaster(tasmax.2070.3.re, "outputs/CMPI6_rasters/tasmax.2070.3.re.tif")
-writeRaster(tasmax.2070.4.re, "outputs/CMPI6_rasters/tasmax.2070.4.re.tif")
-writeRaster(tasmax.2070.5.re, "outputs/CMPI6_rasters/tasmax.2070.5.re.tif")
-writeRaster(tasmax.2070.6.re, "outputs/CMPI6_rasters/tasmax.2070.6.re.tif")
+writeRaster(tasmax.2070.1.re, "outputs/CMPI6_rasters/tasmax.2070.1.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2070.2.re, "outputs/CMPI6_rasters/tasmax.2070.2.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2070.3.re, "outputs/CMPI6_rasters/tasmax.2070.3.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2070.4.re, "outputs/CMPI6_rasters/tasmax.2070.4.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2070.5.re, "outputs/CMPI6_rasters/tasmax.2070.5.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2070.6.re, "outputs/CMPI6_rasters/tasmax.2070.6.re.tif", overwrite = TRUE)
 
 #.--------
 
@@ -1000,12 +1002,12 @@ plot(boundary, add=TRUE, lwd=2)
 plot(r3.6.2080, main="July 2080, model 6", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 
 # saving all rasters
-writeRaster(tasmax.2080.1.re, "outputs/CMPI6_rasters/tasmax.2080.1.re.tif")
-writeRaster(tasmax.2080.2.re, "outputs/CMPI6_rasters/tasmax.2080.2.re.tif")
-writeRaster(tasmax.2080.3.re, "outputs/CMPI6_rasters/tasmax.2080.3.re.tif")
-writeRaster(tasmax.2080.4.re, "outputs/CMPI6_rasters/tasmax.2080.4.re.tif")
-writeRaster(tasmax.2080.5.re, "outputs/CMPI6_rasters/tasmax.2080.5.re.tif")
-writeRaster(tasmax.2080.6.re, "outputs/CMPI6_rasters/tasmax.2080.6.re.tif")
+writeRaster(tasmax.2080.1.re, "outputs/CMPI6_rasters/tasmax.2080.1.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2080.2.re, "outputs/CMPI6_rasters/tasmax.2080.2.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2080.3.re, "outputs/CMPI6_rasters/tasmax.2080.3.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2080.4.re, "outputs/CMPI6_rasters/tasmax.2080.4.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2080.5.re, "outputs/CMPI6_rasters/tasmax.2080.5.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2080.6.re, "outputs/CMPI6_rasters/tasmax.2080.6.re.tif", overwrite = TRUE)
 
 # .--------
 # JULY 2090 -------
@@ -1119,12 +1121,12 @@ plot(boundary, add=TRUE, lwd=2)
 plot(r3.6.2090, main="July 2090, model 6", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 
 # saving all rasters
-writeRaster(tasmax.2090.1.re, "outputs/CMPI6_rasters/tasmax.2090.1.re.tif")
-writeRaster(tasmax.2090.2.re, "outputs/CMPI6_rasters/tasmax.2090.2.re.tif")
-writeRaster(tasmax.2090.3.re, "outputs/CMPI6_rasters/tasmax.2090.3.re.tif")
-writeRaster(tasmax.2090.4.re, "outputs/CMPI6_rasters/tasmax.2090.4.re.tif")
-writeRaster(tasmax.2090.5.re, "outputs/CMPI6_rasters/tasmax.2090.5.re.tif")
-writeRaster(tasmax.2090.6.re, "outputs/CMPI6_rasters/tasmax.2090.6.re.tif")
+writeRaster(tasmax.2090.1.re, "outputs/CMPI6_rasters/tasmax.2090.1.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2090.2.re, "outputs/CMPI6_rasters/tasmax.2090.2.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2090.3.re, "outputs/CMPI6_rasters/tasmax.2090.3.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2090.4.re, "outputs/CMPI6_rasters/tasmax.2090.4.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2090.5.re, "outputs/CMPI6_rasters/tasmax.2090.5.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2090.6.re, "outputs/CMPI6_rasters/tasmax.2090.6.re.tif", overwrite = TRUE)
 
 
 # .-------
@@ -1240,12 +1242,12 @@ plot(boundary, add=TRUE, lwd=2)
 plot(r3.6.2100, main="July 2100, model 6", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
 
 # saving all rasters
-writeRaster(tasmax.2100.1.re, "outputs/CMPI6_rasters/tasmax.2100.1.re.tif")
-writeRaster(tasmax.2100.2.re, "outputs/CMPI6_rasters/tasmax.2100.2.re.tif")
-writeRaster(tasmax.2100.3.re, "outputs/CMPI6_rasters/tasmax.2100.3.re.tif")
-writeRaster(tasmax.2100.4.re, "outputs/CMPI6_rasters/tasmax.2100.4.re.tif")
-writeRaster(tasmax.2100.5.re, "outputs/CMPI6_rasters/tasmax.2100.5.re.tif")
-writeRaster(tasmax.2100.6.re, "outputs/CMPI6_rasters/tasmax.2100.6.re.tif")
+writeRaster(tasmax.2100.1.re, "outputs/CMPI6_rasters/tasmax.2100.1.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2100.2.re, "outputs/CMPI6_rasters/tasmax.2100.2.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2100.3.re, "outputs/CMPI6_rasters/tasmax.2100.3.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2100.4.re, "outputs/CMPI6_rasters/tasmax.2100.4.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2100.5.re, "outputs/CMPI6_rasters/tasmax.2100.5.re.tif", overwrite = TRUE)
+writeRaster(tasmax.2100.6.re, "outputs/CMPI6_rasters/tasmax.2100.6.re.tif", overwrite = TRUE)
 
 # STOP----
 # hdd.cdd.2023 = crop(tasmax.2023, boundary) # crop to the extent of the PCH range

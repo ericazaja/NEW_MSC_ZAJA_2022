@@ -51,6 +51,7 @@ class(p50_2020) # raster
 # exploring resolution 
 res(p50_2020) # resolution 0.000595209 0.000595209 degrees
 res(p50_2020_resample_highest) # 0.01 0.01 i.e 1km by 1km
+
 # exploring projection
 projection(p50_2020) # "+proj=longlat +datum=WGS84 +no_defs"
 # Previous proj was aea: "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"
@@ -68,17 +69,10 @@ extent(p50_2020)
 # creating raster with resolution I want
 x <- raster()
 x <- raster(xmn=-154.8826 , xmx=-127.0697, ymn=59.43991 , ymx=71.49051)
-res(x) <- 0.1 # 0.1 x 0.1 degrees which is 10km x 10km
+res(x) <- 0.01 # 0.01 x 0.01 degrees which is 1km x 1km
 res(x)
 projection(x) <- "+proj=longlat +datum=WGS84 +no_defs"
 
-# alternative way
-#library(terra)
-#a <- aggregate(p50_2020, 3, mean)
-#res(a) # [1] 0.001785627 0.001785627
-
-#plot(a)
-#rr <- raster(crs="+proj=longlat +datum=WGS84 +no_defs", resolution=1000, xmn=-154.8826 , xmx=-127.0697, ymn=59.43991 , ymx=71.49051)
 
 # AGGREGATE PIXELS -----
 # Aggregate pixels of shrub map p50_2020 to climate raster size (1.25 x 1 degree)
@@ -206,8 +200,8 @@ theme_shrub <- function(){ theme(legend.position = "right",
 # plotting raster with personalised colours from dataframe 
 (raster_my_palette_new <- ggplot(extract_end_highest) + 
     geom_tile(aes(x=x,y=y,fill=pft_agb_deciduousshrub_p50_2020_wgs84)) + 
-    scale_fill_gradient(name = "Shrub biomass g/m2",high = "green4", low = "yellow1",  na.value="white",
-                        breaks = c(0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200)) +
+    scale_fill_gradient(name = "Shrub biomass g/m2",high = "green4", low = "yellow",  na.value="white",
+                        breaks = c(0, 200,  400,  600, 800,  1000,  1200, 1400, 1600, 1800)) +
     coord_quickmap()+
     theme_shrub() +  
     xlab("\nLongitude") +
@@ -223,7 +217,7 @@ theme_shrub <- function(){ theme(legend.position = "right",
        #   legend.text = element_text(size=20),
        #   legend.title = element_text(size=40),
         #  legend.position ="right"))
-
+ggsave(file = "outputs/raster_my_palette_new.png")
 # EXTRAS ----
 #p50_2020_resample_df <- extract(p50_2020_resample, xy, cellnumbers = T)
 #view(p50_2020_resample_df)
