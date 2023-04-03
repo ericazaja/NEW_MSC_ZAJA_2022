@@ -1,26 +1,29 @@
 # Script to plot QHI monitoring heights over time -----
 
-# scale function =====
-# centering with 'scale()'
-center_scale <- function(x) {
-  scale(x, scale = FALSE)
-}
-
 # libraries
 library(tidyverse)
 library(brms)
 library(readxl)
 
-# Data-----
+# scale function =====
+# centering with 'scale()'
+#center_scale <- function(x) {
+ # scale(x, scale = FALSE)
+#}
+
+
+# LOAD DATA -----
 # data 1999-2019
 QHI_1999_2019 <- read_csv("data/ITEX/pointfr_1999-2019_sas.csv")
 # 2022 data
 QHI_2022 <- read_excel("data/ITEX/qhi_Point_Framing_Longform_2022_inprogress.xlsx")
 
-# Wrangle ------
+# DATA WRANGLE ------
+# make a subsite plot year x y column 
 QHI_2022$SubsitePlotYearXY<- with(QHI_2022, paste0(SUBSITE, PLOT, YEAR, X, Y))
 QHI_1999_2019$SubsitePlotYearXY<- with(QHI_1999_2019, paste0(SUBSITE, PLOT, YEAR, X, Y))
 
+# keeping only max values
 QHI_2022_max <- QHI_2022 %>%
   group_by(SubsitePlotYearXY) %>%
   mutate(max_heights_cm = max(Height))%>%
@@ -31,16 +34,18 @@ QHI_2022_max <- QHI_2022 %>%
 
 QHI_2022_max <- QHI_2022_max %>%
   group_by(SubsitePlotYearXY)%>%
-  distinct()
+  distinct() # keeping one unique value
 
-range(QHI_2022_max$max_heights_cm) # 10.9 41.0
+range(QHI_2022_max$max_heights_cm) # 10.9 41.0 cm! Makes sense.
 
-
+# Making a plot column for the 1999-2019 data
 QHI_1999_2019$PlotN<- with(QHI_1999_2019, paste0(SUBSITE, PLOT))
+
+#keep max heights only 
 QHI_2019_max <- QHI_1999_2019 %>%
   group_by(SubsitePlotYearXY) %>%
   mutate(max_heights = max(Height..cm.))
-
+# keep pulchra only
 QHI_2019_max <- QHI_2019_max %>%
   filter(SPP %in% c("Salix pulchra", "SALPUL"),
          STATUS != "Standing dead", 
@@ -53,26 +58,50 @@ view(QHI_2019_max)
 
 QHI_2019_max <- QHI_2019_max %>%
   group_by(SubsitePlotYearXY)%>%
-  distinct()
+  distinct() # keep one unique value 
 
-range(QHI_2019_max$max_heights) #  1 393
+# ISLA HELP figure out what is going on here ------
+QHI_minus_2019_max <- QHI_2019_max%>%
+  filter(YEAR != 2019) # I think 2019 might be in cm, while all other years in mm?
 
-QHI_2019_max <- QHI_2019_max %>%
-  mutate(max_heights_cm = case_when(max_heights> 41 ~ (max_heights/10), # im assuming anything above 30 is in mm
-                                    max_heights<= 41 ~ max_heights)) %>%
-  mutate(max_heights_cm= case_when(max_heights_cm <= 1 ~ (max_heights_cm*10), # im assuming anything above 30 is in mm
-                                   max_heights_cm > 1 ~ max_heights_cm))%>%
-  dplyr::select(-max_heights)
+# separate 2019 data
+QHI_only_2019_max <- QHI_2019_max%>%
+  filter(YEAR == 2019)%>%
+  rename(max_heights_cm = max_heights) 
 
-range(QHI_2019_max$max_heights_cm) #  1 41
+# making values into mm (my judgement..?)
+QHI_minus_2019_max <- QHI_minus_2019_max %>%
+  mutate(max_heights_cm = max_heights/10)
+
+# remerging data
+QHI_2013_2019_bind <- rbind(QHI_minus_2019_max,QHI_only_2019_max)
+
+#QHI_2019_max <- QHI_2019_max %>%
+ # mutate(max_heights_cm = case_when(max_heights> 41 ~ (max_heights/10), # im assuming anything above 30 is in mm
+ ##                                   max_heights<= 41 ~ max_heights)) %>%
+ # mutate(max_heights_cm= case_when(max_heights_cm <= 3 ~ (max_heights_cm*10), # im assuming anything above 30 is in mm
+  #                                 max_heights_cm > 3 ~ max_heights_cm))%>%
+ # dplyr::select(-max_heights)
 
 unique(QHI_2019_max$PlotN)
 
-# merge 
-QHI_1999_2022 <- rbind(QHI_2019_max, QHI_2022_max)
-view(QHI_1999_2022)
+# merge with 2022 data
+QHI_1999_2022 <- rbind(QHI_2013_2019_bind, QHI_2022_max)
 
-# Model QHI pulchra heights over time-----
+# quick plot
+# raw data 
+(pulchra_height_plot <- QHI_1999_2022 %>%
+    ggplot(aes(x = YEAR, y = max_heights_cm)) +
+    geom_point(data = QHI_1999_2022) +
+    geom_smooth(method = "lm") +
+    scale_fill_brewer(palette = "Set2") +
+    scale_color_brewer(palette = "Dark2") +
+    ylab("Salix pulchra height (cm) \n") +
+    xlab("\nYear (scaled)") +
+    theme_shrub())
+
+# MODELLING------
+# Model QHI pulchra heights over time-----
 unique(QHI_1999_2022$YEAR)
 QHI_1999_2022 <-QHI_1999_2022 %>%
   mutate(Year_index = I(YEAR - 1998))
@@ -146,4 +175,6 @@ pp_check(temp_time, type = "dens_overlay", nsamples = 100)
     ylab("Height change (cm, scaled) \n") +
     xlab("\nTemperature change (scaled)")+ theme_shrub() +
     labs(title = "Salix pulchra"))
+
+
 

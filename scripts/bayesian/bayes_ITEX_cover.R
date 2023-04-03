@@ -120,9 +120,9 @@ view(cov_time_pul_random_new)
 # data visualisation ------
 # one line per site
 (pulchra_cover_plot <- itex_EZ_pulchra %>%
-   group_by(SITE) %>%
+  # group_by(SITE) %>%
    add_predicted_draws(pulchra_cover) %>%
-   ggplot(aes(x = YEAR, y = cover_prop, color = SITE, fill = SITE)) +
+   ggplot(aes(x = YEAR, y = cover_prop)) +
    stat_lineribbon(aes(y = .prediction), .width = .50, alpha = 1/4) +
    geom_point(data = itex_EZ_pulchra) +
    scale_fill_brewer(palette = "Set2") +
