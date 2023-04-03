@@ -89,7 +89,7 @@ threshold_avg$biomass_level <- factor(threshold_avg$biomass_level,levels=c("Low"
     xlab("\nLongitude") +
     ylab("Latitude\n"))
 
-# threshold map
+# binary threshold map
 threshold_avg_2 <- shrub_natural_mean %>%
   mutate(biomass_level = case_when (biomass_per_m2_new < 605.1821     ~ 'Low', # 75% quant.
                                     biomass_per_m2_new > 605.1821 ~ 'High')) # 75%

@@ -49,7 +49,7 @@ shrub_novel <- rbind(shrub_map_2020, shrub_map_project_novel)
     geom_tile(aes(x=x,y=y,fill=(biomass_per_m2_new))) + 
     facet_wrap(~year, nrow = 1) +
     #scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
-    scale_fill_gradient(name = "Shrub biomass g/m2",high = "green4", low = "yellow1",  na.value="white")+
+    scale_fill_gradient(name = "Shrub biomass g/m2",high = "#013220", low = "lightyellow1",  na.value="white")+
     coord_quickmap()+
     theme_shrub() +  
     theme(axis.text.x  = element_text(vjust=0.5, size=10, colour = "black", angle = 45)) +
@@ -59,3 +59,51 @@ shrub_novel <- rbind(shrub_map_2020, shrub_map_project_novel)
 
 
 # THRESHOLD MAPS -----
+quantiles_novel <- quantile(shrub_novel$biomass_per_m2_new)
+quantiles_novel
+#   0%       25%       50%       75%      100% 
+#  0.0000   174.4421 26107.4000 50263.2420 52214.8000 
+
+# setting biomass level thresholds using quantiles
+threshold_novel <- shrub_novel %>%
+  mutate(biomass_level = case_when (biomass_per_m2_new < 174.4421     ~ 'Low', # 25% quant.
+                                    biomass_per_m2_new> 174.4421    & biomass_per_m2_new < 50263.2420 ~ 'Medium', # between 25 and 75 
+                                    biomass_per_m2_new > 50263.2420 ~ 'High')) # 75%
+
+# ordering factor levels
+threshold_novel$biomass_level <- factor(threshold_novel$biomass_level,levels=c("Low", "Medium", "High"),
+                                      labels = c("Low", "Medium", "High"),
+                                      ordered = T)
+
+(threshold_novel_levels <- ggplot(threshold_novel) + 
+    geom_tile(aes(x=x,y=y,fill=biomass_level)) + 
+    facet_wrap(~year, nrow = 1) +
+    scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
+    coord_quickmap()+
+    theme_shrub() +  
+    theme(axis.text.x  = element_text(vjust=0.5, size=10, colour = "black", angle = 45)) +
+    theme(axis.text.y  = element_text(vjust=0.5, size=10, colour = "black")) + 
+    xlab("\nLongitude") +
+    ylab("Latitude\n"))
+
+# binary threshold map
+threshold_novel_bi <- shrub_novel %>%
+  mutate(biomass_level = case_when (biomass_per_m2_new < 50263.2420     ~ 'Low', # 75% quant.
+                                    biomass_per_m2_new > 50263.2420 ~ 'High')) # 75%
+
+# ordering factor levels
+threshold_novel_bi$biomass_level <- factor(threshold_novel_bi$biomass_level,levels=c("Low", "High"),
+                                        labels = c("Low", "High"),
+                                        ordered = T)
+
+(treshold_novel_bi <- ggplot(threshold_novel_bi) + 
+    geom_tile(aes(x=x,y=y,fill=biomass_level)) +
+    facet_wrap(~year, nrow = 1) +
+    scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#009E73")) +
+    coord_quickmap()+
+    theme_shrub() +  
+    theme(axis.text.x  = element_text(vjust=0.5, size=10, colour = "black", angle = 45)) +
+    theme(axis.text.y  = element_text(vjust=0.5, size=10, colour = "black")) + 
+    xlab("\nLongitude") +
+    ylab("Latitude\n"))
+
