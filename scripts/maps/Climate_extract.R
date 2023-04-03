@@ -624,7 +624,7 @@ write.csv(coord.chelsa.combo.c.all.biom, "data/coord.chelsa.combo.c.all.biom.csv
     xlab("\nLongitude") +
     ylab("Latitude\n"))
 
-ggsave(raster_test_temp, "outputs/map_2.pdf") # doesnt run 
+# ggsave(raster_test_temp, "outputs/map_2.pdf") # doesnt save too heavy
 
 # plotting facet climate (blue red)
 (raster_test_temp <- ggplot(coord.chelsa.combo.c.final.2100) + 
