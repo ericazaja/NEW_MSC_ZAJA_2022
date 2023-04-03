@@ -112,8 +112,8 @@ height_rich <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population+(1|Year),
                          iter = 5000, warmup = 1000, 
                          control = list(max_treedepth = 15, adapt_delta = 0.99))
 
-# only southern
-height_rich_south <- brms::brm(log(Canopy_Height_cm) ~ Sample_age+(1|Year),
+# only southern random slopes
+height_rich_south <- brms::brm(log(Canopy_Height_cm) ~ Sample_age+(Sample_age|SampleID_standard),
                          data = all_CG_growth_ric_south,  family = gaussian(), chains = 3,
                          iter = 5000, warmup = 1000, 
                          control = list(max_treedepth = 15, adapt_delta = 0.99))
@@ -122,6 +122,8 @@ summary(height_rich_south) # significant height growth over time
 plot(height_rich_south)
 pp_check(height_rich_south, type = "dens_overlay", ndraws = 100) 
 
+
+
 # Salix pulchra -----
 height_pul <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population+(1|Year),
                         data = all_CG_growth_pul,  family = gaussian(), chains = 3,
@@ -129,7 +131,7 @@ height_pul <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population+(1|Year),
                         control = list(max_treedepth = 15, adapt_delta = 0.99))
 
 # only southern
-height_pul_south <- brms::brm(log(Canopy_Height_cm) ~ Sample_age+(1|Year),
+height_pul_south <- brms::brm(log(Canopy_Height_cm) ~ Sample_age+(Sample_age|SampleID_standard),
                                data = all_CG_growth_pul_south,  family = gaussian(), chains = 3,
                                iter = 5000, warmup = 1000, 
                                control = list(max_treedepth = 15, adapt_delta = 0.99))
