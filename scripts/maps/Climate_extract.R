@@ -1,19 +1,81 @@
 # EXTRACTION FUTURE CLIMATE PROJECTIONS -----
 
+# libraries
+library(raster)
+library(tidyverse)
+
 # Load data -----
-shrub_map_extract <- read.csv("data/extract_end.csv") # low res map
-shrub_map_extract_high <- read.csv("data/extract_end_high.csv") # high res map
+#shrub_map_extract <- read.csv("data/extract_end.csv") # low res map
+#shrub_map_extract_high <- read.csv("data/extract_end_high.csv") # high res map
 shrub_map_extract_highest <- read.csv("data/extract_end_highest.csv") # high res map
 
-# Loading climate rasters
-rastlist <- list.files(path = "outputs/CMPI6_rasters", pattern='.tif', all.files=TRUE, 
-                       full.names=TRUE)
+# Loading climate rasters -------
+tasmax.2020.1.re <- raster("outputs/CMPI6_rasters/tasmax.2020.1.re.tif")
+tasmax.2020.2.re <- raster("outputs/CMPI6_rasters/tasmax.2020.2.re.tif")
+tasmax.2020.3.re <- raster("outputs/CMPI6_rasters/tasmax.2020.3.re.tif")
+tasmax.2020.4.re <- raster("outputs/CMPI6_rasters/tasmax.2020.4.re.tif")
+tasmax.2020.5.re <- raster("outputs/CMPI6_rasters/tasmax.2020.5.re.tif")
+tasmax.2020.6.re<- raster("outputs/CMPI6_rasters/tasmax.2020.6.re.tif")
 
-rasters <- lapply(rastlist, raster)
-r_stack <- stack(rasters)
-r_unstack <-unstack(r_stack)
-b <- brick(r_stack)
-climate_rast <- unstack(b)
+tasmax.2030.1.re <- raster("outputs/CMPI6_rasters/tasmax.2030.1.re.tif")
+tasmax.2030.2.re <- raster("outputs/CMPI6_rasters/tasmax.2030.2.re.tif")
+tasmax.2030.3.re <- raster("outputs/CMPI6_rasters/tasmax.2030.3.re.tif")
+tasmax.2030.4.re <- raster("outputs/CMPI6_rasters/tasmax.2030.4.re.tif")
+tasmax.2030.5.re <- raster("outputs/CMPI6_rasters/tasmax.2030.5.re.tif")
+tasmax.2030.6.re<- raster("outputs/CMPI6_rasters/tasmax.2030.6.re.tif")
+
+tasmax.2040.1.re <- raster("outputs/CMPI6_rasters/tasmax.2040.1.re.tif")
+tasmax.2040.2.re <- raster("outputs/CMPI6_rasters/tasmax.2040.2.re.tif")
+tasmax.2040.3.re <- raster("outputs/CMPI6_rasters/tasmax.2040.3.re.tif")
+tasmax.2040.4.re <- raster("outputs/CMPI6_rasters/tasmax.2040.4.re.tif")
+tasmax.2040.5.re <- raster("outputs/CMPI6_rasters/tasmax.2040.5.re.tif")
+tasmax.2040.6.re<- raster("outputs/CMPI6_rasters/tasmax.2040.6.re.tif")
+
+tasmax.2050.1.re <- raster("outputs/CMPI6_rasters/tasmax.2050.1.re.tif")
+tasmax.2050.2.re <- raster("outputs/CMPI6_rasters/tasmax.2050.2.re.tif")
+tasmax.2050.3.re <- raster("outputs/CMPI6_rasters/tasmax.2050.3.re.tif")
+tasmax.2050.4.re <- raster("outputs/CMPI6_rasters/tasmax.2050.4.re.tif")
+tasmax.2050.5.re <- raster("outputs/CMPI6_rasters/tasmax.2050.5.re.tif")
+tasmax.2050.6.re <- raster("outputs/CMPI6_rasters/tasmax.2050.6.re.tif")
+
+tasmax.2060.1.re <- raster("outputs/CMPI6_rasters/tasmax.2060.1.re.tif")
+tasmax.2060.2.re <- raster("outputs/CMPI6_rasters/tasmax.2060.2.re.tif")
+tasmax.2060.3.re <- raster("outputs/CMPI6_rasters/tasmax.2060.3.re.tif")
+tasmax.2060.4.re <- raster("outputs/CMPI6_rasters/tasmax.2060.4.re.tif")
+tasmax.2060.5.re <- raster("outputs/CMPI6_rasters/tasmax.2060.5.re.tif")
+tasmax.2060.6.re <- raster("outputs/CMPI6_rasters/tasmax.2060.6.re.tif")
+
+tasmax.2070.1.re <- raster("outputs/CMPI6_rasters/tasmax.2070.1.re.tif")
+tasmax.2070.2.re <- raster("outputs/CMPI6_rasters/tasmax.2070.2.re.tif")
+tasmax.2070.3.re <- raster("outputs/CMPI6_rasters/tasmax.2070.3.re.tif")
+tasmax.2070.4.re <- raster("outputs/CMPI6_rasters/tasmax.2070.4.re.tif")
+tasmax.2070.5.re <- raster("outputs/CMPI6_rasters/tasmax.2070.5.re.tif")
+tasmax.2070.6.re <- raster("outputs/CMPI6_rasters/tasmax.2070.6.re.tif")
+
+tasmax.2080.1.re <- raster("outputs/CMPI6_rasters/tasmax.2080.1.re.tif")
+tasmax.2080.2.re <- raster("outputs/CMPI6_rasters/tasmax.2080.2.re.tif")
+tasmax.2080.3.re <- raster("outputs/CMPI6_rasters/tasmax.2080.3.re.tif")
+tasmax.2080.4.re <- raster("outputs/CMPI6_rasters/tasmax.2080.4.re.tif")
+tasmax.2080.5.re <- raster("outputs/CMPI6_rasters/tasmax.2080.5.re.tif")
+tasmax.2080.6.re <- raster("outputs/CMPI6_rasters/tasmax.2080.6.re.tif")
+
+tasmax.2090.1.re <- raster("outputs/CMPI6_rasters/tasmax.2090.1.re.tif")
+tasmax.2090.2.re <- raster("outputs/CMPI6_rasters/tasmax.2090.2.re.tif")
+tasmax.2090.3.re <- raster("outputs/CMPI6_rasters/tasmax.2090.3.re.tif")
+tasmax.2090.4.re <- raster("outputs/CMPI6_rasters/tasmax.2090.4.re.tif")
+tasmax.2090.5.re <- raster("outputs/CMPI6_rasters/tasmax.2090.5.re.tif")
+tasmax.2090.6.re <- raster("outputs/CMPI6_rasters/tasmax.2090.6.re.tif")
+
+tasmax.2100.1.re <- raster("outputs/CMPI6_rasters/tasmax.2100.1.re.tif")
+tasmax.2100.2.re <- raster("outputs/CMPI6_rasters/tasmax.2100.2.re.tif")
+tasmax.2100.3.re <- raster("outputs/CMPI6_rasters/tasmax.2100.3.re.tif")
+tasmax.2100.4.re <- raster("outputs/CMPI6_rasters/tasmax.2100.4.re.tif")
+tasmax.2100.5.re <- raster("outputs/CMPI6_rasters/tasmax.2100.5.re.tif")
+tasmax.2100.6.re <- raster("outputs/CMPI6_rasters/tasmax.2100.6.re.tif")
+
+
+
+
 
 # EXTRACTION ------
 # Loading the coordinates of the cropped shrub map
@@ -196,19 +258,46 @@ coord.chelsa.combo.c.all <- rbind(coord.chelsa.combo.c.2020, coord.chelsa.combo.
                                   coord.chelsa.combo.c.2060, coord.chelsa.combo.c.2070,  
                                   coord.chelsa.combo.c.2080,coord.chelsa.combo.c.2090,
                                   coord.chelsa.combo.c.2100)
+
 coord.chelsa.combo.c.all$year <- as.factor(coord.chelsa.combo.c.all$year)
 
-# calculate difference between temps in 2020 and 2030
+# calculate difference between temps in 2020 and 2030 (I THINK ALL YEARS NEED TO BE MINUS 2020 temp, as baseline)
 coord.chelsa.combo.c.delta <- coord.chelsa.combo.c.all %>%
   group_by(cell) %>%
-  mutate(delta = mean_temp_C[year == 2030] - mean_temp_C[year == 2020])%>%
-  mutate(delta.1 = mean_temp_C[year == 2040] - mean_temp_C[year == 2030])%>%
-  mutate(delta.2 = mean_temp_C[year == 2050] - mean_temp_C[year == 2040])%>%
-  mutate(delta.3 = mean_temp_C[year == 2060] - mean_temp_C[year == 2050])%>%
-  mutate(delta.4 = mean_temp_C[year == 2070] - mean_temp_C[year == 2060])%>%
-  mutate(delta.5 = mean_temp_C[year == 2080] - mean_temp_C[year == 2070])%>%
-  mutate(delta.6 = mean_temp_C[year == 2090] - mean_temp_C[year == 2080])%>%
-  mutate(delta.7 = mean_temp_C[year == 2100] - mean_temp_C[year == 2090])%>%
+  mutate(delta = mean_temp_C[year == 2030] - mean_temp_C[year == 2020])
+
+coord.chelsa.combo.c.delta <- coord.chelsa.combo.c.delta %>%
+  group_by(cell) %>%
+  mutate(delta.1 = mean_temp_C[year == 2040] - mean_temp_C[year == 2030])
+
+coord.chelsa.combo.c.delta <- coord.chelsa.combo.c.delta %>%
+  group_by(cell) %>%
+  mutate(delta.2 = mean_temp_C[year == 2050] - mean_temp_C[year == 2040])
+
+coord.chelsa.combo.c.delta <- coord.chelsa.combo.c.delta %>%
+  group_by(cell) %>%
+  mutate(delta.3 = mean_temp_C[year == 2060] - mean_temp_C[year == 2050])
+
+coord.chelsa.combo.c.delta <- coord.chelsa.combo.c.delta %>%
+  group_by(cell) %>%
+  mutate(delta.4 = mean_temp_C[year == 2070] - mean_temp_C[year == 2060])
+
+coord.chelsa.combo.c.delta <- coord.chelsa.combo.c.delta %>%
+  group_by(cell) %>%
+  mutate(delta.5 = mean_temp_C[year == 2080] - mean_temp_C[year == 2070])
+
+coord.chelsa.combo.c.delta <- coord.chelsa.combo.c.delta %>%
+  group_by(cell) %>%
+  mutate(delta.6 = mean_temp_C[year == 2090] - mean_temp_C[year == 2080])
+
+coord.chelsa.combo.c.delta <- coord.chelsa.combo.c.delta %>%
+  group_by(cell) %>%
+  mutate(delta.7 = mean_temp_C[year == 2100] - mean_temp_C[year == 2090])
+
+write.csv(coord.chelsa.combo.c.delta, "data/coord.chelsa.combo.c.delta.1.csv")
+
+
+coord.chelsa.combo.c.delta <- coord.chelsa.combo.c.delta %>%
    mutate(delta_2 = case_when(year == 2030 ~ delta,
                               year == 2040 ~ delta.1,
                               year == 2050 ~ delta.2,
@@ -220,9 +309,7 @@ coord.chelsa.combo.c.delta <- coord.chelsa.combo.c.all %>%
                               FALSE ~ NA)) %>%
   dplyr::select(- delta, -delta.1, -delta.2,  -delta.3,  -delta.4,  -delta.5, -delta.6, -delta.7)
 
-# do this for all years til 2100
-view(coord.chelsa.combo.c.delta)
-
+# save big dataset
 write.csv(coord.chelsa.combo.c.delta, "data/coord.chelsa.combo.c.delta.csv")
 
 # Static biomass in july 2020 -----
