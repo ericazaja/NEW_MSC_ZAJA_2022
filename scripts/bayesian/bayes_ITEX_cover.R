@@ -3,6 +3,7 @@
 # last update: 21/02/2023
 
 # libraries ------
+library(tidyverse)
 library(brms)
 library(tidybayes)
 library(bayesplot)
@@ -41,25 +42,32 @@ itex_EZ_arctica <- itex_EZ_arctica %>%
 itex_EZ_pulchra <- itex_EZ_pulchra %>%
   filter(PLOT != 15)  %>%
   filter(PLOT != 28)   %>%
-  filter(PLOT != 35)  %>%
-  filter(PLOT != 40) 
+  filter(PLOT != 35)   %>%
+  filter(PLOT != 40) %>%
 filter(PLOT != 58)  %>%
   filter(PLOT != 65)   %>%
   filter(PLOT != 68)  %>%
   filter(PLOT != 69)  %>%
-  filter(PLOT != 82)
+  filter(PLOT != 82)%>%
+  filter(SUBSITE != "KO")
 
 itex_EZ_arctica$SITE <- as.factor(itex_EZ_arctica$SITE)
 itex_EZ_pulchra$SITE <- as.factor(itex_EZ_pulchra$SITE)
 itex_EZ_pulchra$SiteSubsitePlot <- as.factor(itex_EZ_pulchra$SiteSubsitePlot)
 itex_EZ_arctica$SiteSubsitePlot <- as.factor(itex_EZ_arctica$SiteSubsitePlot)
+itex_EZ_pulchra$SitePlotYear<- with(itex_EZ_pulchra, paste0(SITE, PLOT, YEAR))
+itex_EZ_pulchra$SitePlot<- with(itex_EZ_pulchra, paste0(SITE, PLOT))
 
-itex_EZ_pulchra$SiteSubsitePlotYear <- as.factor(itex_EZ_pulchra$SiteSubsitePlotYear)
-itex_EZ_pulchra$SiteSubsitePlot <- as.factor(itex_EZ_pulchra$SiteSubsitePlot)
+# keeping max values 
 
-itex_EZ_pulchra_max <-  itex_EZ_pulchra %>%
-  group_by(SiteSubsitePlot) %>%
-  slice(which.max(cover_prop)) 
+itex_EZ_pulchra_max<-  itex_EZ_pulchra %>%
+  group_by(SiteSubsitePlotYear) %>%
+  slice(which.max(cover_prop)) %>%
+  distinct()
+
+view(itex_EZ_pulchra_max)
+(plot <- ggplot(itex_EZ_pulchra_max) +
+  geom_point(aes(x =YEAR , y = cover_prop, color= SITE, fill =SITE)))
 
 
 # modelling cover over time -----
@@ -108,6 +116,7 @@ pulchra_cover_max <- brms::brm(cover_prop ~ I(YEAR-1988)+ (I(YEAR-1988)|SiteSubs
                            data = itex_EZ_pulchra_max, family = "beta", chains = 3,
                            iter = 5000, warmup = 1000, 
                            control = list(max_treedepth = 15, adapt_delta = 0.99))
+summary(pulchra_cover_max)
 
 # Extracting outputs
 cov_time_pul_fix <- as.data.frame(fixef(pulchra_cover)) # extract fixed eff. slopes 
@@ -132,12 +141,12 @@ view(cov_time_pul_random_new)
 
 # data visualisation ------
 # one line per site
-(pulchra_cover_plot <- itex_EZ_pulchra %>%
-  # group_by(SITE) %>%
-   add_predicted_draws(pulchra_cover) %>%
-   ggplot(aes(x = YEAR, y = cover_prop)) +
+(pulchra_cover_plot <- itex_EZ_pulchra_max %>%
+  group_by(SITE) %>%
+   add_predicted_draws(pulchra_cover_max) %>%
+   ggplot(aes(x = YEAR, y = cover_prop, color = ordered(SITE), fill = ordered(SITE))) +
    stat_lineribbon(aes(y = .prediction), .width = .50, alpha = 1/4) +
-   geom_point(data = itex_EZ_pulchra) +
+   geom_point(data = itex_EZ_pulchra_max) +
    scale_fill_brewer(palette = "Set2") +
    scale_color_brewer(palette = "Dark2") +
    ylab("Salix pulchra cover \n") +
