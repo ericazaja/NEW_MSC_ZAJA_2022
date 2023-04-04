@@ -31,10 +31,12 @@ QHI_2022_sum_max <- QHI_2022 %>%
   summarise(HeightMax = max(Height)) %>%
   mutate(Height_mm = case_when(HeightMax >= 100 ~ "TRUE", HeightMax < 100 ~ "FALSE")) %>%
   select(-HeightMax)
+view(QHI_2022_sum_max)
 
 QHI_2022_cm <- QHI_2022 %>% 
   left_join(QHI_2022_sum_max) %>% 
-  mutate(Height_cm = case_when(Height_mm == "TRUE" ~ Height/10, Height_mm < 100 ~ Height)) %>% 
+  mutate(Height_cm = case_when(Height_mm == "TRUE" ~ Height/10, 
+                               Height_mm == "FALSE"~ Height)) %>% 
   # filter(Height_cm > 10) %>% # This will remove things like roots and basal stems
   select(-Height) %>%
   na.omit(Height_cm)
