@@ -87,7 +87,7 @@ unique(QHI_2019_max$PlotN)
 
 # merge with 2022 data
 QHI_1999_2022 <- rbind(QHI_2013_2019_bind, QHI_2022_max)
-
+unique(QHI_1999_2022$YEAR)
 # quick plot
 # raw data 
 (pulchra_height_plot <- QHI_1999_2022 %>%

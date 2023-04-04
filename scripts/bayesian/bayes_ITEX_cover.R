@@ -54,6 +54,13 @@ itex_EZ_pulchra$SITE <- as.factor(itex_EZ_pulchra$SITE)
 itex_EZ_pulchra$SiteSubsitePlot <- as.factor(itex_EZ_pulchra$SiteSubsitePlot)
 itex_EZ_arctica$SiteSubsitePlot <- as.factor(itex_EZ_arctica$SiteSubsitePlot)
 
+itex_EZ_pulchra$SiteSubsitePlotYear <- as.factor(itex_EZ_pulchra$SiteSubsitePlotYear)
+itex_EZ_pulchra$SiteSubsitePlot <- as.factor(itex_EZ_pulchra$SiteSubsitePlot)
+
+itex_EZ_pulchra_max <-  itex_EZ_pulchra %>%
+  group_by(SiteSubsitePlot) %>%
+  slice(which.max(cover_prop)) 
+
 
 # modelling cover over time -----
 
@@ -97,6 +104,11 @@ summary(pulchra_cover)
 plot(pulchra_cover)
 pp_check(pulchra_cover, type = "dens_overlay", nsamples = 100) 
 
+pulchra_cover_max <- brms::brm(cover_prop ~ I(YEAR-1988)+ (I(YEAR-1988)|SiteSubsitePlot),
+                           data = itex_EZ_pulchra_max, family = "beta", chains = 3,
+                           iter = 5000, warmup = 1000, 
+                           control = list(max_treedepth = 15, adapt_delta = 0.99))
+
 # Extracting outputs
 cov_time_pul_fix <- as.data.frame(fixef(pulchra_cover)) # extract fixed eff. slopes 
 cov_time_pul_random <- as.data.frame(ranef(pulchra_cover)) # extract random eff. slopes 
@@ -116,6 +128,7 @@ cov_time_pul_random_new <- cov_time_pul_random %>%
 cov_time_pul_random_new$Site <- ifelse(grepl("QHI", cov_time_pul_random_new$SiteSubsitePlot), "QHI",
                                                       ifelse(grepl("TOOLIK", cov_time_pul_random_new$SiteSubsitePlot), "TOOLIK" , NA))
 view(cov_time_pul_random_new)
+
 
 # data visualisation ------
 # one line per site
