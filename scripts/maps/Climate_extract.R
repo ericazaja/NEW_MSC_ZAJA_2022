@@ -351,6 +351,8 @@ range(coord.chelsa.combo.c.biom.2020$biomass_per_m2) # 0 2126 g/m2
 c_meantemp_2020 <- c(coord.chelsa.combo.c.biom.2020$mean_temp_C)
 mean(c_meantemp_2020) # 15.12132
 
+write.csv(coord.chelsa.combo.c.biom.2020, "data/coord.chelsa.combo.c.biom.2020.csv")
+
 # July 2030 projection -------
 
 # multiply by biomass increase
