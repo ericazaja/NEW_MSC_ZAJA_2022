@@ -6,6 +6,7 @@ library(plyr)
 library(brms) 
 library(readxl)
 library(tidybayes)
+library(gridExtra)
 
 # LOAD DATA -----
 # data 1999-2019
@@ -80,53 +81,41 @@ pp_check(QHI_height_new, type = "dens_overlay", ndraws = 100)
 all_bind_d <- (conditional_effects(QHI_height_new))
 all_bind_dat <- all_bind_d[[1]]
 
-(pulchra_height_plot <-ggplot(all_bind_dat) +
+(pulchra_height_plot_all <-ggplot(all_bind_dat) +
     geom_point(data = all_bind, aes(x = Year_index, y = Height),
                alpha = 0.5)+
     geom_line(aes(x = effect1__, y = estimate__),
               linewidth = 1.5) +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
                 alpha = .1) +
-    ylab("Salix pulchra height (cm)\n") +
-    xlab("\n Year (scaled) (cm)" ) +
+    ylab("ALL Salix pulchra height (cm)\n") +
+    xlab("\n Year (scaled) " ) +
     # ylim(0, 300) +
     scale_color_brewer(palette = "Greys")+
     scale_fill_brewer(palette = "Greys")+
     theme_classic())
 
-# merge all data
-# do the max and means on the all_bind instead of thebelow !
-
-QHI_2019_2022_mean <- ddply(QHI_2019_2022,.(YEAR, SUBSITE, PLOT), summarise,
-      mean_height = mean(Height))
-QHI_2019_2022_max <- ddply(QHI_2019_2022,.(YEAR, SUBSITE, PLOT), summarise,
-                            max_height = max(Height))
-
-# PLOT MEAN
-avg_salpuls <- ddply(salpuls_new,.(YEAR, SUBSITE, PLOT), summarise,
-                     mean_height = mean(Height))
+# calculate plot means and plot max
 
 # PLOT MAX
-max_salpuls <- ddply(salpuls_new,.(YEAR, SUBSITE, PLOT), summarise,
-                     max_height = max(Height))
 
-new_bind_mean <- rbind(avg_salpuls,QHI_2019_2022_mean)
-new_bind_max <- rbind(max_salpuls,QHI_2019_2022_max)
+all_bind_new_mean <- ddply(all_bind_new,.(YEAR, SubsitePlot), summarise,
+        mean_height = mean(max_pointfr_height))
+  
+all_bind_new_max <- ddply(all_bind_new,.(YEAR, SubsitePlot), summarise,
+                           max_height = max(max_pointfr_height))
 
-new_bind_mean$SubsitePlot <- with(new_bind_mean, paste0(SUBSITE, PLOT))
-new_bind_max$SubsitePlot <- with(new_bind_max, paste0(SUBSITE, PLOT))
-
-new_bind_mean <- new_bind_mean %>% 
+all_bind_new_mean <- all_bind_new_mean %>% 
   mutate(Year_index = I(YEAR - 1998)) 
 
-new_bind_max <- new_bind_max %>% 
+all_bind_new_max <- all_bind_new_max %>% 
   mutate(Year_index = I(YEAR - 1998)) 
 
 # quick plot
 # raw data 
-(pulchra_height_plot <- all_bind_test %>%
-    ggplot(aes(x = YEAR, y = max_all)) +
-    geom_point(data = all_bind_test) +
+(pulchra_height_plot <- new_bind_mean %>%
+    ggplot(aes(x = YEAR, y = mean_height)) +
+    geom_point(data = new_bind_mean) +
     geom_smooth(method = "lm") +
     scale_fill_brewer(palette = "Set2") +
     scale_color_brewer(palette = "Dark2") +
@@ -136,7 +125,7 @@ new_bind_max <- new_bind_max %>%
 
 # model with plot mean data
 MEAN <- brms::brm(mean_height ~ Year_index + (Year_index),
-                            data = new_bind_mean,  family = gaussian(), chains = 3,
+                            data = all_bind_new_mean,  family = gaussian(), chains = 3,
                             iter = 5000, warmup = 1000, 
                             control = list(max_treedepth = 15, adapt_delta = 0.99))
 summary(MEAN)
@@ -145,15 +134,15 @@ pp_check(MEAN, type = "dens_overlay", ndraws = 100)
 all_bind_mean <- (conditional_effects(MEAN))
 all_bind_mean_dat <- all_bind_mean[[1]]
 
-(pulchra_height_plot <-ggplot(all_bind_mean_dat) +
-    geom_point(data = new_bind_mean, aes(x = Year_index, y = mean_height),
+(pulchra_height_plot_mean <-ggplot(all_bind_mean_dat) +
+    geom_point(data = all_bind_new_mean, aes(x = Year_index, y = mean_height),
                alpha = 0.5)+
     geom_line(aes(x = effect1__, y = estimate__),
               linewidth = 1.5) +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
                 alpha = .1) +
-    ylab("Salix pulchra height (cm)\n") +
-    xlab("\n Year (scaled) (cm)" ) +
+    ylab("PLOT MEAN Salix pulchra height (cm)\n") +
+    xlab("\n Year (scaled)" ) +
     # ylim(0, 300) +
     scale_color_brewer(palette = "Greys")+
     scale_fill_brewer(palette = "Greys")+
@@ -161,7 +150,7 @@ all_bind_mean_dat <- all_bind_mean[[1]]
 
 # model with plot max data
 MAX <- brms::brm(max_height ~ Year_index + (Year_index),
-                  data = new_bind_max,  family = gaussian(), chains = 3,
+                  data = all_bind_new_max,  family = gaussian(), chains = 3,
                   iter = 5000, warmup = 1000, 
                   control = list(max_treedepth = 15, adapt_delta = 0.99))
 summary(MAX)
@@ -170,25 +159,23 @@ pp_check(MAX, type = "dens_overlay", ndraws = 100)
 all_bind_max <- (conditional_effects(MAX))
 all_bind_max_dat <- all_bind_max[[1]]
 
-(pulchra_height_plot <-ggplot(all_bind_max_dat) +
-    geom_point(data = new_bind_max, aes(x = Year_index, y = max_height),
+(pulchra_height_plot_max <-ggplot(all_bind_max_dat) +
+    geom_point(data = all_bind_new_max, aes(x = Year_index, y = max_height),
                alpha = 0.5)+
     geom_line(aes(x = effect1__, y = estimate__),
               linewidth = 1.5) +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
                 alpha = .1) +
-    ylab("Salix pulchra height (cm)\n") +
-    xlab("\n Year (scaled) (cm)" ) +
+    ylab("PLOT MAX Salix pulchra height (cm)\n") +
+    xlab("\n Year (scaled)" ) +
     # ylim(0, 300) +
     scale_color_brewer(palette = "Greys")+
     scale_fill_brewer(palette = "Greys")+
     theme_classic())
 
 
-
-
-
-
+panel <- grid.arrange(pulchra_height_plot_all, pulchra_height_plot_mean,
+                      pulchra_height_plot_max, nrow =1)
 
 
 # STOP ----
