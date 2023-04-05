@@ -24,14 +24,15 @@ test <- QHI_1999_2022 %>%
 
 # DATA WRANGLE ------
 # make a subsite plot year x y column 
-QHI_2022 <- QHI_1999_2022 %>% select(SUBSITE, PLOT, YEAR, X, Y, SPP, STATUS, Height) %>% filter(SPP == "Salix pulchra" & STATUS == "LIVE")
+QHI_2022 <- QHI_1999_2022 %>% select(SUBSITE, PLOT, YEAR, X, Y, SPP, STATUS, Height) %>% 
+  filter(SPP == "Salix pulchra" & STATUS == "LIVE")
 
 QHI_2022_sum_max <- QHI_2022 %>% 
   group_by(SUBSITE, PLOT, YEAR, SPP) %>%
   summarise(HeightMax = max(Height)) %>%
   mutate(Height_mm = case_when(HeightMax >= 100 ~ "TRUE", HeightMax < 100 ~ "FALSE")) %>%
   select(-HeightMax)
-view(QHI_2022_sum_max)
+
 
 QHI_2022_cm <- QHI_2022 %>% 
   left_join(QHI_2022_sum_max) %>% 
@@ -48,7 +49,7 @@ QHI_2022_max <- QHI_2022_cm %>%
   distinct() %>% # keeping one unique value
   na.omit(max_heights_cm)
 
-range(QHI_2022_max$max_heights_cm) # 0.2 39.3 cm (this is what you had before: 10.9 41.0 cm)
+range(QHI_2022_max$max_heights_cm) # 0.2 39.3 cm 
 
 # quick plot
 # raw data 
@@ -59,11 +60,8 @@ range(QHI_2022_max$max_heights_cm) # 0.2 39.3 cm (this is what you had before: 1
     scale_fill_brewer(palette = "Set2") +
     scale_color_brewer(palette = "Dark2") +
     ylab("Salix pulchra height (cm) \n") +
-    xlab("\nYear (scaled)"))
+    xlab("\nYear (scaled)") + theme_shrub())
 
-# + theme_shrub())
-
-# Isla has stopped at this point, below this point needs editing to run properly
 
 # MODELLING------
 # Model QHI pulchra heights over time-----
@@ -123,24 +121,24 @@ view(QHI_height_random_year)
 #view(QHI_temp_height_pul)
 
 # this doesnt work! makes no sense? 
-temp_time <- brms::brm(plot_height_index_year_estimate ~ index_year_estimate,
-                       data = QHI_temp_height_pul,  family = gaussian(), chains = 3,
-                       iter = 5000, warmup = 1000, 
-                       control = list(max_treedepth = 15, adapt_delta = 0.99))
+#temp_time <- brms::brm(plot_height_index_year_estimate ~ index_year_estimate,
+  #                     data = QHI_temp_height_pul,  family = gaussian(), chains = 3,
+    #                   iter = 5000, warmup = 1000, 
+         #              control = list(max_treedepth = 15, adapt_delta = 0.99))
 
-summary(temp_time)
-pp_check(temp_time, type = "dens_overlay", nsamples = 100) 
+#summary(temp_time)
+#pp_check(temp_time, type = "dens_overlay", nsamples = 100) 
 
-(temp_time_plot <- QHI_temp_height_pul %>%
-    add_predicted_draws(temp_time) %>%
-    ggplot(aes(x =index_year_estimate, y =plot_height_index_year_estimate)) +
-    stat_lineribbon(aes(y = .prediction), .width = .50, alpha = 1/4) +
-    geom_point(data = QHI_temp_height_pul) +
-    scale_colour_viridis_d(begin = 0.1, end = 0.95) +
-    scale_fill_viridis_d(begin = 0.1, end = 0.95) +
-    ylab("Height change (cm, scaled) \n") +
-    xlab("\nTemperature change (scaled)")+ theme_shrub() +
-    labs(title = "Salix pulchra"))
+#(temp_time_plot <- QHI_temp_height_pul %>%
+ #   add_predicted_draws(temp_time) %>%
+ #   ggplot(aes(x =index_year_estimate, y =plot_height_index_year_estimate)) +
+ #   stat_lineribbon(aes(y = .prediction), .width = .50, alpha = 1/4) +
+  #  geom_point(data = QHI_temp_height_pul) +
+  #  scale_colour_viridis_d(begin = 0.1, end = 0.95) +
+  #  scale_fill_viridis_d(begin = 0.1, end = 0.95) +
+  #  ylab("Height change (cm, scaled) \n") +
+  # xlab("\nTemperature change (scaled)")+ theme_shrub() +
+   # labs(title = "Salix pulchra"))
 
 
 
