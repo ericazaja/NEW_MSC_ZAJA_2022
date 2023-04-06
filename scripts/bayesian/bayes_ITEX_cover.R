@@ -9,9 +9,24 @@ library(tidybayes)
 library(bayesplot)
 
 # load data ------
-itex_EZ_shrubs_2023 <- read_csv("data/ITEX/itex_EZ_shrubs_2023.csv")
+# itex_EZ_shrubs_2023 <- read_csv("data/ITEX/itex_EZ_shrubs_2023.csv")
+pulchra_yearly_max <- read_csv("data/ITEX/pfxy.check_max.csv")
+pulchra_yearly_mean <- read_csv("data/ITEX/pfxy.check_mean.csv")
 
 # wrangle data -----
+pulchra_yearly_max <- pulchra_yearly_max%>%
+  mutate(cover_prop_max = max_cov/100)%>% 
+  mutate(Year_index = I(YEAR - 1988)) %>%
+  mutate(SITE = case_when(SiteSubsite %in% c("QHI:HE", "QHI:KO")~ "QHI", 
+                          SiteSubsite %in% c("TOOLIK:IMNAVAIT", "TOOLIK:MOIST", "TOOLIK:TUSSOCKGRID")~ "TOOLIK"))
+
+hist(pulchra_yearly_max$cover_prop_max, breaks = 30)
+pulchra_yearly_mean <- pulchra_yearly_mean%>%
+  mutate(cover_prop_mean = mean_cov/100)%>% 
+  mutate(Year_index = I(YEAR - 1988)) %>%
+  mutate(SITE = case_when(SiteSubsite %in% c("QHI:HE", "QHI:KO")~ "QHI", 
+                          SiteSubsite %in% c("TOOLIK:IMNAVAIT", "TOOLIK:MOIST", "TOOLIK:TUSSOCKGRID")~ "TOOLIK"))
+
 itex_EZ_shrubs_2023 <- itex_EZ_shrubs_2023 %>%
   mutate(cover_prop = RelCover/100)
 
@@ -58,16 +73,21 @@ itex_EZ_arctica$SiteSubsitePlot <- as.factor(itex_EZ_arctica$SiteSubsitePlot)
 itex_EZ_pulchra$SitePlotYear<- with(itex_EZ_pulchra, paste0(SITE, PLOT, YEAR))
 itex_EZ_pulchra$SitePlot<- with(itex_EZ_pulchra, paste0(SITE, PLOT))
 
-# keeping max values 
+# keeping max values per plot 
 
 itex_EZ_pulchra_max<-  itex_EZ_pulchra %>%
   group_by(SiteSubsitePlotYear) %>%
   slice(which.max(cover_prop)) %>%
   distinct()
 
-view(itex_EZ_pulchra_max)
-(plot <- ggplot(itex_EZ_pulchra_max) +
-  geom_point(aes(x =YEAR , y = cover_prop, color= SITE, fill =SITE)))
+#itex_EZ_pulchra_mean <- ddply(itex_EZ_pulchra,.(YEAR, SiteSubsitePlot), summarise,
+ #                          mean_cov = mean(cover_prop))
+
+#itex_EZ_pulchra_max <- ddply(itex_EZ_pulchra,.(YEAR, SiteSubsitePlot), summarise,
+         #                     max_cov = max(cover_prop))
+
+(plot <- ggplot(pulchra_yearly_mean) +
+  geom_point(aes(x =YEAR , y = mean_cov, color= SiteSubsite, fill =SiteSubsite)))
 
 
 # modelling cover over time -----
@@ -112,11 +132,22 @@ summary(pulchra_cover)
 plot(pulchra_cover)
 pp_check(pulchra_cover, type = "dens_overlay", nsamples = 100) 
 
-pulchra_cover_max <- brms::brm(cover_prop ~ I(YEAR-1988)+ (I(YEAR-1988)|SiteSubsitePlot),
-                           data = itex_EZ_pulchra_max, family = "beta", chains = 3,
+# max and means
+pulchra_cover_max <- brms::brm(cover_prop_max ~ Year_index + (Year_index|SITE),
+                           data = pulchra_yearly_max, family = "beta", chains = 3,
                            iter = 5000, warmup = 1000, 
                            control = list(max_treedepth = 15, adapt_delta = 0.99))
+
 summary(pulchra_cover_max)
+view(pulchra_yearly_max)
+
+# max and means
+pulchra_cover_mean <- brms::brm(cover_prop_mean ~ Year_index + (Year_index|SITE),
+                               data = pulchra_yearly_mean, family = "beta", chains = 3,
+                               iter = 5000, warmup = 1000, 
+                               control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(pulchra_cover_mean)
 
 # Extracting outputs
 cov_time_pul_fix <- as.data.frame(fixef(pulchra_cover)) # extract fixed eff. slopes 
@@ -178,5 +209,65 @@ view(cov_time_pul_random_new)
           axis.title = element_text(size = 14),
           axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
           axis.text.y = element_text(size = 12, colour = "black"))) 
+
+# mean and max plot
+library(tidybayes)
+library(brms)
+cov_mean <- (conditional_effects(pulchra_cover_mean))
+cov_mean_dat <- cov_mean[[1]]
+
+(pulchra_cov_plot_mean <-ggplot(cov_mean_dat) +
+    geom_point(data = pulchra_yearly_mean, aes(x = Year_index, y = cover_prop_mean, colour = SiteSubsite),
+               alpha = 0.5)+
+    geom_line(aes(x = effect1__, y = estimate__),
+              linewidth = 1.5) +
+    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
+                alpha = .1) +
+    ylab("PLOT MEAN Salix pulchra cover (prop)\n") +
+    xlab("\n Year (scaled)" ) +
+    #ylim(0, 30) +
+    scale_color_brewer(palette = "Greys")+
+    scale_fill_brewer(palette = "Greys")+
+    theme_classic())
+
+(pulchra_cover_plot <- pulchra_yearly_max %>%
+    group_by(SITE) %>%
+    add_predicted_draws(pulchra_cover_max) %>%
+    ggplot(aes(x = Year_index, y = cover_prop_max, color = ordered(SITE), fill = ordered(SITE))) +
+    stat_lineribbon(aes(y = .prediction), .width = .50, alpha = 1/4) +
+    geom_point(data = pulchra_yearly_max) +
+    scale_fill_brewer(palette = "Set2") +
+    scale_color_brewer(palette = "Dark2") +
+    ylab("Salix pulchra cover \n") +
+    xlab("\nYear") +
+    # theme_shrub() +
+    theme(panel.border = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.line = element_line(colour = "black"),
+          axis.title = element_text(size = 14),
+          axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
+          axis.text.y = element_text(size = 12, colour = "black"))) 
+
+
+(pulchra_cover_plot_mean <- pulchra_yearly_mean %>%
+    group_by(SITE) %>%
+    add_predicted_draws(pulchra_cover_mean) %>%
+    ggplot(aes(x = Year_index, y = cover_prop_mean, color = ordered(SITE), fill = ordered(SITE))) +
+    stat_lineribbon(aes(y = .prediction), .width = .50, alpha = 1/4) +
+    geom_point(data = pulchra_yearly_mean) +
+    scale_fill_brewer(palette = "Set2") +
+    scale_color_brewer(palette = "Dark2") +
+    ylab("Salix pulchra cover \n") +
+    xlab("\nYear") +
+    # theme_shrub() +
+    theme(panel.border = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.line = element_line(colour = "black"),
+          axis.title = element_text(size = 14),
+          axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
+          axis.text.y = element_text(size = 12, colour = "black"))) 
+
 
 

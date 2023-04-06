@@ -2,6 +2,7 @@
 #  Mean amount of growth, what has been happening on average 
 # in real world (~baseline)
 
+library(tidyverse)
 # Data 
 shrub_map_extract_highest <- read.csv("data/extract_end_highest.csv") # high res map
 
@@ -16,11 +17,11 @@ shrub_map_extract_highest <- read.csv("data/extract_end_highest.csv") # high res
 # Multiply the obtained biomass by 80 years and add to existing 2022 biomass
 
 # SLOPES:
-# # Height slope  for S pulchra  = ???
+# # MEAN Height slope  for S pulchra  = 0.34
 # Cover slope for S pulchra = 0
 
 # Salpul allom equation = 
-# Biomass =  (1.1*height +-  5.0 ) + (18.1 *cover +-  8.2)
+# Biomass =  (1.1*0.34 +-  5.0 ) + (18.1 *cover +-  8.2)
 # add + high error ? 
 
 # 2100 projection
@@ -29,7 +30,7 @@ shrub_map_2020 <- shrub_map_extract_highest %>%
   mutate(year = rep(2020))
 
 shrub_map_project_mean <- shrub_map_2020 %>%
-  mutate(biomass_per_m2_new = biomass_per_m2 + (5.11*80))%>%
+  mutate(biomass_per_m2_new = biomass_per_m2 + (0.374*80))%>%
   dplyr::select(-biomass_per_m2)%>%
   mutate(year = rep(2100))
 
@@ -47,7 +48,7 @@ unique(shrub_natural_mean$year)
     #scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
     scale_fill_gradient(name = "Shrub biomass g/m2",high = "green4", low = "yellow1",  na.value="white") +
     coord_quickmap()+
-    theme_shrub() +  
+    #theme_shrub() +  
     theme(axis.text.x  = element_text(vjust=0.5, size=10, colour = "black", angle = 45)) +
     theme(axis.text.y  = element_text(vjust=0.5, size=10, colour = "black")) + 
     xlab("\nLongitude") +

@@ -66,6 +66,7 @@ range(all_bind$Height) #0 32
 all_bind_new <- all_bind %>%
   group_by(SubsitePlot, YEAR, X, Y) %>%
   dplyr::summarise(max_pointfr_height = max(Height))
+
 all_bind_new <- all_bind_new %>% 
   mutate(Year_index = I(YEAR - 1998)) 
 
@@ -96,8 +97,6 @@ all_bind_dat <- all_bind_d[[1]]
     theme_classic())
 
 # calculate plot means and plot max
-
-# PLOT MAX
 
 all_bind_new_mean <- ddply(all_bind_new,.(YEAR, SubsitePlot), summarise,
         mean_height = mean(max_pointfr_height))
@@ -143,7 +142,7 @@ all_bind_mean_dat <- all_bind_mean[[1]]
                 alpha = .1) +
     ylab("PLOT MEAN Salix pulchra height (cm)\n") +
     xlab("\n Year (scaled)" ) +
-    # ylim(0, 300) +
+    ylim(0, 30) +
     scale_color_brewer(palette = "Greys")+
     scale_fill_brewer(palette = "Greys")+
     theme_classic())
