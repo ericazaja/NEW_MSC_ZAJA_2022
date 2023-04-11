@@ -16,15 +16,16 @@ coord.chelsa.combo.c.biom.2020 <- read.csv("data/coord.chelsa.combo.c.biom.2020.
 
 # HEIGHT and COVER SLOPES:
 # # Height slope  for S pulchra for full time period =  0.34 * 23 years = 7.82
-# Cover slope for S pulchra for full time period = 0.006 * 33 years = 0.198
+# Cover slope for S pulchra for full time period = 0.011 * 33 years = 0.363
 
 # Salpul allom equation = 
-# Biomass =  (1.1*7.82 +-  5.0 ) + (18.1 *0.198 +-  8.2)
+# Biomass =  (1.1*7.82 +-  5.0 ) + (18.1 *0.363 +-  8.2)
 # add + high error ? 
-# 12.1858 g/m2/degC
+# 15.1723 g/m2/degC
 
 # when cover is 1 (100%)...
 # Biomass =  (1.1*7.82 +-  5.0 ) + (18.1 *1 +-  8.2)
+# 26.702*80 = 2136.16
 
 # TEMP SLOPES:
 # QHI = 0.18858300 +0.0610727508 = 0.2496558
@@ -33,16 +34,17 @@ coord.chelsa.combo.c.biom.2020 <- read.csv("data/coord.chelsa.combo.c.biom.2020.
 # mean: (0.2496558+0.1261383+0.1267458)/3 = 0.2
 # mean = 0.2 * 20 years = 4 degC over full time period
 
-# biomass/temp over full time = 12.1858/4 =  3.04645 g/degC
+# biomass/temp over full time = 15.1723/4 =  3.793075 g/degC
+# 3.793075*80 years? = 303.446
 
 # multiply by biomass increase
 avg_warm <- coord.chelsa.combo.c.delta.2100.solo %>%
   filter(year == 2100) %>% 
-  mutate(biomass_per_m2_2100_solo = biomass_per_m2 + (3.04645 *delta.7.solo)) %>%
+  mutate(biomass_per_m2_2100_solo = biomass_per_m2 + (303.446 *delta.7.solo)) %>%
   dplyr::select(-biomass_per_m2)
 
 c_mean_2100_solo <- c(avg_warm$biomass_per_m2_2100_solo)
-mean(c_mean_2100_solo) #243.6624 g/m2
+mean(c_mean_2100_solo) #247.4343 g/m2
 range(avg_warm$biomass_per_m2_2100_solo) #  210.5148 2416.6555
 
 c_mean_2100_temp_solo <- c(avg_warm$mean_temp_C)
@@ -64,7 +66,7 @@ glimpse(avg_warm_to_plot)
     #scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
     scale_fill_gradient(name = "Shrub biomass g/m2",high = "#013220", low = "lightyellow1",  na.value="white")+
     coord_quickmap()+
-    #theme_shrub() +  
+    theme_shrub() +  
     theme(axis.text.x  = element_text(vjust=0.5, size=10, colour = "black", angle = 45)) +
     theme(axis.text.y  = element_text(vjust=0.5, size=10, colour = "black")) + 
     xlab("\nLongitude") +
@@ -73,15 +75,15 @@ glimpse(avg_warm_to_plot)
 # TRESHOLD MAPS-----
 quant_avg_warm <- quantile(avg_warm_to_plot$biomass_per_m2)
 quant_avg_warm
-#0%       25%       50%       75%      100% 
-#0.0000  163.1958  265.5276  398.5287 2298.3705 
+#  0%       25%       50%       75%      100% 
+# 0.0000  174.4421 1320.9807 1725.7870 3842.9211 
 
 
 # setting biomass level thresholds using quantiles
 threshold_avg_warm <- avg_warm_to_plot %>%
-  mutate(biomass_level = case_when (biomass_per_m2 < 163.1958     ~ 'Low', # 25% quant.
-                                    biomass_per_m2> 163.1958    & biomass_per_m2 < 398.5287 ~ 'Medium', # between 25 and 75 
-                                    biomass_per_m2 > 398.5287 ~ 'High')) # 75%
+  mutate(biomass_level = case_when (biomass_per_m2 < 174.4421     ~ 'Low', # 25% quant.
+                                    biomass_per_m2> 174.4421    & biomass_per_m2 < 1725.7870 ~ 'Medium', # between 25 and 75 
+                                    biomass_per_m2 > 1725.7870 ~ 'High')) # 75%
 
 # ordering factor levels
 threshold_avg_warm$biomass_level <- factor(threshold_avg_warm$biomass_level,levels=c("Low", "Medium", "High"),
@@ -93,16 +95,16 @@ threshold_avg_warm$biomass_level <- factor(threshold_avg_warm$biomass_level,leve
     facet_wrap(~year, nrow = 1) +
     scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
     coord_quickmap()+
-    #theme_shrub() +  
+    theme_shrub() +  
     theme(axis.text.x  = element_text(vjust=0.5, size=10, colour = "black", angle = 45)) +
     theme(axis.text.y  = element_text(vjust=0.5, size=10, colour = "black")) + 
     xlab("\nLongitude") +
     ylab("Latitude\n"))
 
-# binary threshold map
+# binary threshold map: using same tresholds as time maps?
 threshold_avg_warm_bi <- avg_warm_to_plot %>%
-  mutate(biomass_level = case_when (biomass_per_m2 < 321.7873     ~ 'Low', # 75% quant.
-                                    biomass_per_m2 > 321.7873 ~ 'High')) # 75%
+  mutate(biomass_level = case_when (biomass_per_m2 < 2136.16     ~ 'Low', # 75% quant.
+                                    biomass_per_m2 > 2136.16 ~ 'High')) # 75%
 
 # ordering factor levels
 threshold_avg_warm_bi$biomass_level <- factor(threshold_avg_warm_bi$biomass_level,levels=c("Low", "High"),

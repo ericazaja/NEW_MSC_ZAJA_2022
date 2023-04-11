@@ -28,10 +28,13 @@ coord.chelsa.combo.c.delta.2100.solo <- read.csv("data/coord.chelsa.combo.c.delt
 200.781/6.4
 # 31.37203 g/m2/degC
 
+# 31.37203*80
+# 2509.762
+
 # multiply by biomass increase
 novel_warm <- coord.chelsa.combo.c.delta.2100.solo %>%
   filter(year == 2100) %>% 
-  mutate(biomass_per_m2_2100_solo = biomass_per_m2 + (31.37203*delta.7.solo)) %>%
+  mutate(biomass_per_m2_2100_solo = biomass_per_m2 + (2509.762*delta.7.solo)) %>%
   dplyr::select(-biomass_per_m2)
 
 c_mean_2100_solo <- c(novel_warm$biomass_per_m2_2100_solo)
@@ -58,7 +61,7 @@ novel_warm_to_plot <- rbind(coord.chelsa.combo.c.biom.2020, novel_warm_bind)
     #scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
     scale_fill_gradient(name = "Shrub biomass g/m2",high = "#013220", low = "lightyellow1",  na.value="white")+
     coord_quickmap()+
-    #theme_shrub() +  
+    theme_shrub() +  
     theme(axis.text.x  = element_text(vjust=0.5, size=10, colour = "black", angle = 45)) +
     theme(axis.text.y  = element_text(vjust=0.5, size=10, colour = "black")) + 
     xlab("\nLongitude") +
@@ -68,14 +71,14 @@ novel_warm_to_plot <- rbind(coord.chelsa.combo.c.biom.2020, novel_warm_bind)
 quant_novel_warm <- quantile(novel_warm_to_plot$biomass_per_m2)
 quant_novel_warm
 
-# 0%       25%       50%       75%      100% 
-# 0.0000  164.5013  268.6543  401.6677 2303.5054 
+#   0%        25%        50%        75%       100% 
+# 0.0000   174.4421  6205.5164 12930.1861 18640.7937 
 
 # setting biomass level thresholds using quantiles
 threshold_novel_warm <- novel_warm_to_plot %>%
-  mutate(biomass_level = case_when (biomass_per_m2 < 164.5013     ~ 'Low', # 25% quant.
-                                    biomass_per_m2> 164.5013    & biomass_per_m2 < 401.6677 ~ 'Medium', # between 25 and 75 
-                                    biomass_per_m2 > 401.6677 ~ 'High')) # 75%
+  mutate(biomass_level = case_when (biomass_per_m2 < 174.4421     ~ 'Low', # 25% quant.
+                                    biomass_per_m2> 174.4421    & biomass_per_m2 < 12930.1861 ~ 'Medium', # between 25 and 75 
+                                    biomass_per_m2 > 12930.1861 ~ 'High')) # 75%
 
 # ordering factor levels
 threshold_novel_warm$biomass_level <- factor(threshold_novel_warm$biomass_level,levels=c("Low", "Medium", "High"),
@@ -87,7 +90,7 @@ threshold_novel_warm$biomass_level <- factor(threshold_novel_warm$biomass_level,
     facet_wrap(~year, nrow = 1) +
     scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
     coord_quickmap()+
-   # theme_shrub() +  
+   theme_shrub() +  
     theme(axis.text.x  = element_text(vjust=0.5, size=10, colour = "black", angle = 45)) +
     theme(axis.text.y  = element_text(vjust=0.5, size=10, colour = "black")) + 
     xlab("\nLongitude") +
@@ -108,6 +111,20 @@ threshold_novel_bi$biomass_level <- factor(threshold_novel_bi$biomass_level,leve
     geom_tile(aes(x=x,y=y,fill=biomass_level)) +
     facet_wrap(~year, nrow = 1) +
     scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#009E73")) +
+    coord_quickmap()+
+    theme_shrub() +  
+    theme(axis.text.x  = element_text(vjust=0.5, size=10, colour = "black", angle = 45)) +
+    theme(axis.text.y  = element_text(vjust=0.5, size=10, colour = "black")) + 
+    xlab("\nLongitude") +
+    ylab("Latitude\n"))
+
+
+# plotting facet biomass (yellow-green)
+(raster_temps <- ggplot(novel_warm_to_plot) + 
+    geom_tile(aes(x=x,y=y,fill=(mean_temp_C))) + 
+    facet_wrap(~year, nrow = 1) +
+    #scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
+    scale_fill_gradient(name = "Temperature g/m2",high = "red", low = "navy",  na.value="white")+
     coord_quickmap()+
     theme_shrub() +  
     theme(axis.text.x  = element_text(vjust=0.5, size=10, colour = "black", angle = 45)) +

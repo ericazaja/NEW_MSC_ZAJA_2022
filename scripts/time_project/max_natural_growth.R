@@ -95,7 +95,7 @@ threshold_max_2$biomass_level <- factor(threshold_avg_2$biomass_level,levels=c("
     facet_wrap(~year, nrow = 1) +
     scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#009E73")) +
     coord_quickmap()+
-    #theme_shrub() +  
+    theme_shrub() +  
     theme(axis.text.x  = element_text(vjust=0.5, size=10, colour = "black", angle = 45)) +
     theme(axis.text.y  = element_text(vjust=0.5, size=10, colour = "black")) + 
     xlab("\nLongitude") +
