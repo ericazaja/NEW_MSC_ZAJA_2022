@@ -46,7 +46,6 @@ mean <- ddply(itex_EZ_pulchra,.(YEAR, SiteSubsite), summarise,
 max <- ddply(itex_EZ_pulchra,.(YEAR, SiteSubsite), summarise,
              max_cov = max(cover_prop))
 
-
 mean <- mean %>%
 mutate(Year_index = I(YEAR - 1988)) %>%
   filter(SiteSubsite != "QHI:KO")%>%
@@ -77,20 +76,20 @@ range(itex_EZ_pulchra$YEAR)
 range(itex_EZ_arctica$YEAR)
 
 # filter out plots that dont have at least 3 years of repeat measure
-itex_EZ_arctica <- itex_EZ_arctica %>%
-  filter(PLOT <=6)
+#itex_EZ_arctica <- itex_EZ_arctica %>%
+ # filter(PLOT <=6)
 
-itex_EZ_pulchra <- itex_EZ_pulchra %>%
-  filter(PLOT != 15)  %>%
-  filter(PLOT != 28)   %>%
-  filter(PLOT != 35)   %>%
-  filter(PLOT != 40) %>%
-filter(PLOT != 58)  %>%
-  filter(PLOT != 65)   %>%
-  filter(PLOT != 68)  %>%
-  filter(PLOT != 69)  %>%
-  filter(PLOT != 82)%>%
-  filter(SUBSITE != "KO")
+#itex_EZ_pulchra <- itex_EZ_pulchra %>%
+ # filter(PLOT != 15)  %>%
+ # filter(PLOT != 28)   %>%
+ # filter(PLOT != 35)   %>%
+ # filter(PLOT != 40) %>%
+#filter(PLOT != 58)  %>%
+  #filter(PLOT != 65)   %>%
+  #filter(PLOT != 68)  %>%
+  #filter(PLOT != 69)  %>%
+  #filter(PLOT != 82)%>%
+  #filter(SUBSITE != "KO")
 
 itex_EZ_arctica$SITE <- as.factor(itex_EZ_arctica$SITE)
 itex_EZ_pulchra$SITE <- as.factor(itex_EZ_pulchra$SITE)
@@ -155,7 +154,10 @@ pulchra_cover_max <- brms::brm(max_cov ~ Year_index * SITE + (1|Year_index),
                            iter = 5000, warmup = 1000, 
                            control = list(max_treedepth = 15, adapt_delta = 0.99))
 
-summary(pulchra_cover_max)
+summary(pulchra_cover_max) # 0.001
+# QHI estimate =  0.002518971 
+# toolik = 0.002518971  +0.016781174  
+# mean of slope both sites= 0.01090955
 
 
 # max and means
@@ -164,10 +166,10 @@ pulchra_cover_mean <- brms::brm(mean_cov ~ Year_index * SITE + (1|Year_index),
                                iter = 5000, warmup = 1000, 
                                control = list(max_treedepth = 15, adapt_delta = 0.99))
 
-summary(pulchra_cover_mean)
+summary(pulchra_cover_mean) # mean year estimate for both sites 0.00677882
 
 # Extracting outputs
-cov_time_pul_fix <- as.data.frame(fixef(pulchra_cover_mean)) # extract fixed eff. slopes 
+cov_time_pul_fix <- as.data.frame(fixef(pulchra_cover_max)) # extract fixed eff. slopes 
 cov_time_pul_random <- as.data.frame(ranef(pulchra_cover_mean)) # extract random eff. slopes 
 cov_time_pul_coef <- as.data.frame(coef(pulchra_cover_max, summary = TRUE, robust = FALSE, 
                                         probs = c(0.025, 0.975))) # extract combined coeff (random and fixed)

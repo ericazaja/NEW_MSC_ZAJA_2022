@@ -14,7 +14,7 @@ all_CG_source_growth <- read_csv("data/common_garden_shrub_data/all_CG_source_gr
 # 1. temp over time
 #rename column
 july_enviro_chelsa <- july_enviro_chelsa %>%
-  rename ("mean_temp_C" ="(mean_temp_C = (mean_temp/10 - 273.15))")
+  dplyr::rename ("mean_temp_C" ="(mean_temp_C = (mean_temp/10 - 273.15))")
 
 july_enviro_chelsa <- july_enviro_chelsa %>%
   mutate(Site = case_when(site == "ATIGUN" ~ "ANWR",
@@ -49,7 +49,8 @@ summary(temp_time)
     scale_colour_viridis_d(begin = 0.1, end = 0.95) +
     scale_fill_viridis_d(begin = 0.1, end = 0.95) +
     ylab("July temperature (degC, scaled) \n") +
-    xlab("\nYear (scaled)")+ theme_shrub())
+    xlab("\nYear (scaled)"))
+    #theme_shrub())
 
 # I think I only need the index_year estimates
 temp_time_random <- as.data.frame(ranef(temp_time)) # extract random eff. slopes 
@@ -60,6 +61,9 @@ colnames(temp_time_random)[6] <- "index_year_error"
 colnames(temp_time_random)[7] <- "index_year_Q_25" 
 colnames(temp_time_random)[8] <- "index_year_Q_97"
 view(temp_time_random)
+
+temp_time_coef <- as.data.frame(coef(temp_time)) # all coefficients. 
+## ERICA CHECK THIS: I think the slope of each line is the coefficients for year minus the random eff. slopes (year coeff)
 
 temp_time_random_year <- temp_time_random %>%
   dplyr::select("Site","index_year_estimate" ,"index_year_error", "index_year_Q_25",

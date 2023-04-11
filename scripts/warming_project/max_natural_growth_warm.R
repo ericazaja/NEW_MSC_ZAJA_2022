@@ -3,37 +3,35 @@
 # data -----
 shrub_map_extract_highest <- read.csv("data/extract_end_highest.csv") # high res map
 coord.chelsa.combo.c.delta.2100.solo <- read.csv("data/coord.chelsa.combo.c.delta.2100.solo")
+coord.chelsa.combo.c.delta.2020 <- read.csv("data/coord.chelsa.combo.c.biom.2020.csv")
 
 # MAX HEIGHT and COVER SLOPES:
-# # Height slope  for S pulchra for full time period = ??? * 23 years
-# Cover slope for S pulchra for full time period =  -0.02 * 33 years = 0
+# # Height slope  for S pulchra for full time period = 0.70 * 23 years = 16.1
+# Cover slope for S pulchra for full time period =   0.011 * 33 years =  0.363
 
 
 # Salpul allom equation = 
-# Biomass =  (1.1*height +-  5.0 ) + (18.1 *cover +-  8.2)
+# Biomass =  (1.1*16.1 +-  5.0 ) + (18.1 *0.363 +-  8.2) = 24.2803
 
 # TEMP SLOPES:
-# QHI = 0.06
-# ANWR = -0.00
-# TOOLIK = -0.00
-# mean = 0.02 * 20 years = 0.4 degC over full time period
+# mean = 0.2 * 20 years = 4 degC over full time period
 
-# biomass/temp over full time = /0.02 =  g/degC
+# biomass/temp over full time = 24.2803/4 =  6.070075 g/degC
 
 # multiply by biomass increase
 max_warm <- coord.chelsa.combo.c.delta.2100.solo %>%
   filter(year == 2100) %>% 
-  mutate(biomass_per_m2_2100_solo = biomass_per_m2 + (5.5*delta.7.solo)) %>%
+  mutate(biomass_per_m2_2100_solo = biomass_per_m2 + (6.070075*delta.7.solo)) %>%
   dplyr::select(-biomass_per_m2)
 
 c_mean_2100_solo <- c(max_warm$biomass_per_m2_2100_solo)
-mean(c_mean_2100_solo) #256.0573 g/m2
+mean(c_mean_2100_solo) #258.9373 g/m2
 range(max_warm$biomass_per_m2_2100_solo) #  22.53906 2157.11943
 
 # bind 2020 and 2100
 max_warm_bind <- max_warm %>%
-  rename(biomass_per_m2 = biomass_per_m2_2100_solo)
-
+  dplyr::rename(biomass_per_m2 = biomass_per_m2_2100_solo, 
+                delta = delta.7.solo)
 max_warm_bind$year <- as.factor(max_warm_bind$year)
 coord.chelsa.combo.c.biom.2020$year <- as.factor(coord.chelsa.combo.c.biom.2020$year)
 max_warm_to_plot <- rbind(coord.chelsa.combo.c.biom.2020, max_warm_bind)
@@ -54,15 +52,14 @@ max_warm_to_plot <- rbind(coord.chelsa.combo.c.biom.2020, max_warm_bind)
 # TRESHOLD MAPS-----
 quant_max_warm <- quantile(max_warm_to_plot$biomass_per_m2)
 quant_max_warm
-#   0%       25%       50%       75%      100% 
-# 0.0000  106.4514  188.7321  321.7873 2157.1194 
-
+#0%       25%       50%       75%      100% 
+#0.0000  107.7868  190.2687  323.3229 2160.3450 
 
 # setting biomass level thresholds using quantiles
 threshold_max_warm <- max_warm_to_plot %>%
-  mutate(biomass_level = case_when (biomass_per_m2 < 106.4514     ~ 'Low', # 25% quant.
-                                    biomass_per_m2> 106.4514    & biomass_per_m2 < 321.7873 ~ 'Medium', # between 25 and 75 
-                                    biomass_per_m2 > 321.7873 ~ 'High')) # 75%
+  mutate(biomass_level = case_when (biomass_per_m2 < 107.7868     ~ 'Low', # 25% quant.
+                                    biomass_per_m2> 107.7868    & biomass_per_m2 < 323.3229 ~ 'Medium', # between 25 and 75 
+                                    biomass_per_m2 > 323.3229 ~ 'High')) # 75%
 
 # ordering factor levels
 threshold_max_warm$biomass_level <- factor(threshold_max_warm$biomass_level,levels=c("Low", "Medium", "High"),
