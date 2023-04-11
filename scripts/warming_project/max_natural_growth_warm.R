@@ -34,6 +34,14 @@ c_mean_2100_solo <- c(max_warm$biomass_per_m2_2100_solo)
 mean(c_mean_2100_solo) #2681.468 g/m2
 range(max_warm$biomass_per_m2_2100_solo) #  22.53906 2157.11943
 
+# %diff
+(2681.468-228.2723)/228.2723
+# 10.7468
+
+# times larger
+2681.468/228.2723
+# 11.7468
+
 # bind 2020 and 2100
 max_warm_bind <- max_warm %>%
   dplyr::rename(biomass_per_m2 = biomass_per_m2_2100_solo, 

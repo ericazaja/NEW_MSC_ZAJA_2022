@@ -52,10 +52,20 @@ shrub_map_project_novel <- shrub_map_2020 %>%
   dplyr::select(-biomass_per_m2)%>%
   mutate(year = rep(2100))
 
+mean_2100_novel <- c(shrub_map_project_novel$biomass_per_m2_new)
+mean(mean_2100_novel)# 2032.032 g/m2
+
 hist(shrub_map_project_novel$biomass_per_m2_new)
 
 shrub_map_2020 <- shrub_map_2020 %>%
   dplyr::rename("biomass_per_m2_new" = "biomass_per_m2")
+
+# % diff
+(2032.032-228.2723)/228.2723
+
+# times larger
+(2032.032/228.2723)
+# 8.90179
 
 # bind data so that I can facet plot
 shrub_novel <- rbind(shrub_map_2020, shrub_map_project_novel)

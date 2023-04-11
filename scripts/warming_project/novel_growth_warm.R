@@ -38,11 +38,20 @@ novel_warm <- coord.chelsa.combo.c.delta.2100.solo %>%
   dplyr::select(-biomass_per_m2)
 
 c_mean_2100_solo <- c(novel_warm$biomass_per_m2_2100_solo)
-mean(c_mean_2100_solo) #386.7582 g/m2
+mean(c_mean_2100_solo) #12907.15 g/m2
 range(novel_warm$biomass_per_m2_2100_solo) # 128.5629 2303.5054
 
 c_mean_2100_temp_solo <- c(novel_warm$mean_temp_C)
 mean(c_mean_2100_temp_solo) # 20.17315 C
+
+# %diff
+(12907.15-228.2723)/228.2723
+#55.54278
+# 5554.278
+
+# times larger
+12907.15/228.2723
+# 56.54278
 
 # bind 2020 and 2100
 novel_warm_bind <- novel_warm %>%

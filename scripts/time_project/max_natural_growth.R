@@ -24,10 +24,23 @@ shrub_map_project_max <- shrub_map_2020 %>%
   mutate(biomass_per_m2_new = biomass_per_m2 + ( 0.9691*80))%>%
   dplyr::select(-biomass_per_m2)%>%
   mutate(year = rep(2100))
+mean_2100_natural_max <- c(shrub_map_project_max$biomass_per_m2_new)
+mean(mean_2100_natural_max)# 305.8003 g/m2
 
 range(shrub_map_project_max$biomass_per_m2_2100)
 shrub_map_2020 <- shrub_map_2020 %>%
   dplyr::rename("biomass_per_m2_new" = "biomass_per_m2")
+mean_2020_natural_max <- c(shrub_map_2020$biomass_per_m2_new)
+mean(mean_2020_natural_max)# 228.2723 g/m2
+
+# %diff
+(305.8003-228.2723)/228.2723
+# 0.3396295
+# 34%
+
+# times larger
+(305.8003/228.2723)
+# 1.339629
 
 # bind data so that I can facet plot
 shrub_natural_max <- rbind(shrub_map_2020, shrub_map_project_max)
