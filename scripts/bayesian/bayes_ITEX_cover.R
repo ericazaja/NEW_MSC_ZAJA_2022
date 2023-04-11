@@ -9,23 +9,24 @@ library(tidybayes)
 library(bayesplot)
 
 # load data ------
-# itex_EZ_shrubs_2023 <- read_csv("data/ITEX/itex_EZ_shrubs_2023.csv")
-pulchra_yearly_max <- read_csv("data/ITEX/pfxy.check_max.csv")
-pulchra_yearly_mean <- read_csv("data/ITEX/pfxy.check_mean.csv")
+itex_EZ_shrubs_2023 <- read_csv("data/ITEX/itex_EZ_shrubs_2023.csv")
+#pulchra_yearly_max <- read_csv("data/ITEX/itex.meta.max.csv")
+#pulchra_yearly_mean <- read_csv("data/ITEX/itex.meta.mean.csv")
+
 
 # wrangle data -----
-pulchra_yearly_max <- pulchra_yearly_max%>%
-  mutate(cover_prop_max = max_cov/100)%>% 
-  mutate(Year_index = I(YEAR - 1988)) %>%
-  mutate(SITE = case_when(SiteSubsite %in% c("QHI:HE", "QHI:KO")~ "QHI", 
-                          SiteSubsite %in% c("TOOLIK:IMNAVAIT", "TOOLIK:MOIST", "TOOLIK:TUSSOCKGRID")~ "TOOLIK"))
+#pulchra_yearly_max <- pulchra_yearly_max%>%
+ # mutate(cover_prop_max = max_cov/100)%>% 
+ # mutate(Year_index = I(YEAR - 1988)) %>%
+ # mutate(SITE = case_when(SiteSubsite %in% c("QHI:HE", "QHI:KO")~ "QHI", 
+                 #         SiteSubsite %in% c("TOOLIK:IMNAVAIT", "TOOLIK:MOIST", "TOOLIK:TUSSOCKGRID")~ "TOOLIK"))
 
-hist(pulchra_yearly_max$cover_prop_max, breaks = 30)
-pulchra_yearly_mean <- pulchra_yearly_mean%>%
-  mutate(cover_prop_mean = mean_cov/100)%>% 
-  mutate(Year_index = I(YEAR - 1988)) %>%
-  mutate(SITE = case_when(SiteSubsite %in% c("QHI:HE", "QHI:KO")~ "QHI", 
-                          SiteSubsite %in% c("TOOLIK:IMNAVAIT", "TOOLIK:MOIST", "TOOLIK:TUSSOCKGRID")~ "TOOLIK"))
+#pulchra_yearly_mean <- pulchra_yearly_mean%>%
+ # mutate(cover_prop_mean = mean_cov/100)%>% 
+ # mutate(Year_index = I(YEAR - 1988)) %>%
+  #mutate(SITE = case_when(SiteSubsite %in% c("QHI:HE", "QHI:KO")~ "QHI", 
+       #                   SiteSubsite %in% c("TOOLIK:IMNAVAIT", "TOOLIK:MOIST", "TOOLIK:TUSSOCKGRID")~ "TOOLIK"))
+
 
 itex_EZ_shrubs_2023 <- itex_EZ_shrubs_2023 %>%
   mutate(cover_prop = RelCover/100)
@@ -37,6 +38,31 @@ itex_EZ_arctica <- itex_EZ_shrubs_2023 %>%
 
 itex_EZ_pulchra <- itex_EZ_shrubs_2023 %>%
   filter(SPECIES_NAME == "Salix pulchra")
+
+# calculate mean per year
+mean <- ddply(itex_EZ_pulchra,.(YEAR, SiteSubsite), summarise,
+              mean_cov = mean(cover_prop))
+
+max <- ddply(itex_EZ_pulchra,.(YEAR, SiteSubsite), summarise,
+             max_cov = max(cover_prop))
+
+
+mean <- mean %>%
+mutate(Year_index = I(YEAR - 1988)) %>%
+  filter(SiteSubsite != "QHI:KO")%>%
+  mutate(SITE = case_when(SiteSubsite %in% c("QHI:HE", "QHI:KO")~ "QHI", 
+                          SiteSubsite %in% c("TOOLIK:IMNAVAIT", "TOOLIK:MOIST", "TOOLIK:TUSSOCKGRID")~ "TOOLIK"))
+
+range(mean$mean_cov) #  0.06909564 0.22607917
+
+  
+max <- max %>%
+  mutate(Year_index = I(YEAR - 1988))%>%
+  filter(SiteSubsite != "QHI:KO")%>%
+  mutate(SITE = case_when(SiteSubsite %in% c("QHI:HE", "QHI:KO")~ "QHI", 
+                          SiteSubsite %in% c("TOOLIK:IMNAVAIT", "TOOLIK:MOIST", "TOOLIK:TUSSOCKGRID")~ "TOOLIK"))
+
+range(max$max_cov) # 0.0800000 0.7692308
 
 hist(itex_EZ_shrubs_2023$cover_prop, breaks = 30)
 hist(itex_EZ_arctica$cover_prop, breaks = 20) # NOT zero inflated
@@ -73,21 +99,12 @@ itex_EZ_arctica$SiteSubsitePlot <- as.factor(itex_EZ_arctica$SiteSubsitePlot)
 itex_EZ_pulchra$SitePlotYear<- with(itex_EZ_pulchra, paste0(SITE, PLOT, YEAR))
 itex_EZ_pulchra$SitePlot<- with(itex_EZ_pulchra, paste0(SITE, PLOT))
 
-# keeping max values per plot 
+# quick plots
+(plot <- ggplot(mean) +
+  geom_point(aes(x =YEAR , y = mean_cov, color= SITE, fill =SITE)))
 
-itex_EZ_pulchra_max<-  itex_EZ_pulchra %>%
-  group_by(SiteSubsitePlotYear) %>%
-  slice(which.max(cover_prop)) %>%
-  distinct()
-
-#itex_EZ_pulchra_mean <- ddply(itex_EZ_pulchra,.(YEAR, SiteSubsitePlot), summarise,
- #                          mean_cov = mean(cover_prop))
-
-#itex_EZ_pulchra_max <- ddply(itex_EZ_pulchra,.(YEAR, SiteSubsitePlot), summarise,
-         #                     max_cov = max(cover_prop))
-
-(plot <- ggplot(pulchra_yearly_mean) +
-  geom_point(aes(x =YEAR , y = mean_cov, color= SiteSubsite, fill =SiteSubsite)))
+(plot <- ggplot(max) +
+    geom_point(aes(x =YEAR , y = max_cov, color= SITE, fill =SITE)))
 
 
 # modelling cover over time -----
@@ -133,26 +150,26 @@ plot(pulchra_cover)
 pp_check(pulchra_cover, type = "dens_overlay", nsamples = 100) 
 
 # max and means
-pulchra_cover_max <- brms::brm(cover_prop_max ~ Year_index + (Year_index|SITE),
-                           data = pulchra_yearly_max, family = "beta", chains = 3,
+pulchra_cover_max <- brms::brm(max_cov ~ Year_index * SITE + (1|Year_index),
+                           data = max, family = "beta", chains = 3,
                            iter = 5000, warmup = 1000, 
                            control = list(max_treedepth = 15, adapt_delta = 0.99))
 
 summary(pulchra_cover_max)
-view(pulchra_yearly_max)
+
 
 # max and means
-pulchra_cover_mean <- brms::brm(cover_prop_mean ~ Year_index + (Year_index|SITE),
-                               data = pulchra_yearly_mean, family = "beta", chains = 3,
+pulchra_cover_mean <- brms::brm(mean_cov ~ Year_index * SITE + (1|Year_index),
+                               data = mean, family = "beta", chains = 3,
                                iter = 5000, warmup = 1000, 
                                control = list(max_treedepth = 15, adapt_delta = 0.99))
 
 summary(pulchra_cover_mean)
 
 # Extracting outputs
-cov_time_pul_fix <- as.data.frame(fixef(pulchra_cover)) # extract fixed eff. slopes 
-cov_time_pul_random <- as.data.frame(ranef(pulchra_cover)) # extract random eff. slopes 
-cov_time_pul_coef <- as.data.frame(coef(pulchra_cover, summary = TRUE, robust = FALSE, 
+cov_time_pul_fix <- as.data.frame(fixef(pulchra_cover_mean)) # extract fixed eff. slopes 
+cov_time_pul_random <- as.data.frame(ranef(pulchra_cover_mean)) # extract random eff. slopes 
+cov_time_pul_coef <- as.data.frame(coef(pulchra_cover_max, summary = TRUE, robust = FALSE, 
                                         probs = c(0.025, 0.975))) # extract combined coeff (random and fixed)
 
 cov_time_pul_random$SiteSubsitePlot <- row.names(cov_time_pul_random) # Apply row.names function
@@ -217,7 +234,7 @@ cov_mean <- (conditional_effects(pulchra_cover_mean))
 cov_mean_dat <- cov_mean[[1]]
 
 (pulchra_cov_plot_mean <-ggplot(cov_mean_dat) +
-    geom_point(data = pulchra_yearly_mean, aes(x = Year_index, y = cover_prop_mean, colour = SiteSubsite),
+    geom_point(data = pulchra_yearly_mean, aes(x = Year_index, y = cover_prop_mean, colour = Site),
                alpha = 0.5)+
     geom_line(aes(x = effect1__, y = estimate__),
               linewidth = 1.5) +
@@ -250,15 +267,35 @@ cov_mean_dat <- cov_mean[[1]]
           axis.text.y = element_text(size = 12, colour = "black"))) 
 
 
-(pulchra_cover_plot_mean <- pulchra_yearly_mean %>%
+(pulchra_cover_plot_mean <- mean %>%
     group_by(SITE) %>%
     add_predicted_draws(pulchra_cover_mean) %>%
-    ggplot(aes(x = Year_index, y = cover_prop_mean, color = ordered(SITE), fill = ordered(SITE))) +
+    ggplot(aes(x = Year_index, y = mean_cov, color = ordered(SITE), fill = ordered(SITE))) +
     stat_lineribbon(aes(y = .prediction), .width = .50, alpha = 1/4) +
-    geom_point(data = pulchra_yearly_mean) +
+    geom_point(data = mean) +
     scale_fill_brewer(palette = "Set2") +
     scale_color_brewer(palette = "Dark2") +
-    ylab("Salix pulchra cover \n") +
+    ylab("Salix pulchra cover mean \n") +
+    xlab("\nYear") +
+    ylim(0, 0.8)+
+    # theme_shrub() +
+    theme(panel.border = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.line = element_line(colour = "black"),
+          axis.title = element_text(size = 14),
+          axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
+          axis.text.y = element_text(size = 12, colour = "black"))) 
+
+(pulchra_cover_plot_max <- max %>%
+    group_by(SITE) %>%
+    add_predicted_draws(pulchra_cover_max) %>%
+    ggplot(aes(x = Year_index, y = max_cov, color = ordered(SITE), fill = ordered(SITE))) +
+    stat_lineribbon(aes(y = .prediction), .width = .50, alpha = 1/4) +
+    geom_point(data = max) +
+    scale_fill_brewer(palette = "Set2") +
+    scale_color_brewer(palette = "Dark2") +
+    ylab("Salix pulchra cover max\n") +
     xlab("\nYear") +
     # theme_shrub() +
     theme(panel.border = element_blank(),
@@ -269,5 +306,6 @@ cov_mean_dat <- cov_mean[[1]]
           axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
           axis.text.y = element_text(size = 12, colour = "black"))) 
 
-
+library(gridExtra)
+grid.arrange(pulchra_cover_plot_max, pulchra_cover_plot_mean, nrow=1)
 

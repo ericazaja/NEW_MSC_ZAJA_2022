@@ -6,7 +6,7 @@
 ## December 2022 
 
 # ERICA LOAD THIS data, no need to run full script again
-# itex_EZ_shrubs_2023 <- read_csv("data/ITEX/itex_EZ_shrubs_2023.csv")
+# itex_EZ_shrubs_2023 <- read_csv("data/ITEX/itex_EZ_shrubs_2023.csv")
 
 
 ## PACKAGES ----
@@ -240,7 +240,7 @@ cov <- perccov_all6 %>% filter(ValueType == "percent_cover") %>%
   group_by(SiteSubsitePlotYear) %>% summarise(sum = sum(ABUNDANCE))
 # Quite a lot of values over 100 so they need to be made proportional too so all values are comparable
 
-unique(perccov_all6$SITE)# none of my sites
+unique(perccov_all6$SITE)# none of my sites
 unique(perccov_all6$SPP)
 
 # As I'm comparing different methods, I had to make the abundance data comparable across XY hits, all hits and cover values.
@@ -268,20 +268,20 @@ cov.test <- perccov_all6 %>% group_by(SiteSubsitePlotYear) %>%
 # Check if this is because of the missing species names or actually there are repeated species names
 dif <- cov.test %>% filter(SameOrNot == "Different")
 
-# Add up values per species so we end up with only one row per species -----
+# ERICA SKIP THIS Add up values per species so we end up with only one row per species -----
 #dif2 <- dif %>% 
-  #filter(SiteSubsitePlotYear != "BARROW:CAREX_MOIST_MEADOW_MICROTOPO:BC02.5:1999") %>%
-  #group_by(SiteSubsitePlotYear, SPECIES_NAME) %>% mutate(AbundanceFixed = sum(ABUNDANCE)) %>% ungroup() %>%
-  #group_by(SiteSubsitePlotYear) %>% distinct(SPECIES_NAME, .keep_all = TRUE) %>% ungroup()
+#filter(SiteSubsitePlotYear != "BARROW:CAREX_MOIST_MEADOW_MICROTOPO:BC02.5:1999") %>%
+#group_by(SiteSubsitePlotYear, SPECIES_NAME) %>% mutate(AbundanceFixed = sum(ABUNDANCE)) %>% ungroup() %>%
+#group_by(SiteSubsitePlotYear) %>% distinct(SPECIES_NAME, .keep_all = TRUE) %>% ungroup()
 
 # Confirm that this has worked and 1 row = 1 species
 #dif3 <- dif2 %>% group_by(SiteSubsitePlotYear) %>% 
- # mutate(NumberRows = n()) %>% mutate(NumberSpecies = length(unique(SPECIES_NAME))) %>%
- # mutate(SameOrNot = ifelse(NumberRows == NumberSpecies, "Same", "Different")) %>% ungroup()
+# mutate(NumberRows = n()) %>% mutate(NumberSpecies = length(unique(SPECIES_NAME))) %>%
+# mutate(SameOrNot = ifelse(NumberRows == NumberSpecies, "Same", "Different")) %>% ungroup()
 
 # One site has duplicate values: all records have exactly the same abundance values twice
 #barrow.dup <- dif %>% filter(SiteSubsitePlotYear == "BARROW:CAREX_MOIST_MEADOW_MICROTOPO:BC02.5:1999") %>% 
- # distinct(SPECIES_NAME, .keep_all = TRUE)
+# distinct(SPECIES_NAME, .keep_all = TRUE)
 
 
 # 1) Remove inconsistent plots from original dataset
@@ -303,13 +303,13 @@ perccov_fixed <- cov.test %>% filter(ABUNDANCE > 0) %>% select(., -c(NumberRows,
 
 # Convert all values to relative cover
 itex.cov <- perccov_fixed %>% group_by(SiteSubsitePlotYear) %>% 
- # mutate(TotalAbundance = sum(ABUNDANCE)) %>%
+  # mutate(TotalAbundance = sum(ABUNDANCE)) %>%
   mutate(RelCover = ABUNDANCE/100) %>% ungroup() # 20349 obs
 
 # Confirm that total cover values add up to 100 in every plotXyear
 #cov.check <- itex.cov %>% group_by(SiteSubsitePlotYear) %>% 
- # mutate(TotalCover = sum(RelCover)) %>% 
-  # distinct(SiteSubsitePlotYear, .keep_all = TRUE)
+# mutate(TotalCover = sum(RelCover)) %>% 
+# distinct(SiteSubsitePlotYear, .keep_all = TRUE)
 
 view(itex.cov)
 
@@ -336,13 +336,13 @@ ab.dup <- dif %>% filter(SiteSubsitePlotYear %in% ab.vector) %>% group_by(SiteSu
 
 # Add up values per species so we end up with only one row per species: erica skip 
 #dif.sum2 <- dif.sum %>% filter(SiteSubsitePlotYear %notin% ab.vector) %>% 
- # group_by(SiteSubsitePlotYear, SPECIES_NAME) %>% mutate(AbundanceFixed = sum(ABUNDANCE)) %>% ungroup() %>%
- # group_by(SiteSubsitePlotYear) %>% distinct(SPECIES_NAME, .keep_all = TRUE) %>% ungroup()
+# group_by(SiteSubsitePlotYear, SPECIES_NAME) %>% mutate(AbundanceFixed = sum(ABUNDANCE)) %>% ungroup() %>%
+# group_by(SiteSubsitePlotYear) %>% distinct(SPECIES_NAME, .keep_all = TRUE) %>% ungroup()
 
 # Confirm that this has worked and 1 row = 1 species
 #dif.sum.test <- dif.sum2 %>% group_by(SiteSubsitePlotYear) %>% 
- # mutate(NumberRows = n()) %>% mutate(NumberSpecies = length(unique(SPECIES_NAME))) %>%
- # mutate(SameOrNot = ifelse(NumberRows == NumberSpecies, "Same", "Different")) %>% ungroup()
+# mutate(NumberRows = n()) %>% mutate(NumberSpecies = length(unique(SPECIES_NAME))) %>%
+# mutate(SameOrNot = ifelse(NumberRows == NumberSpecies, "Same", "Different")) %>% ungroup()
 
 
 # Dataframes to merge:
@@ -368,7 +368,7 @@ pfsum_fixed <- pfsum_fixed0 %>% filter(ABUNDANCE > 0) %>% select(., -c(NumberRow
 
 # Convert all values to relative cover
 itex.pfsum <- pfsum_fixed %>% group_by(SiteSubsitePlotYear) %>% 
- # mutate(TotalAbundance = sum(ABUNDANCE)) %>%
+  # mutate(TotalAbundance = sum(ABUNDANCE)) %>%
   mutate(RelCover = ABUNDANCE/100) %>% ungroup() # 15427 obs
 
 # Confirm that total cover values add up to 100 in every plotXyear
@@ -390,38 +390,36 @@ pfxy_all7 <- pfxy_all6 %>% tidyr::replace_na(list(Y = "0")) %>%
 
 # STEP 1: Convert species abundance to presence/absence 
 # (2D, not considering multiple hits of the same species at each xy coord, just 1)
-pfxy_all_pa <- pfxy_all7 %>% mutate(ABUNDANCE = ifelse(ABUNDANCE > 1, 1, ABUNDANCE)) %>%
- filter(ABUNDANCE > 0) %>%
- group_by(SiteSubsitePlotYear, XY) %>% distinct(SPECIES_NAME, .keep_all = TRUE) 
-
 #pfxy_all_pa <- pfxy_all7 %>% mutate(ABUNDANCE = ifelse(ABUNDANCE > 1, 1, ABUNDANCE)) %>%
- # filter(ABUNDANCE > 0)
+# filter(ABUNDANCE > 0) %>%
+# group_by(SiteSubsitePlotYear, XY) %>% distinct(SPECIES_NAME, .keep_all = TRUE) 
+
+pfxy_all_pa <- pfxy_all7 %>% mutate(ABUNDANCE = ifelse(ABUNDANCE > 1, 1, ABUNDANCE)) %>%
+  filter(ABUNDANCE > 0)
 
 # STEP 2: Calculate unique species hits per plot and total unique species hits per plot
-pfxy_all_pa2 <- pfxy_all_pa %>% group_by(SiteSubsitePlotYear) %>%
-  dplyr::mutate(UniqueSpHitsPlot = n()) %>%
- distinct(SiteSubsitePlotYear, .keep_all = TRUE) %>%
- ungroup() %>% select(., -c(X, Y, XY, HIT)) %>% 
-  group_by(SiteSubsitePlotYear) %>%
- mutate(TotalUniqueSpHitsPlot = sum(UniqueSpHitsPlot)) %>% 
-  ungroup()
-
 #pfxy_all_pa2 <- pfxy_all_pa %>% group_by(SiteSubsitePlotYear) %>%
- # mutate(UniqueSpHitsPlot = n()) %>%
- # distinct(SiteSubsitePlotYear, .keep_all = TRUE) %>%
- # ungroup() %>% select(., -c(X, Y, XY, HIT)) %>% group_by(SiteSubsitePlotYear) %>%
-  #mutate(TotalUniqueSpHitsPlot = sum(UniqueSpHitsPlot)) %>% ungroup()
+# mutate(UniqueSpHitsPlot = n()) %>%
+# distinct(SiteSubsitePlotYear, .keep_all = TRUE) %>%
+# ungroup() %>% select(., -c(X, Y, XY, HIT)) %>% group_by(SiteSubsitePlotYear) %>%
+# mutate(TotalUniqueSpHitsPlot = sum(UniqueSpHitsPlot)) %>% ungroup()
+
+pfxy_all_pa2 <- pfxy_all_pa %>% group_by(SiteSubsitePlotYear) %>%
+  mutate(UniqueSpHitsPlot = n()) %>%
+  distinct(SiteSubsitePlotYear, .keep_all = TRUE) %>%
+  ungroup() %>% select(., -c(X, Y, XY, HIT)) %>% group_by(SiteSubsitePlotYear) %>%
+  mutate(TotalUniqueSpHitsPlot = sum(UniqueSpHitsPlot)) %>% ungroup()
 
 glimpse(pfxy_all_pa2)
 #pfxy_all_pa2 <- pfxy_all_pa %>% 
 #  filter(SPECIES_NAME == "Salix pulchra")%>% 
- # filter(SITE %in% c("TOOLIK", "QHI"))%>% 
+# filter(SITE %in% c("TOOLIK", "QHI"))%>% 
 #group_by(SiteSubsitePlotYear, SPECIES_NAME) %>% 
 # dplyr::mutate(UniqueSpHitsPlot = n()) %>% 
- # distinct(SiteSubsitePlotYear, SPECIES_NAME, .keep_all = TRUE) %>% 
- #ungroup() %>% 
-  #select(., -c(X, Y, XY, HIT)) %>% 
- # group_by(SiteSubsitePlotYear) %>%
+# distinct(SiteSubsitePlotYear, SPECIES_NAME, .keep_all = TRUE) %>% 
+#ungroup() %>% 
+#select(., -c(X, Y, XY, HIT)) %>% 
+# group_by(SiteSubsitePlotYear) %>%
 # dplyr::mutate(TotalUniqueSpHitsPlot = sum(UniqueSpHitsPlot)) %>% ungroup()
 
 
@@ -436,7 +434,7 @@ view(pfxy_all_cov)
 # Confirm that total cover values add up to 100 in every plotXyear
 pfxy.check <- pfxy_all_cov %>% group_by(SiteSubsitePlotYear) %>% 
   mutate(TotalCover = sum(RelCover)) %>% 
-  distinct(SiteSubsitePlotYear, .keep_all = TRUE) %>% 
+  # distinct(SiteSubsitePlotYear, .keep_all = TRUE) %>% 
   filter(SPECIES_NAME == "Salix pulchra") %>%  
   filter(SITE %in% c("QHI", "TOOLIK"))
 
@@ -448,19 +446,12 @@ pfxy.check_mean <- ddply(pfxy.check,.(YEAR, SiteSubsite), summarise,
                          mean_cov = mean(RelCover))
 
 pfxy.check_max <- ddply(pfxy.check,.(YEAR, SiteSubsite), summarise,
-                         max_cov = max(RelCover))
+                        max_cov = max(RelCover))
 
 view(pfxy.check_mean)
 
-# quick plot
-(plot <- ggplot(pfxy.check_mean) +
-    geom_point(aes(x =YEAR , y = mean_cov, color= SiteSubsite, fill =SiteSubsite))+
-    geom_line(aes(x =YEAR , y = mean_cov, color= SiteSubsite, fill =SiteSubsite)))
-
-
 write.csv(pfxy.check_mean, "data/ITEX/pfxy.check_mean.csv")
 write.csv(pfxy.check_max, "data/ITEX/pfxy.check_max.csv")
-
 
 ## BINDING ----
 
