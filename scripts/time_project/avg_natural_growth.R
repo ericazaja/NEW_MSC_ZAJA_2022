@@ -124,3 +124,20 @@ threshold_avg_2$biomass_level <- factor(threshold_avg_2$biomass_level,levels=c("
     theme(axis.text.y  = element_text(vjust=0.5, size=10, colour = "black")) + 
     xlab("\nLongitude") +
     ylab("Latitude\n"))
+
+# only 2100 raster
+(raster_2100 <- ggplot(shrub_map_project_mean) + 
+    geom_tile(aes(x=x,y=y,fill=(biomass_per_m2_new))) + 
+    #scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
+    scale_fill_gradient(name = "Shrub biomass g/m2",high = "#013220", low = "lightyellow1",  na.value="white") +
+    coord_quickmap()+
+    theme_shrub() +  
+    theme(axis.text.x  = element_text(vjust=0.5, size=10, colour = "black", angle = 45)) +
+    theme(axis.text.y  = element_text(vjust=0.5, size=10, colour = "black")) + 
+    xlab("\nLongitude") +
+    ylab("Latitude\n"))
+
+
+
+# Save the plot
+ggsave(plot=raster_2100, "my_ggplot.tiff", device = "tiff")
