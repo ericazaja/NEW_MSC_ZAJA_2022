@@ -59,6 +59,9 @@ mean(c_mean_2100_temp_solo) # 20.17315 C
 (1761.228/228.2723)
 # 7.71547
 
+# temperatre difference
+20.17315-15.12132
+
 # bind 2020 and 2100
 avg_warm_bind <- avg_warm %>%
   dplyr::rename(biomass_per_m2 = biomass_per_m2_2100_solo, 
@@ -67,6 +70,9 @@ avg_warm_bind$year <- as.factor(avg_warm_bind$year)
 coord.chelsa.combo.c.biom.2020$year <- as.factor(coord.chelsa.combo.c.biom.2020$year)
 avg_warm_to_plot <- rbind(coord.chelsa.combo.c.biom.2020, avg_warm_bind)
 glimpse(avg_warm_to_plot)
+
+mean_2020_temp <- c(coord.chelsa.combo.c.biom.2020$mean_temp_C)
+mean(mean_2020_temp) # 15.12132
 
 # plotting facet biomass (yellow-green)
 (avg_test_temp <- ggplot(avg_warm_to_plot) + 

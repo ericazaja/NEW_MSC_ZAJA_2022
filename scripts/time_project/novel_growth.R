@@ -11,7 +11,7 @@ shrub_map_extract_highest <- read.csv("data/extract_end_highest.csv") # high res
 # Cover: cover over time (script: )
 # → get biomass 
 
-# height slope richardsonii = 1.74 
+# height slope richardsonii = 1.74 cm/year
 # cover slope richardsonii = 0.66
 # RICHARDSONII FINAL EQUATION: Biomass =  (18.0*height +- 5.1) + (11.9 *cover +-  18.0)
 (18.0*1.74  ) + (11.9 *0.7 ) 

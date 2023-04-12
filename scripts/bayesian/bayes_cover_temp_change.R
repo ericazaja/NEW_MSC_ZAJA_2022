@@ -71,7 +71,8 @@ temp_time_random_year <- temp_time_random %>%
 view(temp_time_random_year)
 write.csv(temp_time_random_year,"data/temp_time_random_year.csv")
 
-# SLOPE vs slopes -----
+# IGNORE Slope vs slope models -----
+# SLOPE vs slopes 
 # S. Pulchra slope vs slope -----
 temp_time_pul <- temp_time_random_year %>%
   filter(Site %in% c("QHI", "TOOLIK"))

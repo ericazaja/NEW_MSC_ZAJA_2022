@@ -16,25 +16,25 @@ salpuls <- read_csv("data/ITEX/salpuls.csv")
 
 # Wrangle salpuls data
 salpuls <- subset(salpuls,!is.na(Height..cm.)) %>%
-  select(SUBSITE, PLOT, YEAR, X, Y, SPP, STATUS, Height..cm.)%>%
+  dplyr::select(SUBSITE, PLOT, YEAR, X, Y, SPP, STATUS, Height..cm.)%>%
   dplyr::rename(Height = Height..cm.)
 
 # filter out 2016 where STATUS and TISSU messed up
 salpuls_no_2016 <- salpuls %>%
-  filter(YEAR != 2016)
+  dplyr::filter(YEAR != 2016)
 
 salpuls_2016 <- salpuls %>%
-  filter(YEAR == 2016) %>% 
+  dplyr::filter(YEAR == 2016) %>% 
   mutate(STATUS_2 = case_when(STATUS %in% c("Leaf", "Stem") ~ "Live", 
             STATUS == "Live"~ "Live", 
             STATUS == "Standing dead" ~"Standing dead"))%>%
-  select(-STATUS) %>%
+  dplyr::select(-STATUS) %>%
   dplyr::rename(STATUS = STATUS_2)
 
 salpuls_bind <- rbind(salpuls_no_2016,salpuls_2016)
 
 salpuls_new <- salpuls_bind %>%
-  filter(STATUS %in% c("LIVE", "Live"))
+  dplyr::filter(STATUS %in% c("LIVE", "Live"))
 
 salpuls_new$SubsitePlotYear <- with(salpuls_new, paste0(SUBSITE, PLOT, YEAR))
 
@@ -45,8 +45,8 @@ meansp <- ddply(salpuls_new,.(YEAR), summarise,
 
 # keep only 2019 and 2022 
 QHI_2019_2022 <- QHI_1999_2022 %>%
-  filter(YEAR %in% c(2019, 2022)) %>% select(SUBSITE, PLOT, YEAR, X, Y, SPP, STATUS, Height) %>% 
-  filter(SPP == "Salix pulchra" & STATUS == "LIVE")
+  dplyr::filter(YEAR %in% c(2019, 2022)) %>% dplyr::select(SUBSITE, PLOT, YEAR, X, Y, SPP, STATUS, Height) %>% 
+  dplyr::filter(SPP == "Salix pulchra" & STATUS == "LIVE")
 
 # make a SubsitePlotYear col
 QHI_2019_2022$SubsitePlotYear <- with(QHI_2019_2022, paste0(SUBSITE, PLOT, YEAR))
@@ -57,10 +57,10 @@ all_bind <- rbind(salpuls_new, QHI_2019_2022)
 
 all_bind$SubsitePlot <- with(all_bind, paste0(SUBSITE, PLOT))
 all_bind <- all_bind %>% 
-  mutate(Year_index = I(YEAR - 1998)) 
+  dplyr::mutate(Year_index = I(YEAR - 1998)) 
 
 hist(all_bind$Height) # normal
-range(all_bind$Height) #0 32
+range(all_bind$Height)#0 32
 
 # Keep max value per coordinate of the point framing
 all_bind_new <- all_bind %>%
@@ -68,7 +68,7 @@ all_bind_new <- all_bind %>%
   dplyr::summarise(max_pointfr_height = max(Height))
 
 all_bind_new <- all_bind_new %>% 
-  mutate(Year_index = I(YEAR - 1998)) 
+  dplyr::mutate(Year_index = I(YEAR - 1998)) 
 
 
 # model with ALL data

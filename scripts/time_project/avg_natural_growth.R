@@ -46,6 +46,7 @@ range(shrub_map_project_mean$biomass_per_m2_new) #  45.848 2171.848
 mean_2100_natural <- c(shrub_map_project_mean$biomass_per_m2_new)
 mean(mean_2100_natural)# 274.1203 g/m2
 
+
 shrub_map_2020 <- shrub_map_2020 %>%
   dplyr::rename("biomass_per_m2_new" = "biomass_per_m2")
 mean_2020_natural <- c(shrub_map_2020$biomass_per_m2_new)

@@ -27,7 +27,7 @@ itex_EZ_shrubs_2023 <- read_csv("data/ITEX/itex_EZ_shrubs_2023.csv")
   #mutate(SITE = case_when(SiteSubsite %in% c("QHI:HE", "QHI:KO")~ "QHI", 
        #                   SiteSubsite %in% c("TOOLIK:IMNAVAIT", "TOOLIK:MOIST", "TOOLIK:TUSSOCKGRID")~ "TOOLIK"))
 
-
+# dividing percent cover by 100 to use beta family in models
 itex_EZ_shrubs_2023 <- itex_EZ_shrubs_2023 %>%
   mutate(cover_prop = RelCover/100)
 
@@ -39,10 +39,11 @@ itex_EZ_arctica <- itex_EZ_shrubs_2023 %>%
 itex_EZ_pulchra <- itex_EZ_shrubs_2023 %>%
   filter(SPECIES_NAME == "Salix pulchra")
 
-# calculate mean per year
+# calculate subsite mean per year, cannot do it plot level
 mean <- ddply(itex_EZ_pulchra,.(YEAR, SiteSubsite), summarise,
               mean_cov = mean(cover_prop))
 
+# calculate subsite max per year, cannot do it plot level
 max <- ddply(itex_EZ_pulchra,.(YEAR, SiteSubsite), summarise,
              max_cov = max(cover_prop))
 
@@ -105,13 +106,63 @@ itex_EZ_pulchra$SitePlot<- with(itex_EZ_pulchra, paste0(SITE, PLOT))
 (plot <- ggplot(max) +
     geom_point(aes(x =YEAR , y = max_cov, color= SITE, fill =SITE)))
 
+# MODELLING -----
+# cover over time at different sites
+# Salix pulchra -----
+# overall model 
+pulchra_cover <- brms::brm(cover_prop ~ I(YEAR-1988)+ (I(YEAR-1988)|SiteSubsitePlot),
+                      data = itex_EZ_pulchra, family = "beta", chains = 3,
+                      iter = 5000, warmup = 1000, 
+                      control = list(max_treedepth = 15, adapt_delta = 0.99))
 
-# modelling cover over time -----
+summary(pulchra_cover) 
+plot(pulchra_cover)
+pp_check(pulchra_cover, type = "dens_overlay", nsamples = 100) 
+
+# site max and means
+pulchra_cover_max <- brms::brm(max_cov ~ Year_index * SITE + (1|Year_index),
+                           data = max, family = "beta", chains = 3,
+                           iter = 5000, warmup = 1000, 
+                           control = list(max_treedepth = 15, adapt_delta = 0.99))
+pp_check(pulchra_cover_max, ndraws=100)
+summary(pulchra_cover_max) # 0.001
+# QHI estimate =  0.002518971 
+# toolik = 0.002518971  + 0.016781174  
+# mean of slope both sites= 0.01090955
+
+# max and means
+pulchra_cover_mean <- brms::brm(mean_cov ~ Year_index * SITE + (1|Year_index),
+                               data = mean, family = "beta", chains = 3,
+                               iter = 5000, warmup = 1000, 
+                               control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(pulchra_cover_mean) # mean year estimate for both sites 0.00677882
+pp_check(pulchra_cover_mean, ndraws=100)
+
+# Extracting outputs
+cov_time_pul_fix <- as.data.frame(fixef(pulchra_cover_mean)) # extract fixed eff. slopes 
+cov_time_pul_random <- as.data.frame(ranef(pulchra_cover_mean)) # extract random eff. slopes 
+cov_time_pul_coef <- as.data.frame(coef(pulchra_cover_max, summary = TRUE, robust = FALSE, 
+                                        probs = c(0.025, 0.975))) # extract combined coeff (random and fixed)
+
+cov_time_pul_random$SiteSubsitePlot <- row.names(cov_time_pul_random) # Apply row.names function
+rownames(cov_time_pul_random) <- NULL
+colnames(cov_time_pul_random)[5] <- "sitesubsiteplot_index_year_estimate" 
+colnames(cov_time_pul_random)[6] <- "sitesubsiteplot_index_year_error" 
+colnames(cov_time_pul_random)[7] <- "sitesubsiteplot_index_year_Q_25" 
+colnames(cov_time_pul_random)[8] <- "sitesubsiteplot_index_year_Q_97"
+
+cov_time_pul_random_new <- cov_time_pul_random %>%
+  dplyr::select("SiteSubsitePlot","sitesubsiteplot_index_year_estimate" ,"sitesubsiteplot_index_year_error" ,
+                "sitesubsiteplot_index_year_Q_25" ,"sitesubsiteplot_index_year_Q_97")
+cov_time_pul_random_new$Site <- ifelse(grepl("QHI", cov_time_pul_random_new$SiteSubsitePlot), "QHI",
+                                                      ifelse(grepl("TOOLIK", cov_time_pul_random_new$SiteSubsitePlot), "TOOLIK" , NA))
+view(cov_time_pul_random_new)
 
 # salix arctica -----
 arctica_cover <- brms::brm(cover_prop ~ I(YEAR-1996)+(I(YEAR-1996)|SiteSubsitePlot),
                            data = itex_EZ_arctica, family = gaussian(),
-                          chains = 3,iter = 5000, warmup = 1000, 
+                           chains = 3,iter = 5000, warmup = 1000, 
                            control = list(max_treedepth = 15, adapt_delta = 0.99))
 
 summary(arctica_cover)
@@ -137,56 +188,6 @@ cov_time_arc_random_new <- cov_time_arc_random %>%
 cov_time_arc_random_new$Site <- ifelse(grepl("QHI", cov_time_arc_random_new$SiteSubsitePlot), "QHI",
                                        ifelse(grepl("ANWR", cov_time_arc_random_new$SiteSubsitePlot), "ANWR" , NA))
 view(cov_time_arc_random_new)
-
-# salix pulchra -----
-pulchra_cover <- brms::brm(cover_prop ~ I(YEAR-1988)+ (I(YEAR-1988)|SiteSubsitePlot),
-                      data = itex_EZ_pulchra, family = "beta", chains = 3,
-                      iter = 5000, warmup = 1000, 
-                      control = list(max_treedepth = 15, adapt_delta = 0.99))
-
-summary(pulchra_cover) 
-plot(pulchra_cover)
-pp_check(pulchra_cover, type = "dens_overlay", nsamples = 100) 
-
-# max and means
-pulchra_cover_max <- brms::brm(max_cov ~ Year_index * SITE + (1|Year_index),
-                           data = max, family = "beta", chains = 3,
-                           iter = 5000, warmup = 1000, 
-                           control = list(max_treedepth = 15, adapt_delta = 0.99))
-
-summary(pulchra_cover_max) # 0.001
-# QHI estimate =  0.002518971 
-# toolik = 0.002518971  +0.016781174  
-# mean of slope both sites= 0.01090955
-
-
-# max and means
-pulchra_cover_mean <- brms::brm(mean_cov ~ Year_index * SITE + (1|Year_index),
-                               data = mean, family = "beta", chains = 3,
-                               iter = 5000, warmup = 1000, 
-                               control = list(max_treedepth = 15, adapt_delta = 0.99))
-
-summary(pulchra_cover_mean) # mean year estimate for both sites 0.00677882
-
-# Extracting outputs
-cov_time_pul_fix <- as.data.frame(fixef(pulchra_cover_max)) # extract fixed eff. slopes 
-cov_time_pul_random <- as.data.frame(ranef(pulchra_cover_mean)) # extract random eff. slopes 
-cov_time_pul_coef <- as.data.frame(coef(pulchra_cover_max, summary = TRUE, robust = FALSE, 
-                                        probs = c(0.025, 0.975))) # extract combined coeff (random and fixed)
-
-cov_time_pul_random$SiteSubsitePlot <- row.names(cov_time_pul_random) # Apply row.names function
-rownames(cov_time_pul_random) <- NULL
-colnames(cov_time_pul_random)[5] <- "sitesubsiteplot_index_year_estimate" 
-colnames(cov_time_pul_random)[6] <- "sitesubsiteplot_index_year_error" 
-colnames(cov_time_pul_random)[7] <- "sitesubsiteplot_index_year_Q_25" 
-colnames(cov_time_pul_random)[8] <- "sitesubsiteplot_index_year_Q_97"
-
-cov_time_pul_random_new <- cov_time_pul_random %>%
-  dplyr::select("SiteSubsitePlot","sitesubsiteplot_index_year_estimate" ,"sitesubsiteplot_index_year_error" ,
-                "sitesubsiteplot_index_year_Q_25" ,"sitesubsiteplot_index_year_Q_97")
-cov_time_pul_random_new$Site <- ifelse(grepl("QHI", cov_time_pul_random_new$SiteSubsitePlot), "QHI",
-                                                      ifelse(grepl("TOOLIK", cov_time_pul_random_new$SiteSubsitePlot), "TOOLIK" , NA))
-view(cov_time_pul_random_new)
 
 
 # data visualisation ------
@@ -280,7 +281,7 @@ cov_mean_dat <- cov_mean[[1]]
     ylab("Salix pulchra cover mean \n") +
     xlab("\nYear") +
     ylim(0, 0.8)+
-    # theme_shrub() +
+    theme_shrub() +
     theme(panel.border = element_blank(),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
@@ -299,7 +300,7 @@ cov_mean_dat <- cov_mean[[1]]
     scale_color_brewer(palette = "Dark2") +
     ylab("Salix pulchra cover max\n") +
     xlab("\nYear") +
-    # theme_shrub() +
+    theme_shrub() +
     theme(panel.border = element_blank(),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
