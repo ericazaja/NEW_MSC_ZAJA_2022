@@ -1,7 +1,8 @@
 # WARMING PROJECTIONS: Average natural growth with warming scenario
 
+# NB this below is just the method, not accurate numbers. Calculatins after data
 # STEP 1. Height with warming: 
-# Height over time S. pulchra on QHI: 0.1 cm per year. = 2.4 cm height over 24 years (1999-2022, 24 years) . 
+# Height over time S. pulchra on QHI: 0.34 cm per year. = 8.16 cm height over 24 years (1999-2022, 24 years) . 
 # STEP 2. Cover over time. Multiply by full time period.
 # STEP 3. BIOMASS: Put the height over the full time period and the cover over full time period in the allometric equations, derive biomass. 
 
@@ -15,48 +16,53 @@ coord.chelsa.combo.c.delta.2100.solo <- read.csv("data/coord.chelsa.combo.c.delt
 coord.chelsa.combo.c.biom.2020 <- read.csv("data/coord.chelsa.combo.c.biom.2020.csv")
 
 # HEIGHT and COVER SLOPES:
-# # Height slope  for S pulchra for full time period =  0.34 * 23 years = 7.82
-# Cover slope for S pulchra for full time period = 0.011 * 33 years = 0.363
+# # Height slope  for S pulchra for full time period =  0.34 * 23 years = 7.82 +- 0.04
+# Cover slope for S pulchra for full time period =  0.67 * 33 years = 22.11% +-0.02
 
+# no error: 
 # Salpul allom equation = 
-# Biomass =  (1.1*7.82 +-  5.0 ) + (18.1 *0.363 +-  8.2)
-# add + high error ? 
-# 15.1723 g/m2/degC
+# Biomass =  (1.1*7.82) + (18.1 *22.11)
+(1.1*7.82) + (18.1 *22.11)
+# 408.793 g/m2/degC
+
 
 # when cover is 1 (100%)...
-# Biomass =  (1.1*7.82 +-  5.0 ) + (18.1 *1 +-  8.2)
-# 26.702*80 = 2136.16
+# Biomass =  (1.1*7.82) + (18.1 *100)
+(1.1*7.82) + (18.1 *100)
+# 1818.602
 
 # TEMP SLOPES:
-# QHI = 0.18858300 +0.0610727508 = 0.2496558
-# ANWR = 0.12682429 -0.0006859617 =0.1261383
-# TOOLIK = 0.12712801- 0.0003822406= 0.1267458
-# mean: (0.2496558+0.1261383+0.1267458)/3 = 0.2
-# mean = 0.2 * 20 years = 4 degC over full time period
+# QHI = 0.18858300 +0.0610727508 = 0.2496558+- 0.1062264
+# ANWR = 0.12682429 -0.0006859617 =0.1261383 +- 0.08487509
+# TOOLIK = 0.12712801- 0.0003822406= 0.1267458 +-0.07488695
+# mean: (0.2496558+0.1261383+0.1267458)/3 = 0.1675133
+# mean error:(0.1062264+0.08487509+0.07488695)/3= 0.08866281
+# MEAN SLOPE = 0.1675133 +- 0.08866281
+# mean = 0.1675133 * 20 years = 3.350266 +- 0.08866281 degC over full time period
 
-# biomass/temp over full time = 15.1723/4 =  3.793075 g/degC
+# biomass/temp over full time = 408.793/3.350266 = 122.0181 g/degC
 # 3.793075*80 years? = 303.446
 
 # multiply by biomass increase
 avg_warm <- coord.chelsa.combo.c.delta.2100.solo %>%
   filter(year == 2100) %>% 
-  mutate(biomass_per_m2_2100_solo = biomass_per_m2 + (303.446 *delta.7.solo)) %>%
+  mutate(biomass_per_m2_2100_solo = biomass_per_m2 + (122.0181 *delta.7.solo)) %>%
   dplyr::select(-biomass_per_m2)
 
 c_mean_2100_solo <- c(avg_warm$biomass_per_m2_2100_solo)
-mean(c_mean_2100_solo) #1761.228 g/m2
-range(avg_warm$biomass_per_m2_2100_solo) #  210.5148 2416.6555
+mean(c_mean_2100_solo) #844.6861 g/m2
+range(avg_warm$biomass_per_m2_2100_solo) # 500.0315 2816.3879
 
 c_mean_2100_temp_solo <- c(avg_warm$mean_temp_C)
 mean(c_mean_2100_temp_solo) # 20.17315 C
 
 # %diff
-(1761.228-228.2723)/228.2723
-# 6.71547
-#671.547%
+(844.6861-228.2723)/228.2723
+# 2.700344
+#270%
 
 # times larger
-(1761.228/228.2723)
+(844.6861/228.2723)
 # 7.71547
 
 # temperatre difference
@@ -90,15 +96,15 @@ mean(mean_2020_temp) # 15.12132
 # TRESHOLD MAPS-----
 quant_avg_warm <- quantile(avg_warm_to_plot$biomass_per_m2)
 quant_avg_warm
-#  0%       25%       50%       75%      100% 
-# 0.0000  174.4421 1320.9807 1725.7870 3842.9211 
+# 0%       25%       50%       75%      100% 
+# 0.0000  174.4421  617.4858  805.4790 2816.3879 
 
 
 # setting biomass level thresholds using quantiles
 threshold_avg_warm <- avg_warm_to_plot %>%
   mutate(biomass_level = case_when (biomass_per_m2 < 174.4421     ~ 'Low', # 25% quant.
-                                    biomass_per_m2> 174.4421    & biomass_per_m2 < 1725.7870 ~ 'Medium', # between 25 and 75 
-                                    biomass_per_m2 > 1725.7870 ~ 'High')) # 75%
+                                    biomass_per_m2> 174.4421    & biomass_per_m2 < 805.4790 ~ 'Medium', # between 25 and 75 
+                                    biomass_per_m2 > 805.4790 ~ 'High')) # 75%
 
 # ordering factor levels
 threshold_avg_warm$biomass_level <- factor(threshold_avg_warm$biomass_level,levels=c("Low", "Medium", "High"),
@@ -118,8 +124,8 @@ threshold_avg_warm$biomass_level <- factor(threshold_avg_warm$biomass_level,leve
 
 # binary threshold map: using same tresholds as time maps?
 threshold_avg_warm_bi <- avg_warm_to_plot %>%
-  mutate(biomass_level = case_when (biomass_per_m2 < 2136.16     ~ 'Low', # 75% quant.
-                                    biomass_per_m2 > 2136.16 ~ 'High')) # 75%
+  mutate(biomass_level = case_when (biomass_per_m2 < 1818.602     ~ 'Low', # 75% quant.
+                                    biomass_per_m2 > 1818.602 ~ 'High')) # 75%
 
 # ordering factor levels
 threshold_avg_warm_bi$biomass_level <- factor(threshold_avg_warm_bi$biomass_level,levels=c("Low", "High"),

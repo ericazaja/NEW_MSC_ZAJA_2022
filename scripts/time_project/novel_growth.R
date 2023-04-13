@@ -11,49 +11,49 @@ shrub_map_extract_highest <- read.csv("data/extract_end_highest.csv") # high res
 # Cover: cover over time (script: )
 # → get biomass 
 
-# height slope richardsonii = 1.74 cm/year
-# cover slope richardsonii = 0.66
+# height slope richardsonii = 1.74 cm/year +- 1.071
+# cover slope richardsonii = 66% +- 8%
 # RICHARDSONII FINAL EQUATION: Biomass =  (18.0*height +- 5.1) + (11.9 *cover +-  18.0)
-(18.0*1.74  ) + (11.9 *0.7 ) 
-#  39.65
+(18.0*1.74  ) + (11.9 *66 ) 
+#  816.72
 
 # if cover is 100%
-(18.0*1.74  ) + (11.9 *1) 
-# 43.22
+(18.0*1.74  ) + (11.9 *100) 
+# 1221.32
 
-# height slope pulchra = 1
-# cover slope pulchra = 0.24
+# height slope pulchra = 1 +-  1.05 cm/year
+# cover slope pulchra = 24% +- 7%
 # PULCHRA FINAL EQUATION:  Biomass =  (1.1*height +-  5.0 ) + (18.1 *cover +-  8.2)
-(1.1*1 ) + (18.1 *0.24 )
-#  5.444
+(1.1*1 ) + (18.1 *24 )
+#  435.5
 
 # if cover is 100%
-(1.1*1 ) + (18.1 *1 )
-# 19.2
+(1.1*1 ) + (18.1 *100 )
+# 1811.1
 
 # average biomass for s rich + s pul
-(39.65 +5.444)/2
-# 22.547 g/m2
+(435.5 +816.72)/2
+# 626.11 g/m2
 
 # with cover 100%, average biomass for s rich + s pul
-(43.22 +19.2)/2
-# 31.21 g/m2
-31.21*80
+(1221.32 +1811.1)/2
+# 1516.21 g/m2
+31.21*80 ???
 # 2496.8 threshold?
 
 
 # 2100 projection
 shrub_map_2020 <- shrub_map_extract_highest %>%
-  dplyr::rename("biomass_per_m2" = "pft_agb_deciduousshrub_p50_2020_wgs84")  %>%
-  mutate(year = rep(2020))
+  dplyr::rename("biomass_per_m2"="pft_agb_deciduousshrub_p50_2020_wgs84")%>%
+  dplyr::mutate(year = rep(2020))
 
 shrub_map_project_novel <- shrub_map_2020 %>%
-  dplyr::mutate(biomass_per_m2_new = biomass_per_m2 + (22.547*80))%>%
+  dplyr::mutate(biomass_per_m2_new = biomass_per_m2 + (626.11*80))%>%
   dplyr::select(-biomass_per_m2)%>%
   mutate(year = rep(2100))
 
 mean_2100_novel <- c(shrub_map_project_novel$biomass_per_m2_new)
-mean(mean_2100_novel)# 2032.032 g/m2
+mean(mean_2100_novel)# 50317.07 g/m2
 
 hist(shrub_map_project_novel$biomass_per_m2_new)
 
@@ -61,11 +61,11 @@ shrub_map_2020 <- shrub_map_2020 %>%
   dplyr::rename("biomass_per_m2_new" = "biomass_per_m2")
 
 # % diff
-(2032.032-228.2723)/228.2723
-
+(50317.07-228.2723)/228.2723
+# 21942.56%
 # times larger
-(2032.032/228.2723)
-# 8.90179
+(50317.07/228.2723)
+#  220.4256
 
 # bind data so that I can facet plot
 shrub_novel <- rbind(shrub_map_2020, shrub_map_project_novel)
@@ -86,14 +86,14 @@ shrub_novel <- rbind(shrub_map_2020, shrub_map_project_novel)
 # THRESHOLD MAPS -----
 quantiles_novel <- quantile(shrub_novel$biomass_per_m2_new)
 quantiles_novel
-#  0%       25%       50%       75%      100% 
-# 0.0000  174.4421 1803.7600 1978.2025 3929.7600 
+#    0%        25%        50%        75%       100% 
+# 0.0000   174.4421 26107.4000 50263.2420 52214.8000 
 
 # setting biomass level thresholds using quantiles
 threshold_novel <- shrub_novel %>%
   mutate(biomass_level = case_when (biomass_per_m2_new < 174.4421     ~ 'Low', # 25% quant.
-                                    biomass_per_m2_new> 174.4421    & biomass_per_m2_new < 1978.2025 ~ 'Medium', # between 25 and 75 
-                                    biomass_per_m2_new > 1978.2025 ~ 'High')) # 75%
+                                    biomass_per_m2_new> 174.4421    & biomass_per_m2_new < 50263.2420 ~ 'Medium', # between 25 and 75 
+                                    biomass_per_m2_new > 50263.2420 ~ 'High')) # 75%
 
 # ordering factor levels
 threshold_novel$biomass_level <- factor(threshold_novel$biomass_level,levels=c("Low", "Medium", "High"),
@@ -113,8 +113,8 @@ threshold_novel$biomass_level <- factor(threshold_novel$biomass_level,levels=c("
 
 # binary threshold map
 threshold_novel_bi <- shrub_novel %>%
-  mutate(biomass_level = case_when (biomass_per_m2_new < 2496.8     ~ 'Low', # 75% quant.
-                                    biomass_per_m2_new > 2496.8 ~ 'High')) # 75%
+  mutate(biomass_level = case_when (biomass_per_m2_new < 1516.21     ~ 'Low', # 75% quant.
+                                    biomass_per_m2_new > 1516.21 ~ 'High')) # 75%
 
 # ordering factor levels
 threshold_novel_bi$biomass_level <- factor(threshold_novel_bi$biomass_level,levels=c("Low", "High"),

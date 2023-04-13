@@ -19,17 +19,29 @@ shrub_map_extract_highest <- read.csv("data/extract_end_highest.csv") # high res
 # Multiply the obtained biomass by 80 years and add to existing 2022 biomass
 
 # SLOPES:
-# MEAN Height slope  for S pulchra  = 0.34 cm/year
-# MEAN Cover slope for S pulchra =  0.011 /year
+# MEAN Height slope  for S pulchra  = 0.34 cm/year +- 0.04
+# MEAN Cover slope for S pulchra =  0.67 %/year +- 0.02
 
+# NO error:
 # Put these into the Salpul allometric equation = 
-# Biomass =  (1.1*0.34 +-  5.0 ) + (18.1 *0.011 +-  8.2)
-# add + high error ? 
-# 0.5731 g/m2
+# Biomass =  (1.1*0.34 ) + (18.1 *0.67)
+(1.1*0.34 ) + (18.1 *0.67)
+# 12.501 g/m2
+
+# Positive error:
+# Biomass =  (1.1*0.34 +  5.0 + 0.04) + (18.1 *0.67 +8.2+ 0.02)
+((1.1*0.34) +  5.0 + 0.04) + ((18.1 *0.67) +8.2+ 0.02)
+#25.761g/m2
+
+# Negative error: 
+((1.1*0.34) -  5.0 - 0.04) + ((18.1 *0.67) - 8.2 - 0.02)
+# -0.759 g/m2
 
 # When COVER is 1 (100%) 
-# Biomass =  (1.1*0.34 +-  5.0 ) + (18.1 *1 +-  8.2)
-# 18.474 
+# Biomass =  (1.1*0.34 ) + (18.1 *100)
+(1.1*0.34 ) + (18.1 *100)
+#1810.374 g/m2
+# multuply by 80 or leave?
 # 18.474*80 years = 1477.92 threshold of connectivity 
 
 # 2100 projection
@@ -38,13 +50,13 @@ shrub_map_2020 <- shrub_map_extract_highest %>%
   mutate(year = rep(2020))
 
 shrub_map_project_mean <- shrub_map_2020 %>%
-  dplyr::mutate(biomass_per_m2_new = biomass_per_m2 + (0.5731*80))%>%
+  dplyr::mutate(biomass_per_m2_new = biomass_per_m2 + ( 12.501*80))%>%
   dplyr::select(-biomass_per_m2)%>%
   mutate(year = rep(2100))
 
 range(shrub_map_project_mean$biomass_per_m2_new) #  45.848 2171.848
 mean_2100_natural <- c(shrub_map_project_mean$biomass_per_m2_new)
-mean(mean_2100_natural)# 274.1203 g/m2
+mean(mean_2100_natural)# 1228.352 g/m2
 
 
 shrub_map_2020 <- shrub_map_2020 %>%
@@ -53,12 +65,12 @@ mean_2020_natural <- c(shrub_map_2020$biomass_per_m2_new)
 mean(mean_2020_natural) # 228.2723 g/m2
 
 # %diff 
-(274.1203 -228.2723)/228.2723
-# 0.2008478
+(1228.352 -228.2723)/228.2723
+# 4.381082 or 438%
 
 # how many times bigger
-#274.1203/228.2723
-# 1.200848 times bigger
+1228.352/228.2723
+# 5.381082 times bigger
 
 # bind data so that I can facet plot
 shrub_natural_mean <- rbind(shrub_map_2020, shrub_map_project_mean)
@@ -83,14 +95,14 @@ unique(shrub_natural_mean$year)
 # Find quantiles
 quantiles <- quantile(shrub_natural_mean$biomass_per_m2_new)
 quantiles
-#  0%       25%       50%       75%      100% 
-# 0.0000  114.5488  198.7810  331.7651 2171.8480 
+#0%       25%       50%       75%      100% 
+#0.0000  174.4421 1000.0800 1175.7623 3126.0800 
 
 # setting biomass level thresholds using quantiles
 threshold_avg <- shrub_natural_mean %>%
-  mutate(biomass_level = case_when (biomass_per_m2_new < 114.5488     ~ 'Low', # 25% quant.
-                                    biomass_per_m2_new> 114.5488    & biomass_per_m2_new < 331.7651 ~ 'Medium', # between 25 and 75 
-                                    biomass_per_m2_new > 331.7651 ~ 'High')) # 75%
+  mutate(biomass_level = case_when (biomass_per_m2_new < 174.4421     ~ 'Low', # 25% quant.
+                                    biomass_per_m2_new> 174.4421    & biomass_per_m2_new < 1175.7623 ~ 'Medium', # between 25 and 75 
+                                    biomass_per_m2_new > 1175.7623 ~ 'High')) # 75%
 
 hist(shrub_natural_mean$biomass_per_m2_new)
 
@@ -118,8 +130,8 @@ threshold_avg$biomass_level <- factor(threshold_avg$biomass_level,levels=c("Low"
 
 # binary threshold map
 threshold_avg_2 <- shrub_natural_mean %>%
-  mutate(biomass_level = case_when (biomass_per_m2_new < 1477.92     ~ 'Low', # 75% quant.
-                                    biomass_per_m2_new > 1477.92 ~ 'High')) # 75%
+  mutate(biomass_level = case_when (biomass_per_m2_new < 1810.374     ~ 'Low', # 75% quant.
+                                    biomass_per_m2_new > 1810.374 ~ 'High')) # 75%
 
 # ordering factor levels
 threshold_avg_2$biomass_level <- factor(threshold_avg_2$biomass_level,levels=c("Low", "High"),
