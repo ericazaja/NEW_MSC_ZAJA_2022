@@ -18,6 +18,7 @@ tasmax.2020.5.re <- raster("outputs/CMPI6_rasters/tasmax.2020.5.re.tif")
 tasmax.2020.6.re<- raster("outputs/CMPI6_rasters/tasmax.2020.6.re.tif")
 
 tasmax.2030.1.re <- raster("outputs/CMPI6_rasters/tasmax.2030.1.re.tif")
+
 tasmax.2030.2.re <- raster("outputs/CMPI6_rasters/tasmax.2030.2.re.tif")
 tasmax.2030.3.re <- raster("outputs/CMPI6_rasters/tasmax.2030.3.re.tif")
 tasmax.2030.4.re <- raster("outputs/CMPI6_rasters/tasmax.2030.4.re.tif")
@@ -164,7 +165,7 @@ coord.chelsa.combo.2100 <- left_join(chelsa.extract.2100, coord.df, by = c("ID" 
 # Loading the shrub biomass df
 biomass.df <- shrub_map_extract_highest %>%
   dplyr::select(-ID)%>%
-  rename("ID" = "X", 
+  dplyr::rename("ID" = "X", 
         "biomass_per_m2" = "pft_agb_deciduousshrub_p50_2020_wgs84") %>%
   dplyr::select(ID, biomass_per_m2, cell)
 
@@ -174,20 +175,20 @@ range(biomass.df$biomass_per_m2) # 0 2126
 # Merging biomass df with climate df
 coord.chelsa.combo.a.2020 <- left_join(coord.chelsa.combo.2020, biomass.df, by = c("ID" = "ID")) # only 2020 biomass data
 coord.chelsa.combo.a.2030 <- left_join(coord.chelsa.combo.2030, biomass.df, by = c("ID" = "ID")) # only 2020 biomass data
-coord.chelsa.combo.a.2040 <- left_join(coord.chelsa.combo.2040, biomass.df, by = c("ID" = "ID")) %>% 
-  mutate(biomass_per_m2 = rep(NA)) # remove 2020 biomass data
-coord.chelsa.combo.a.2050 <- left_join(coord.chelsa.combo.2050, biomass.df, by = c("ID" = "ID")) %>% 
-  mutate(biomass_per_m2 = rep(NA))
-coord.chelsa.combo.a.2060 <- left_join(coord.chelsa.combo.2060, biomass.df, by = c("ID" = "ID")) %>%
-  mutate(biomass_per_m2 = rep(NA))
-coord.chelsa.combo.a.2070 <- left_join(coord.chelsa.combo.2070, biomass.df, by = c("ID" = "ID")) %>%
-  mutate(biomass_per_m2 = rep(NA))
-coord.chelsa.combo.a.2080 <- left_join(coord.chelsa.combo.2080, biomass.df, by = c("ID" = "ID")) %>%
-  mutate(biomass_per_m2 = rep(NA))
-coord.chelsa.combo.a.2090 <- left_join(coord.chelsa.combo.2090, biomass.df, by = c("ID" = "ID")) %>%
-  mutate(biomass_per_m2 = rep(NA))
-coord.chelsa.combo.a.2100 <- left_join(coord.chelsa.combo.2100, biomass.df, by = c("ID" = "ID")) %>%
-  mutate(biomass_per_m2 = rep(NA))
+coord.chelsa.combo.a.2040 <- left_join(coord.chelsa.combo.2040, biomass.df, by = c("ID" = "ID"))  
+  #mutate(biomass_per_m2 = rep(NA)) # remove 2020 biomass data?
+coord.chelsa.combo.a.2050 <- left_join(coord.chelsa.combo.2050, biomass.df, by = c("ID" = "ID")) 
+ # mutate(biomass_per_m2 = rep(NA))
+coord.chelsa.combo.a.2060 <- left_join(coord.chelsa.combo.2060, biomass.df, by = c("ID" = "ID")) 
+  #mutate(biomass_per_m2 = rep(NA))
+coord.chelsa.combo.a.2070 <- left_join(coord.chelsa.combo.2070, biomass.df, by = c("ID" = "ID")) 
+  #mutate(biomass_per_m2 = rep(NA))
+coord.chelsa.combo.a.2080 <- left_join(coord.chelsa.combo.2080, biomass.df, by = c("ID" = "ID")) 
+  #mutate(biomass_per_m2 = rep(NA))
+coord.chelsa.combo.a.2090 <- left_join(coord.chelsa.combo.2090, biomass.df, by = c("ID" = "ID")) 
+  #mutate(biomass_per_m2 = rep(NA))
+coord.chelsa.combo.a.2100 <- left_join(coord.chelsa.combo.2100, biomass.df, by = c("ID" = "ID")) 
+  #mutate(biomass_per_m2 = rep(NA))
 
 coord.chelsa.combo.a.2100.solo <- left_join(coord.chelsa.combo.2100, biomass.df, by = c("ID" = "ID"))
 glimpse(coord.chelsa.combo.a.2100.solo)
@@ -269,6 +270,7 @@ coord.chelsa.combo.c.all <- rbind(coord.chelsa.combo.c.2020, coord.chelsa.combo.
                                   coord.chelsa.combo.c.2100)
 
 coord.chelsa.combo.c.all$year <- as.factor(coord.chelsa.combo.c.all$year)
+unique(coord.chelsa.combo.c.all$year)
 
 coord.chelsa.combo.c.all.2020.2100 <- rbind(coord.chelsa.combo.c.2020,coord.chelsa.combo.c.2100.solo)
 
@@ -279,42 +281,42 @@ write.csv(coord.chelsa.combo.c.all.2020.2100, "data/coord.chelsa.combo.c.all.202
 coord.chelsa.combo.c.delta.2030 <- coord.chelsa.combo.c.all %>%
   filter(year %in% c(2020, 2030)) %>%
   group_by(cell) %>%
-  mutate(delta = mean_temp_C[year == 2030] - mean_temp_C[year == 2020])
+  dplyr::mutate(delta = mean_temp_C[year == 2030] - mean_temp_C[year == 2020])
 
 coord.chelsa.combo.c.delta.2040 <- coord.chelsa.combo.c.all %>%
-  filter(year %in% c(2030, 2040)) %>%
+  filter(year %in% c(2020, 2040)) %>%
   group_by(cell) %>%
-  mutate(delta.1 = mean_temp_C[year == 2040] - mean_temp_C[year == 2030])
+  dplyr::mutate(delta.1 = mean_temp_C[year == 2040] - mean_temp_C[year == 2020])
 
 coord.chelsa.combo.c.delta.2050 <- coord.chelsa.combo.c.all %>%
-  filter(year %in% c(2040, 2050)) %>%
+  filter(year %in% c(2020, 2050)) %>%
   group_by(cell) %>%
-  mutate(delta.2 = mean_temp_C[year == 2050] - mean_temp_C[year == 2040])
+  dplyr::mutate(delta.2 = mean_temp_C[year == 2050] - mean_temp_C[year == 2020])
 
 coord.chelsa.combo.c.delta.2060 <- coord.chelsa.combo.c.all %>%
-  filter(year %in% c(2050, 2060)) %>%
+  filter(year %in% c(2020, 2060)) %>%
   group_by(cell) %>%
-  mutate(delta.3 = mean_temp_C[year == 2060] - mean_temp_C[year == 2050])
+  dplyr::mutate(delta.3 = mean_temp_C[year == 2060] - mean_temp_C[year == 2020])
 
 coord.chelsa.combo.c.delta.2070 <- coord.chelsa.combo.c.all %>%
-  filter(year %in% c(2060, 2070)) %>%
+  filter(year %in% c(2020, 2070)) %>%
   group_by(cell) %>%
-  mutate(delta.4 = mean_temp_C[year == 2070] - mean_temp_C[year == 2060])
+  dplyr::mutate(delta.4 = mean_temp_C[year == 2070] - mean_temp_C[year == 2020])
 
 coord.chelsa.combo.c.delta.2080 <- coord.chelsa.combo.c.all %>%
-  filter(year %in% c(2070, 2080)) %>%
+  filter(year %in% c(2020, 2080)) %>%
   group_by(cell) %>%
-  mutate(delta.5 = mean_temp_C[year == 2080] - mean_temp_C[year == 2070])
+  dplyr::mutate(delta.5 = mean_temp_C[year == 2080] - mean_temp_C[year == 2020])
 
 coord.chelsa.combo.c.delta.2090 <- coord.chelsa.combo.c.all %>%
-  filter(year %in% c(2080, 2090)) %>%
+  filter(year %in% c(2020, 2090)) %>%
   group_by(cell) %>%
-  mutate(delta.6 = mean_temp_C[year == 2090] - mean_temp_C[year == 2080])
+  dplyr::mutate(delta.6 = mean_temp_C[year == 2090] - mean_temp_C[year == 2020])
 
 coord.chelsa.combo.c.delta.2100 <- coord.chelsa.combo.c.all %>%
-  filter(year %in% c(2090, 2100)) %>%
+  filter(year %in% c(2020, 2100)) %>%
   group_by(cell) %>%
-  mutate(delta.7 = mean_temp_C[year == 2100] - mean_temp_C[year == 2090])
+  dplyr::mutate(delta.7 = mean_temp_C[year == 2100] - mean_temp_C[year == 2020])
 
 coord.chelsa.combo.c.delta.2100.solo <- coord.chelsa.combo.c.all.2020.2100 %>%
   # filter(year %in% c(2020, 2100)) %>%
@@ -323,6 +325,14 @@ coord.chelsa.combo.c.delta.2100.solo <- coord.chelsa.combo.c.all.2020.2100 %>%
 
 # write.csv(coord.chelsa.combo.c.delta, "data/coord.chelsa.combo.c.delta.1.csv")
 write.csv(coord.chelsa.combo.c.delta.2100.solo, "data/coord.chelsa.combo.c.delta.2100.solo.csv")
+write.csv(coord.chelsa.combo.c.delta.2030, "data/coord.chelsa.combo.c.delta.2030.csv")
+write.csv(coord.chelsa.combo.c.delta.2040, "data/coord.chelsa.combo.c.delta.2040.csv")
+write.csv(coord.chelsa.combo.c.delta.2050, "data/coord.chelsa.combo.c.delta.2050.csv")
+write.csv(coord.chelsa.combo.c.delta.2060, "data/coord.chelsa.combo.c.delta.2060.csv")
+write.csv(coord.chelsa.combo.c.delta.2070, "data/coord.chelsa.combo.c.delta.2070.csv")
+write.csv(coord.chelsa.combo.c.delta.2080, "data/coord.chelsa.combo.c.delta.2080.csv")
+write.csv(coord.chelsa.combo.c.delta.2090, "data/coord.chelsa.combo.c.delta.2090.csv")
+write.csv(coord.chelsa.combo.c.delta.2100, "data/coord.chelsa.combo.c.delta.2100.csv")
 
 #coord.chelsa.combo.c.delta <- coord.chelsa.combo.c.delta %>%
  #  mutate(delta_2 = case_when(year == 2030 ~ delta,
@@ -353,6 +363,7 @@ mean(c_meantemp_2020) # 15.12132
 
 write.csv(coord.chelsa.combo.c.biom.2020, "data/coord.chelsa.combo.c.biom.2020.csv")
 
+# NB ignore below ------
 # July 2030 projection -------
 
 # multiply by biomass increase
