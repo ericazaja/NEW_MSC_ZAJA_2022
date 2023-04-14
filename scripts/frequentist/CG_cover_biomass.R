@@ -40,7 +40,7 @@ view(all_CG_growth)
 # COVER ------
 # calculate cover based on widths
 all_CG_growth_cover <- all_CG_growth %>%
-  mutate(cover = (Width_cm*Width_2_cm)/10000)%>%
+  mutate(cover = (Width_cm*Width_2_cm)/10000)%>% # to get in m2 
   mutate(cover_percent = cover *100) %>%
   filter(cover_percent <=100) # setting max to 100% cover 
 

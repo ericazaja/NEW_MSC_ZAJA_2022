@@ -112,9 +112,9 @@ all_bind_new_max <- all_bind_new_max %>%
 
 # quick plot
 # raw data 
-(pulchra_height_plot <- new_bind_mean %>%
+(pulchra_height_plot <- all_bind_new_mean %>%
     ggplot(aes(x = YEAR, y = mean_height)) +
-    geom_point(data = new_bind_mean) +
+    geom_point(data = all_bind_new_mean) +
     geom_smooth(method = "lm") +
     scale_fill_brewer(palette = "Set2") +
     scale_color_brewer(palette = "Dark2") +
@@ -123,7 +123,8 @@ all_bind_new_max <- all_bind_new_max %>%
 
 
 # model with plot mean data
-MEAN <- brms::brm(mean_height ~ Year_index + (Year_index),
+# using trunc to  so that the predictions will never give you a value over 160cm (the max pulchra height)
+MEAN <- brms::brm(mean_height|trunc(lb = 0, ub = 160) ~ Year_index + (Year_index), 
                             data = all_bind_new_mean,  family = gaussian(), chains = 3,
                             iter = 5000, warmup = 1000, 
                             control = list(max_treedepth = 15, adapt_delta = 0.99))
@@ -148,7 +149,7 @@ all_bind_mean_dat <- all_bind_mean[[1]]
     theme_classic())
 
 # model with plot max data
-MAX <- brms::brm(max_height ~ Year_index + (Year_index),
+MAX <- brms::brm(max_height|trunc(lb = 0, ub = 160) ~ Year_index + (Year_index),
                   data = all_bind_new_max,  family = gaussian(), chains = 3,
                   iter = 5000, warmup = 1000, 
                   control = list(max_treedepth = 15, adapt_delta = 0.99))

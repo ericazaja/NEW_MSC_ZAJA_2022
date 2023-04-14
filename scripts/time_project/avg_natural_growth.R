@@ -48,6 +48,7 @@ shrub_map_extract_highest <- read.csv("data/extract_end_highest.csv") # high res
 shrub_map_2020 <- shrub_map_extract_highest %>%
   dplyr::rename("biomass_per_m2" = "pft_agb_deciduousshrub_p50_2020_wgs84")%>%
   mutate(year = rep(2020))
+#%>% dplyr::mutate(biomass_per_km2 = biomass_per_m2/1000000)
 
 shrub_map_project_mean <- shrub_map_2020 %>%
   dplyr::mutate(biomass_per_m2_new = biomass_per_m2 + ( 12.501*80))%>%

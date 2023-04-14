@@ -34,6 +34,7 @@ shrub_map_extract_highest <- read.csv("data/extract_end_highest.csv") # high res
 # average biomass for s rich + s pul
 (435.5 +816.72)/2
 # 626.11 g/m2
+#0.00062611 g/km2
 
 # with cover 100%, average biomass for s rich + s pul
 (1221.32 +1811.1)/2
@@ -44,13 +45,13 @@ shrub_map_extract_highest <- read.csv("data/extract_end_highest.csv") # high res
 
 # 2100 projection
 shrub_map_2020 <- shrub_map_extract_highest %>%
-  dplyr::rename("biomass_per_m2"="pft_agb_deciduousshrub_p50_2020_wgs84")%>%
-  dplyr::mutate(year = rep(2020))
+dplyr::rename("biomass_per_m2" = "pft_agb_deciduousshrub_p50_2020_wgs84")%>%
+mutate(year = rep(2020)) 
 
 shrub_map_project_novel <- shrub_map_2020 %>%
-  dplyr::mutate(biomass_per_m2_new = biomass_per_m2 + (626.11*80))%>%
+  dplyr::mutate(biomass_per_m2_new = biomass_per_m2 + (626.11*5))%>%
   dplyr::select(-biomass_per_m2)%>%
-  mutate(year = rep(2100))
+  mutate(year = rep(2025))
 
 mean_2100_novel <- c(shrub_map_project_novel$biomass_per_m2_new)
 mean(mean_2100_novel)# 50317.07 g/m2
@@ -61,11 +62,11 @@ shrub_map_2020 <- shrub_map_2020 %>%
   dplyr::rename("biomass_per_m2_new" = "biomass_per_m2")
 
 # % diff
-(50317.07-228.2723)/228.2723
+(3358.822-228.2723)/228.2723
 # 21942.56%
 # times larger
-(50317.07/228.2723)
-#  220.4256
+(3358.822/228.2723)
+#  14.7141 times larger 
 
 # bind data so that I can facet plot
 shrub_novel <- rbind(shrub_map_2020, shrub_map_project_novel)
@@ -87,13 +88,13 @@ shrub_novel <- rbind(shrub_map_2020, shrub_map_project_novel)
 quantiles_novel <- quantile(shrub_novel$biomass_per_m2_new)
 quantiles_novel
 #    0%        25%        50%        75%       100% 
-# 0.0000   174.4421 26107.4000 50263.2420 52214.8000 
+#  0.0000  174.4421 2628.2750 3304.9920 5256.5500 
 
 # setting biomass level thresholds using quantiles
 threshold_novel <- shrub_novel %>%
   mutate(biomass_level = case_when (biomass_per_m2_new < 174.4421     ~ 'Low', # 25% quant.
-                                    biomass_per_m2_new> 174.4421    & biomass_per_m2_new < 50263.2420 ~ 'Medium', # between 25 and 75 
-                                    biomass_per_m2_new > 50263.2420 ~ 'High')) # 75%
+                                    biomass_per_m2_new> 174.4421    & biomass_per_m2_new < 3304.9920 ~ 'Medium', # between 25 and 75 
+                                    biomass_per_m2_new > 3304.9920 ~ 'High')) # 75%
 
 # ordering factor levels
 threshold_novel$biomass_level <- factor(threshold_novel$biomass_level,levels=c("Low", "Medium", "High"),
@@ -113,8 +114,8 @@ threshold_novel$biomass_level <- factor(threshold_novel$biomass_level,levels=c("
 
 # binary threshold map
 threshold_novel_bi <- shrub_novel %>%
-  mutate(biomass_level = case_when (biomass_per_m2_new < 1516.21     ~ 'Low', # 75% quant.
-                                    biomass_per_m2_new > 1516.21 ~ 'High')) # 75%
+  mutate(biomass_level = case_when (biomass_per_m2_new < 3304.9920     ~ 'Low', # 
+                                    biomass_per_m2_new > 3304.9920 ~ 'High')) #
 
 # ordering factor levels
 threshold_novel_bi$biomass_level <- factor(threshold_novel_bi$biomass_level,levels=c("Low", "High"),

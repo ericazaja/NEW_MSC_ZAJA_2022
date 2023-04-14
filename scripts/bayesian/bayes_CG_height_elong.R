@@ -39,7 +39,8 @@ all_CG_growth_pul_south <- all_CG_growth_pul %>%
   filter(population == "Southern")
 
 all_CG_growth_arc_south <- all_CG_growth_arc %>%
-  filter(population == "Southern")
+  filter(population == "Southern") %>%
+  filter(Canopy_Height_cm>=0)
 
 # MODELLING 
 # 1.STEM ELONG over time ------
@@ -113,7 +114,8 @@ height_rich <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population+(1|Year),
                          control = list(max_treedepth = 15, adapt_delta = 0.99))
 
 # only southern random slopes
-height_rich_south <- brms::brm(log(Canopy_Height_cm) ~ Sample_age+(Sample_age|SampleID_standard),
+# truncating to max richardsonii height from usda.gov (450cm, log(450)=6.109)
+height_rich_south <- brms::brm(log(Canopy_Height_cm)|trunc(lb = 0, ub = 6.109248) ~ Sample_age+(Sample_age|SampleID_standard),
                          data = all_CG_growth_ric_south,  family = gaussian(), chains = 3,
                          iter = 5000, warmup = 1000, 
                          control = list(max_treedepth = 15, adapt_delta = 0.99))
@@ -131,7 +133,8 @@ height_pul <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population+(1|Year),
                         control = list(max_treedepth = 15, adapt_delta = 0.99))
 
 # only southern
-height_pul_south <- brms::brm(log(Canopy_Height_cm) ~ Sample_age+(Sample_age|SampleID_standard),
+# truncating to max height of pulchra 160 cm = log(160 )
+height_pul_south <- brms::brm(log(Canopy_Height_cm) |trunc(lb = 0, ub =5.075174) ~ Sample_age+(Sample_age|SampleID_standard),
                                data = all_CG_growth_pul_south,  family = gaussian(), chains = 3,
                                iter = 5000, warmup = 1000, 
                                control = list(max_treedepth = 15, adapt_delta = 0.99))
@@ -151,7 +154,8 @@ plot(height_arc)
 pp_check(height_arc, type = "dens_overlay", nsamples = 100) 
 
 # only southern
-height_arc_south <- brms::brm(log(Canopy_Height_cm) ~ Sample_age+(1|Year),
+# truncarte to max height 23 cm, log(23)= 3.135494, -1 lower bound because some small values when logged give negative number eg log(0.5)
+height_arc_south <- brms::brm(log(Canopy_Height_cm)|trunc(lb = -1, ub =3.135494) ~ Sample_age+(Sample_age|SampleID_standard),
                               data = all_CG_growth_arc_south,  family = gaussian(), chains = 3,
                               iter = 5000, warmup = 1000, 
                               control = list(max_treedepth = 15, adapt_delta = 0.99))
@@ -163,7 +167,7 @@ pp_check(height_arc_south, type = "dens_overlay", ndraws = 100)
 # DATA VISUALISATION -------
 # 1. HEIGHT -----
 # Salix richardsonii ------
-rich_height_1 <- (conditional_effects(height_rich))
+rich_height_1 <- (conditional_effects(height_rich_south))
 rich_height_data <- rich_height_1[[1]]
 rich_height_data_2 <- rich_height_1[[2]]
 
@@ -183,7 +187,7 @@ rich_height_data_2 <- rich_height_1[[2]]
     scale_fill_viridis_d(begin = 0.1, end = 0.95) +
     theme_shrub())
 
-# this works well (but need to remove year from model)
+# this works well 
 (rich_south_heights_plot_new <- all_CG_growth_ric_south %>%
     group_by(population) %>%
     add_predicted_draws(height_rich_south, allow_new_levels = TRUE) %>%
