@@ -39,8 +39,6 @@ shrub_map_extract_highest <- read.csv("data/extract_end_highest.csv") # high res
 # with cover 100%, average biomass for s rich + s pul
 (1221.32 +1811.1)/2
 # 1516.21 g/m2
-31.21*80 ???
-# 2496.8 threshold?
 
 
 # 2030 projection
@@ -48,10 +46,20 @@ shrub_map_2020 <- shrub_map_extract_highest %>%
 dplyr::rename("biomass_per_m2" = "pft_agb_deciduousshrub_p50_2020_wgs84")%>%
 mutate(year = rep(2020)) 
 
-shrub_map_project_novel <- shrub_map_2020 %>%
+shrub_map_project_novel_2050 <- shrub_map_2020 %>%
   dplyr::mutate(biomass_per_m2_new = biomass_per_m2 + (626.11*30))%>%
   dplyr::select(-biomass_per_m2)%>%
   mutate(year = rep(2050))
+
+shrub_map_project_novel_2030 <- shrub_map_2020 %>%
+  dplyr::mutate(biomass_per_m2_new = biomass_per_m2 + (626.11*10))%>%
+  dplyr::select(-biomass_per_m2)%>%
+  mutate(year = rep(2030))
+
+shrub_map_project_novel_2100 <- shrub_map_2020 %>%
+  dplyr::mutate(biomass_per_m2_new = biomass_per_m2 + (626.11*80))%>%
+  dplyr::select(-biomass_per_m2)%>%
+  mutate(year = rep(2100))
 
 mean_2030_novel <- c(shrub_map_project_novel$biomass_per_m2_new)
 mean(mean_2030_novel)# 6489.372 g/m2
@@ -73,8 +81,9 @@ shrub_map_2020 <- shrub_map_2020 %>%
 
 # bind data so that I can facet plot
 shrub_novel <- rbind(shrub_map_2020, shrub_map_project_novel)
+shrub_novel_all <- rbind(shrub_map_2020, shrub_map_project_novel_2030,shrub_map_project_novel_2050, shrub_map_project_novel_2100)
 
-(raster_test_novel <- ggplot(shrub_novel) + 
+(raster_test_novel <- ggplot(shrub_novel_all) + 
     geom_tile(aes(x=x,y=y,fill=(biomass_per_m2_new))) + 
     facet_wrap(~year, nrow = 1) +
     #scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
@@ -89,9 +98,13 @@ shrub_novel <- rbind(shrub_map_2020, shrub_map_project_novel)
 
 # THRESHOLD MAPS -----
 quantiles_novel <- quantile(shrub_novel$biomass_per_m2_new)
+quantiles_novel_all <- quantile(shrub_novel_all$biomass_per_m2_new)
+
 quantiles_novel
+quantiles_novel_all
 #    0%        25%        50%        75%       100% 
 #  0.0000  174.4421 2628.2750 3304.9920 5256.5500 
+#  0.000  5227.325 13585.200 28204.175 52214.800 
 
 # setting biomass level thresholds using quantiles
 threshold_novel <- shrub_novel %>%
@@ -99,12 +112,20 @@ threshold_novel <- shrub_novel %>%
                                     biomass_per_m2_new> 174.4421    & biomass_per_m2_new < 18957.7420 ~ 'Medium', # between 25 and 75 
                                     biomass_per_m2_new > 18957.7420 ~ 'High')) # 75%
 
+threshold_novel_all <- shrub_novel_all %>%
+  mutate(biomass_level = case_when (biomass_per_m2_new < 5227.325     ~ 'Low', # 25% quant.
+                                    biomass_per_m2_new> 5227.325    & biomass_per_m2_new < 28204.175 ~ 'Medium', # between 25 and 75 
+                                    biomass_per_m2_new > 28204.175 ~ 'High')) # 75%
+
 # ordering factor levels
 threshold_novel$biomass_level <- factor(threshold_novel$biomass_level,levels=c("Low", "Medium", "High"),
                                       labels = c("Low", "Medium", "High"),
                                       ordered = T)
 
-(threshold_novel_levels <- ggplot(threshold_novel) + 
+threshold_novel_all$biomass_level <- factor(threshold_novel_all$biomass_level,levels=c("Low", "Medium", "High"),
+                                        labels = c("Low", "Medium", "High"),
+                                        ordered = T)
+(threshold_novel_levels <- ggplot(threshold_novel_all) + 
     geom_tile(aes(x=x,y=y,fill=biomass_level)) + 
     facet_wrap(~year, nrow = 1) +
     scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
@@ -120,12 +141,19 @@ threshold_novel_bi <- shrub_novel %>%
   mutate(biomass_level = case_when (biomass_per_m2_new < 18957.7420     ~ 'Low', # 
                                     biomass_per_m2_new > 18957.7420 ~ 'High')) #
 
+threshold_novel_bi_all <- shrub_novel_all %>%
+  mutate(biomass_level = case_when (biomass_per_m2_new < 28204.175     ~ 'Low', # 
+                                    biomass_per_m2_new > 28204.175 ~ 'High')) #
+
 # ordering factor levels
 threshold_novel_bi$biomass_level <- factor(threshold_novel_bi$biomass_level,levels=c("Low", "High"),
                                         labels = c("Low", "High"),
                                         ordered = T)
+threshold_novel_bi_all$biomass_level <- factor(threshold_novel_bi_all$biomass_level,levels=c("Low", "High"),
+                                           labels = c("Low", "High"),
+                                           ordered = T)
 
-(treshold_novel_bi <- ggplot(threshold_novel_bi) + 
+(treshold_novel_bi <- ggplot(threshold_novel_bi_all) + 
     geom_tile(aes(x=x,y=y,fill=biomass_level)) +
     facet_wrap(~year, nrow = 1) +
     scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#009E73")) +
