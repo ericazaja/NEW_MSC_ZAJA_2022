@@ -34,7 +34,8 @@ shrub_map_2020 <- shrub_map_extract_highest %>%
 shrub_map_project_max <- shrub_map_2020 %>%
   mutate(biomass_per_m2_new = biomass_per_m2 + ( 21.404*80))%>%
   dplyr::select(-biomass_per_m2)%>%
-  mutate(year = rep(2100))
+  mutate(year = rep("2100_max"))
+
 mean_2100_natural_max <- c(shrub_map_project_max$biomass_per_m2_new)
 mean(mean_2100_natural_max)# 1940.592 g/m2
 

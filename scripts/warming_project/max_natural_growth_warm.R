@@ -24,7 +24,6 @@ coord.chelsa.combo.c.delta.2020 <- read.csv("data/coord.chelsa.combo.c.biom.2020
 
 # biomass/temp over full time = 698.632/3.350266 = 208.5303g/degC
 
-# 6.070075*80 = 485.606 ??
 
 # multiply by biomass increase
 max_warm <- coord.chelsa.combo.c.delta.2100.solo %>%

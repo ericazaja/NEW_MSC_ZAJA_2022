@@ -40,8 +40,7 @@ coord.chelsa.combo.c.biom.2020 <- read.csv("data/coord.chelsa.combo.c.biom.2020.
 # MEAN SLOPE = 0.1675133 +- 0.08866281
 # mean = 0.1675133 * 20 years = 3.350266 +- 0.08866281 degC over full time period
 
-# biomass/temp over full time = 408.793/3.350266 = 122.0181 g/degC
-# 3.793075*80 years? = 303.446
+# biomass/temp over full time = 408.793/3.350266 = 122.0181 g/m2/degC
 
 # multiply by biomass increase
 avg_warm <- coord.chelsa.combo.c.delta.2100.solo %>%
