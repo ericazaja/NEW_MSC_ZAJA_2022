@@ -17,7 +17,7 @@ coord.chelsa.combo.c.biom.2020 <- read.csv("data/coord.chelsa.combo.c.biom.2020.
 
 # HEIGHT and COVER SLOPES:
 # # Height slope  for S pulchra for full time period =  0.34 * 23 years = 7.82 +- 0.04
-# Cover slope for S pulchra for full time period =  0.67 * 23 years =15.41 % +-0.02
+# Cover slope for S pulchra for full time period =  0.67% * 23 years =15.41 % +-0.02
 
 # no error: 
 # Salpul allom equation = 
@@ -26,10 +26,10 @@ coord.chelsa.combo.c.biom.2020 <- read.csv("data/coord.chelsa.combo.c.biom.2020.
 # 287.523 g/m2/degC
 
 
-# when cover is 1 (100%)...
+# when cover is 100 and max height avg pulchra 129cm
 # Biomass =  (1.1*7.82) + (18.1 *100)
-(1.1*7.82) + (18.1 *100)
-# 1818.602
+(1.1*129) + (18.1 *100)
+# 1951.9
 
 # TEMP SLOPES:
 # QHI = 0.18858300 +0.0610727508 = 0.2496558+- 0.1062264

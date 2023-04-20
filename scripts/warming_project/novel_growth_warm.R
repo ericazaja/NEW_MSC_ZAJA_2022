@@ -17,50 +17,50 @@ coord.chelsa.combo.c.delta.2050 <- read.csv("data/coord.chelsa.combo.c.delta.205
 (18.0*15.66 ) + (11.9 *5.94 )
 #  352.566 g/m2
 
-# height slope pulchra = 1 --> 1*9= 9
-# cover slope pulchra = 0.24 --> 0.24*9 =2.16
-# PULCHRA FINAL EQUATION:  Biomass =  (1.1*9 +-  5.0 ) + (18.1 *2.16 +-  8.2)
-(1.1*9  ) + (18.1 *2.16 )# 48.996
+# times by 23 to keep years consistent?? 
+# height slope pulchra = 1 --> 1*23= 23
+# cover slope pulchra = 0.24 --> 24%*23 =552
+# PULCHRA FINAL EQUATION:  Biomass =  (1.1*23 +-  5.0 ) + (18.1 *5.52 +-  8.2)
+(1.1*23  ) + (18.1 *552)
+# 10016.5
 
 # Mean
 (352.566+48.996)/2
 #200.781
 
-# Biomass over 9 year period divided by the 6.4 diference in temp beterrn KP and CG
-200.781/6.4
-# 31.37203 g/m2/degC
+# Biomass over 23 year period divided by the 6.4 diference in temp beterrn KP and CG
+10016.5/6.4
+#  1565.078 g/m2/degC
 
-# 31.37203*80
-# 2509.762
 
 # multiply by biomass increase
 novel_warm_2100 <- coord.chelsa.combo.c.delta.2100.solo %>%
   filter(year == 2100) %>% 
-  mutate(biomass_per_m2_2100_solo = biomass_per_m2 + (2509.762*delta.7.solo)) %>%
+  mutate(biomass_per_m2_2100_solo = biomass_per_m2 + (1565.078*delta.7.solo)) %>%
   dplyr::select(-biomass_per_m2)
 
 c_mean_2100 <- c(novel_warm_2100$biomass_per_m2_2100_solo)
-mean(c_mean_2100)  # 12907.15
-range(novel_warm$biomass_per_m2_2100_solo) # 10285.03 18640.79
+mean(c_mean_2100)  #8134.769
+range(novel_warm_2100$biomass_per_m2_2100_solo) # 6413.707 11624.328
 
 # 2030, multiply by biomass increase
 novel_warm_2030 <- coord.chelsa.combo.c.delta.2030 %>%
   filter(year == 2030) %>% 
-  mutate(biomass_per_m2_2030 = biomass_per_m2 + (2509.762*delta)) %>%
+  mutate(biomass_per_m2_2030 = biomass_per_m2 + (1565.078*delta)) %>%
   dplyr::select(-biomass_per_m2)
 
 c_mean_2030 <- c(novel_warm_2030$biomass_per_m2_2030)
-mean(c_mean_2030) #1460.994 g/m2
+mean(c_mean_2030) # 996.9929 g/m2
 range(novel_warm_2030$biomass_per_m2_2030) # -247.4458 4658.8445
 
 # 2050
 novel_warm_2050 <- coord.chelsa.combo.c.delta.2050 %>%
   filter(year == 2050) %>% 
-  mutate(biomass_per_m2_2050 = biomass_per_m2 + (2509.762*delta.2)) %>%
+  mutate(biomass_per_m2_2050 = biomass_per_m2 + (1565.078*delta.2)) %>%
   dplyr::select(-biomass_per_m2)
 
 c_mean_2050 <- c(novel_warm_2050$biomass_per_m2_2050)
-mean(c_mean_2050) #3496.323 g/m2
+mean(c_mean_2050) #2266.216 g/m2
 range(novel_warm_2050$biomass_per_m2_2050) #  313.9614 6095.8091
 
 c_mean_2100_temp_solo <- c(novel_warm$mean_temp_C)
@@ -127,6 +127,7 @@ quant_novel_warm_all
 # -247.4458  166.2585  536.7945 1425.6429 4658.8445 
 # 0.0000  174.4421  998.2743 3535.3238 6095.8091 
 #  -247.4458   535.5691  2402.6422  7143.1150 18640.7937 
+# -154.1138   466.2626  1579.7166  5042.9683 11624.3278 
 
 # setting biomass level thresholds using quantiles
 threshold_novel_warm <- novel_warm_to_plot %>%
@@ -145,9 +146,9 @@ threshold_novel_warm_2050 <- novel_warm_to_plot_2050 %>%
                                     biomass_per_m2 > 3535.3238 ~ 'High')) # 75%
 
 threshold_novel_warm_all <- novel_warm_to_plot_all %>%
-  mutate(biomass_level = case_when (biomass_per_m2 < 535.5691     ~ 'Low', # 25% quant.
-                                    biomass_per_m2> 535.5691    & biomass_per_m2 < 7143.1150 ~ 'Medium', # between 25 and 75 
-                                    biomass_per_m2 > 7143.1150 ~ 'High')) # 75%
+  mutate(biomass_level = case_when (biomass_per_m2 < 466.2626     ~ 'Low', # 25% quant.
+                                    biomass_per_m2> 466.2626    & biomass_per_m2 < 5042.9683 ~ 'Medium', # between 25 and 75 
+                                    biomass_per_m2 > 5042.9683 ~ 'High')) # 75%
 
 # ordering factor levels
 threshold_novel_warm$biomass_level <- factor(threshold_novel_warm$biomass_level,levels=c("Low", "Medium", "High"),
@@ -192,8 +193,8 @@ threshold_novel_warm_bi_2050 <- novel_warm_to_plot_2050 %>%
                                     biomass_per_m2 > 1425.6429 ~ 'High')) # 75%
 
 threshold_novel_warm_bi_all <- novel_warm_to_plot_all %>%
-  mutate(biomass_level = case_when (biomass_per_m2 < 7143.1150     ~ 'Low', # 75% quant.
-                                    biomass_per_m2 > 7143.1150 ~ 'High')) # 75%
+  mutate(biomass_level = case_when (biomass_per_m2 < 1951.9     ~ 'Low', # 75% quant.
+                                    biomass_per_m2 > 1951.9 ~ 'High')) # 75%
 
 # ordering factor levels
 threshold_novel_bi$biomass_level <- factor(threshold_novel_bi$biomass_level,levels=c("Low", "High"),

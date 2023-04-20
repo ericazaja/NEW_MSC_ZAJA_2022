@@ -37,11 +37,10 @@ shrub_map_extract_highest <- read.csv("data/extract_end_highest.csv") # high res
 ((1.1*0.34) -  5.0 - 0.04) + ((18.1 *0.67) - 8.2 - 0.02)
 # -0.759 g/m2
 
-# When COVER is 1 (100%) 
-# Biomass =  (1.1*0.34 ) + (18.1 *100)
-(1.1*0.34 ) + (18.1 *100)
-#1810.374 g/m2
-# multuply by 80 or leave?
+# When COVER is 100%  and height is max value 129 cm
+# Biomass =  (1.1*129 ) + (18.1 *100)
+(1.1*129) + (18.1 *100)
+#1951.9 g/m2
 
 # 2100 projection
 shrub_map_2020 <- shrub_map_extract_highest %>%
@@ -145,8 +144,8 @@ threshold_avg_2 <- shrub_natural_mean %>%
                                     biomass_per_m2_new > 1810.374 ~ 'High')) # 75%
 
 threshold_avg_3 <- shrub_natural_mean_max %>%
-  mutate(biomass_level = case_when (biomass_per_m2_new < 1810     ~ 'Low', # 75% quant.
-                                    biomass_per_m2_new > 1810 ~ 'High')) # 75%
+  mutate(biomass_level = case_when (biomass_per_m2_new < 1951.9     ~ 'Low', # 75% quant.
+                                    biomass_per_m2_new > 1951.9 ~ 'High')) # 75%
 
 # ordering factor levels
 threshold_avg_2$biomass_level <- factor(threshold_avg_2$biomass_level,levels=c("Low", "High"),

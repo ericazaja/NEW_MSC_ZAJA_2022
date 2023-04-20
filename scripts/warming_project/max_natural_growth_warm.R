@@ -16,8 +16,8 @@ coord.chelsa.combo.c.delta.2020 <- read.csv("data/coord.chelsa.combo.c.biom.2020
 # 492.292
 
 # if cover is 100
-(1.1*16.1 ) + (18.1 *100 )
-# 1827.71
+(1.1*129) + (18.1 *100)
+# 1951.9
 
 # TEMP SLOPES:
 # mean = 3.350266 over full time period
@@ -52,14 +52,14 @@ max_warm_bind <- max_warm %>%
 max_warm_bind$year <- as.factor(max_warm_bind$year)
 coord.chelsa.combo.c.biom.2020$year <- as.factor(coord.chelsa.combo.c.biom.2020$year)
 max_warm_to_plot <- rbind(coord.chelsa.combo.c.biom.2020, max_warm_bind)
-mean_max_warm_to_plot <- rbind(coord.chelsa.combo.c.biom.2020, avg_warm_bind, max_warm_bind)
+mean_max_warm_to_plot <- rbind(coord.chelsa.combo.c.biom.2020, avg_warm_bind, max_warm_bind, novel_warm_bind)
 
 # plotting facet biomass (yellow-green)
 (max_test_temp <- ggplot(mean_max_warm_to_plot) + 
     geom_tile(aes(x=x,y=y,fill=(biomass_per_m2))) + 
     facet_wrap(~year, nrow = 1) +
     #scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
-    scale_fill_gradient(name = "Shrub biomass g/m2",high = "#013220", low = "lightyellow1",  na.value="white")+
+    scale_fill_gradient(name = "Shrub biomass g/m2",high = "#013220", low = "yellow1",  na.value="white")+
     coord_quickmap()+
     theme_shrub() +  
     theme(axis.text.x  = element_text(vjust=0.5, size=10, colour = "black", angle = 45)) +
@@ -113,12 +113,22 @@ threshold_max_warm_bi <- max_warm_to_plot %>%
   mutate(biomass_level = case_when (biomass_per_m2 < 1827.71     ~ 'Low', # 75% quant.
                                     biomass_per_m2 > 1827.71 ~ 'High')) # 75%
 
+# binary threshold map
+threshold_maxmean_warm_bi <- mean_max_warm_to_plot %>%
+  mutate(biomass_level = case_when (biomass_per_m2 < 1951.9     ~ 'Low', # 75% quant.
+                                    biomass_per_m2 > 1951.9 ~ 'High')) # 75%
+
 # ordering factor levels
 threshold_max_warm_bi$biomass_level <- factor(threshold_max_warm_bi$biomass_level,levels=c("Low", "High"),
                                               labels = c("Low", "High"),
                                               ordered = T)
 
-(treshold_max_bi <- ggplot(threshold_max_warm_bi) + 
+# ordering factor levels
+threshold_maxmean_warm_bi$biomass_level <- factor(threshold_maxmean_warm_bi$biomass_level,levels=c("Low", "High"),
+                                              labels = c("Low", "High"),
+                                              ordered = T)
+
+(treshold_maxmean_bi <- ggplot(threshold_maxmean_warm_bi) + 
     geom_tile(aes(x=x,y=y,fill=biomass_level)) +
     facet_wrap(~year, nrow = 1) +
     scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#009E73")) +
