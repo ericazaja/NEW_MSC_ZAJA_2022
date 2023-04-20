@@ -17,13 +17,13 @@ coord.chelsa.combo.c.biom.2020 <- read.csv("data/coord.chelsa.combo.c.biom.2020.
 
 # HEIGHT and COVER SLOPES:
 # # Height slope  for S pulchra for full time period =  0.34 * 23 years = 7.82 +- 0.04
-# Cover slope for S pulchra for full time period =  0.67 * 33 years = 22.11% +-0.02
+# Cover slope for S pulchra for full time period =  0.67 * 23 years =15.41 % +-0.02
 
 # no error: 
 # Salpul allom equation = 
-# Biomass =  (1.1*7.82) + (18.1 *22.11)
-(1.1*7.82) + (18.1 *22.11)
-# 408.793 g/m2/degC
+# Biomass =  (1.1*7.82) + (18.1 *15.41)
+(1.1*7.82) + (18.1 *15.41)
+# 287.523 g/m2/degC
 
 
 # when cover is 1 (100%)...
@@ -40,29 +40,29 @@ coord.chelsa.combo.c.biom.2020 <- read.csv("data/coord.chelsa.combo.c.biom.2020.
 # MEAN SLOPE = 0.1675133 +- 0.08866281
 # mean = 0.1675133 * 20 years = 3.350266 +- 0.08866281 degC over full time period
 
-# biomass/temp over full time = 408.793/3.350266 = 122.0181 g/m2/degC
+# biomass/temp over full time = 287.523/3.350266 = 85.82095 g/m2/degC
 
 # multiply by biomass increase
 avg_warm <- coord.chelsa.combo.c.delta.2100.solo %>%
   filter(year == 2100) %>% 
-  mutate(biomass_per_m2_2100_solo = biomass_per_m2 + (122.0181 *delta.7.solo)) %>%
+  mutate(biomass_per_m2_2100_solo = biomass_per_m2 + (85.82095 *delta.7.solo)) %>%
   dplyr::select(-biomass_per_m2)
 
 c_mean_2100_solo <- c(avg_warm$biomass_per_m2_2100_solo)
-mean(c_mean_2100_solo) #844.6861 g/m2
-range(avg_warm$biomass_per_m2_2100_solo) # 500.0315 2816.3879
+mean(c_mean_2100_solo) #661.8245 g/m2
+range(avg_warm$biomass_per_m2_2100_solo) # 351.6952 2611.5816
 
 c_mean_2100_temp_solo <- c(avg_warm$mean_temp_C)
 mean(c_mean_2100_temp_solo) # 20.17315 C
 
 # %diff
-(844.6861-228.2723)/228.2723
-# 2.700344
-#270%
+(661.8245-228.2723)/228.2723
+# 1.899276
+#189%
 
 # times larger
-(844.6861/228.2723)
-# 7.71547
+(661.8245/228.2723)
+# 2.899276
 
 # temperatre difference
 20.17315-15.12132
@@ -70,7 +70,9 @@ mean(c_mean_2100_temp_solo) # 20.17315 C
 # bind 2020 and 2100
 avg_warm_bind <- avg_warm %>%
   dplyr::rename(biomass_per_m2 = biomass_per_m2_2100_solo, 
-                delta = delta.7.solo)
+                delta = delta.7.solo) %>%
+  mutate(year= rep("2100_avg"))
+
 avg_warm_bind$year <- as.factor(avg_warm_bind$year)
 coord.chelsa.combo.c.biom.2020$year <- as.factor(coord.chelsa.combo.c.biom.2020$year)
 avg_warm_to_plot <- rbind(coord.chelsa.combo.c.biom.2020, avg_warm_bind)

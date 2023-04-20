@@ -8,6 +8,8 @@ library(brms)
 library(tidybayes)
 library(bayesplot)
 library(plyr)
+library(sjPlot)
+
 
 # load data ------
 itex_EZ_shrubs_2023 <- read_csv("data/ITEX/itex_EZ_shrubs_2023.csv")
@@ -47,6 +49,7 @@ mean <- ddply(itex_EZ_pulchra,.(YEAR, SiteSubsite), summarise,
 # calculate subsite max per year, cannot do it plot level
 max <- ddply(itex_EZ_pulchra,.(YEAR, SiteSubsite), summarise,
              max_cov = max(cover_prop))
+hist(max$max_cov, breaks = 10)
 
 # mean and max in one dataset
 meanmax <- ddply(itex_EZ_pulchra,.(YEAR, SiteSubsite), summarise,
@@ -59,6 +62,7 @@ mutate(Year_index = I(YEAR - 1988)) %>%
                           SiteSubsite %in% c("TOOLIK:IMNAVAIT", "TOOLIK:MOIST", "TOOLIK:TUSSOCKGRID")~ "TOOLIK"))
 
 range(mean$mean_cov) #  0.06909564 0.22607917
+hist(mean$mean_cov, breaks = 10)
 
   
 max <- max %>%
@@ -136,6 +140,7 @@ pulchra_cover_max <- brms::brm(max_cov ~ Year_index * SITE + (1|Year_index),
                            iter = 5000, warmup = 1000, 
                            control = list(max_treedepth = 15, adapt_delta = 0.99))
 pp_check(pulchra_cover_max, ndraws=100)
+plot_model(pulchra_cover_max, type = "pred", terms = c("Year_index ", "SITE")) # to visualise interaction
 summary(pulchra_cover_max) # 0.001
 # QHI estimate =  0.002518971 
 # toolik = 0.002518971  + 0.016781174  
@@ -149,7 +154,7 @@ pulchra_cover_mean <- brms::brm(mean_cov ~ Year_index * SITE + (1|Year_index),
 
 summary(pulchra_cover_mean) # mean year estimate for both sites 0.00677882
 pp_check(pulchra_cover_mean, ndraws=100)
-
+plot_model(pulchra_cover_mean, type = "pred", terms = c("Year_index ", "SITE")) # to visualise interaction
 
 # Extracting outputs
 cov_time_pul_fix <- as.data.frame(fixef(pulchra_cover_max)) # extract fixed eff. slopes 
@@ -381,15 +386,15 @@ cov_all_dat <- full_join(cov_mean_dat_2,cov_max_dat_3, by = c("Year_index"="Year
                                                               "effect1__"= "effect1__"))
 (pulchra_cov_plot_meanmax <-ggplot(cov_all_dat) +
     geom_point(data = meanmax, aes(x = Year_index, y = mean_cov, colour = SITE),
-               alpha = 0.5)+
-    geom_point(data = meanmax, aes(x = Year_index, y = max_cov, colour = SITE),
-               alpha = 0.6)+
+               alpha = 0.5, show.legend = FALSE)+
+    geom_point(data = meanmax, aes(x = Year_index, y = max_cov, colour = SITE, fill = SITE),
+               alpha = 0.5, shape=23, show.legend = FALSE)+
     geom_line(aes(x = effect1__, y = estimate__.x, colour = SITE),
               linewidth = 1.5) +
     geom_line(aes(x = effect1__, y = estimate__.y,  colour = SITE),
               linewidth = 1.5, linetype = "dashed") +
    geom_ribbon(aes(x = effect1__, ymin = lower__.x, ymax = upper__.x,  fill = SITE),
-              alpha = .1) +
+              alpha = 0.1) +
     geom_ribbon(aes(x = effect1__, ymin = lower__.y, ymax = upper__.y,  fill = SITE),
                 alpha = 0.1) +
     ylab("Plot mean and plot max Salix pulchra cover (prop)\n") +

@@ -3,6 +3,7 @@
 # 1. LOADING LIBRARIES -----
 library(tidyverse)
 library(brms)
+library(gridExtra)
 
 # 2. DATA -----
 # Andy Cunliffe data from QHI: S rich. and arctica
@@ -16,6 +17,14 @@ Pika_all_shrub_biomass <- read_csv("data/allometry/Isla_phd/Pika_all_shrub_bioma
 hist(Pika_all_shrub_biomass$biomass_per_m2, breaks = 7) # weird, not much data
 hist(QHI_salric_shrub_biomass$biomass_per_m2, breaks = 20) # not super normal
 hist(QHI_salarc_shrub_biomass$biomass_per_m2, breaks = 10) # weird,not much data
+
+hist(Pika_all_shrub_biomass$Shrub_Height_cm, breaks = 7) # weird, not much data
+hist(QHI_salric_shrub_biomass$max_height, breaks = 7) # weird, not much data
+hist(QHI_salarc_shrub_biomass$max_height, breaks = 7) # weird, not much data
+
+hist(Pika_all_shrub_biomass$max_cover, breaks = 7) # weird, not much data
+hist(QHI_salric_shrub_biomass$percent_cover, breaks = 7) # weird, not much data
+hist(QHI_salarc_shrub_biomass$percent_cover, breaks = 7) # weird, not much data
 
 # removing an outlier from Pika data
 Pika_all_shrub_biomass_edit <- Pika_all_shrub_biomass %>%
@@ -218,4 +227,85 @@ cov_all_allom <- grid.arrange(rich_cov_allom,
                                  pul_cov_allom,
                                  arc_cov_allom, nrow = 1)
 
+# HEIGHT vs COVER ------
+# Sal. rich. -----
+rich_height_cov <- brms::brm(max_height |trunc(lb = 0, ub = 450) ~ percent_cover,
+                        data = QHI_salric_shrub_biomass, family = gaussian(), chains = 3,
+                        iter = 5000, warmup = 1000, 
+                        control = list(max_treedepth = 15, adapt_delta = 0.99))
+summary(rich_height_cov)
+pp_check(rich_height_cov, type = "dens_overlay", nsamples = 100) # meh
+
+
+# Sal.pul ----
+pul_height_cov <- brms::brm(Shrub_Height_cm|trunc(lb = 0, ub = 160) ~ max_cover,
+                       data = Pika_all_shrub_biomass_edit_2, family = gaussian(), chains = 3,
+                       iter = 5000, warmup = 1000, 
+                       control = list(max_treedepth = 15, adapt_delta = 0.99))
+summary(pul_height_cov)
+pp_check(pul_height_cov, type = "dens_overlay", nsamples = 100) # meh
+
+# Sal. arc -----
+arc_height_cov <- brms::brm(max_height|trunc(lb = 0, ub = 23) ~ percent_cover ,
+                       data = QHI_salarc_shrub_biomass, family = gaussian(), chains = 3,
+                       iter = 5000, warmup = 1000, 
+                       control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(arc_height_cov)
+pp_check(arc_height_cov, type = "dens_overlay", nsamples = 100) # meh
+
+# Data vis
+rich_height_cov1 <- (conditional_effects(rich_height_cov))
+rich_height_cov2 <- rich_height_cov1[[1]]
+
+(rich_height_cov_plot <-ggplot(rich_height_cov2) +
+    geom_point(data = QHI_salric_shrub_biomass, aes(x = percent_cover, y = max_height),
+               alpha = 0.5)+
+    geom_line(aes(x = effect1__, y = estimate__),
+              linewidth = 1.5) +
+    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
+                alpha = .1) +
+    ylab("S. richardsonii height (cm)\n") +
+    xlab("\n Cover (%/m2)" ) +
+    scale_color_brewer(palette = "Greys")+
+    scale_fill_brewer(palette = "Greys")+
+    theme_shrub())
+
+pul_height_cov1 <- (conditional_effects(pul_height_cov))
+pul_height_cov2 <- pul_height_cov1[[1]]
+
+(pul_height_cov_plot <-ggplot(pul_height_cov2) +
+    geom_point(data = Pika_all_shrub_biomass_edit_2, aes(x = max_cover, y = Shrub_Height_cm),
+               alpha = 0.5)+
+    geom_line(aes(x = effect1__, y = estimate__),
+              linewidth = 1.5) +
+    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
+                alpha = .1) +
+    ylab("S. pulchra height (cm)\n") +
+    xlab("\n Cover (%/m2)" ) +
+    #ylim(0, 4000 ) +
+    scale_color_brewer(palette = "Greys")+
+    scale_fill_brewer(palette = "Greys")+
+    theme_shrub())
+
+arc_height_cov1 <- (conditional_effects(arc_height_cov))
+arc_height_cov2 <- arc_height_cov1[[1]]
+
+(arc_height_cov_plot <-ggplot(arc_height_cov2) +
+    geom_point(data = QHI_salarc_shrub_biomass, aes(x = percent_cover, y = max_height),
+               alpha = 0.5)+
+    geom_line(aes(x = effect1__, y = estimate__),
+              linewidth = 1.5) +
+    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
+                alpha = .1) +
+    ylab("S. arctica height (cm)\n") +
+    xlab("\n Cover (%/m2)" ) +
+    #ylim(0, 4000 ) +
+    scale_color_brewer(palette = "Greys")+
+    scale_fill_brewer(palette = "Greys")+
+    theme_shrub())
+
+heightcov_all <- grid.arrange(rich_height_cov_plot,
+                              pul_height_cov_plot,
+                              arc_height_cov_plot, nrow = 1)
 

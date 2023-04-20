@@ -38,19 +38,24 @@ temp_time <- brms::brm(mean_temp_C_scaled ~ index_year + (index_year|Site),
                        iter = 5000, warmup = 1000, 
                        control = list(max_treedepth = 15, adapt_delta = 0.99))
 
-summary(temp_time)
+temp_time_interact <- brms::brm(mean_temp_C_scaled ~ index_year*Site + (1|index_year),
+                       data = july_enviro_chelsa,  family = gaussian(), chains = 3,
+                       iter = 5000, warmup = 1000, 
+                       control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(temp_time_interact)
 
 (temp_time_plot <- july_enviro_chelsa %>%
     group_by(Site) %>%
-    add_predicted_draws(temp_time) %>%
+    add_predicted_draws(temp_time, allow_new_levels = TRUE) %>%
     ggplot(aes(x =index_year, y =mean_temp_C_scaled , color = Site, fill = Site)) +
     stat_lineribbon(aes(y = .prediction), .width = .50, alpha = 1/4) +
     geom_point(data = july_enviro_chelsa) +
     scale_colour_viridis_d(begin = 0.1, end = 0.95) +
     scale_fill_viridis_d(begin = 0.1, end = 0.95) +
     ylab("July temperature (degC, scaled) \n") +
-    xlab("\nYear (scaled)"))
-    #theme_shrub())
+    xlab("\nYear (scaled)") +
+    theme_shrub())
 
 # I think I only need the index_year estimates
 temp_time_random <- as.data.frame(ranef(temp_time)) # extract random eff. slopes 

@@ -24,7 +24,6 @@
 # When cover is 100%
 (1.1*0.70 ) + (18.1 *100 )
 #1810.77
-# 18.87*80 years = 1509.6
 
 # 2100 projection
 shrub_map_2020 <- shrub_map_extract_highest %>%

@@ -402,7 +402,7 @@ hist(all_shrubs_allom$biomass_per_m2, breaks = 15)
 # not super normally distributed
 
 write.csv(all_shrubs_allom, "data/allometry/all_shrubs_allom.csv")
-
+all_shrubs_allom <- read_csv("data/allometry/all_shrubs_allom.csv")
 
 # visual assessment of 3 allometric equations: height vs biomass
 (plot_all_allom_height <- ggplot() +
