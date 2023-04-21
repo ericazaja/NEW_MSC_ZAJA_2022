@@ -43,9 +43,10 @@ plot(bb, col=NA, xlab = "Longitude", ylab = "Latitude")
 plot(p50_2020_resample_highest, add=T, legend=FALSE) # plot(raster, ...)
 lines(NA_full_2, add=TRUE)
 plot(p50_2020_resample_highest, legend.only=TRUE, legend.width = 0.5,
-     smallplot=c(0.8,0.90, 0.2,0.3)); par(mar = par("mar"))
+     smallplot=c(0.8,0.90, 0.2,0.4)); par(mar = par("mar"))
 dev.off()
 # ggsave()
+
 
 
 

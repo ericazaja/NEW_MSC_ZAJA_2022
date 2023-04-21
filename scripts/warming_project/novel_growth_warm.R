@@ -193,7 +193,7 @@ threshold_novel_warm_bi_2050 <- novel_warm_to_plot_2050 %>%
                                     biomass_per_m2 > 1425.6429 ~ 'High')) # 75%
 
 threshold_novel_warm_bi_all <- novel_warm_to_plot_all %>%
-  mutate(biomass_level = case_when (biomass_per_m2 < 1951.9     ~ 'Low', # 75% quant.
+  mutate(biomass_level = case_when (biomass_per_m2 < threshold_novel_all     ~ 'Low', # 75% quant.
                                     biomass_per_m2 > 1951.9 ~ 'High')) # 75%
 
 # ordering factor levels

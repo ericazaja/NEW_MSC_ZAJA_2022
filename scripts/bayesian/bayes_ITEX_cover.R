@@ -136,7 +136,7 @@ pp_check(pulchra_cover, type = "dens_overlay", nsamples = 100)
 
 # site max and means
 pulchra_cover_max <- brms::brm(max_cov ~ Year_index * SITE + (1|Year_index),
-                           data = meanmax, family = "beta", chains = 3,
+                           data = max, family = "beta", chains = 3,
                            iter = 5000, warmup = 1000, 
                            control = list(max_treedepth = 15, adapt_delta = 0.99))
 pp_check(pulchra_cover_max, ndraws=100)
@@ -148,7 +148,7 @@ summary(pulchra_cover_max) # 0.001
 
 # max and means
 pulchra_cover_mean <- brms::brm(mean_cov ~ Year_index * SITE + (1|Year_index),
-                               data = meanmax, family = "beta", chains = 3,
+                               data = mean, family = "beta", chains = 3,
                                iter = 5000, warmup = 1000, 
                                control = list(max_treedepth = 15, adapt_delta = 0.99))
 
@@ -410,3 +410,37 @@ cov_all_dat <- full_join(cov_mean_dat_2,cov_max_dat_3, by = c("Year_index"="Year
           axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
           axis.text.y = element_text(size = 12, colour = "black"))) 
 
+# final graphs 
+cov_mean_2 <- (conditional_effects(pulchra_cover_mean))
+cov_max_3 <- (conditional_effects(pulchra_cover_max))
+cov_mean_dat_2 <- cov_mean_2[[3]] 
+cov_max_dat_3 <- cov_max_3[[3]]
+
+(pul_mean_cover_plot <-ggplot(cov_mean_dat_2) +
+    geom_point(data = mean, aes(x = Year_index, y = mean_cov, colour = SITE),
+               alpha = 0.5)+
+    geom_line(aes(x = effect1__, y = estimate__, colour = SITE),
+              linewidth = 1.5) +
+    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__, fill = SITE),
+                alpha = .1) +
+    ylab("Cover proportion (plot mean)") +
+    xlab("\n Year (scaled)" ) +
+    scale_fill_brewer(palette = "Set2") +
+    scale_color_brewer(palette = "Dark2") +
+    theme_shrub())
+
+(pul_max_cover_plot <-ggplot(cov_max_dat_3) +
+    geom_point(data = max, aes(x = Year_index, y = max_cov, colour = SITE),
+               alpha = 0.5)+
+    geom_line(aes(x = effect1__, y = estimate__, colour = SITE),
+              linewidth = 1.5) +
+    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__, fill = SITE),
+                alpha = .1) +
+    ylab("Cover proportion (plot max)") +
+    xlab("\n Year (scaled)" ) +
+    scale_fill_brewer(palette = "Set2") +
+    scale_color_brewer(palette = "Dark2") +
+    theme_shrub())
+
+panel_coverheight_max <- grid.arrange(pulchra_height_plot_max,pul_max_cover_plot,nrow=1)
+panel_coverheight_mean <- grid.arrange(pulchra_height_plot_mean,pul_mean_cover_plot, nrow=1)

@@ -45,6 +45,7 @@ ncell(p50_2020)
 # if there is shrub, what is their biomass (g/m2)
 
 # 3. DATA EXPLORE  -----
+plot(p50_2020_resample_highest)
 plot(p50_2020) 
 class(p50_2020) # raster 
 
@@ -218,6 +219,8 @@ theme_shrub <- function(){ theme(legend.position = "right",
        #   legend.title = element_text(size=40),
         #  legend.position ="right"))
 ggsave(file = "outputs/raster_my_palette_new.png")
+
+
 # EXTRAS ----
 #p50_2020_resample_df <- extract(p50_2020_resample, xy, cellnumbers = T)
 #view(p50_2020_resample_df)

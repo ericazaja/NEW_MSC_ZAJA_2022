@@ -212,6 +212,29 @@ rich_height_data_2 <- rich_height_1[[2]]
     xlab("\nSample age")+
    theme(legend.position = "none"))
 
+# Salix pulchra ------
+pul_height_1 <- (conditional_effects(height_pul_south))
+pul_height_data_1 <- pul_height_1[[1]]
+pul_height_data_back <- pul_height_data_1 %>%
+  dplyr::mutate(canopy_height_back = exp(log(Canopy_Height_cm)))
+
+(pul_height_plot <-ggplot(pul_height_data_1) +
+    geom_point(data = all_CG_growth_pul_south, aes(x = Sample_age,y = Canopy_Height_cm),
+               alpha = 0.5, colour = "#21918c")+
+    geom_line(aes(x = effect1__, y = exp(estimate__)),
+              linewidth = 1.5, colour = "#21918c") +
+    geom_ribbon(aes(x = effect1__, ymin = exp(lower__), ymax = exp(upper__)),
+                alpha = .1, fill = "#21918c") +
+    labs(x = "\n Sample age",
+         y = "Canopy height (cm)")+
+    # ylab("Cover (/m2)\n") +
+    # xlab("\n Sample age" ) +
+    # scale_fill_brewer(palette = "orange") +
+    scale_color_brewer(palette = "Dark2") +
+    theme_shrub())
+
+pulchra_CG_panel <- grid.arrange(pul_height_plot,pul_cover_plot, nrow=1)
+
 
 # Salix arctica------
 (arc_south_heights_plot_new <- all_CG_growth_arc_south %>%

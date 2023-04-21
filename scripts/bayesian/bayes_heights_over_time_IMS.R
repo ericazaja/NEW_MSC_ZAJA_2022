@@ -136,17 +136,15 @@ all_bind_mean_dat <- all_bind_mean[[1]]
 
 (pulchra_height_plot_mean <-ggplot(all_bind_mean_dat) +
     geom_point(data = all_bind_new_mean, aes(x = Year_index, y = mean_height),
-               alpha = 0.5)+
+               alpha = 0.5, colour = "#66c2a5")+
     geom_line(aes(x = effect1__, y = estimate__),
-              linewidth = 1.5) +
+              linewidth = 1.5, colour = "#1b9e77") +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
-                alpha = .1) +
-    ylab("PLOT MEAN Salix pulchra height (cm)\n") +
+                alpha = .1,  fill = "#1b9e77") +
+    ylab("Canopy height plot mean (cm)") +
     xlab("\n Year (scaled)" ) +
     ylim(0, 30) +
-    scale_color_brewer(palette = "Greys")+
-    scale_fill_brewer(palette = "Greys")+
-    theme_classic())
+    theme_shrub())
 
 # model with plot max data
 MAX <- brms::brm(max_height|trunc(lb = 0, ub = 160) ~ Year_index + (Year_index),
@@ -161,17 +159,17 @@ all_bind_max_dat <- all_bind_max[[1]]
 
 (pulchra_height_plot_max <-ggplot(all_bind_max_dat) +
     geom_point(data = all_bind_new_max, aes(x = Year_index, y = max_height),
-               alpha = 0.5)+
+               alpha = 0.5, colour = "#66c2a5")+
     geom_line(aes(x = effect1__, y = estimate__),
-              linewidth = 1.5) +
+              linewidth = 1.5, colour = "#1b9e77") +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
-                alpha = .1) +
-    ylab("PLOT MAX Salix pulchra height (cm)\n") +
+                alpha = .1, fill = "#1b9e77") +
+    ylab("Canopy height plot max (cm)") +
     xlab("\n Year (scaled)" ) +
-    # ylim(0, 300) +
-    scale_color_brewer(palette = "Greys")+
-    scale_fill_brewer(palette = "Greys")+
-    theme_classic())
+    ylim(0, 30) +
+    #scale_color_brewer(palette = "Greys")+
+    #scale_fill_brewer(palette = "Greys")+
+    theme_shrub())
 
 
 panel <- grid.arrange(pulchra_height_plot_all, pulchra_height_plot_mean,

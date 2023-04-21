@@ -187,9 +187,9 @@ pp_check(tall_biom_random_slopes, type = "dens_overlay", nsamples = 100)
 
 # 4. DATA VISUALISATION ---------
 theme_shrub <- function(){ theme(legend.position = "right",
-                                 axis.title.x = element_text(face="bold", size=20),
+                                 axis.title.x = element_text(size=20),
                                  axis.text.x  = element_text(vjust=0.5, size=18, colour = "black"), 
-                                 axis.title.y = element_text(face="bold", size=20),
+                                 axis.title.y = element_text(size=20),
                                  axis.text.y  = element_text(vjust=0.5, size=18, colour = "black"),
                                  panel.grid.major.x=element_blank(), panel.grid.minor.x=element_blank(), 
                                  panel.grid.minor.y=element_blank(), panel.grid.major.y=element_blank(), 
@@ -221,15 +221,16 @@ pul_cov_data_1 <- pul_cov_1[[1]]
 
 (pul_cover_plot <-ggplot(pul_cov_data_1) +
     geom_point(data = CG_pul_cover_biomass, aes(x = Sample_age, y = (cover_percent/100)),
-               alpha = 0.5)+
+               alpha = 0.5, colour = "#21918c")+
     geom_line(aes(x = effect1__, y = estimate__),
-              linewidth = 1.5) +
+              linewidth = 1.5, colour = "#21918c") +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
-                alpha = .1) +
-    ylab("Pulchra cover (prop.)\n") +
+                alpha = .1, fill = "#21918c") +
+   # ylab("Cover (/m2)\n") +
     xlab("\n Sample age" ) +
-    scale_color_brewer(palette = "Greys")+
-    scale_fill_brewer(palette = "Greys")+
+    ylab(expression("Cover proportion/" ~m^2 ~"\n")) + 
+   # scale_fill_brewer(palette = "orange") +
+  # scale_color_brewer(palette = "Dark2") +
     theme_shrub())
 
 # Salix arctica ------
