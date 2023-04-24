@@ -72,7 +72,7 @@ mean(c_mean_2100_temp_solo) # 20.17315 C
 # 5554.278
 
 # times larger
-12907.15/228.2723
+2266.216/228.2723
 # 56.54278
 
 # bind 2020 and 2100
@@ -96,11 +96,11 @@ coord.chelsa.combo.c.biom.2020$year <- as.factor(coord.chelsa.combo.c.biom.2020$
 
 novel_warm_to_plot <- rbind(coord.chelsa.combo.c.biom.2020, novel_warm_bind)
 novel_warm_to_plot_2030 <- rbind(coord.chelsa.combo.c.biom.2020, novel_warm_bind_2030)
-novel_warm_to_plot_2050 <- rbind(coord.chelsa.combo.c.biom.2020, novel_warm_bind_2050)
+novel_warm_to_plot_2050 <- rbind(coord.chelsa.combo.c.biom.2020, novel_warm_bind_2030, novel_warm_bind_2050)
 novel_warm_to_plot_all <- rbind(coord.chelsa.combo.c.biom.2020, novel_warm_bind_2030, novel_warm_bind_2050, novel_warm_bind)
 
 # plotting facet biomass (yellow-green)
-(raster_test_temp <- ggplot(novel_warm_to_plot_all) + 
+(raster_test_temp <- ggplot(novel_warm_to_plot_2050) + 
     geom_tile(aes(x=x,y=y,fill=(biomass_per_m2))) + 
     facet_wrap(~year, nrow = 1) +
     #scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
@@ -126,7 +126,7 @@ quant_novel_warm_all
 # 0.0000   174.4421  6205.5164 12930.1861 18640.7937 
 # -247.4458  166.2585  536.7945 1425.6429 4658.8445 
 # 0.0000  174.4421  998.2743 3535.3238 6095.8091 
-#  -247.4458   535.5691  2402.6422  7143.1150 18640.7937 
+# -154.1138  276.7149  964.7357 2010.3582 4586.0554 
 # -154.1138   466.2626  1579.7166  5042.9683 11624.3278 
 
 # setting biomass level thresholds using quantiles
@@ -141,9 +141,9 @@ threshold_novel_warm_2030 <- novel_warm_to_plot_2030 %>%
                                     biomass_per_m2 > 1425.6429 ~ 'High')) # 75%
 
 threshold_novel_warm_2050 <- novel_warm_to_plot_2050 %>%
-  mutate(biomass_level = case_when (biomass_per_m2 < 174.4421     ~ 'Low', # 25% quant.
-                                    biomass_per_m2> 174.4421    & biomass_per_m2 < 3535.3238 ~ 'Medium', # between 25 and 75 
-                                    biomass_per_m2 > 3535.3238 ~ 'High')) # 75%
+  mutate(biomass_level = case_when (biomass_per_m2 < 276.7149     ~ 'Low', # 25% quant.
+                                    biomass_per_m2> 276.7149    & biomass_per_m2 < 2010.3582 ~ 'Medium', # between 25 and 75 
+                                    biomass_per_m2 > 2010.3582 ~ 'High')) # 75%
 
 threshold_novel_warm_all <- novel_warm_to_plot_all %>%
   mutate(biomass_level = case_when (biomass_per_m2 < 466.2626     ~ 'Low', # 25% quant.
@@ -167,7 +167,7 @@ threshold_novel_warm_all$biomass_level <- factor(threshold_novel_warm_all$biomas
                                                   labels = c("Low", "Medium", "High"),
                                                   ordered = T)
 
-(threshold_novel_warm_levels <- ggplot(threshold_novel_warm_all) + 
+(threshold_novel_warm_levels <- ggplot(threshold_novel_warm_2050) + 
     geom_tile(aes(x=x,y=y,fill=biomass_level)) + 
     facet_wrap(~year, nrow = 1) +
     scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
