@@ -37,7 +37,7 @@ shrub_map_extract_highest <- read.csv("data/extract_end_highest.csv") # high res
 ((1.1*0.34) -  5.0 - 0.04) + ((18.1 *0.67) - 8.2 - 0.02)
 # -0.759 g/m2
 
-# When COVER is 100%  and height is max value 129 cm
+# When COVER is 100%  and pulchra height is max value 129 cm
 # Biomass =  (1.1*129 ) + (18.1 *100)
 (1.1*129) + (18.1 *100)
 #1951.9 g/m2

@@ -4,31 +4,31 @@
 coord.chelsa.combo.c.delta.2100.solo <- read.csv("data/coord.chelsa.combo.c.delta.2100.solo")
 coord.chelsa.combo.c.delta.2030 <- read.csv("data/coord.chelsa.combo.c.delta.2030.csv")
 coord.chelsa.combo.c.delta.2050 <- read.csv("data/coord.chelsa.combo.c.delta.2050.csv")
-
+coord.chelsa.combo.c.biom.2020 <- read.csv("data/coord.chelsa.combo.c.biom.2020.csv")
 # Get biomass over full time period. Divide biomass by 6 deg warming (difference between KP and CG temps). Get biomass per degree of warming
 # multiply this by the 5 degrees projected warming.
 # NB we basically gave the KP shrubs in the CG the warming that they will experience naturally in the future.
 
-# height slope richardsonii = 1.74 --> 
-# height over full 9 year time period = 1.74*9 = 15.66
-# cover slope richardsonii = 0.66 -->
-# cover over 9 years = 0.66*9 = 5.94
-# RICHARDSONII FINAL EQUATION: Biomass =  (18.0*15.66 +- 5.1) + (11.9 *5.94 +-  18.0)
-(18.0*15.66 ) + (11.9 *5.94 )
-#  352.566 g/m2
+# height slope richardsonii = 1.271249 --> 
+# height over full 9 year time period = 1.271249*23 = 29.23873
+# cover slope richardsonii = 66% -->
+# cover over 9 years = 66*23 = 1518%
+# RICHARDSONII FINAL EQUATION: Biomass =  (18.0*29.23873 +- 5.1) + (11.9 *1518 +-  18.0)
+(18.0*29.23873 ) + (11.9 *1518 )
+#  18590.5 g/m2
 
-# times by 23 to keep years consistent?? 
+# times pulchra rates by 23 to keep years consistent.
 # height slope pulchra = 1 --> 1*23= 23
 # cover slope pulchra = 0.24 --> 24%*23 =552
-# PULCHRA FINAL EQUATION:  Biomass =  (1.1*23 +-  5.0 ) + (18.1 *5.52 +-  8.2)
+# PULCHRA FINAL EQUATION:  Biomass =  (1.1*23 +-  5.0 ) + (18.1 *552 +-  8.2)
 (1.1*23  ) + (18.1 *552)
 # 10016.5
 
 # Mean
-(352.566+48.996)/2
-#200.781
+(18590.5+10016.5)/2
+#14303.5
 
-# Biomass over 23 year period divided by the 6.4 diference in temp beterrn KP and CG
+# Biomass over 23 year period divided by the 6.4 difference in temp between KP and CG
 10016.5/6.4
 #  1565.078 g/m2/degC
 
@@ -229,7 +229,7 @@ threshold_novel_warm_bi_all$biomass_level <- factor(threshold_novel_warm_bi_all$
     geom_tile(aes(x=x,y=y,fill=(mean_temp_C))) + 
     facet_wrap(~year, nrow = 1) +
     #scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
-    scale_fill_gradient(name = "Temperature g/m2",high = "red", low = "navy",  na.value="white")+
+    scale_fill_gradient(name = "Temperature g/m2",high = "red", low = "blue4",  na.value="white")+
     coord_quickmap()+
     theme_shrub() +  
     theme(axis.text.x  = element_text(vjust=0.5, size=10, colour = "black", angle = 45)) +

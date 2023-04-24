@@ -11,17 +11,17 @@ shrub_map_extract_highest <- read.csv("data/extract_end_highest.csv") # high res
 # Cover: cover over time (script: )
 # → get biomass 
 
-# height slope richardsonii = 1.74 cm/year +- 1.071
+# height slope richardsonii = 1.271249 cm/year +- 1.03 
 # cover slope richardsonii = 66% +- 8%
 # RICHARDSONII FINAL EQUATION: Biomass =  (18.0*height +- 5.1) + (11.9 *cover +-  18.0)
-(18.0*1.74  ) + (11.9 *66 ) 
-#  816.72
+(18.0*1.27  ) + (11.9 *66 ) 
+#  808.26
 
 # if cover is 100% and max heights
-(18.0*1.74  ) + (11.9 *100) 
-# 1221.32
+(18.0*1.27  ) + (11.9 *100 ) 
+# 1212.86
 
-# height slope pulchra = 1 +-  1.05 cm/year
+# height slope pulchra = 1 +-  1.02 cm/year
 # cover slope pulchra = 24% +- 7%
 # PULCHRA FINAL EQUATION:  Biomass =  (1.1*height +-  5.0 ) + (18.1 *cover +-  8.2)
 (1.1*1 ) + (18.1 *24 )
@@ -32,13 +32,13 @@ shrub_map_extract_highest <- read.csv("data/extract_end_highest.csv") # high res
 # 1951.9
 
 # average biomass for s rich + s pul
-(435.5 +816.72)/2
-# 626.11 g/m2
+(435.5 +808.26)/2
+# 621.88 g/m2
 #0.00062611 g/km2
 
 # with cover 100%, average biomass for s rich + s pul
-(1221.32 +1811.1)/2
-# 1516.21 g/m2
+(1212.86 +1951.9)/2
+# 1582.38 g/m2
 
 
 # 2030 projection
