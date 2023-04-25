@@ -98,6 +98,12 @@ threshold_maxmean_warm$biomass_level <- factor(threshold_maxmean_warm$biomass_le
                                            labels = c("Low", "Medium", "High"),
                                            ordered = T)
 
+threshold_maxmean_warm_summary <- threshold_maxmean_warm %>% 
+  filter(year == "2100_max")%>% 
+  group_by(biomass_level) %>% 
+  summarise(percent_biomass_level = n())
+# finding the ratio of 100% using method here: https://www.mathswithmum.com/calculate-ratio-3-numbers/ 
+
 (threshold_max_warm_levels <- ggplot(threshold_maxmean_warm) + 
     geom_tile(aes(x=x,y=y,fill=biomass_level)) + 
     facet_wrap(~year, nrow = 1) +

@@ -167,6 +167,12 @@ threshold_novel_warm_all$biomass_level <- factor(threshold_novel_warm_all$biomas
                                                   labels = c("Low", "Medium", "High"),
                                                   ordered = T)
 
+threshold_novel_warm_2050_summary <- threshold_novel_warm_2050 %>% 
+  filter(year == "2050")%>% 
+  group_by(biomass_level) %>% 
+  summarise(percent_biomass_level = n())
+# finding the ratio of 100% using method here: https://www.mathswithmum.com/calculate-ratio-3-numbers/ 
+
 (threshold_novel_warm_levels <- ggplot(threshold_novel_warm_2050) + 
     geom_tile(aes(x=x,y=y,fill=biomass_level)) + 
     facet_wrap(~year, nrow = 1) +
@@ -211,6 +217,7 @@ threshold_novel_warm_bi_2050$biomass_level <- factor(threshold_novel_warm_bi_205
 threshold_novel_warm_bi_all$biomass_level <- factor(threshold_novel_warm_bi_all$biomass_level,levels=c("Low", "High"),
                                                      labels = c("Low", "High"),
                                                      ordered = T)
+
 
 (treshold_novel_bi <- ggplot(threshold_novel_warm_bi_all) + 
     geom_tile(aes(x=x,y=y,fill=biomass_level)) +
