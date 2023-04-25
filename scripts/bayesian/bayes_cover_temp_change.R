@@ -1,5 +1,7 @@
 # Cover change VS temp change at ITEX sites 
 
+library(brms)
+library(tidybayes)
 # scale function =====
 # centering with 'scale()'
 center_scale <- function(x) {
@@ -17,7 +19,7 @@ july_enviro_chelsa <- july_enviro_chelsa %>%
   dplyr::rename ("mean_temp_C" ="(mean_temp_C = (mean_temp/10 - 273.15))")
 
 july_enviro_chelsa <- july_enviro_chelsa %>%
-  mutate(Site = case_when(site == "ATIGUN" ~ "ANWR",
+  dplyr::mutate(Site = case_when(site == "ATIGUN" ~ "ANWR",
                           site %in% c("IMNAVAIT", "TUSSOKGRID") ~ "TOOLIK", 
                           site == "QHI" ~ "QHI",
                           site == "Common_garden" ~ "CG",
@@ -44,6 +46,7 @@ temp_time_interact <- brms::brm(mean_temp_C_scaled ~ index_year*Site + (1|index_
                        control = list(max_treedepth = 15, adapt_delta = 0.99))
 
 summary(temp_time_interact)
+ylab <- "July temperature (°C), scaled\n"
 
 (temp_time_plot <- july_enviro_chelsa %>%
     group_by(Site) %>%
@@ -53,8 +56,8 @@ summary(temp_time_interact)
     geom_point(data = july_enviro_chelsa) +
     scale_colour_viridis_d(begin = 0.1, end = 0.95) +
     scale_fill_viridis_d(begin = 0.1, end = 0.95) +
-    ylab("July temperature (degC, scaled) \n") +
-    xlab("\nYear (scaled)") +
+    labs(y= ylab) +
+    xlab("\nYear, scaled") +
     theme_shrub())
 
 # I think I only need the index_year estimates

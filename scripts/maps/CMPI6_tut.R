@@ -52,8 +52,9 @@ tasmax.scenes.1 = sapply(1:length(tasmax.dates.1), function(z) {
 
 close.nc(nc_NOAA_85)
 
-plot(tasmax.scenes.1[[1000]], main="NOAA, RCP 8.5", sub =tasmax.dates.1[[1000]], 
+plot(tasmax.scenes.1[[1029]], main="NOAA, RCP 8.5", sub =tasmax.dates.1[[1029]], 
      col=colorRampPalette(c('navy', 'lightgray', 'red'))(30))
+
 
 # Model 2: CMCC -------
 tasmax.dates.2 = as.Date(var.get.nc(nc_CMCC_85, "time"), origin="1850-01-01 00:00:00")
@@ -68,7 +69,7 @@ tasmax.scenes.2 = sapply(1:length(tasmax.dates.2), function(z) {
 
 close.nc(nc_CMCC_85)
 
-plot(tasmax.scenes.2[[1000]], main="CMCC, RCP 8.5",  sub=tasmax.dates.2[[1000]], 
+plot(tasmax.scenes.2[[1029]], main="CMCC, RCP 8.5",  sub=tasmax.dates.2[[1029]], 
      col=colorRampPalette(c('navy', 'lightgray', 'red'))(30))
 
 # Model 3: MRI (might remove this) ------
@@ -84,7 +85,7 @@ tasmax.scenes.3 = sapply(1:length(tasmax.dates.3), function(z) {
 
 close.nc(nc_MRI_85)
 
-plot(tasmax.scenes.3[[1000]], main = "MRI, RCP 8.5", sub=tasmax.dates.3[[1000]], 
+plot(tasmax.scenes.3[[1027]], main = "MRI, RCP 8.5", sub=tasmax.dates.3[[1027]], 
      col=colorRampPalette(c('navy', 'lightgray', 'red'))(30))
 
 # Model 4: MIROC -------
@@ -100,7 +101,7 @@ tasmax.scenes.4 = sapply(1:length(tasmax.dates.4), function(z) {
 
 close.nc(nc_MIROC_85)
 
-plot(tasmax.scenes.4[[1000]],main = "MIROC, RCP 8.5", sub=tasmax.dates.4[[1000]], 
+plot(tasmax.scenes.4[[1027]],main = "MIROC, RCP 8.5", sub=tasmax.dates.4[[1027]], 
      col=colorRampPalette(c('navy', 'lightgray', 'red'))(30))
 
 # Model 5: CNRM -------
@@ -116,7 +117,7 @@ tasmax.scenes.5 = sapply(1:length(tasmax.dates.5), function(z) {
 
 close.nc(nc_CNRM_85)
 
-plot(tasmax.scenes.5[[1000]], main = "CNRM, RCP 8.5",sub=tasmax.dates.5[[1000]], 
+plot(tasmax.scenes.5[[1027]], main = "CNRM, RCP 8.5",sub=tasmax.dates.5[[1027]], 
      col=colorRampPalette(c('navy', 'lightgray', 'red'))(30))
 
 # Model 6: ACCESS ----
@@ -132,7 +133,7 @@ tasmax.scenes.6 = sapply(1:length(tasmax.dates.6), function(z) {
 
 close.nc(nc_ACCESS_85)
 
-plot(tasmax.scenes.6[[1000]], main = "ACCESS, RCP 8.5",sub=tasmax.dates.6[[1030]], 
+plot(tasmax.scenes.6[[1027]], main = "ACCESS, RCP 8.5",sub=tasmax.dates.6[[1027]], 
      col=colorRampPalette(c('navy', 'lightgray', 'red'))(30))
 
 # EXTRACTING rasters by year ------
