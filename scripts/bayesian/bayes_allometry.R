@@ -128,12 +128,13 @@ rich_data_2 <- rich[[2]]
 
 (rich_height_allom <-ggplot(rich_data) +
     geom_point(data = QHI_salric_shrub_biomass, aes(x = max_height, y = biomass_per_m2),
-               alpha = 0.5)+
+               alpha = 0.5, colour = "#2e8b57")+
     geom_line(aes(x = effect1__, y = estimate__),
-              linewidth = 1.5) +
+              linewidth = 1.5, colour = "#2e8b57") +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
-                alpha = .1) +
-    ylab("Richardsonii shrub biomass (g/m2)\n") +
+                alpha = .1, fill = "#2e8b57") +
+    labs(y = expression("Shrub biomass" ~ g/m^2)) +
+    ggtitle(expression(italic("Salix richardsonii"))) +
     xlab("\n Shrub height (cm)" ) +
     scale_color_brewer(palette = "Greys")+
     scale_fill_brewer(palette = "Greys")+
@@ -141,13 +142,14 @@ rich_data_2 <- rich[[2]]
 
 (rich_cov_allom <-ggplot(rich_data_2) +
     geom_point(data = QHI_salric_shrub_biomass, aes(x = percent_cover, y = biomass_per_m2),
-               alpha = 0.5)+
+               alpha = 0.5, colour = "#2e8b57")+
     geom_line(aes(x = effect1__, y = estimate__),
-              linewidth = 1.5) +
+              linewidth = 1.5, colour = "#2e8b57") +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
-                alpha = .1) +
-    ylab("Richardsonii shrub biomass (g/m2) \n") +
-    xlab("\n Cover (%)" ) +
+                alpha = .1, fill = "#2e8b57") +
+   # ggtitle(expression(italic("Salix richardsonii"))) +
+    labs(y = expression("Shrub biomass" ~ g/m^2), 
+         x = expression("\n % cover/"~m^2)) +
     scale_color_brewer(palette = "Greys")+
     scale_fill_brewer(palette = "Greys")+
     theme_shrub())
@@ -159,13 +161,15 @@ pul_data_2 <- pul[[2]]
 
 (pul_height_allom <-ggplot(pul_data) +
     geom_point(data = Pika_all_shrub_biomass_edit_2, aes(x = Shrub_Height_cm, y = biomass_per_m2),
-               alpha = 0.5)+
+               alpha = 0.5, colour = "#8a2e61")+
     geom_line(aes(x = effect1__, y = estimate__),
-              linewidth = 1.5) +
+              linewidth = 1.5, colour = "#8a2e61") +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
-                alpha = .1) +
-    ylab("Pulchra shrub biomass (g/m2)\n") +
+                alpha = .1, fill = "#8a2e61") +
+    ggtitle(expression(italic("Salix pulchra"))) +
+    # labs(y = expression("Shrub biomass" ~ g/m^2)) +
     xlab("\n Shrub height (cm)" ) +
+    labs(y = "")+
     #ylim(0, 4000 ) +
     scale_color_brewer(palette = "Greys")+
     scale_fill_brewer(palette = "Greys")+
@@ -173,14 +177,16 @@ pul_data_2 <- pul[[2]]
 
 (pul_cov_allom <-ggplot(pul_data_2) +
     geom_point(data = Pika_all_shrub_biomass_edit_2, aes(x = max_cover, y = biomass_per_m2),
-               alpha = 0.5)+
+               alpha = 0.5, colour = "#8a2e61")+
     geom_line(aes(x = effect1__, y = estimate__),
-              linewidth = 1.5) +
+              linewidth = 1.5, colour = "#8a2e61") +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
-                alpha = .1) +
-    ylab("Pulchra shrub biomass (g/m2) \n") +
-    xlab("\n Cover (%)" ) +
-   ylim(0, 1500) +
+                alpha = .1, fill = "#8a2e61") +
+    #ggtitle(expression(italic("Salix pulchra"))) +
+    #labs(y = expression("Shrub biomass" ~ g/m^2)) +
+    labs(x = expression("\n % cover/" ~m^2), 
+         y = "") +
+   #ylim(0, 1500) +
     scale_color_brewer(palette = "Greys")+
     scale_fill_brewer(palette = "Greys")+
     theme_shrub())
@@ -192,30 +198,34 @@ arc_data_2 <- arc[[2]]
 
 (arc_height_allom <-ggplot(arc_data) +
     geom_point(data = QHI_salarc_shrub_biomass, aes(x = max_height, y = biomass_per_m2),
-               alpha = 0.5)+
+               alpha = 0.5, colour = "#8a852e")+
     geom_line(aes(x = effect1__, y = estimate__),
-              linewidth = 1.5) +
+              linewidth = 1.5, colour = "#8a852e") +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
-                alpha = .1) +
-    ylab("Arctica shrub biomass (g/m2)\n") +
+                alpha = .1, fill = "#8a852e") +
+    ggtitle(expression(italic("Salix arctica"))) +
+    #labs(y = expression("Shrub biomass" ~ g/m^2)) +
     xlab("\n Shrub height (cm)" ) +
-    ylim(0, 300) +
-    scale_color_brewer(palette = "Greys")+
-    scale_fill_brewer(palette = "Greys")+
+    labs(y = "")+
+    #ylim(0, 300) +
+    #scale_color_brewer(palette = "Greys")+
+    #scale_fill_brewer(palette = "Greys")+
     theme_shrub())
 
 (arc_cov_allom <-ggplot(arc_data_2) +
     geom_point(data = QHI_salarc_shrub_biomass, aes(x = percent_cover, y = biomass_per_m2),
-               alpha = 0.5)+
+               alpha = 0.5, colour = "#8a852e")+
     geom_line(aes(x = effect1__, y = estimate__),
-              linewidth = 1.5) +
+              linewidth = 1.5, colour =  "#8a852e") +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
-                alpha = .1) +
-    ylab("Arctica shrub biomass (g/m2) \n") +
-    xlab("\n Cover (%)" ) +
-    ylim(0, 250) +
-    scale_color_brewer(palette = "Greys")+
-    scale_fill_brewer(palette = "Greys")+
+                alpha = .1,fill = "#8a852e") +
+   # labs(y = expression("Shrub biomass" ~ g/m^2)) +
+      labs( x = expression("\n% cover/" ~m^2), 
+            y = "")+
+   # ylim(0, 250) +
+    #ggtitle(expression(italic("Salix arctica"))) +
+    #scale_color_brewer(palette = "Greys")+
+    #scale_fill_brewer(palette = "Greys")+
     theme_shrub())
 
 # panels ------
@@ -226,6 +236,14 @@ height_all_allom <- grid.arrange(rich_height_allom,
 cov_all_allom <- grid.arrange(rich_cov_allom,
                                  pul_cov_allom,
                                  arc_cov_allom, nrow = 1)
+
+all <- grid.arrange(height_all_allom, cov_all_allom)
+
+rich_allom <- grid.arrange(rich_height_allom,rich_cov_allom)
+pulchra_allom <- grid.arrange(pul_height_allom,pul_cov_allom)
+arctic_allom <- grid.arrange(arc_height_allom, arc_cov_allom)
+
+all_allom <- grid.arrange(rich_allom,pulchra_allom,arctic_allom, ncol=3)
 
 # HEIGHT vs COVER ------
 # Sal. rich. -----
