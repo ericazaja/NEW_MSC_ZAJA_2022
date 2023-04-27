@@ -276,6 +276,7 @@ coord.chelsa.combo.c.all.2020.2100 <- rbind(coord.chelsa.combo.c.2020,coord.chel
 
 write.csv(coord.chelsa.combo.c.all, "data/coord.chelsa.combo.c.all.csv")
 write.csv(coord.chelsa.combo.c.all.2020.2100, "data/coord.chelsa.combo.c.all.2020.2100.csv")
+coord.chelsa.combo.c.all <- read_csv("data/coord.chelsa.combo.c.all.csv")
 
 # calculate difference between temps in 2020 and 2030 
 coord.chelsa.combo.c.delta.2030 <- coord.chelsa.combo.c.all %>%
