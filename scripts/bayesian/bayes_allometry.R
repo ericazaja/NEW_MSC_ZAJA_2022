@@ -120,6 +120,17 @@ round(20.71333, digits = 1) # 20.7
 
 
 # 4.DATA VISUALISATION------
+theme_shrub <- function(){ theme(legend.position = "right",
+                                 axis.title.x = element_text(size=16),
+                                 axis.text.x  = element_text(vjust=0.5, size=14, colour = "black"), 
+                                 axis.title.y = element_text(size=16),
+                                 axis.text.y  = element_text(vjust=0.5, size=14, colour = "black"),
+                                 panel.grid.major.x=element_blank(), panel.grid.minor.x=element_blank(), 
+                                 panel.grid.minor.y=element_blank(), panel.grid.major.y=element_blank(), 
+                                 panel.background = element_blank(), axis.line = element_line(colour = "black"), 
+                                 plot.title = element_text(color = "black", size = 14, face = "bold", hjust = 0.5),
+                                 plot.margin = unit(c(1,1,1,1), units = , "cm"))}
+
 
 # 4.1. Salix richardsonii -------
 rich <- (conditional_effects(rich_allom))
@@ -135,7 +146,7 @@ rich_data_2 <- rich[[2]]
                 alpha = .1, fill = "#2e8b57") +
     labs(y = expression("Shrub biomass" ~ g/m^2)) +
     ggtitle(expression(italic("Salix richardsonii"))) +
-    xlab("\n Shrub height (cm)" ) +
+    xlab("Shrub height (cm)" ) +
     scale_color_brewer(palette = "Greys")+
     scale_fill_brewer(palette = "Greys")+
     theme_shrub())
@@ -149,7 +160,7 @@ rich_data_2 <- rich[[2]]
                 alpha = .1, fill = "#2e8b57") +
    # ggtitle(expression(italic("Salix richardsonii"))) +
     labs(y = expression("Shrub biomass" ~ g/m^2), 
-         x = expression("\n % cover/"~m^2)) +
+         x = expression("Cover %/"~m^2)) +
     scale_color_brewer(palette = "Greys")+
     scale_fill_brewer(palette = "Greys")+
     theme_shrub())
@@ -168,7 +179,7 @@ pul_data_2 <- pul[[2]]
                 alpha = .1, fill = "#8a2e61") +
     ggtitle(expression(italic("Salix pulchra"))) +
     # labs(y = expression("Shrub biomass" ~ g/m^2)) +
-    xlab("\n Shrub height (cm)" ) +
+    xlab("Shrub height (cm)" ) +
     labs(y = "")+
     #ylim(0, 4000 ) +
     scale_color_brewer(palette = "Greys")+
@@ -184,7 +195,7 @@ pul_data_2 <- pul[[2]]
                 alpha = .1, fill = "#8a2e61") +
     #ggtitle(expression(italic("Salix pulchra"))) +
     #labs(y = expression("Shrub biomass" ~ g/m^2)) +
-    labs(x = expression("\n % cover/" ~m^2), 
+    labs(x = expression("Cover %/"~m^2), 
          y = "") +
    #ylim(0, 1500) +
     scale_color_brewer(palette = "Greys")+
@@ -205,7 +216,7 @@ arc_data_2 <- arc[[2]]
                 alpha = .1, fill = "#8a852e") +
     ggtitle(expression(italic("Salix arctica"))) +
     #labs(y = expression("Shrub biomass" ~ g/m^2)) +
-    xlab("\n Shrub height (cm)" ) +
+    xlab("Shrub height (cm)" ) +
     labs(y = "")+
     #ylim(0, 300) +
     #scale_color_brewer(palette = "Greys")+
@@ -220,7 +231,7 @@ arc_data_2 <- arc[[2]]
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
                 alpha = .1,fill = "#8a852e") +
    # labs(y = expression("Shrub biomass" ~ g/m^2)) +
-      labs( x = expression("\n% cover/" ~m^2), 
+      labs( x = expression("Cover %/"~m^2), 
             y = "")+
    # ylim(0, 250) +
     #ggtitle(expression(italic("Salix arctica"))) +
@@ -239,9 +250,9 @@ cov_all_allom <- grid.arrange(rich_cov_allom,
 
 all <- grid.arrange(height_all_allom, cov_all_allom)
 
-rich_allom <- grid.arrange(rich_height_allom,rich_cov_allom)
-pulchra_allom <- grid.arrange(pul_height_allom,pul_cov_allom)
-arctic_allom <- grid.arrange(arc_height_allom, arc_cov_allom)
+rich_allom <- grid.arrange(rich_height_allom,rich_cov_allom, rich_height_cov_plot)
+pulchra_allom <- grid.arrange(pul_height_allom,pul_cov_allom, pul_height_cov_plot)
+arctic_allom <- grid.arrange(arc_height_allom, arc_cov_allom, arc_height_cov_plot)
 
 all_allom <- grid.arrange(rich_allom,pulchra_allom,arctic_allom, ncol=3)
 
@@ -278,15 +289,14 @@ rich_height_cov2 <- rich_height_cov1[[1]]
 
 (rich_height_cov_plot <-ggplot(rich_height_cov2) +
     geom_point(data = QHI_salric_shrub_biomass, aes(x = percent_cover, y = max_height),
-               alpha = 0.5)+
+               alpha = 0.5, colour = "#2e8b57")+
     geom_line(aes(x = effect1__, y = estimate__),
-              linewidth = 1.5) +
+              linewidth = 1.5, colour = "#2e8b57") +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
-                alpha = .1) +
-    ylab("S. richardsonii height (cm)\n") +
-    xlab("\n Cover (%/m2)" ) +
-    scale_color_brewer(palette = "Greys")+
-    scale_fill_brewer(palette = "Greys")+
+                alpha = .1, fill = "#2e8b57") +
+    #ggtitle(expression(italic("Salix richardsonii"))) +
+    ylab("Shrub height (cm)\n") +
+    labs(x = expression("Cover %/"~m^2)) + 
     theme_shrub())
 
 pul_height_cov1 <- (conditional_effects(pul_height_cov))
@@ -294,16 +304,15 @@ pul_height_cov2 <- pul_height_cov1[[1]]
 
 (pul_height_cov_plot <-ggplot(pul_height_cov2) +
     geom_point(data = Pika_all_shrub_biomass_edit_2, aes(x = max_cover, y = Shrub_Height_cm),
-               alpha = 0.5)+
+               alpha = 0.5, colour = "#8a2e61")+
     geom_line(aes(x = effect1__, y = estimate__),
-              linewidth = 1.5) +
+              linewidth = 1.5, colour = "#8a2e61") +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
-                alpha = .1) +
-    ylab("S. pulchra height (cm)\n") +
-    xlab("\n Cover (%/m2)" ) +
+                alpha = .1, fill = "#8a2e61") +
+   # ggtitle(expression(italic("Salix pulchra"))) +
+    ylab("Shrub height (cm)\n") +
+    labs(x = expression("Cover %/"~m^2)) + 
     #ylim(0, 4000 ) +
-    scale_color_brewer(palette = "Greys")+
-    scale_fill_brewer(palette = "Greys")+
     theme_shrub())
 
 arc_height_cov1 <- (conditional_effects(arc_height_cov))
@@ -311,16 +320,15 @@ arc_height_cov2 <- arc_height_cov1[[1]]
 
 (arc_height_cov_plot <-ggplot(arc_height_cov2) +
     geom_point(data = QHI_salarc_shrub_biomass, aes(x = percent_cover, y = max_height),
-               alpha = 0.5)+
+               alpha = 0.5, colour = "#8a852e")+
     geom_line(aes(x = effect1__, y = estimate__),
-              linewidth = 1.5) +
+              linewidth = 1.5, colour = "#8a852e") +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
-                alpha = .1) +
-    ylab("S. arctica height (cm)\n") +
-    xlab("\n Cover (%/m2)" ) +
+                alpha = .1, fill = "#8a852e") +
+    # ggtitle(expression(italic("Salix arctica"))) +
+    ylab("Shrub height (cm)\n") +
+    labs(x = expression("Cover %/"~m^2)) + 
     #ylim(0, 4000 ) +
-    scale_color_brewer(palette = "Greys")+
-    scale_fill_brewer(palette = "Greys")+
     theme_shrub())
 
 heightcov_all <- grid.arrange(rich_height_cov_plot,
