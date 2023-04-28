@@ -8,6 +8,32 @@ library(readr)
 library(brms)
 library(tidyverse)
 library(gridExtra)
+library(kableExtra)
+library(knitr)
+library(ggpubr)
+
+
+# funciton to extract model summary
+model_summ <- function(x) {
+  sum = summary(x)
+  fixed = sum$fixed
+  sigma = sum$spec_pars
+  random = sum$random$Sample_age # change name of random effect here 
+  random = sum$random$SampleID_standard # change name of random effect here 
+  obs = sum$nobs
+  
+  fixed$effect <- "fixed"  # add ID column for type of effect (fixed, random, residual)
+ # fixed$effect <- "population"  # add ID column for type of effect (fixed, random, residual)
+  random$effect <- "random"
+ # random$effect <- "SampleID_standard"
+  sigma$effect <- "residual"
+  fixed$nobs <- obs  # add column with number of observations
+  random$nobs <- obs
+  sigma$nobs <- obs
+  row.names(random)[row.names(random) == "sd(Intercept)"] <- "random" # could change rowname here of random effect if you'd like 
+  
+  modelTerms <- as.data.frame(bind_rows(fixed, random, sigma))  # merge together
+}
 
 # DATA -------
 all_CG_growth <- read_csv("data/common_garden_shrub_data/all_CG_growth.csv")
@@ -43,75 +69,28 @@ all_CG_growth_arc_south <- all_CG_growth_arc %>%
   filter(Canopy_Height_cm>=0)
 
 # MODELLING 
-# 1.STEM ELONG over time ------
+
+# HEIGHT over time ------
 # Salix richardsonii -------
-elong_rich <- brms::brm(log(mean_stem_elong) ~ Sample_age*population +(1|Year),
+
+height_rich <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population+(Sample_age|SampleID_standard),
                          data = all_CG_growth_ric,  family = gaussian(), chains = 3,
                          iter = 5000, warmup = 1000, 
                          control = list(max_treedepth = 15, adapt_delta = 0.99))
 
-summary(elong_rich) # significant height growth over time
-plot(elong_rich)
-pp_check(elong_rich, type = "dens_overlay", nsamples = 100) 
+# extracting model summary
+height_rich_summ <- model_summ(height_rich)
+summary(height_rich)
+rownames(height_rich_summ) <- c("Intercept", "Sample age", "Southern population"
+                           , "Sample age:Southern population", "Random intercept", 
+                           "sd(Sample age)", "cor(Intercept, Sample age)", "sigma")
 
-# southern only 
-elong_rich_south <- brms::brm(log(mean_stem_elong) ~ Sample_age + (1|Year),
-                        data = all_CG_growth_ric_south,  family = gaussian(), chains = 3,
-                        iter = 5000, warmup = 1000, 
-                        control = list(max_treedepth = 15, adapt_delta = 0.99))
+height_rich_summ$Rhat <- as.character(formatC(height_rich_summ$Rhat, digits = 2, format = 'f'))
 
-summary(elong_rich_south) # significant height growth over time
-plot(elong_rich_south)
-pp_check(elong_rich_south, type = "dens_overlay", nsamples = 100) 
+height_rich_summ <- height_rich_summ %>%
+  mutate(Species = "Salix richardsonii")%>%
+  relocate("Species", .before = "Estimate")
 
-# Salix pulchra -----
-elong_pul <- brms::brm(log(mean_stem_elong) ~ Sample_age*population+(1|Year),
-                        data = all_CG_growth_pul,  family = gaussian(), chains = 3,
-                        iter = 5000, warmup = 1000, 
-                        control = list(max_treedepth = 15, adapt_delta = 0.99))
-
-summary(elong_pul) # 
-plot(elong_pul)
-pp_check(elong_pul, type = "dens_overlay", nsamples = 100) 
-
-# southern 
-elong_pul_south <- brms::brm(log(mean_stem_elong) ~ Sample_age+(1|Year),
-                       data = all_CG_growth_pul_south,  family = gaussian(), chains = 3,
-                       iter = 5000, warmup = 1000, 
-                       control = list(max_treedepth = 15, adapt_delta = 0.99))
-
-summary(elong_pul_south) # 
-plot(elong_pul_south)
-pp_check(elong_pul_south, type = "dens_overlay", nsamples = 100) 
-
-
-# Salix arctica -------
-elong_arc <- brms::brm(log(mean_stem_elong) ~ Sample_age*population+(1|Year),
-                        data = all_CG_growth_arc,  family = gaussian(), chains = 3,
-                        iter = 5000, warmup = 1000, 
-                        control = list(max_treedepth = 15, adapt_delta = 0.99))
-
-summary(elong_arc) # significant growth over time
-plot(elong_arc)
-pp_check(elong_arc, type = "dens_overlay", nsamples = 100) 
-
-# southern 
-elong_arc_south <- brms::brm(log(mean_stem_elong) ~ Sample_age+(1|Year),
-                       data = all_CG_growth_arc_south,  family = gaussian(), chains = 3,
-                       iter = 5000, warmup = 1000, 
-                       control = list(max_treedepth = 15, adapt_delta = 0.99))
-
-summary(elong_arc_south) # significant growth over time
-plot(elong_arc_south)
-pp_check(elong_arc_south, type = "dens_overlay", nsamples = 100) 
-
-# 2. HEIGHT over time ------
-# Salix richardsonii -------
-
-height_rich <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population+(1|Year),
-                         data = all_CG_growth_ric,  family = gaussian(), chains = 3,
-                         iter = 5000, warmup = 1000, 
-                         control = list(max_treedepth = 15, adapt_delta = 0.99))
 
 # only southern random slopes
 # truncating to max richardsonii height from usda.gov (450cm, log(450)=6.109)
@@ -127,10 +106,22 @@ pp_check(height_rich_south, type = "dens_overlay", ndraws = 100)
 
 
 # Salix pulchra -----
-height_pul <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population+(1|Year),
+height_pul <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population+(Sample_age|SampleID_standard),
                         data = all_CG_growth_pul,  family = gaussian(), chains = 3,
                         iter = 5000, warmup = 1000, 
                         control = list(max_treedepth = 15, adapt_delta = 0.99))
+summary(height_pul)
+height_pul_summ <- model_summ(height_pul)
+rownames(height_pul_summ) <- c("Intercept ", "Sample age ", "Southern population "
+                                , "Sample age:Southern population ", "Random intercept ", 
+                                "sd(Sample age) ", "cor(Intercept, Sample age) ", "sigma ")
+height_pul_summ$Rhat <- as.character(formatC(height_pul_summ$Rhat, digits = 2, format = 'f'))
+
+height_pul_summ <- height_pul_summ %>%
+  mutate(Species = "Salix pulchra")%>%
+  relocate("Species", .before = "Estimate")
+
+height_pul_ric <- rbind(height_rich_summ, height_pul_summ)
 
 # only southern
 # truncating to max height of pulchra 160 cm = log(160 )
@@ -144,7 +135,7 @@ plot(height_pul_south)
 pp_check(height_pul_south, type = "dens_overlay", ndraws = 100) 
 
 # Salix arctica -------
-height_arc <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population+(1|Year),
+height_arc <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population+(Sample_age|SampleID_standard),
                         data = all_CG_growth_arc,  family = gaussian(), chains = 3,
                         iter = 5000, warmup = 1000, 
                         control = list(max_treedepth = 15, adapt_delta = 0.99))
@@ -152,6 +143,37 @@ height_arc <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population+(1|Year),
 summary(height_arc) # significant growth over time
 plot(height_arc)
 pp_check(height_arc, type = "dens_overlay", nsamples = 100) 
+
+height_arc_summ <- model_summ(height_arc)
+rownames(height_arc_summ) <- c(" Intercept ", " Sample age ", " Southern population "
+                               , " Sample age:Southern population ", " Random intercept ", 
+                               " sd(Sample age) ", " cor(Intercept, Sample age) ", " sigma ")
+height_arc_summ$Rhat <- as.character(formatC(height_arc_summ$Rhat, digits = 2, format = 'f'))
+
+height_arc_summ <- height_arc_summ %>%
+  mutate(Species = "Salix arctica")%>%
+  relocate("Species", .before = "Estimate")
+
+height_pul_ric_arc <- rbind(height_rich_summ, height_pul_summ,height_arc_summ )
+
+kable_rich_pul_arc <- height_pul_ric_arc %>% 
+  kbl(caption="Table. Heights over time of northern and southern shrubs in the common garden. ", 
+      col.names = c("Species", "Estimate", "Error", "Lower 95% CI", "Upper 95% CI",
+                    "Rhat", "Bulk effective sample size", "Tail effective sample size",
+                    "Effect", "Sample size"), # give the column names you want making sure you have one name per column!
+      digits=2, align = "c") %>%  # specify number of significant digits, align numbers at the centre (can also align "l" left/ "r" right)
+  kable_classic(full_width=FALSE, html_font="Helvetica") # can change fonts
+
+# optional: making specific column text in italics
+column_spec(kable_rich_pul_arc, 2, width = NULL, bold = FALSE, italic = TRUE) # 2 is my example column number 
+
+save_kable(kable_rich_pul_arc,file = "outputs/tables/kable_rich_pul_arc.pdf", # or .png, or .jpeg, save in your working directory
+           bs_theme = "simplex",
+           self_contained = TRUE,
+           extra_dependencies = NULL,
+           latex_header_includes = NULL,
+           keep_tex = FALSE,
+           density = 300)
 
 # only southern
 # truncarte to max height 23 cm, log(23)= 3.135494, -1 lower bound because some small values when logged give negative number eg log(0.5)
@@ -165,7 +187,7 @@ plot(height_arc_south)
 pp_check(height_arc_south, type = "dens_overlay", ndraws = 100) 
 
 # DATA VISUALISATION -------
-# 1. HEIGHT -----
+# HEIGHT -----
 # Salix richardsonii ------
 rich_height_1 <- (conditional_effects(height_rich_south))
 rich_height_data <- rich_height_1[[1]]
@@ -188,29 +210,35 @@ rich_height_data_2 <- rich_height_1[[2]]
     theme_shrub())
 
 # this works well 
-(rich_south_heights_plot_new <- all_CG_growth_ric_south %>%
+(rich_heights_plot_new <- all_CG_growth_ric %>%
     group_by(population) %>%
-    add_predicted_draws(height_rich_south, allow_new_levels = TRUE) %>%
-    ggplot(aes(x = Sample_age, y = log(Canopy_Height_cm), colour = ordered(population))) +
-    stat_lineribbon(aes(y = .prediction), .width = c(.50), alpha = 1/4) +
-    geom_point(data = all_CG_growth_ric_south) +
+    add_predicted_draws(height_rich, allow_new_levels = TRUE) %>%
+    ggplot(aes(x = Sample_age, y = Canopy_Height_cm, colour = population)) +
+    stat_lineribbon(aes(y = exp(.prediction), fill = population), .width = c(.50), alpha = 1/4) +
+    geom_point(data = all_CG_growth_ric) +
+    scale_colour_viridis_d(begin = 0.1, end = 0.95) +
+    scale_fill_viridis_d(begin = 0.1, end = 0.95) +
     theme_shrub() +
-    ylab("S. richardsonii (southern) canopy height (log cm)\n") +
-    xlab("\nSample age") +
-    theme(legend.position = "none"))
+    ggtitle(expression(italic("Salix richardsonii"))) +
+    ylab("Canopy height (cm)\n") +
+    xlab("\nSample age"))
+    #theme(legend.position = "none"))
 
 # Salix pulchra ------
 
-(pul_south_heights_plot_new <- all_CG_growth_pul_south %>%
+(pul_heights_plot_new <- all_CG_growth_pul %>%
     group_by(population) %>%
-    add_predicted_draws(height_pul_south, allow_new_levels = TRUE ) %>%
-    ggplot(aes(x = Sample_age, y = log(Canopy_Height_cm), color = ordered(population))) +
-    stat_lineribbon(aes(y = .prediction), .width = c(.50), alpha = 1/4) +
-    geom_point(data = all_CG_growth_pul_south) +
-    theme_shrub() +
-    ylab("S. pulchra (southern) canopy height (log cm)\n") +
-    xlab("\nSample age")+
-   theme(legend.position = "none"))
+    add_predicted_draws(height_pul, allow_new_levels = TRUE ) %>%
+    ggplot(aes(x = Sample_age, y = Canopy_Height_cm, color = population)) +
+    stat_lineribbon(aes(y = exp(.prediction), fill = population), .width = c(.50), alpha = 1/4) +
+    geom_point(data = all_CG_growth_pul) +
+   scale_colour_viridis_d(begin = 0.1, end = 0.95) +
+   scale_fill_viridis_d(begin = 0.1, end = 0.95) +
+   theme_shrub() +
+   ggtitle(expression(italic("Salix pulchra"))) +
+   ylab("Canopy height (cm)\n") +
+   xlab("\nSample age"))
+  # theme(legend.position = "none"))
 
 # Salix pulchra ------
 pul_height_1 <- (conditional_effects(height_pul_south))
@@ -237,20 +265,86 @@ pulchra_CG_panel <- grid.arrange(pul_height_plot,pul_cover_plot, nrow=1)
 
 
 # Salix arctica------
-(arc_south_heights_plot_new <- all_CG_growth_arc_south %>%
-  # group_by(population) %>%
-   add_predicted_draws(height_arc_south, allow_new_levels = TRUE ) %>%
-   ggplot(aes(x = Sample_age, y = log(Canopy_Height_cm), color = ordered(population))) +
-   stat_lineribbon(aes(y = .prediction), .width = c(.50), alpha = 1/4) +
-   geom_point(data = all_CG_growth_arc_south) +
+(arc_heights_plot_new <- all_CG_growth_arc %>%
+  group_by(population) %>%
+   add_predicted_draws(height_arc, allow_new_levels = TRUE ) %>%
+   ggplot(aes(x = Sample_age, y = Canopy_Height_cm, color = population)) +
+   stat_lineribbon(aes(y = exp(.prediction), fill = population), .width = c(.50), alpha = 1/4) +
+   geom_point(data = all_CG_growth_arc) +
+   scale_colour_viridis_d(begin = 0.1, end = 0.95) +
+   scale_fill_viridis_d(begin = 0.1, end = 0.95) +
    theme_shrub() +
-   ylab("S. arctica (southern) canopy height (log cm)\n") +
-   xlab("\nSample age")+
-   theme(legend.position = "none"))
+   ggtitle(expression(italic("Salix arctica"))) +
+   ylab("Canopy height (cm)\n") +
+   xlab("\nSample age"))
 
-CG_height_panel_south <- grid.arrange(rich_south_heights_plot_new,
-                                pul_south_heights_plot_new, 
-                                arc_south_heights_plot_new, nrow = 1)
+
+CG_height_panel <- ggarrange(rich_heights_plot_new,
+                                pul_heights_plot_new, 
+                                arc_heights_plot_new, nrow = 1,
+                                common.legend = TRUE, legend="right")
+# STEM ELONG over time ------
+# Salix richardsonii -------
+elong_rich <- brms::brm(log(mean_stem_elong) ~ Sample_age*population +(1|Year),
+                        data = all_CG_growth_ric,  family = gaussian(), chains = 3,
+                        iter = 5000, warmup = 1000, 
+                        control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(elong_rich) # significant height growth over time
+plot(elong_rich)
+pp_check(elong_rich, type = "dens_overlay", nsamples = 100) 
+
+# southern only 
+elong_rich_south <- brms::brm(log(mean_stem_elong) ~ Sample_age + (1|Year),
+                              data = all_CG_growth_ric_south,  family = gaussian(), chains = 3,
+                              iter = 5000, warmup = 1000, 
+                              control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(elong_rich_south) # significant height growth over time
+plot(elong_rich_south)
+pp_check(elong_rich_south, type = "dens_overlay", nsamples = 100) 
+
+# Salix pulchra -----
+elong_pul <- brms::brm(log(mean_stem_elong) ~ Sample_age*population+(1|Year),
+                       data = all_CG_growth_pul,  family = gaussian(), chains = 3,
+                       iter = 5000, warmup = 1000, 
+                       control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(elong_pul) # 
+plot(elong_pul)
+pp_check(elong_pul, type = "dens_overlay", nsamples = 100) 
+
+# southern 
+elong_pul_south <- brms::brm(log(mean_stem_elong) ~ Sample_age+(1|Year),
+                             data = all_CG_growth_pul_south,  family = gaussian(), chains = 3,
+                             iter = 5000, warmup = 1000, 
+                             control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(elong_pul_south) # 
+plot(elong_pul_south)
+pp_check(elong_pul_south, type = "dens_overlay", nsamples = 100) 
+
+
+# Salix arctica -------
+elong_arc <- brms::brm(log(mean_stem_elong) ~ Sample_age*population+(1|Year),
+                       data = all_CG_growth_arc,  family = gaussian(), chains = 3,
+                       iter = 5000, warmup = 1000, 
+                       control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(elong_arc) # significant growth over time
+plot(elong_arc)
+pp_check(elong_arc, type = "dens_overlay", nsamples = 100) 
+
+# southern 
+elong_arc_south <- brms::brm(log(mean_stem_elong) ~ Sample_age+(1|Year),
+                             data = all_CG_growth_arc_south,  family = gaussian(), chains = 3,
+                             iter = 5000, warmup = 1000, 
+                             control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(elong_arc_south) # significant growth over time
+plot(elong_arc_south)
+pp_check(elong_arc_south, type = "dens_overlay", nsamples = 100) 
+
 # 2.STEM ELONGATION -----
 # Salix richardsonii -------
 (rich_elong_plot_new <- all_CG_growth_ric_south %>%
