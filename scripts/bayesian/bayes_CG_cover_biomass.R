@@ -187,14 +187,14 @@ pp_check(tall_biom_random_slopes, type = "dens_overlay", nsamples = 100)
 
 # 4. DATA VISUALISATION ---------
 theme_shrub <- function(){ theme(legend.position = "right",
-                                 axis.title.x = element_text(size=20),
-                                 axis.text.x  = element_text(vjust=0.5, size=18, colour = "black"), 
-                                 axis.title.y = element_text(size=20),
-                                 axis.text.y  = element_text(vjust=0.5, size=18, colour = "black"),
+                                 axis.title.x = element_text(size=18),
+                                 axis.text.x  = element_text(vjust=0.5, size=16, colour = "black"), 
+                                 axis.title.y = element_text(size=18),
+                                 axis.text.y  = element_text(vjust=0.5, size=16, colour = "black"),
                                  panel.grid.major.x=element_blank(), panel.grid.minor.x=element_blank(), 
                                  panel.grid.minor.y=element_blank(), panel.grid.major.y=element_blank(), 
                                  panel.background = element_blank(), axis.line = element_line(colour = "black"), 
-                                 plot.title = element_text(color = "black", size = 18, face = "bold", hjust = 0.5),
+                                 plot.title = element_text(color = "black", size = 16, face = "bold", hjust = 0.5),
                                  plot.margin = unit(c(1,1,1,1), units = , "cm"))}
 
 # 4.1 COVER -----
@@ -221,17 +221,17 @@ pul_cov_data_1 <- pul_cov_1[[1]]
 
 (pul_cover_plot <-ggplot(pul_cov_data_1) +
     geom_point(data = CG_pul_cover_biomass, aes(x = Sample_age, y = (cover_percent/100)),
-               alpha = 0.5, colour = "#21918c")+
+               alpha = 0.5, colour = "#0072B2")+
     geom_line(aes(x = effect1__, y = estimate__),
-              linewidth = 1.5, colour = "#21918c") +
+              linewidth = 1.5, colour = "#0072B2") +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
-                alpha = .1, fill = "#21918c") +
+                alpha = .1, fill = "#0072B2") +
    # ylab("Cover (/m2)\n") +
     xlab("\n Sample age" ) +
-    ylab(expression("Cover proportion/" ~m^2 ~"\n")) + 
+    ylab("Cover (proportion) \n") + 
    # scale_fill_brewer(palette = "orange") +
   # scale_color_brewer(palette = "Dark2") +
-    theme_shrub())
+    theme_shrub()+ theme(text=element_text(family="Helvetica Light")) )
 
 # Salix arctica ------
 arc_cov_1 <- (conditional_effects(cover_arc))

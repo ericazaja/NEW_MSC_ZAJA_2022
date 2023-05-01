@@ -399,8 +399,7 @@ cov_all_dat <- full_join(cov_mean_dat_2,cov_max_dat_3, by = c("Year_index"="Year
                 alpha = 0.1) +
     ylab("Plot mean and plot max Salix pulchra cover (prop)\n") +
     xlab("\n Year (scaled)" ) +
-    scale_fill_brewer(palette = "Set2") +
-    scale_color_brewer(palette = "Dark2") +
+    scale_color_manual(values = c("QHI" = "#c00100", "TOOLIK" = "#332288"))+
     theme_shrub() +
     theme(panel.border = element_blank(),
           panel.grid.major = element_blank(),
@@ -410,7 +409,7 @@ cov_all_dat <- full_join(cov_mean_dat_2,cov_max_dat_3, by = c("Year_index"="Year
           axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
           axis.text.y = element_text(size = 12, colour = "black"))) 
 
-# final graphs 
+# final graphs  ----
 cov_mean_2 <- (conditional_effects(pulchra_cover_mean))
 cov_max_3 <- (conditional_effects(pulchra_cover_max))
 cov_mean_dat_2 <- cov_mean_2[[3]] 
@@ -423,11 +422,15 @@ cov_max_dat_3 <- cov_max_3[[3]]
               linewidth = 1.5) +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__, fill = SITE),
                 alpha = .1) +
-    ylab("Cover proportion (plot mean)") +
+    ylim(0, 1.00)+
+    ylab("Mean cover (proportion)\n") +
     xlab("\n Year (scaled)" ) +
-    scale_fill_brewer(palette = "Set2") +
-    scale_color_brewer(palette = "Dark2") +
-    theme_shrub())
+    scale_color_manual(values = c("QHI" = "#D55E00", "TOOLIK" = "#009E73"))+
+    scale_fill_manual(values = c("QHI" = "#D55E00", "TOOLIK" = "#009E73"))+
+   # scale_fill_brewer(palette = "Set2") +
+   # scale_color_brewer(palette = "Dark2") +
+    theme_shrub() + theme(legend.position = "none")+ theme(text=element_text(family="Helvetica Light")) )
+  #+ theme(legend.position = c(0.95, 0.95)))
 
 (pul_max_cover_plot <-ggplot(cov_max_dat_3) +
     geom_point(data = max, aes(x = Year_index, y = max_cov, colour = SITE),
@@ -436,11 +439,25 @@ cov_max_dat_3 <- cov_max_3[[3]]
               linewidth = 1.5) +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__, fill = SITE),
                 alpha = .1) +
-    ylab("Cover proportion (plot max)") +
+    ylab("Max cover (proportion)\n") +
     xlab("\n Year (scaled)" ) +
-    scale_fill_brewer(palette = "Set2") +
-    scale_color_brewer(palette = "Dark2") +
-    theme_shrub())
+    ylim(0, 1.00) +
+    scale_color_manual(values = c("QHI" = "#D55E00", "TOOLIK" = "#009E73"))+
+    scale_fill_manual(values = c("QHI" = "#D55E00", "TOOLIK" = "#009E73"))+
+    theme_shrub() + theme(legend.position = "none") +
+    theme(text=element_text(family="Helvetica Light")) )
 
 panel_coverheight_max <- grid.arrange(pulchra_height_plot_max,pul_max_cover_plot,nrow=1)
 panel_coverheight_mean <- grid.arrange(pulchra_height_plot_mean,pul_mean_cover_plot, nrow=1)
+panel_coverheight_meanmax <- grid.arrange(pulchra_height_plot_mean,pul_mean_cover_plot, pulchra_height_plot_max,
+                                          pul_max_cover_plot, nrow=2)
+
+panel_coverheight_meanmax_cg <- grid.arrange(pulchra_height_plot_mean,pul_mean_cover_plot, pulchra_height_plot_max,
+                                             pul_max_cover_plot, pul_height_plot, pul_cover_plot, nrow=3)
+ggsave(panel_coverheight_meanmax_cg, filename = "outputs/figures/panel_coverheight_meanmax_cg.png", width = 8.27, height = 11.69)
+
+#common legend
+plot(NULL ,xaxt='n',yaxt='n',bty='n',ylab='',xlab='', xlim=0:1, ylim=0:1)
+legend("topleft", legend =c('QHI', 'TOOLIK', 'CG'), pch=16, pt.cex=2, cex=1.5, bty='n',
+       col = c('#D55E00', '#009E73', '#0072B2'), text(family="Helvetica Light"))
+mtext("Site", at=0.2, cex=2, family = "Helvetica Light")

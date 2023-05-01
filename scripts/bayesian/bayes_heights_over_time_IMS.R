@@ -110,6 +110,8 @@ all_bind_new_mean <- all_bind_new_mean %>%
 all_bind_new_max <- all_bind_new_max %>% 
   mutate(Year_index = I(YEAR - 1998)) 
 
+range(all_bind_new$max_pointfr_height)
+
 # quick plot
 # raw data 
 (pulchra_height_plot <- all_bind_new_mean %>%
@@ -136,15 +138,15 @@ all_bind_mean_dat <- all_bind_mean[[1]]
 
 (pulchra_height_plot_mean <-ggplot(all_bind_mean_dat) +
     geom_point(data = all_bind_new_mean, aes(x = Year_index, y = mean_height),
-               alpha = 0.5, colour = "#66c2a5")+
+               alpha = 0.5, colour =  "#D55E00")+
     geom_line(aes(x = effect1__, y = estimate__),
-              linewidth = 1.5, colour = "#1b9e77") +
+              linewidth = 1.5, colour =  "#D55E00") +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
-                alpha = .1,  fill = "#1b9e77") +
-    ylab("Canopy height plot mean (cm)") +
+                alpha = .1,  fill =  "#D55E00") +
+    ylab("Mean canopy height (cm)\n") +
     xlab("\n Year (scaled)" ) +
-    ylim(0, 30) +
-    theme_shrub())
+    ylim(0, 100) +
+    theme_shrub()+ theme(text=element_text(family="Helvetica Light")) )
 
 # model with plot max data
 MAX <- brms::brm(max_height|trunc(lb = 0, ub = 160) ~ Year_index + (Year_index),
@@ -159,22 +161,21 @@ all_bind_max_dat <- all_bind_max[[1]]
 
 (pulchra_height_plot_max <-ggplot(all_bind_max_dat) +
     geom_point(data = all_bind_new_max, aes(x = Year_index, y = max_height),
-               alpha = 0.5, colour = "#66c2a5")+
+               alpha = 0.5, colour = "#D55E00")+
     geom_line(aes(x = effect1__, y = estimate__),
-              linewidth = 1.5, colour = "#1b9e77") +
+              linewidth = 1.5, colour = "#D55E00") +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
-                alpha = .1, fill = "#1b9e77") +
-    ylab("Canopy height plot max (cm)") +
+                alpha = .1, fill = "#D55E00") +
+    ylab("Max canopy height (cm)\n") +
     xlab("\n Year (scaled)" ) +
-    ylim(0, 30) +
+    ylim(0, 100) +
     #scale_color_brewer(palette = "Greys")+
     #scale_fill_brewer(palette = "Greys")+
-    theme_shrub())
+    theme_shrub()+ theme(text=element_text(family="Helvetica Light")) )
 
 
 panel <- grid.arrange(pulchra_height_plot_all, pulchra_height_plot_mean,
                       pulchra_height_plot_max, nrow =1)
-
 
 # STOP ----
 

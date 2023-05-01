@@ -248,18 +248,18 @@ pul_height_data_back <- pul_height_data_1 %>%
 
 (pul_height_plot <-ggplot(pul_height_data_1) +
     geom_point(data = all_CG_growth_pul_south, aes(x = Sample_age,y = Canopy_Height_cm),
-               alpha = 0.5, colour = "#21918c")+
+               alpha = 0.5, colour = "#0072B2")+
     geom_line(aes(x = effect1__, y = exp(estimate__)),
-              linewidth = 1.5, colour = "#21918c") +
+              linewidth = 1.5, colour = "#0072B2") +
     geom_ribbon(aes(x = effect1__, ymin = exp(lower__), ymax = exp(upper__)),
-                alpha = .1, fill = "#21918c") +
+                alpha = .1, fill = "#0072B2") +
     labs(x = "\n Sample age",
-         y = "Canopy height (cm)")+
+         y = "Canopy height (cm)\n")+
     # ylab("Cover (/m2)\n") +
     # xlab("\n Sample age" ) +
     # scale_fill_brewer(palette = "orange") +
     scale_color_brewer(palette = "Dark2") +
-    theme_shrub())
+    theme_shrub()+ theme(text=element_text(family="Helvetica Light")) )
 
 pulchra_CG_panel <- grid.arrange(pul_height_plot,pul_cover_plot, nrow=1)
 
