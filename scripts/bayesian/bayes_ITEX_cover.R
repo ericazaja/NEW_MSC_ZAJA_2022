@@ -10,6 +10,24 @@ library(bayesplot)
 library(plyr)
 library(sjPlot)
 
+# funciton to extract model summary
+model_summ_cov <- function(x) {
+  sum = summary(x)
+  fixed = sum$fixed
+  sigma = sum$spec_pars
+  random = sum$random$Year_index # change name of random effect here 
+  obs = sum$nobs
+  
+  fixed$effect <- "fixed"  # add ID column for type of effect (fixed, random, residual)
+  random$effect <- "random"
+  sigma$effect <- "residual"
+  fixed$nobs <- obs  # add column with number of observations
+  random$nobs <- obs
+  sigma$nobs <- obs
+  row.names(random)[row.names(random) == "sd(Intercept)"] <- "random" # could change rowname here of random effect if you'd like 
+  
+  modelTerms <- as.data.frame(bind_rows(fixed, random, sigma))  # merge together
+}
 
 # load data ------
 itex_EZ_shrubs_2023 <- read_csv("data/ITEX/itex_EZ_shrubs_2023.csv")
@@ -156,6 +174,17 @@ summary(pulchra_cover_mean) # mean year estimate for both sites 0.00677882
 pp_check(pulchra_cover_mean, ndraws=100)
 plot_model(pulchra_cover_mean, type = "pred", terms = c("Year_index ", "SITE")) # to visualise interaction
 
+pulchra_cover_mean_summ <- model_summ_cov(pulchra_cover_mean)
+rownames(pulchra_cover_mean_summ) <- c("Intercept ", "Year (indexed) ", "Toolik site ", "Year (indexed):Toolik site",
+                                       "Random intercept", "phi")
+pulchra_cover_mean_summ$Rhat <- as.character(formatC(pulchra_cover_mean_summ$Rhat, digits = 2, format = 'f'))
+
+pulchra_cover_mean_summ <- pulchra_cover_mean_summ %>%
+  mutate("Scenario" = "natural",
+         "Response variable" = "Mean cover") %>% 
+  relocate("Scenario", .before = "Estimate") %>%
+  relocate("Response variable", .before = "Scenario")
+
 # Extracting outputs
 cov_time_pul_fix <- as.data.frame(fixef(pulchra_cover_max)) # extract fixed eff. slopes 
 cov_time_pul_random <- as.data.frame(ranef(pulchra_cover_mean)) # extract random eff. slopes 
@@ -189,10 +218,34 @@ pulchra_cover_mean_QHI <- brms::brm(mean_cov ~ Year_index + (1|Year_index),
                                 iter = 5000, warmup = 1000, 
                                 control = list(max_treedepth = 15, adapt_delta = 0.99))
 
+pulchra_cover_mean_QHI_summ <- model_summ_cov(pulchra_cover_mean_QHI)
+rownames(pulchra_cover_mean_QHI_summ) <- c("Intercept   ", "Year (indexed)            ",
+                                       "Random intercept  ", "phi   ")
+pulchra_cover_mean_QHI_summ$Rhat <- as.character(formatC(pulchra_cover_mean_QHI_summ$Rhat, digits = 2, format = 'f'))
+
+pulchra_cover_mean_QHI_summ <- pulchra_cover_mean_QHI_summ %>%
+  mutate("Site" = "QHI", "Scenario" = "Natural",
+         "Response variable" = "Mean cover") %>% 
+  relocate("Site", .before = "Estimate") %>%
+  relocate("Response variable", .before = "Site")%>%
+  relocate("Scenario", .before = "Site")
+
 pulchra_cover_max_QHI <- brms::brm(max_cov ~ Year_index + (1|Year_index),
                                     data = max_QHI, family = "beta", chains = 3,
                                     iter = 5000, warmup = 1000, 
                                     control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+pulchra_cover_max_QHI_summ <- model_summ_cov(pulchra_cover_max_QHI)
+rownames(pulchra_cover_max_QHI_summ) <- c(" Intercept  ", "Year (indexed)  ",
+                                           "Random intercept ", "phi ")
+pulchra_cover_max_QHI_summ$Rhat <- as.character(formatC(pulchra_cover_max_QHI_summ$Rhat, digits = 2, format = 'f'))
+
+pulchra_cover_max_QHI_summ <- pulchra_cover_max_QHI_summ %>%
+  mutate("Site" = "QHI", "Scenario" = "Natural",
+         "Response variable" = "Max cover") %>% 
+  relocate("Site", .before = "Estimate") %>%
+  relocate("Response variable", .before = "Site")%>%
+  relocate("Scenario", .before = "Site")
 
 summary(pulchra_cover_mean_QHI) # 0.01686414
 summary(pulchra_cover_max_QHI)
@@ -211,11 +264,42 @@ pulchra_cover_mean_toolik <- brms::brm(mean_cov ~ Year_index + (1|Year_index),
                                     data = mean_toolik, family = "beta", chains = 3,
                                     iter = 5000, warmup = 1000, 
                                     control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+pulchra_cover_mean_toolik_summ <- model_summ_cov(pulchra_cover_mean_toolik)
+rownames(pulchra_cover_mean_toolik_summ) <- c("Intercept     ", "  Year (indexed) ",
+                                           "  Random intercept ", "phi  ")
+pulchra_cover_mean_toolik_summ$Rhat <- as.character(formatC(pulchra_cover_mean_toolik_summ$Rhat, digits = 2, format = 'f'))
+
+pulchra_cover_mean_toolik_summ <- pulchra_cover_mean_toolik_summ %>%
+  mutate("Site" = "Toolik", "Scenario" = "Natural",
+         "Response variable" = "Mean cover") %>% 
+  relocate("Site", .before = "Estimate") %>%
+  relocate("Response variable", .before = "Site")%>%
+  relocate("Scenario", .before = "Site")
+  
+
 pulchra_cover_max_toolik <- brms::brm(max_cov ~ Year_index + (1|Year_index),
                                        data = max_toolik, family = "beta", chains = 3,
                                        iter = 5000, warmup = 1000, 
                                        control = list(max_treedepth = 15, adapt_delta = 0.99))
 
+pulchra_cover_max_toolik_summ <- model_summ_cov(pulchra_cover_max_toolik)
+rownames(pulchra_cover_max_toolik_summ) <- c(" Intercept  ", " Year (indexed) ",
+                                              " Random intercept ", " phi ")
+pulchra_cover_max_toolik_summ$Rhat <- as.character(formatC(pulchra_cover_max_toolik_summ$Rhat, digits = 2, format = 'f'))
+
+pulchra_cover_max_toolik_summ <- pulchra_cover_max_toolik_summ %>%
+  mutate("Site" = "Toolik", "Scenario"="Natural",
+         "Response variable" = "Max cover", 
+         "Scenario" = "Natural") %>% 
+  relocate("Site", .before = "Estimate") %>%
+  relocate("Response variable", .before = "Site")%>%
+relocate("Scenario", .before = "Site")
+
+all_natural_cov <- rbind(pulchra_cover_max_QHI_summ, pulchra_cover_mean_QHI_summ, 
+                         pulchra_cover_max_toolik_summ, pulchra_cover_mean_toolik_summ)
+
+ALL_MAIN_MODELS <- rbind(bind_with_cg, all_natural_cov)
 summary(pulchra_cover_mean_toolik) # 0.003300622
 summary(pulchra_cover_max_toolik) 
 cov_time_pul_fix_toolik <- as.data.frame(fixef(pulchra_cover_mean_toolik)) # extract fixed eff. slopes 

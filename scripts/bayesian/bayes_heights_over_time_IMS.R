@@ -8,6 +8,26 @@ library(readxl)
 library(tidybayes)
 library(gridExtra)
 
+# funciton to extract model summary
+model_summ_heights <- function(x) {
+  sum = summary(x)
+  fixed = sum$fixed
+  sigma = sum$spec_pars
+  random = sum$random$Year_index # change name of random effect here 
+  obs = sum$nobs
+  
+  fixed$effect <- "fixed"  # add ID column for type of effect (fixed, random, residual)
+  random$effect <- "random"
+  sigma$effect <- "residual"
+  fixed$nobs <- obs  # add column with number of observations
+  random$nobs <- obs
+  sigma$nobs <- obs
+  row.names(random)[row.names(random) == "sd(Intercept)"] <- "random" # could change rowname here of random effect if you'd like 
+  
+  modelTerms <- as.data.frame(bind_rows(fixed, random, sigma))  # merge together
+}
+
+
 # LOAD DATA -----
 # data 1999-2019
 QHI_1999_2022 <- read_csv("data/ITEX/pointfr_1999_2022_clean.csv")
@@ -126,13 +146,26 @@ range(all_bind_new$max_pointfr_height)
 
 # model with plot mean data
 # using trunc to  so that the predictions will never give you a value over 160cm (the max pulchra height)
-MEAN <- brms::brm(mean_height|trunc(lb = 0, ub = 160) ~ Year_index + (Year_index), 
+MEAN <- brms::brm(mean_height|trunc(lb = 0, ub = 160) ~ Year_index + (1|Year_index), 
                             data = all_bind_new_mean,  family = gaussian(), chains = 3,
                             iter = 5000, warmup = 1000, 
                             control = list(max_treedepth = 15, adapt_delta = 0.99))
 summary(MEAN)
 pp_check(MEAN, type = "dens_overlay", ndraws = 100) 
 
+MEAN_summ <- model_summ_heights(MEAN)
+
+rownames(MEAN_summ) <- c("Intercept    ", "Year (indexed)    ", "Random intercept    ", "sigma     ")
+MEAN_summ$Rhat <- as.character(formatC(MEAN_summ$Rhat, digits = 2, format = 'f'))
+
+MEAN_summ <- MEAN_summ %>%
+  mutate("Site" = "QHI","Scenario" = "Natural",
+         "Response variable" = "Mean canopy height") %>% 
+  relocate("Site", .before = "Estimate") %>%
+  relocate("Response variable", .before = "Site")%>%
+  relocate("Scenario", .before = "Site")
+
+# plot
 all_bind_mean <- (conditional_effects(MEAN))
 all_bind_mean_dat <- all_bind_mean[[1]]
 
@@ -148,14 +181,59 @@ all_bind_mean_dat <- all_bind_mean[[1]]
     ylim(0, 100) +
     theme_shrub()+ theme(text=element_text(family="Helvetica Light")) )
 
+
 # model with plot max data
-MAX <- brms::brm(max_height|trunc(lb = 0, ub = 160) ~ Year_index + (Year_index),
+MAX <- brms::brm(max_height|trunc(lb = 0, ub = 160) ~ Year_index + (1|Year_index),
                   data = all_bind_new_max,  family = gaussian(), chains = 3,
                   iter = 5000, warmup = 1000, 
                   control = list(max_treedepth = 15, adapt_delta = 0.99))
 summary(MAX)
 pp_check(MAX, type = "dens_overlay", ndraws = 100) 
 
+MAX_summ <- model_summ_heights(MAX)
+
+rownames(MAX_summ) <- c("    Intercept ", "     Year (indexed) ", "    Random intercept ", "       sigma")
+MAX_summ$Rhat <- as.character(formatC(MAX_summ$Rhat, digits = 2, format = 'f'))
+
+MAX_summ <- MAX_summ %>%
+  mutate("Site" = "QHI", "Scenario"= "Natural",
+         "Response variable" = "Max canopy height") %>% 
+  relocate("Site", .before = "Estimate") %>%
+  relocate("Response variable", .before = "Site")%>%
+  relocate("Scenario", .before = "Site")
+
+Mean_max_bind <- rbind(MEAN_summ, MAX_summ, all_natural_cov)
+bind_with_cg <- rbind(cg_models_bind,Mean_max_bind)
+
+
+kable_bind_with_cg <- bind_with_cg %>% 
+  kbl(caption="Table. Heights and cover over time of natural vs novel scenarios. ", 
+      col.names = c("Response variable", "Scenario", "Site", "Estimate", "Error", "Lower 95% CI", "Upper 95% CI",
+                    "Rhat", "Bulk effective sample size", "Tail effective sample size",
+                    "Effect", "Sample size"), # give the column names you want making sure you have one name per column!
+      digits=3, align = "c") %>%  # specify number of significant digits, align numbers at the centre (can also align "l" left/ "r" right)
+  kable_classic(full_width=TRUE, html_font="Helvetica")# can change fonts
+
+kable_bind_with_cg <- kable_bind_with_cg %>%
+  row_spec(0,  bold = TRUE)%>%
+  row_spec(c(2,8,14,18,22, 26, 30, 34), bold = TRUE)%>%
+  landscape()
+
+kable_bind_with_cg
+
+# optional: making specific column text in italics
+save_kable(kable_bind_with_cg,file = "outputs/tables/kable_bind_with_cg.pdf", # or .png, or .jpeg, save in your working directory
+           bs_theme = "simplex",
+           self_contained = TRUE,
+           extra_dependencies = NULL,
+           latex_header_includes = NULL,
+           keep_tex = FALSE,
+           density = 300)
+
+
+
+
+# plot
 all_bind_max <- (conditional_effects(MAX))
 all_bind_max_dat <- all_bind_max[[1]]
 
@@ -185,7 +263,7 @@ test <- QHI_1999_2022 %>%
   group_by(SUBSITE, PLOT, YEAR) %>%
   summarise(HeightMax = max(Height))
 
-# DATA WRANGLE ------
+# DATA WRANGLE 
 # make a subsite plot year x y column 
 QHI_2022 <- QHI_1999_2022 %>% select(SUBSITE, PLOT, YEAR, X, Y, SPP, STATUS, Height) %>% 
   filter(SPP == "Salix pulchra" & STATUS == "LIVE")
@@ -233,8 +311,8 @@ hist(QHI_2022_max_3$plot_max, breaks = 30)
 #QHI_2022_max <- QHI_2022_max %>%
  # mutate(log_max_heights = log(max_heights_cm))
 
-# MODELLING------
-# Model QHI pulchra heights over time-----
+# MODELLING
+# Model QHI pulchra heights over time
 
 range(QHI_2022_max$max_heights_cm) #  0.0 39.3
 hist(QHI_2022_max$max_heights_cm, breaks = 30)

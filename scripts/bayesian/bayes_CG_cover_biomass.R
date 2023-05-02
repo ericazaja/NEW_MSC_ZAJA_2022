@@ -7,6 +7,27 @@ library(tidyverse)
 library(brms)
 library(gridExtra)
 
+model_summ <- function(x) {
+  sum = summary(x)
+  fixed = sum$fixed
+  sigma = sum$spec_pars
+  random = sum$random$Sample_age # change name of random effect here 
+  random = sum$random$SampleID_standard # change name of random effect here 
+  obs = sum$nobs
+  
+  fixed$effect <- "fixed"  # add ID column for type of effect (fixed, random, residual)
+  # fixed$effect <- "population"  # add ID column for type of effect (fixed, random, residual)
+  random$effect <- "random"
+  # random$effect <- "SampleID_standard"
+  sigma$effect <- "residual"
+  fixed$nobs <- obs  # add column with number of observations
+  random$nobs <- obs
+  sigma$nobs <- obs
+  row.names(random)[row.names(random) == "sd(Intercept)"] <- "random" # could change rowname here of random effect if you'd like 
+  
+  modelTerms <- as.data.frame(bind_rows(fixed, random, sigma))  # merge together
+}
+
 # DATA -----
 all_CG_growth_cover <- read_csv("data/all_CG_growth_cover.csv")
 
@@ -89,7 +110,19 @@ summary(cover_pul) # significant cover growth over time
 plot(cover_pul)
 pp_check(cover_pul, type = "dens_overlay", nsamples = 100) 
 
-cover_pul_random <- as.data.frame(coef(cover_pul)) 
+#cover_pul_random <- as.data.frame(coef(cover_pul)) 
+
+cov_pul_summ <- model_summ(cover_pul)
+rownames(cov_pul_summ) <- c("     Intercept ", "      Sample age ", "      Random intercept ", 
+                               "   sd(Sample age) ", "     cor(Intercept, Sample age) ", "   phi")
+cov_pul_summ$Rhat <- as.character(formatC(cov_pul_summ$Rhat, digits = 2, format = 'f'))
+
+cov_pul_summ <- cov_pul_summ %>%
+  mutate("Site" = "Common garden","Scenario"="Novel",
+         "Response variable" = "Cover")%>%
+  relocate("Site", .before = "Estimate") %>%
+  relocate("Response variable", .before = "Site") %>%
+  relocate("Scenario", .before = "Site")
 
 # Salix arctica -------
 cover_arc <- brms::brm((cover_percent/100) ~ Sample_age + (Sample_age|SampleID_standard),

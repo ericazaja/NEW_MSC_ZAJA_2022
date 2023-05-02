@@ -112,7 +112,7 @@ height_pul <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population+(Sample_ag
                         control = list(max_treedepth = 15, adapt_delta = 0.99))
 summary(height_pul)
 height_pul_summ <- model_summ(height_pul)
-rownames(height_pul_summ) <- c("Intercept ", "Sample age ", "Southern population "
+rownames(height_pul_summ) <- c("Intercept      ", "Sample age      ", "Southern population "
                                 , "Sample age:Southern population ", "Random intercept ", 
                                 "sd(Sample age) ", "cor(Intercept, Sample age) ", "sigma ")
 height_pul_summ$Rhat <- as.character(formatC(height_pul_summ$Rhat, digits = 2, format = 'f'))
@@ -134,6 +134,27 @@ summary(height_pul_south) #
 plot(height_pul_south)
 pp_check(height_pul_south, type = "dens_overlay", ndraws = 100) 
 
+height_pul_south_summ <- model_summ(height_pul_south)
+rownames(height_pul_south_summ) <- c("Intercept          ", "Sample age            ", "Random intercept         ", 
+                            "sd(Sample age) ", "cor(Intercept, Sample age)    ", "phi       ")
+height_pul_south_summ$Rhat <- as.character(formatC(height_pul_south_summ$Rhat, digits = 2, format = 'f'))
+
+height_pul_south_summ <- height_pul_south_summ %>%
+  mutate("Site" = "Common garden", "Scenario"="Novel",
+         "Response variable" = "Canopy height") %>% 
+  mutate("Estimate_back" = exp(Estimate),
+         "Error_back"= exp(Est.Error))%>%
+  select(-"Estimate", -"Est.Error")%>%
+  dplyr::rename("Estimate" ="Estimate_back","Est.Error"= "Error_back") %>%
+  relocate("Est.Error", .before = "l-95% CI")%>%
+  relocate("Estimate", .before = "Est.Error")%>%
+  relocate("Site", .before = "Estimate") %>%
+  relocate("Response variable", .before = "Site") %>%
+  relocate("Scenario", .before = "Site") 
+
+cg_models_bind <- rbind(cov_pul_summ, height_pul_south_summ)
+
+
 # Salix arctica -------
 height_arc <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population+(Sample_age|SampleID_standard),
                         data = all_CG_growth_arc,  family = gaussian(), chains = 3,
@@ -151,7 +172,11 @@ rownames(height_arc_summ) <- c(" Intercept ", " Sample age ", " Southern populat
 height_arc_summ$Rhat <- as.character(formatC(height_arc_summ$Rhat, digits = 2, format = 'f'))
 
 height_arc_summ <- height_arc_summ %>%
+  mutate("Estimate_back" = exp("Estimate"),
+         "Error_back"= exp("Est.Error"))%>%
+  select(-"Estimate", -"Est.Error")%>%
   mutate(Species = "Salix arctica")%>%
+  rename("Estimate" ="Estimate_back","Est.Error"= "Error_back") %>%
   relocate("Species", .before = "Estimate")
 
 height_pul_ric_arc <- rbind(height_rich_summ, height_pul_summ,height_arc_summ )
