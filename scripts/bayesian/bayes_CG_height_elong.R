@@ -140,7 +140,7 @@ rownames(height_pul_south_summ) <- c("Intercept          ", "Sample age         
 height_pul_south_summ$Rhat <- as.character(formatC(height_pul_south_summ$Rhat, digits = 2, format = 'f'))
 
 height_pul_south_summ <- height_pul_south_summ %>%
-  mutate("Site" = "Common garden", "Scenario"="Novel",
+  mutate("Site" = "CG", "Scenario"="Novel",
          "Response variable" = "Canopy height") %>% 
   mutate("Estimate_back" = exp(Estimate),
          "Error_back"= exp(Est.Error))%>%

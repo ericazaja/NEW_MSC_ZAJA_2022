@@ -118,7 +118,7 @@ rownames(cov_pul_summ) <- c("     Intercept ", "      Sample age ", "      Rando
 cov_pul_summ$Rhat <- as.character(formatC(cov_pul_summ$Rhat, digits = 2, format = 'f'))
 
 cov_pul_summ <- cov_pul_summ %>%
-  mutate("Site" = "Common garden","Scenario"="Novel",
+  mutate("Site" = "CG","Scenario"="Novel",
          "Response variable" = "Cover")%>%
   relocate("Site", .before = "Estimate") %>%
   relocate("Response variable", .before = "Site") %>%

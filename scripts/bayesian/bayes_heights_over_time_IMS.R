@@ -222,13 +222,14 @@ kable_bind_with_cg <- kable_bind_with_cg %>%
 kable_bind_with_cg
 
 # optional: making specific column text in italics
-save_kable(kable_bind_with_cg,file = "outputs/tables/kable_bind_with_cg.pdf", # or .png, or .jpeg, save in your working directory
+save_kable(kable_bind_with_cg,file = "outputs/tables/kable_bind_with_cg_2.pdf", # or .png, or .jpeg, save in your working directory
            bs_theme = "simplex",
            self_contained = TRUE,
            extra_dependencies = NULL,
            latex_header_includes = NULL,
            keep_tex = FALSE,
            density = 300)
+
 
 
 
