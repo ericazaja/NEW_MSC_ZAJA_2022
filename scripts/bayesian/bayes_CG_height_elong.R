@@ -79,6 +79,7 @@ height_rich <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population+(Sample_a
                          control = list(max_treedepth = 15, adapt_delta = 0.99))
 
 saveRDS(height_rich, file = "outputs/models/height_rich.rds")
+height_rich <- readRDS("outputs/models/height_rich.rds")
 
 # extracting model summary
 height_rich_summ <- model_summ(height_rich)
@@ -114,6 +115,7 @@ height_pul <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population+(Sample_ag
                         control = list(max_treedepth = 15, adapt_delta = 0.99))
 
 saveRDS(height_pul, file = "outputs/models/height_pul.rds")
+height_pul <- readRDS("outputs/models/height_pul.rds")
 
 summary(height_pul)
 height_pul_summ <- model_summ(height_pul)
@@ -166,6 +168,8 @@ height_arc <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population+(Sample_ag
                         iter = 5000, warmup = 1000, 
                         control = list(max_treedepth = 15, adapt_delta = 0.99))
 saveRDS(height_arc, file = "outputs/models/height_arc.rds")
+height_arc <- readRDS("outputs/models/height_arc.rds")
+
 summary(height_arc) # significant growth over time
 plot(height_arc)
 pp_check(height_arc, type = "dens_overlay", nsamples = 100) 
@@ -244,28 +248,16 @@ rich_height_data_2 <- rich_height_1[[2]]
     group_by(population) %>%
     add_predicted_draws(height_rich, allow_new_levels = TRUE) %>%
     ggplot(aes(x = Sample_age, y = Canopy_Height_cm, colour = population)) +
-    stat_lineribbon(aes(y = exp(.prediction), fill = population), .width = c(.50), alpha = 1/4) +
-    geom_point(data = all_CG_growth_ric) +
+    stat_lineribbon(aes(y = exp(.prediction), fill = population), .width = c(.5), alpha = 1/4) +
+    geom_point(data = all_CG_growth_ric, alpha = 0.5) +
     scale_colour_viridis_d(begin = 0.1, end = 0.85) +
     scale_fill_viridis_d(begin = 0.1, end = 0.85) +
+    scale_x_continuous(breaks = seq(0, 9, by = 1)) + 
     theme_shrub() +
     ggtitle(expression(italic("Salix richardsonii"))) +
     ylab("Canopy height (cm)\n") +
-    xlab("\nSample age"))
+    xlab("\nSample age") + theme(text=element_text(family="Helvetica Light")) )
     #theme(legend.position = "none"))
-(rich_heights_plot_new <- all_CG_growth_ric %>%
-    group_by(population) %>%
-    add_predicted_draws(height_rich, allow_new_levels = TRUE) %>%
-    ggplot(aes(x = Sample_age, y = (Canopy_Height_cm), color = population, fill = population)) +
-    stat_lineribbon(aes(y = exp(.prediction)), .width = c(.5), alpha = 1/4) +
-    geom_point(data = all_CG_growth_ric) +
-    scale_colour_viridis_d(begin = 0.1, end = 0.85) +
-    scale_fill_viridis_d(begin = 0.1, end = 0.85) +
-    theme_shrub() +
-    ylab("Canopy height (cm)\n") +
-    labs(title = "Salix richardsonii") +
-    xlab("\nSample age") +
-    scale_x_continuous(breaks = seq(0, 9, by = 1)))
 
 # Salix pulchra ------
 
@@ -274,13 +266,14 @@ rich_height_data_2 <- rich_height_1[[2]]
     add_predicted_draws(height_pul, allow_new_levels = TRUE ) %>%
     ggplot(aes(x = Sample_age, y = Canopy_Height_cm, color = population)) +
     stat_lineribbon(aes(y = exp(.prediction), fill = population), .width = c(.50), alpha = 1/4) +
-    geom_point(data = all_CG_growth_pul) +
+    geom_point(data = all_CG_growth_pul, alpha = 0.5) +
    scale_colour_viridis_d(begin = 0.1, end = 0.85) +
    scale_fill_viridis_d(begin = 0.1, end = 0.85) +
+   scale_x_continuous(breaks = seq(0, 9, by = 1)) + 
    theme_shrub() +
    ggtitle(expression(italic("Salix pulchra"))) +
    ylab("Canopy height (cm)\n") +
-   xlab("\nSample age"))
+   xlab("\nSample age") + theme(text=element_text(family="Helvetica Light")) )
   # theme(legend.position = "none"))
 
 # Salix pulchra ------
@@ -313,19 +306,32 @@ pulchra_CG_panel <- grid.arrange(pul_height_plot,pul_cover_plot, nrow=1)
    add_predicted_draws(height_arc, allow_new_levels = TRUE ) %>%
    ggplot(aes(x = Sample_age, y = Canopy_Height_cm, color = population)) +
    stat_lineribbon(aes(y = exp(.prediction), fill = population), .width = c(.50), alpha = 1/4) +
-   geom_point(data = all_CG_growth_arc) +
+   geom_point(data = all_CG_growth_arc, alpha = 0.5) +
+   scale_x_continuous(breaks = seq(0, 9, by = 1)) + 
    scale_colour_viridis_d(begin = 0.1, end = 0.85) +
    scale_fill_viridis_d(begin = 0.1, end = 0.85) +
    theme_shrub() +
    ggtitle(expression(italic("Salix arctica"))) +
    ylab("Canopy height (cm)\n") +
-   xlab("\nSample age"))
+   xlab("\nSample age") + theme(text=element_text(family="Helvetica Light")) )
 
 
 CG_height_panel <- ggarrange(rich_heights_plot_new,
                                 pul_heights_plot_new, 
                                 arc_heights_plot_new, nrow = 1,
-                                common.legend = TRUE, legend="right")
+                                common.legend = TRUE, legend="none")
+
+CG_height_panel
+
+ggsave(CG_height_panel, filename ="outputs/figures/CG_height_panel.png", width = 14.67, height = 6.53, units = "in")
+
+
+#common legend
+plot(NULL ,xaxt='n',yaxt='n',bty='n',ylab='',xlab='', xlim=0:1, ylim=0:1)
+legend("topleft", legend =c('Northern Garden', 'Southern Garden'), pch=16, pt.cex=2, cex=1.5, bty='n',
+       col = c('#D55E00'), text(family="Helvetica Light"))
+mtext("Site", at=0.2, cex=2, family = "Helvetica Light")
+
 # STEM ELONG over time ------
 # Salix richardsonii -------
 elong_rich <- brms::brm(log(mean_stem_elong) ~ Sample_age*population +(1|Year),

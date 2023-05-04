@@ -231,9 +231,6 @@ save_kable(kable_bind_with_cg,file = "outputs/tables/kable_bind_with_cg_2.pdf", 
            density = 300)
 
 
-
-
-
 # plot
 all_bind_max <- (conditional_effects(MAX))
 all_bind_max_dat <- all_bind_max[[1]]
