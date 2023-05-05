@@ -84,6 +84,19 @@ height_rich <- readRDS("outputs/models/height_rich.rds")
 # extracting model summary
 height_rich_summ <- model_summ(height_rich)
 summary(height_rich)
+
+# estimate for northern sample age: 1.50-0.02 = exp(1.48) = 4.392946 cm per year
+# estimate for southern sample age: (1.50+0.91)+(0.09+0.16) = exp(2.66) = 14.29629 cm per year
+
+# %diff
+(14.29629-4.903749)/4.903749
+# 2%
+
+# times larger
+14.29629/4.903749
+# 2.91538
+
+
 rownames(height_rich_summ) <- c("Intercept", "Sample age", "Southern population"
                            , "Sample age:Southern population", "Random intercept", 
                            "sd(Sample age)", "cor(Intercept, Sample age)", "sigma")
@@ -96,6 +109,9 @@ height_rich_summ <- height_rich_summ %>%
 
 
 # only southern random slopes
+max(all_CG_growth_ric_south$Canopy_Height_cm, na.rm=TRUE) # 127
+mean(all_CG_growth_ric_south$Canopy_Height_cm, na.rm=TRUE) # 127
+
 # truncating to max richardsonii height from usda.gov (450cm, log(450)=6.109)
 height_rich_south <- brms::brm(log(Canopy_Height_cm)|trunc(lb = 0, ub = 6.109248) ~ Sample_age+(Sample_age|SampleID_standard),
                          data = all_CG_growth_ric_south,  family = gaussian(), chains = 3,
@@ -118,6 +134,13 @@ saveRDS(height_pul, file = "outputs/models/height_pul.rds")
 height_pul <- readRDS("outputs/models/height_pul.rds")
 
 summary(height_pul)
+# estimate for northern sample age: 1.99-0.02=1.97 --> exp(1.97)= 7.170676 cm per year
+# estimate for northern sample age: (1.99+0.95) + (-0.02+0.03)= 2.95, exp(2.95)= 19.10595 cm per sample age
+
+# times larger
+19.10595/7.170676
+# 2.664456
+
 height_pul_summ <- model_summ(height_pul)
 rownames(height_pul_summ) <- c("Intercept      ", "Sample age      ", "Southern population "
                                 , "Sample age:Southern population ", "Random intercept ", 
@@ -171,6 +194,9 @@ saveRDS(height_arc, file = "outputs/models/height_arc.rds")
 height_arc <- readRDS("outputs/models/height_arc.rds")
 
 summary(height_arc) # significant growth over time
+# estimate for northern sample age: 0.86+0.08= exp(0.94) = 2.559981
+# estimate for northern sample age: 0.86-0.28 + 0.08 + 0.11 = 0.77= exp(0.77)=  2.159766
+
 plot(height_arc)
 pp_check(height_arc, type = "dens_overlay", nsamples = 100) 
 
