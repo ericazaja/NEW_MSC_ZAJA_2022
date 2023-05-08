@@ -307,7 +307,7 @@ summary(garden_pul_height) # significantly higher canopy heights for southern po
 plot(garden_pul_height) # fine
 pp_check(garden_pul_height, type = "dens_overlay", nsamples = 100)  # good) 
 saveRDS(garden_pul_height, file = "output/models/garden_pul_height.rds")
-
+garden_pul_height <- readRDS("outputs/models/garden_pul_height.rds")
 # estimate for northern: 2.2889943 = exp(2.2889943) = 9.865011
 # estimate for southern: 2.2889943+0.9149186=3.203913 -> exp(3.203913) = 24.62871
 # %diff

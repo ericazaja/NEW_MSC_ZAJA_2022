@@ -7,13 +7,13 @@ coord.chelsa.combo.c.delta.2020 <- read.csv("data/coord.chelsa.combo.c.biom.2020
 
 # MAX HEIGHT and COVER SLOPES:
 # # Height slope  for S pulchra for full time period = 0.70 +- 0.09 * 23 years = 16.1
-# Cover slope for S pulchra for full time period =   1.14 +-0.74 * 23 years =  26.22
+# Cover slope for S pulchra for full time period =   0.8 +-0.03 * 23 years =  18.4
 
 # no error
 # Salpul allom equation = 
-# Biomass =  (1.1*16.1 ) + (18.1 *26.22 ) 
-(1.1*16.1 ) + (18.1 *26.22 )
-# 492.292
+# Biomass =  (1.1*16.1 ) + (18.1 *18.4 ) 
+(1.1*16.1 ) + (18.1 *18.4 )
+# 350.75
 
 # if cover is 100
 (1.1*129) + (18.1 *100)
@@ -22,13 +22,13 @@ coord.chelsa.combo.c.delta.2020 <- read.csv("data/coord.chelsa.combo.c.biom.2020
 # TEMP SLOPES:
 # mean = 3.350266 over full time period
 
-# biomass/temp over full time = 492.292/3.350266 = 146.9412/degC
+# biomass/temp over full time = 350.75/3.350266 = 104.6932/degC
 
 
 # multiply by biomass increase
 max_warm <- coord.chelsa.combo.c.delta.2100.solo %>%
   filter(year == 2100) %>% 
-  mutate(biomass_per_m2_2100_solo = biomass_per_m2 + (146.9412*delta.7.solo)) %>%
+  mutate(biomass_per_m2_2100_solo = biomass_per_m2 + (104.6932*delta.7.solo)) %>%
   dplyr::select(-biomass_per_m2)
 
 c_mean_2100_solo <- c(max_warm$biomass_per_m2_2100_solo)

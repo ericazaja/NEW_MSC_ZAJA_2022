@@ -512,8 +512,8 @@ cov_max_dat_3 <- cov_max_3[[3]]
     #ylim(0, 1.00)+
     ylab("Mean cover (proportion)\n") +
     xlab("\n Year (scaled)" ) +
-    scale_color_manual(values = c("QHI" = "#e75480", "TOOLIK" = "black"))+
-    scale_fill_manual(values = c("QHI" = "#e75480", "TOOLIK" = "black"))+
+    scale_color_manual(values = c("QHI" = "#e75480", "TOOLIK" = "#2b788c"))+
+    scale_fill_manual(values = c("QHI" = "#e75480", "TOOLIK" = "#2b788c"))+
    # scale_fill_brewer(palette = "Set2") +
    # scale_color_brewer(palette = "Dark2") +
     theme_shrub() + theme(legend.position = "none")+ theme(text=element_text(family="Helvetica Light")) +
@@ -530,8 +530,8 @@ cov_max_dat_3 <- cov_max_3[[3]]
     ylab("Max cover (proportion)\n") +
     xlab("\n Year (scaled)" ) +
    # ylim(0, 1.00) +
-    scale_color_manual(values = c("QHI" = "#e75480", "TOOLIK" = "black"))+
-    scale_fill_manual(values = c("QHI" = "#e75480", "TOOLIK" = "#009E73"))+
+    scale_color_manual(values = c("QHI" = "#2b788c", "TOOLIK" = "#e75480"))+
+    scale_fill_manual(values = c("QHI" = "#2b788c", "TOOLIK" = "#e75480"))+
     theme_shrub() + theme(legend.position = "none") +
     theme(text=element_text(family="Helvetica Light")) +
     theme( axis.text.x  = element_text(angle = 0)))

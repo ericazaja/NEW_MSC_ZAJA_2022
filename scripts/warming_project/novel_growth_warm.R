@@ -19,7 +19,7 @@ coord.chelsa.combo.c.biom.2020 <- read.csv("data/coord.chelsa.combo.c.biom.2020.
 
 # times pulchra rates by 23 to keep years consistent.
 # height slope pulchra = 1 --> 1*23= 23
-# cover slope pulchra = 0.24 --> 24%*23 =552
+# cover slope pulchra = 0.24 --> 24% * 23 =552
 # PULCHRA FINAL EQUATION:  Biomass =  (1.1*23 +-  5.0 ) + (18.1 *552 +-  8.2)
 (1.1*23  ) + (18.1 *552)
 # 10016.5

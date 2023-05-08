@@ -172,11 +172,11 @@ all_bind_mean_dat <- all_bind_mean[[1]]
 
 (pulchra_height_plot_mean <-ggplot(all_bind_mean_dat) +
     geom_point(data = all_bind_new_mean, aes(x = Year_index, y = mean_height),
-               alpha = 0.5, colour =  "#e75480")+
+               alpha = 0.5, colour =  "#2b788c")+
     geom_line(aes(x = effect1__, y = estimate__),
-              linewidth = 1.5, colour =  "#e75480") +
+              linewidth = 1.5, colour =  "#2b788c") +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
-                alpha = .1,  fill =  "#e75480") +
+                alpha = .1,  fill =  "#2b788c") +
     ylab("Mean canopy height (cm)\n") +
     xlab("\n Year (scaled)" ) +
    # ylim(0, 100) +
@@ -247,11 +247,11 @@ all_bind_max_dat <- all_bind_max[[1]]
 
 (pulchra_height_plot_max <-ggplot(all_bind_max_dat) +
     geom_point(data = all_bind_new_max, aes(x = Year_index, y = max_height),
-               alpha = 0.5, colour = "#e75480")+
+               alpha = 0.5, colour = "#2b788c")+
     geom_line(aes(x = effect1__, y = estimate__),
-              linewidth = 1.5, colour = "#e75480") +
+              linewidth = 1.5, colour = "#2b788c") +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
-                alpha = .1, fill = "#e75480") +
+                alpha = .1, fill = "#2b788c") +
     ylab("Max canopy height (cm)\n") +
     xlab("\n Year (scaled)" ) +
    # ylim(0, 100) +

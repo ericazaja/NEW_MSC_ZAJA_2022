@@ -266,6 +266,7 @@ garden_rich_emerg_compare <- brms::brm(First_bud_burst_DOY_center ~ population +
 summary(garden_rich_emerg_compare)
 plot(garden_rich_emerg_compare)
 pp_check(garden_rich_emerg_compare, type = "dens_overlay", nsamples = 100) # looks good
+readRDS(garden_rich_emerg_compare, file = "outputs/models/garden_rich_emerg_compare.rds")
 
 # Salix pulchra -----
 all_phenocam_pulchra$First_bud_burst_DOY_center <- center_scale(all_phenocam_pulchra$First_bud_burst_DOY) 
@@ -279,6 +280,7 @@ garden_pul_emerg_compare <- brms::brm(First_bud_burst_DOY_center ~ population + 
 summary(garden_pul_emerg_compare)
 plot(garden_pul_emerg_compare)
 pp_check(garden_pul_emerg_compare, type = "dens_overlay", nsamples = 100) # looks good
+readRDS(garden_pul_emerg_compare, file = "outputs/models/garden_pul_emerg_compare.rds")
 
 # Salix arctica -----
 all_phenocam_arctica$First_bud_burst_DOY_center <- center_scale(all_phenocam_arctica$First_bud_burst_DOY) 
@@ -293,6 +295,7 @@ summary(garden_arc_emerg_compare)
 tab_model(garden_arc_emerg_compare)
 plot(garden_arc_emerg_compare)
 pp_check(garden_arc_emerg_compare, type = "dens_overlay", nsamples = 100) # looks good
+garden_arc_emerg_compare<-readRDS(file = "outputs/models/garden_arc_emerg_compare.rds")
 
 
 # 1.2. LEAF EMERGENCE (CG ONLY MODELS) ------
@@ -420,6 +423,7 @@ plot(garden_rich_yellow_compare)
 pp_check(garden_rich_yellow_compare, type = "dens_overlay", ndraws = 100) # looks good
 
 garden_rich_yellow_compare_extract <- model_summ_pheno(garden_rich_yellow_compare)
+garden_rich_yellow_compare <- readRDS(file = "outputs/models/garden_rich_yellow_compare.rds")
 
 # Salix pulchra ------
 all_phenocam_pulchra$First_leaf_yellow_DOY_center <- center_scale(all_phenocam_pulchra$First_leaf_yellow_DOY) 
@@ -432,6 +436,7 @@ garden_pul_yellow_compare <- brms::brm(First_leaf_yellow_DOY_center ~ population
 summary(garden_pul_yellow_compare)
 plot(garden_pul_yellow_compare)
 pp_check(garden_pul_yellow_compare, type = "dens_overlay", ndraws = 100) # looks good
+garden_pul_yellow_compare <-readRDS(file = "outputs/models/garden_pul_yellow_compare.rds")
 
 garden_pul_yellow_compare_extract <- model_summ_pheno(garden_pul_yellow_compare)
 
@@ -446,6 +451,7 @@ garden_arc_yellow_compare <- brms::brm(First_leaf_yellow_DOY_center ~ population
 summary(garden_arc_yellow_compare)
 plot(garden_arc_yellow_compare)
 pp_check(garden_arc_yellow_compare, type = "dens_overlay", ndraws = 100) # looks good
+garden_arc_yellow_compare <- readRDS(file = "outputs/models/garden_arc_yellow_compare.rds")
 
 garden_arc_yellow_compare_extract <- model_summ_pheno(garden_arc_yellow_compare)
 
@@ -650,14 +656,14 @@ pal_ric  <- c("#440154FF", "#FDE725FF","#5ccc64") # for when n source is missing
 pal_arc  <- c("#2A788EFF", "#440154FF", "#5ccc64") # for when southern source is missing  
 
 theme_shrub <- function(){ theme(legend.position = "right",
-                                 axis.title.x = element_text(face="bold", size=20),
-                                 axis.text.x  = element_text(vjust=0.5, size=20, colour = "black", angle = 45), 
-                                 axis.title.y = element_text(face="bold", size=20),
-                                 axis.text.y  = element_text(vjust=0.5, size=20, colour = "black"),
+                                 axis.title.x = element_text(size=18),
+                                 axis.text.x  = element_text(angle = 35, vjust=0.5, size=14, colour = "black"), 
+                                 axis.title.y = element_text(size=18),
+                                 axis.text.y  = element_text(vjust=0.5, size=14, colour = "black"),
                                  panel.grid.major.x=element_blank(), panel.grid.minor.x=element_blank(), 
                                  panel.grid.minor.y=element_blank(), panel.grid.major.y=element_blank(), 
                                  panel.background = element_blank(), axis.line = element_line(colour = "black"), 
-                                 plot.title = element_text(color = "black", size = 20, face = "bold.italic", hjust = 0.5),
+                                 plot.title = element_text(color = "black", size = 16, face = "bold", hjust = 0.5),
                                  plot.margin = unit(c(1,1,1,1), units = , "cm"))}
 
 # reorder levels to be consistent
@@ -719,7 +725,10 @@ ric_emerg_data <- ric_emerg[[1]] # making the extracted model outputs into a da
     xlab("\n Population" ) +
     scale_color_manual(values=pal) +
     theme_shrub() +
-    labs(title = "Salix richardsonii"))
+    ggtitle(expression(italic("Salix pulchra"))) +
+    theme(text=element_text(family="Helvetica Light")) )
+
+
 # back transform scaled data for figure 
 m_rich_emerg <- mean(all_phenocam_rich$First_bud_burst_DOY, na.rm = T)
 richard_emerg_trans <- ric_emerg_data %>% 
@@ -732,16 +741,18 @@ richard_emerg_trans <- ric_emerg_data %>%
 
 (ric_emerg_plot_scaled <-ggplot(richard_emerg_trans) +
     geom_point(data = all_phenocam_rich, aes(x = population, y = First_bud_burst_DOY, colour = population),
-               alpha = 0.5)+
-    geom_point(aes(x = effect1__, y = Estimate_trans, colour = population), width=0.5, size = 6)+
+               alpha = 0.2)+
+    geom_point(aes(x = effect1__, y = Estimate_trans, colour = population), width=0.5, size = 4)+
     geom_errorbar(aes(x = effect1__, ymin = CI_low_trans, ymax = CI_high_trans,colour = population),
-                  alpha = 1,  width=.5) +
+                  linewidth = 1, alpha = 1) +
     ylab("First leaf emergence DOY \n") +
     xlab("\n" ) +
     coord_cartesian(ylim=c(100, 185)) +
     scale_color_manual(values=pal) +
     theme_shrub() +
-    labs(title = "Salix richardsonii"))
+    ggtitle(expression(italic("Salix richardsonii"))) +
+    theme(text=element_text(family="Helvetica Light")) )
+
 
 # S. pulchra ------
 pul_emerg <- (conditional_effects(garden_pul_emerg_compare)) # extracting conditional effects from bayesian model
@@ -773,16 +784,17 @@ pulchra_emerg_trans <- pul_emerg_data %>%
 
 (pul_emerg_plot_scaled <-ggplot(pulchra_emerg_trans) +
     geom_point(data = all_phenocam_pulchra, aes(x = population, y = First_bud_burst_DOY, colour = population),
-               alpha = 0.5)+
-    geom_point(aes(x = effect1__, y = Estimate_trans, colour = population), width=0.5, size = 6)+
+               alpha = 0.2)+
+    geom_point(aes(x = effect1__, y = Estimate_trans, colour = population), width=0.5, size = 4)+
     geom_errorbar(aes(x = effect1__, ymin = CI_low_trans, ymax = CI_high_trans,colour = population),
-                  alpha = 1,  width=.5) +
+                  alpha = 1,  linewidth=1) +
     ylab("First leaf emergence DOY \n") +
     xlab("\n" ) +
     scale_color_manual(values=pal) +
     theme_shrub() +
     coord_cartesian(ylim=c(100, 185)) +
-    labs(title = "Salix pulchra"))
+    ggtitle(expression(italic("Salix pulchra"))) +
+    theme(text=element_text(family="Helvetica Light")) )
 
 # S. arctica -------
 arc_emerg <- (conditional_effects(garden_arc_emerg_compare)) # extracting conditional effects from bayesian model
@@ -814,16 +826,17 @@ arc_emerg_trans <- arc_emerg_data %>%
 
 (arc_emerg_plot_scaled <-ggplot(arc_emerg_trans) +
     geom_point(data = all_phenocam_arctica, aes(x = population, y = First_bud_burst_DOY, colour = population),
-               alpha = 0.5)+
-    geom_point(aes(x = effect1__, y = Estimate_trans, colour = population), width=0.5, size = 6)+
+               alpha = 0.2)+
+    geom_point(aes(x = effect1__, y = Estimate_trans, colour = population), width=0.5, size = 4)+
     geom_errorbar(aes(x = effect1__, ymin = CI_low_trans, ymax = CI_high_trans,colour = population),
-                  alpha = 1,  width=.5) +
+                  alpha = 1,  linewidth=1) +
     ylab("First leaf emergence DOY \n") +
     xlab("\n" ) +
     scale_color_manual(values=pal_arc) +
     theme_shrub() +
     coord_cartesian(ylim=c(100, 185)) +
-    labs(title = "Salix arctica"))
+    ggtitle(expression(italic("Salix arctica"))) +
+    theme(text=element_text(family="Helvetica Light")) )
 
 # arrange 
 (leaf_emerg_panel <- ggarrange(ric_emerg_plot, pul_emerg_plot, arc_emerg_plot, 
@@ -833,7 +846,8 @@ arc_emerg_trans <- arc_emerg_data %>%
 (leaf_emerg_panel_unscale <- ggarrange(ric_emerg_plot_scaled, pul_emerg_plot_scaled, arc_emerg_plot_scaled, 
                                        common.legend = TRUE, legend = "bottom",
                                        ncol = 3, nrow = 1))
-ggsave("figures/phenology/green_up_panel.png", height = 10, width = 12, dpi = 300)
+
+ggsave("outputs/figures/phenology/leaf_emerg_panel_unscale.png", width = 14.67, height = 6.53, units = "in")
 
 # LEAF YELLOW ----
 # S. richardsonii-----
@@ -867,16 +881,18 @@ richard_yellow_trans <- ric_yellow_data %>%
 
 (ric_yellow_plot_scaled <-ggplot(richard_yellow_trans) +
     geom_point(data = all_phenocam_rich, aes(x = population, y = First_leaf_yellow_DOY, colour = population),
-               alpha = 0.5)+
-    geom_point(aes(x = effect1__, y = Estimate_trans, colour = population), width=0.5, size = 6)+
+               alpha = 0.2)+
+    geom_point(aes(x = effect1__, y = Estimate_trans, colour = population), width=0.5, size = 4)+
     geom_errorbar(aes(x = effect1__, ymin = CI_low_trans, ymax = CI_high_trans,colour = population),
-                  alpha = 1,  width=.5) +
+                  alpha = 1,  linewidth=1) +
     ylab("First leaf yellowing DOY \n") +
     xlab("\n" ) +
     scale_color_manual(values=pal) +
     coord_cartesian(ylim=c(170, 250)) +
     theme_shrub() +
-    labs(title = "Salix richardsonii"))
+    ggtitle(expression(italic("Salix richardsonii"))) +
+    theme(text=element_text(family="Helvetica Light")) )
+
 
 # S. pulchra -----
 pul_yellow <- (conditional_effects(garden_pul_yellow_compare)) # extracting conditional effects from bayesian model
@@ -909,16 +925,18 @@ pulchra_yellow_trans <- pul_yellow_data %>%
 
 (pul_yellow_plot_scaled <-ggplot(pulchra_yellow_trans) +
     geom_point(data = all_phenocam_pulchra, aes(x = population, y = First_leaf_yellow_DOY, colour = population),
-               alpha = 0.5)+
-    geom_point(aes(x = effect1__, y = Estimate_trans, colour = population), width=0.5, size = 6)+
+               alpha = 0.2)+
+    geom_point(aes(x = effect1__, y = Estimate_trans, colour = population), width=0.5, size = 4)+
     geom_errorbar(aes(x = effect1__, ymin = CI_low_trans, ymax = CI_high_trans,colour = population),
-                  alpha = 1,  width=.5) +
+                  alpha = 1,  linewidth=1) +
     ylab("First leaf yellowing DOY \n") +
     xlab("\n" ) +
     scale_color_manual(values=pal) +
     theme_shrub() +
     coord_cartesian(ylim=c(170, 250)) +
-    labs(title = "Salix pulchra"))
+    ggtitle(expression(italic("Salix pulchra"))) +
+    theme(text=element_text(family="Helvetica Light")) )
+
 # S. arctica ------
 arc_yellow <- (conditional_effects(garden_arc_yellow_compare)) # extracting conditional effects from bayesian model
 arc_yellow_data <- arc_yellow[[1]] # making the extracted model outputs into a dataset (for plotting)
@@ -959,7 +977,9 @@ arctica_yellow_trans <- arc_yellow_data %>%
     scale_color_manual(values=pal_arc) +
     theme_shrub() +
     coord_cartesian(ylim=c(170, 250)) +
-    labs(title = "Salix arctica"))
+    ggtitle(expression(italic("Salix pulchra"))) +
+    theme(text=element_text(family="Helvetica Light")) )
+
 # arrange 
 (leaf_yellow_panel <- ggarrange(ric_yellow_plot, pul_yellow_plot, arc_yellow_plot, 
                                 common.legend = TRUE, legend = "bottom",
@@ -968,7 +988,7 @@ arctica_yellow_trans <- arc_yellow_data %>%
 (leaf_yellow_panel_unscale <- ggarrange(ric_yellow_plot_scaled, pul_yellow_plot_scaled, arc_yellow_plot_scaled, 
                                         common.legend = TRUE, legend = "bottom",
                                         ncol = 3, nrow = 1))
-ggsave("figures/phenology/yellowing_panel.png", height = 10, width = 12, dpi = 300)
+ggsave("outputs/figures/phenology/leaf_yellow_panel_unscale.png", width = 14.67, height = 6.53, units = "in")
 
 # GROWING SEASON -------
 # S. richardsonii -------
