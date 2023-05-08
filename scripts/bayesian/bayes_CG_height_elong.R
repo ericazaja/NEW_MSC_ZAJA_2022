@@ -163,6 +163,7 @@ height_pul_south <- brms::brm(log(Canopy_Height_cm) |trunc(lb = 0, ub =5.075174)
 summary(height_pul_south) # 
 plot(height_pul_south)
 pp_check(height_pul_south, type = "dens_overlay", ndraws = 100) 
+saveRDS(height_pul_south, file = "outputs/models/height_pul_south.rds")
 
 height_pul_south_summ <- model_summ(height_pul_south)
 rownames(height_pul_south_summ) <- c("Intercept          ", "Sample age            ", "Random intercept         ", 
@@ -308,23 +309,25 @@ pul_height_data_1 <- pul_height_1[[1]]
 pul_height_data_back <- pul_height_data_1 %>%
   dplyr::mutate(canopy_height_back = exp(log(Canopy_Height_cm)))
 
-(pul_height_plot <-ggplot(pul_height_data_1) +
+(pul_height_plot <-ggplot(pul_height_data_back) +
     geom_point(data = all_CG_growth_pul_south, aes(x = Sample_age,y = Canopy_Height_cm),
-               alpha = 0.5, colour = "#0072B2")+
+               alpha = 0.5, colour = "#5ccc64")+
     geom_line(aes(x = effect1__, y = exp(estimate__)),
-              linewidth = 1.5, colour = "#0072B2") +
+              linewidth = 1.5, colour = "#5ccc64") +
     geom_ribbon(aes(x = effect1__, ymin = exp(lower__), ymax = exp(upper__)),
-                alpha = .1, fill = "#0072B2") +
+                alpha = .1, fill = "#5ccc64") +
     labs(x = "\n Sample age",
          y = "Canopy height (cm)\n")+
+    scale_x_continuous(breaks = seq(0, 9, by = 1)) + 
     # ylab("Cover (/m2)\n") +
     # xlab("\n Sample age" ) +
     # scale_fill_brewer(palette = "orange") +
     scale_color_brewer(palette = "Dark2") +
-    theme_shrub()+ theme(text=element_text(family="Helvetica Light")) )
+    theme_shrub()+ theme(text=element_text(family="Helvetica Light")) +
+    theme( axis.text.x  = element_text(angle = 0)))
 
 pulchra_CG_panel <- grid.arrange(pul_height_plot,pul_cover_plot, nrow=1)
-
+ggsave(pulchra_CG_panel, filename ="output/figures/pulchra_CG_panel.png", width = 14.67, height = 6.53, units = "in")
 
 # Salix arctica------
 (arc_heights_plot_new <- all_CG_growth_arc %>%

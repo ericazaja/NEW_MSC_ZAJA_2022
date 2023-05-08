@@ -152,6 +152,7 @@ MEAN <- brms::brm(mean_height|trunc(lb = 0, ub = 160) ~ Year_index + (1|Year_ind
                             control = list(max_treedepth = 15, adapt_delta = 0.99))
 summary(MEAN)
 pp_check(MEAN, type = "dens_overlay", ndraws = 100) 
+saveRDS(MEAN, file = "outputs/models/MEAN.rds")
 
 MEAN_summ <- model_summ_heights(MEAN)
 
@@ -160,7 +161,7 @@ MEAN_summ$Rhat <- as.character(formatC(MEAN_summ$Rhat, digits = 2, format = 'f')
 
 MEAN_summ <- MEAN_summ %>%
   mutate("Site" = "QHI","Scenario" = "Natural",
-         "Response variable" = "Mean canopy height") %>% 
+         "Response variable" = "Mean height") %>% 
   relocate("Site", .before = "Estimate") %>%
   relocate("Response variable", .before = "Site")%>%
   relocate("Scenario", .before = "Site")
@@ -171,15 +172,16 @@ all_bind_mean_dat <- all_bind_mean[[1]]
 
 (pulchra_height_plot_mean <-ggplot(all_bind_mean_dat) +
     geom_point(data = all_bind_new_mean, aes(x = Year_index, y = mean_height),
-               alpha = 0.5, colour =  "#D55E00")+
+               alpha = 0.5, colour =  "#e75480")+
     geom_line(aes(x = effect1__, y = estimate__),
-              linewidth = 1.5, colour =  "#D55E00") +
+              linewidth = 1.5, colour =  "#e75480") +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
-                alpha = .1,  fill =  "#D55E00") +
+                alpha = .1,  fill =  "#e75480") +
     ylab("Mean canopy height (cm)\n") +
     xlab("\n Year (scaled)" ) +
-    ylim(0, 100) +
-    theme_shrub()+ theme(text=element_text(family="Helvetica Light")) )
+   # ylim(0, 100) +
+    theme_shrub()+ theme(text=element_text(family="Helvetica Light")) +
+    theme( axis.text.x  = element_text(angle = 0)))
 
 
 # model with plot max data
@@ -189,6 +191,7 @@ MAX <- brms::brm(max_height|trunc(lb = 0, ub = 160) ~ Year_index + (1|Year_index
                   control = list(max_treedepth = 15, adapt_delta = 0.99))
 summary(MAX)
 pp_check(MAX, type = "dens_overlay", ndraws = 100) 
+saveRDS(MAX, file = "outputs/models/MAX.rds")
 
 MAX_summ <- model_summ_heights(MAX)
 
@@ -197,7 +200,7 @@ MAX_summ$Rhat <- as.character(formatC(MAX_summ$Rhat, digits = 2, format = 'f'))
 
 MAX_summ <- MAX_summ %>%
   mutate("Site" = "QHI", "Scenario"= "Natural",
-         "Response variable" = "Max canopy height") %>% 
+         "Response variable" = "Max height") %>% 
   relocate("Site", .before = "Estimate") %>%
   relocate("Response variable", .before = "Site")%>%
   relocate("Scenario", .before = "Site")
@@ -205,8 +208,13 @@ MAX_summ <- MAX_summ %>%
 Mean_max_bind <- rbind(MEAN_summ, MAX_summ, all_natural_cov)
 bind_with_cg <- rbind(cg_models_bind,Mean_max_bind)
 
+subsetted <- bind_with_cg[c(2,8,14,18,22, 26, 30, 34),] # only keeping sample age term
 
-kable_bind_with_cg <- bind_with_cg %>% 
+rownames(subsetted) <- c("Age", "Age ",
+                         "Year ",  " Year ",  " Year  ",  "  Year   ", 
+                         "   Year ",  "Year  ")
+
+kable_bind_with_cg <- subsetted %>% 
   kbl(caption="Table. Heights and cover over time of natural vs novel scenarios. ", 
       col.names = c("Response variable", "Scenario", "Site", "Estimate", "Error", "Lower 95% CI", "Upper 95% CI",
                     "Rhat", "Bulk effective sample size", "Tail effective sample size",
@@ -216,7 +224,9 @@ kable_bind_with_cg <- bind_with_cg %>%
 
 kable_bind_with_cg <- kable_bind_with_cg %>%
   row_spec(0,  bold = TRUE)%>%
-  row_spec(c(2,8,14,18,22, 26, 30, 34), bold = TRUE)%>%
+  column_spec(5,  bold = TRUE,  color = "red")%>%
+  column_spec(4,  bold = TRUE)%>%
+  #row_spec(c(2,8,14,18,22, 26, 30, 34), bold = TRUE)%>%
   landscape()
 
 kable_bind_with_cg
@@ -237,21 +247,25 @@ all_bind_max_dat <- all_bind_max[[1]]
 
 (pulchra_height_plot_max <-ggplot(all_bind_max_dat) +
     geom_point(data = all_bind_new_max, aes(x = Year_index, y = max_height),
-               alpha = 0.5, colour = "#D55E00")+
+               alpha = 0.5, colour = "#e75480")+
     geom_line(aes(x = effect1__, y = estimate__),
-              linewidth = 1.5, colour = "#D55E00") +
+              linewidth = 1.5, colour = "#e75480") +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
-                alpha = .1, fill = "#D55E00") +
+                alpha = .1, fill = "#e75480") +
     ylab("Max canopy height (cm)\n") +
     xlab("\n Year (scaled)" ) +
-    ylim(0, 100) +
+   # ylim(0, 100) +
     #scale_color_brewer(palette = "Greys")+
     #scale_fill_brewer(palette = "Greys")+
-    theme_shrub()+ theme(text=element_text(family="Helvetica Light")) )
+    theme_shrub()+ theme(text=element_text(family="Helvetica Light")) +
+    theme( axis.text.x  = element_text(angle = 0)))
 
 
-panel <- grid.arrange(pulchra_height_plot_all, pulchra_height_plot_mean,
+panel <- grid.arrange(pulchra_height_plot_mean,
                       pulchra_height_plot_max, nrow =1)
+
+ggsave(panel, filename ="output/figures/QHI_heights_panel.png", width = 14.67, height = 6.53, units = "in")
+
 
 # STOP ----
 

@@ -192,6 +192,13 @@ source_rich_emerg_extract_df <- source_rich_emerg_extract %>%
   relocate("nobs", .before = "effect")
 
 # Salix pulchra -------
+all_phenocam_pul_source$First_bud_burst_DOY_scaled <- center_scale(all_phenocam_pul_source$First_bud_burst_DOY)
+
+source_pul_emerg <- brms::brm(First_bud_burst_DOY_scaled ~ population + (1|Year),
+                              data = all_phenocam_pul_source, family = gaussian(), chains = 3,
+                              iter = 3000, warmup = 1000, 
+                              control = list(max_treedepth = 15, adapt_delta = 0.99))
+
 source_pul_emerg <- brms::brm(First_bud_burst_DOY ~ population + (1|Year),
                               data = all_phenocam_pul_source, family = gaussian(), chains = 3,
                               iter = 3000, warmup = 1000, 

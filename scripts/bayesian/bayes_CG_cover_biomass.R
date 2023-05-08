@@ -109,6 +109,8 @@ cover_pul <- brms::brm((cover_percent/100) ~ Sample_age + (Sample_age|SampleID_s
 summary(cover_pul) # significant cover growth over time
 plot(cover_pul)
 pp_check(cover_pul, type = "dens_overlay", nsamples = 100) 
+saveRDS(cover_pul, file = "outputs/models/cover_pul.rds")
+readRDS(cover_pul, file = "outputs/models/cover_pul.rds")
 
 #cover_pul_random <- as.data.frame(coef(cover_pul)) 
 
@@ -254,17 +256,20 @@ pul_cov_data_1 <- pul_cov_1[[1]]
 
 (pul_cover_plot <-ggplot(pul_cov_data_1) +
     geom_point(data = CG_pul_cover_biomass, aes(x = Sample_age, y = (cover_percent/100)),
-               alpha = 0.5, colour = "#0072B2")+
+               alpha = 0.5, colour = "#5ccc64")+
     geom_line(aes(x = effect1__, y = estimate__),
-              linewidth = 1.5, colour = "#0072B2") +
+              linewidth = 1.5, colour = "#5ccc64") +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
-                alpha = .1, fill = "#0072B2") +
+                alpha = .1, fill = "#5ccc64") +
    # ylab("Cover (/m2)\n") +
     xlab("\n Sample age" ) +
     ylab("Cover (proportion) \n") + 
+    scale_x_continuous(breaks = seq(0, 9, by = 1)) + 
    # scale_fill_brewer(palette = "orange") +
   # scale_color_brewer(palette = "Dark2") +
-    theme_shrub()+ theme(text=element_text(family="Helvetica Light")) )
+    theme_shrub()+ theme(text=element_text(family="Helvetica Light")) +
+    theme( axis.text.x  = element_text(angle = 0)))
+
 
 # Salix arctica ------
 arc_cov_1 <- (conditional_effects(cover_arc))

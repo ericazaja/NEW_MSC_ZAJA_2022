@@ -160,6 +160,8 @@ pulchra_cover_max <- brms::brm(max_cov ~ Year_index * SITE + (1|Year_index),
 pp_check(pulchra_cover_max, ndraws=100)
 plot_model(pulchra_cover_max, type = "pred", terms = c("Year_index ", "SITE")) # to visualise interaction
 summary(pulchra_cover_max) # 0.001
+saveRDS(pulchra_cover_max, file = "outputs/models/pulchra_cover_max.rds")
+
 # QHI estimate =  0.002518971 
 # toolik = 0.002518971  + 0.016781174  
 # mean of slope both sites= 0.01090955
@@ -173,6 +175,7 @@ pulchra_cover_mean <- brms::brm(mean_cov ~ Year_index * SITE + (1|Year_index),
 summary(pulchra_cover_mean) # mean year estimate for both sites 0.00677882
 pp_check(pulchra_cover_mean, ndraws=100)
 plot_model(pulchra_cover_mean, type = "pred", terms = c("Year_index ", "SITE")) # to visualise interaction
+saveRDS(pulchra_cover_mean, file = "outputs/models/pulchra_cover_mean.rds")
 
 pulchra_cover_mean_summ <- model_summ_cov(pulchra_cover_mean)
 rownames(pulchra_cover_mean_summ) <- c("Intercept ", "Year (indexed) ", "Toolik site ", "Year (indexed):Toolik site",
@@ -506,14 +509,15 @@ cov_max_dat_3 <- cov_max_3[[3]]
               linewidth = 1.5) +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__, fill = SITE),
                 alpha = .1) +
-    ylim(0, 1.00)+
+    #ylim(0, 1.00)+
     ylab("Mean cover (proportion)\n") +
     xlab("\n Year (scaled)" ) +
-    scale_color_manual(values = c("QHI" = "#D55E00", "TOOLIK" = "#009E73"))+
-    scale_fill_manual(values = c("QHI" = "#D55E00", "TOOLIK" = "#009E73"))+
+    scale_color_manual(values = c("QHI" = "#e75480", "TOOLIK" = "black"))+
+    scale_fill_manual(values = c("QHI" = "#e75480", "TOOLIK" = "black"))+
    # scale_fill_brewer(palette = "Set2") +
    # scale_color_brewer(palette = "Dark2") +
-    theme_shrub() + theme(legend.position = "none")+ theme(text=element_text(family="Helvetica Light")) )
+    theme_shrub() + theme(legend.position = "none")+ theme(text=element_text(family="Helvetica Light")) +
+    theme( axis.text.x  = element_text(angle = 0)))
   #+ theme(legend.position = c(0.95, 0.95)))
 
 (pul_max_cover_plot <-ggplot(cov_max_dat_3) +
@@ -525,14 +529,19 @@ cov_max_dat_3 <- cov_max_3[[3]]
                 alpha = .1) +
     ylab("Max cover (proportion)\n") +
     xlab("\n Year (scaled)" ) +
-    ylim(0, 1.00) +
-    scale_color_manual(values = c("QHI" = "#D55E00", "TOOLIK" = "#009E73"))+
-    scale_fill_manual(values = c("QHI" = "#D55E00", "TOOLIK" = "#009E73"))+
+   # ylim(0, 1.00) +
+    scale_color_manual(values = c("QHI" = "#e75480", "TOOLIK" = "black"))+
+    scale_fill_manual(values = c("QHI" = "#e75480", "TOOLIK" = "#009E73"))+
     theme_shrub() + theme(legend.position = "none") +
-    theme(text=element_text(family="Helvetica Light")) )
+    theme(text=element_text(family="Helvetica Light")) +
+    theme( axis.text.x  = element_text(angle = 0)))
 
 panel_coverheight_max <- grid.arrange(pulchra_height_plot_max,pul_max_cover_plot,nrow=1)
 panel_coverheight_mean <- grid.arrange(pulchra_height_plot_mean,pul_mean_cover_plot, nrow=1)
+ggsave(panel_coverheight_max, filename ="outputs/figures/panel_coverheight_max.png", width = 14.67, height = 6.53, units = "in")
+ggsave(panel_coverheight_mean, filename ="outputs/figures/panel_coverheight_mean.png", width = 14.67, height = 6.53, units = "in")
+
+
 panel_coverheight_meanmax <- grid.arrange(pulchra_height_plot_mean,pul_mean_cover_plot, pulchra_height_plot_max,
                                           pul_max_cover_plot, nrow=2)
 
@@ -543,5 +552,5 @@ ggsave(panel_coverheight_meanmax_cg, filename = "outputs/figures/panel_coverheig
 #common legend
 plot(NULL ,xaxt='n',yaxt='n',bty='n',ylab='',xlab='', xlim=0:1, ylim=0:1)
 legend("topleft", legend =c('QHI', 'TOOLIK', 'CG'), pch=16, pt.cex=2, cex=1.5, bty='n',
-       col = c('#D55E00', '#009E73', '#0072B2'), text(family="Helvetica Light"))
+       col = c('#e75480', 'black', '#5ccc64'), text(family="Helvetica Light"))
 mtext("Site", at=0.2, cex=2, family = "Helvetica Light")
