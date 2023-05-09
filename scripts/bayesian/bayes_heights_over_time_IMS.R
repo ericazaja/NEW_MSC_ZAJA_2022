@@ -153,6 +153,7 @@ MEAN <- brms::brm(mean_height|trunc(lb = 0, ub = 160) ~ Year_index + (1|Year_ind
 summary(MEAN)
 pp_check(MEAN, type = "dens_overlay", ndraws = 100) 
 saveRDS(MEAN, file = "outputs/models/MEAN.rds")
+MEAN <- readRDS("outputs/models/MEAN.rds")
 
 MEAN_summ <- model_summ_heights(MEAN)
 
@@ -182,6 +183,22 @@ all_bind_mean_dat <- all_bind_mean[[1]]
    # ylim(0, 100) +
     theme_shrub()+ theme(text=element_text(family="Helvetica Light")) +
     theme( axis.text.x  = element_text(angle = 0)))
+
+(pulchra_height_plot_mean <- all_bind_new_mean %>%
+    #group_by(population) %>%
+    add_predicted_draws(MEAN, allow_new_levels = TRUE ) %>%
+    ggplot(aes(x = Year_index, y = mean_height), color = "#2b788c") +
+    stat_lineribbon(aes(y = .prediction), colour = "#2b788c", fill = "#2b788c",.width = c(.50), alpha = 0.2) +
+    geom_point(data = all_bind_new_mean, alpha = 0.5, colour = "#2b788c") +
+    # scale_colour_viridis_d(begin = 0.1, end = 0.85) +
+    #scale_fill_viridis_d(begin = 0.1, end = 0.85) +
+    #scale_x_continuous(breaks = seq(0, 9, by = 1)) + 
+    theme_shrub() +
+    ggtitle(expression(italic("Salix pulchra"))) +
+    ylab("Mean canopy height (cm)\n") +
+    xlab("\nYear (scaled)") + theme(text=element_text(family="Helvetica Light")) +
+    theme( axis.text.x  = element_text(angle = 0)))
+# theme(legend.position = "none"))
 
 
 # model with plot max data

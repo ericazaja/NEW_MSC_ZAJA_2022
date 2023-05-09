@@ -173,7 +173,7 @@ summary(height_pul_south) #
 plot(height_pul_south)
 pp_check(height_pul_south, type = "dens_overlay", ndraws = 100) 
 saveRDS(height_pul_south, file = "outputs/models/height_pul_south.rds")
-
+height_pul_south <- readRDS("outputs/models/height_pul_south.rds")
 # estimate for s. sample age 9: 2.96+(0.003288811*9)  = 2.989599= exp(2.989599)=  19.87771 --> 19.87771/9 =2.208634 cm /year
 
 height_pul_south_summ <- model_summ(height_pul_south)
@@ -314,6 +314,21 @@ rich_height_data_2 <- rich_height_1[[2]]
    xlab("\nSample age") + theme(text=element_text(family="Helvetica Light")) )
   # theme(legend.position = "none"))
 
+(pul_heights_plot_new_south <- all_CG_growth_pul_south %>%
+    #group_by(population) %>%
+    add_predicted_draws(height_pul_south, allow_new_levels = TRUE ) %>%
+    ggplot(aes(x = Sample_age, y = Canopy_Height_cm), color = "#5ccc64") +
+    stat_lineribbon(aes(y = exp(.prediction)), colour = "#2D6532", fill = "#5ccc64",.width = c(.50), alpha = 0.2) +
+    geom_point(data = all_CG_growth_pul_south, alpha = 0.5, colour = "#5ccc64") +
+   # scale_colour_viridis_d(begin = 0.1, end = 0.85) +
+    #scale_fill_viridis_d(begin = 0.1, end = 0.85) +
+    scale_x_continuous(breaks = seq(0, 9, by = 1)) + 
+    theme_shrub() +
+    ggtitle(expression(italic("Salix pulchra"))) +
+    ylab("Canopy height (cm)\n") +
+    xlab("\nSample age") + theme(text=element_text(family="Helvetica Light")) )
+# theme(legend.position = "none"))
+
 # Salix pulchra ------
 pul_height_1 <- (conditional_effects(height_pul_south))
 pul_height_data_1 <- pul_height_1[[1]]
@@ -337,7 +352,7 @@ pul_height_data_back <- pul_height_data_1 %>%
     theme_shrub()+ theme(text=element_text(family="Helvetica Light")) +
     theme( axis.text.x  = element_text(angle = 0)))
 
-pulchra_CG_panel <- grid.arrange(pul_height_plot,pul_cover_plot, nrow=1)
+pulchra_CG_panel <- grid.arrange(pul_heights_plot_new_south,pul_cover_plot_new, nrow=1)
 ggsave(pulchra_CG_panel, filename ="output/figures/pulchra_CG_panel.png", width = 14.67, height = 6.53, units = "in")
 
 # Salix arctica------
