@@ -184,7 +184,7 @@ all_bind_mean_dat <- all_bind_mean[[1]]
     theme_shrub()+ theme(text=element_text(family="Helvetica Light")) +
     theme( axis.text.x  = element_text(angle = 0)))
 
-(pulchra_height_plot_mean <- all_bind_new_mean %>%
+(pulchra_height_plot_mean_new <- all_bind_new_mean %>%
     #group_by(population) %>%
     add_predicted_draws(MEAN, allow_new_levels = TRUE ) %>%
     ggplot(aes(x = Year_index, y = mean_height), color = "#2b788c") +
@@ -209,6 +209,7 @@ MAX <- brms::brm(max_height|trunc(lb = 0, ub = 160) ~ Year_index + (1|Year_index
 summary(MAX)
 pp_check(MAX, type = "dens_overlay", ndraws = 100) 
 saveRDS(MAX, file = "outputs/models/MAX.rds")
+MAX <- readRDS("outputs/models/MAX.rds")
 
 MAX_summ <- model_summ_heights(MAX)
 
@@ -259,6 +260,23 @@ save_kable(kable_bind_with_cg,file = "outputs/tables/kable_bind_with_cg_2.pdf", 
 
 
 # plot
+(pulchra_height_plot_max_new <- all_bind_new_max %>%
+    #group_by(population) %>%
+    add_predicted_draws(MAX, allow_new_levels = TRUE ) %>%
+    ggplot(aes(x = Year_index, y = max_height), color = "#2b788c") +
+    stat_lineribbon(aes(y = .prediction), colour = "#2b788c", fill = "#2b788c",.width = c(.50), alpha = 0.2) +
+    geom_point(data = all_bind_new_max, alpha = 0.5, colour = "#2b788c") +
+    # scale_colour_viridis_d(begin = 0.1, end = 0.85) +
+    #scale_fill_viridis_d(begin = 0.1, end = 0.85) +
+    #scale_x_continuous(breaks = seq(0, 9, by = 1)) + 
+    theme_shrub() +
+    ggtitle(expression(italic("Salix pulchra"))) +
+    ylab("Max canopy height (cm)\n") +
+    xlab("\nYear (scaled)") + theme(text=element_text(family="Helvetica Light")) +
+    theme( axis.text.x  = element_text(angle = 0)))
+# theme(legend.position = "none"))
+
+
 all_bind_max <- (conditional_effects(MAX))
 all_bind_max_dat <- all_bind_max[[1]]
 
@@ -278,8 +296,8 @@ all_bind_max_dat <- all_bind_max[[1]]
     theme( axis.text.x  = element_text(angle = 0)))
 
 
-panel <- grid.arrange(pulchra_height_plot_mean,
-                      pulchra_height_plot_max, nrow =1)
+panel <- grid.arrange(pulchra_height_plot_mean_new,
+                      pulchra_height_plot_max_new, nrow =1)
 
 ggsave(panel, filename ="output/figures/QHI_heights_panel.png", width = 14.67, height = 6.53, units = "in")
 

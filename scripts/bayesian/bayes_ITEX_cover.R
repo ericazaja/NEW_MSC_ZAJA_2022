@@ -161,7 +161,7 @@ pp_check(pulchra_cover_max, ndraws=100)
 plot_model(pulchra_cover_max, type = "pred", terms = c("Year_index ", "SITE")) # to visualise interaction
 summary(pulchra_cover_max) # 0.001
 saveRDS(pulchra_cover_max, file = "outputs/models/pulchra_cover_max.rds")
-
+pulchra_cover_max <- readRDS("outputs/models/pulchra_cover_max.rds")
 # QHI estimate =  0.002518971 
 # toolik = 0.002518971  + 0.016781174  
 # mean of slope both sites= 0.01090955
@@ -176,6 +176,7 @@ summary(pulchra_cover_mean) # mean year estimate for both sites 0.00677882
 pp_check(pulchra_cover_mean, ndraws=100)
 plot_model(pulchra_cover_mean, type = "pred", terms = c("Year_index ", "SITE")) # to visualise interaction
 saveRDS(pulchra_cover_mean, file = "outputs/models/pulchra_cover_mean.rds")
+pulchra_cover_mean <- readRDS("outputs/models/pulchra_cover_mean.rds")
 
 pulchra_cover_mean_summ <- model_summ_cov(pulchra_cover_mean)
 rownames(pulchra_cover_mean_summ) <- c("Intercept ", "Year (indexed) ", "Toolik site ", "Year (indexed):Toolik site",
@@ -536,6 +537,7 @@ cov_max_dat_3 <- cov_max_3[[3]]
     theme(text=element_text(family="Helvetica Light")) +
     theme( axis.text.x  = element_text(angle = 0)))
 
+
 panel_coverheight_max <- grid.arrange(pulchra_height_plot_max,pul_max_cover_plot,nrow=1)
 panel_coverheight_mean <- grid.arrange(pulchra_height_plot_mean,pul_mean_cover_plot, nrow=1)
 ggsave(panel_coverheight_max, filename ="outputs/figures/panel_coverheight_max.png", width = 14.67, height = 6.53, units = "in")
@@ -554,3 +556,42 @@ plot(NULL ,xaxt='n',yaxt='n',bty='n',ylab='',xlab='', xlim=0:1, ylim=0:1)
 legend("topleft", legend =c('QHI', 'TOOLIK', 'CG'), pch=16, pt.cex=2, cex=1.5, bty='n',
        col = c('#e75480', 'black', '#5ccc64'), text(family="Helvetica Light"))
 mtext("Site", at=0.2, cex=2, family = "Helvetica Light")
+
+# new graphs
+max$SITE <- as.factor(max$SITE)
+(pul_max_cover_plot_new <- max %>%
+    group_by(SITE) %>%
+    add_predicted_draws(pulchra_cover_max, allow_new_levels = TRUE ) %>%
+    ggplot(aes(x = Year_index, y = max_cov, colour = SITE)) +
+    stat_lineribbon(aes(y = .prediction, fill = SITE), .width = c(.50), alpha = 0.2) +
+    geom_point(data = max, alpha = 0.5) +
+    ylab("Max cover (proportion)\n") +
+    xlab("\n Year (scaled)" ) +
+    # ylim(0, 1.00) +
+    scale_color_manual(values = c("QHI" = "#2b788c", "TOOLIK" = "#e75480"))+
+    scale_fill_manual(values = c("QHI" = "#2b788c", "TOOLIK" = "#e75480"))+
+    theme_shrub() + theme(legend.position = "none") +
+    theme(text=element_text(family="Helvetica Light")) +
+    theme( axis.text.x  = element_text(angle = 0)))
+
+mean$SITE <- as.factor(mean$SITE)
+(pul_mean_cover_plot_new <- mean %>%
+    group_by(SITE) %>%
+    add_predicted_draws(pulchra_cover_mean, allow_new_levels = TRUE ) %>%
+    ggplot(aes(x = Year_index, y = mean_cov, colour = SITE)) +
+    stat_lineribbon(aes(y = .prediction, fill = SITE), .width = c(.50), alpha = 0.2) +
+    geom_point(data = mean, alpha = 0.5) +
+    ylab("Mean cover (proportion)\n") +
+    xlab("\n Year (scaled)" ) +
+    # ylim(0, 1.00) +
+    scale_color_manual(values = c("QHI" = "#2b788c", "TOOLIK" = "#e75480"))+
+    scale_fill_manual(values = c("QHI" = "#2b788c", "TOOLIK" = "#e75480"))+
+    theme_shrub() + theme(legend.position = "none") +
+    theme(text=element_text(family="Helvetica Light")) +
+    theme( axis.text.x  = element_text(angle = 0)))
+
+panel_coverheight_max_new <- grid.arrange(pulchra_height_plot_max_new,pul_max_cover_plot_new,nrow=1)
+panel_coverheight_mean_new <- grid.arrange(pulchra_height_plot_mean_new,pul_mean_cover_plot_new, nrow=1)
+ggsave(panel_coverheight_max_new, filename ="outputs/figures/panel_coverheight_max.png", width = 14.67, height = 6.53, units = "in")
+ggsave(panel_coverheight_mean_new, filename ="outputs/figures/panel_coverheight_mean.png", width = 14.67, height = 6.53, units = "in")
+
