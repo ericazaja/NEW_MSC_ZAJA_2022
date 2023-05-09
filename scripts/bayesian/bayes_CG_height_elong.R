@@ -85,8 +85,14 @@ height_rich <- readRDS("outputs/models/height_rich.rds")
 height_rich_summ <- model_summ(height_rich)
 summary(height_rich)
 
-# estimate for northern sample age: 1.50-0.02 = exp(1.48) = 4.392946 cm per year
-# estimate for southern sample age: (1.50+0.91)+(0.09+0.16) = exp(2.66) = 14.29629 cm per year
+# estimate for northern sample age: 1.50+0.09 = exp(1.48) = 4.095955 cm in year 1
+# estimate for southern sample age: (1.50+0.91)+(0.09*1+0.16*1) = exp(2.66) = 14.29629 in year 1
+# estimate for southern sample age in year 9: (1.50+0.91)+(0.09*9 +0.16*9) = exp(4.66) = 105.6361 in year 9 -->105.6361/9 =11.73734 cm/year
+# estimate for n sample age in year 9: 1.50+0.09*9 = exp(2.31) = 10.07442 in year 9 --> 10.07442/9= 1.11938 cm/year
+
+
+# estimate for year N.:  exp(0.09) = 1.09
+# estimate for year S.:  0.09*year +0.16*year = exp(0.25) = 1.28
 
 # %diff
 (14.29629-4.903749)/4.903749
@@ -134,8 +140,11 @@ saveRDS(height_pul, file = "outputs/models/height_pul.rds")
 height_pul <- readRDS("outputs/models/height_pul.rds")
 
 summary(height_pul)
-# estimate for northern sample age: 1.99-0.02=1.97 --> exp(1.97)= 7.170676 cm per year
-# estimate for northern sample age: (1.99+0.95) + (-0.02+0.03)= 2.95, exp(2.95)= 19.10595 cm per sample age
+# estimate for northern sample age: 1.99-0.02=1.97 --> exp(1.97)= 7.170676 cm in year 1
+# estimate for s sample age: (1.99+0.95) + (-0.02+0.03)= 2.95, exp(2.95)= 19.10595 cm per sample age
+# estimate for s. sample age at year 9: (1.99+0.95) + (-0.02*9+0.03*9)= 3.03, exp(3.03)= 20.69 in year 9 --> 2.299692 per year
+# estimate for northern sample age at year 9: 1.99-0.02*9=1.97= 3.03, exp(3.03)= 6.110447 in year 9 --> 0.6789386 per year
+
 
 # times larger
 19.10595/7.170676
@@ -164,6 +173,8 @@ summary(height_pul_south) #
 plot(height_pul_south)
 pp_check(height_pul_south, type = "dens_overlay", ndraws = 100) 
 saveRDS(height_pul_south, file = "outputs/models/height_pul_south.rds")
+
+# estimate for s. sample age 9: 2.96+(0.003288811*9)  = 2.989599= exp(2.989599)=  19.87771 --> 19.87771/9 =2.208634 cm /year
 
 height_pul_south_summ <- model_summ(height_pul_south)
 rownames(height_pul_south_summ) <- c("Intercept          ", "Sample age            ", "Random intercept         ", 
@@ -195,8 +206,8 @@ saveRDS(height_arc, file = "outputs/models/height_arc.rds")
 height_arc <- readRDS("outputs/models/height_arc.rds")
 
 summary(height_arc) # significant growth over time
-# estimate for northern sample age: 0.86+0.08= exp(0.94) = 2.559981
-# estimate for northern sample age: 0.86-0.28 + 0.08 + 0.11 = 0.77= exp(0.77)=  2.159766
+# estimate for northern sample age 9: 0.86+0.08*9= exp(1.58) = 4.854956 -->0.5394396
+# estimate for s. sample age: 0.86-0.28 + 0.08*9 + 0.11*9 = 2.29= exp(2.29)=  9.874938 --> 1.097215
 
 plot(height_arc)
 pp_check(height_arc, type = "dens_overlay", nsamples = 100) 

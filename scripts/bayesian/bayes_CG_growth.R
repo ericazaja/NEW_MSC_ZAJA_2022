@@ -274,8 +274,8 @@ garden_rich_height <- brms::brm(log(max_canopy_height_cm) ~ population +(1|Sampl
 summary(garden_rich_height) # significantly higher canopy heights for southern pop.
 plot(garden_rich_height) # fine
 pp_check(garden_rich_height,  type = "dens_overlay", nsamples = 100)  # good
-saveRDS(garden_rich_height, file = "output/models/garden_rich_height.rds")
-
+saveRDS(garden_rich_height, file = "outputs/models/garden_rich_height.rds")
+garden_rich_height <- readRDS("outputs/models/garden_rich_height.rds")
 # estimate for northern: 2.3801895 = exp(2.3801895) = 10.80695
 # estimate for southern: 2.3801895+1.1569109=3.5371 -> exp(3.5371) = 34.36711
 # %diff
@@ -308,6 +308,8 @@ plot(garden_pul_height) # fine
 pp_check(garden_pul_height, type = "dens_overlay", nsamples = 100)  # good) 
 saveRDS(garden_pul_height, file = "output/models/garden_pul_height.rds")
 garden_pul_height <- readRDS("outputs/models/garden_pul_height.rds")
+garden_pul_height <- readRDS("outputs/models/garden_pul_height.rds")
+
 # estimate for northern: 2.2889943 = exp(2.2889943) = 9.865011
 # estimate for southern: 2.2889943+0.9149186=3.203913 -> exp(3.203913) = 24.62871
 # %diff
@@ -338,7 +340,8 @@ garden_arc_height <- brms::brm(log(max_canopy_height_cm) ~ population + (1|Sampl
 summary(garden_arc_height) # NOT significant difference (again makes sense!)
 plot(garden_arc_height) # fine
 pp_check(garden_arc_height, type = "dens_overlay", nsamples = 100)# good
-saveRDS(garden_arc_height, file = "output/models/garden_arc_height.rds")
+saveRDS(garden_arc_height, file = "outputs/models/garden_arc_height.rds")
+garden_arc_height <- readRDS("outputs/models/garden_arc_height.rds")
 
 # extract output with function
 arc_extract <- model_summ_growth(garden_arc_height)

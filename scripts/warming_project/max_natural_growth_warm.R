@@ -80,6 +80,7 @@ mean_max_warm_to_plot <- rbind(coord.chelsa.combo.c.biom.2020, avg_warm_bind, ma
     xlab("\nLongitude") +
     ylab("Latitude\n") + theme(text=element_text(family="Helvetica Light")) )
 
+
 ggsave(max_test_temp, filename ="output/final_maps/max_test_temp.png", width = 11.7, height = 8.3, units = "in")
 # ggsave(max_test_temp, filename ="output/final_maps/max_test_temp_2.png", width = 11.7, height = 8.3, units = "in", dpi = 300)
 
@@ -92,7 +93,7 @@ quant_maxmean_warm
 
 #0%       25%       50%       75%      100% 
 # 0.0000  174.4421  957.9852 1238.5743 3305.8807 
-# 0.0000  307.5213  631.0684  878.5136 2957.4048 
+# 0.0000  307.5213  576.3771  723.4860 2718.3623 
 
 # setting biomass level thresholds using quantiles
 threshold_max_warm <- max_warm_to_plot %>%
@@ -101,17 +102,17 @@ threshold_max_warm <- max_warm_to_plot %>%
                                     biomass_per_m2 > 1238.5743 ~ 'High')) # 75%
 
 threshold_maxmean_warm <- mean_max_warm_to_plot %>%
-  mutate(biomass_level = case_when (biomass_per_m2 < 307.5213     ~ 'Low', # 25% quant.
-                                    biomass_per_m2> 307.5213    & biomass_per_m2 < 878.5136 ~ 'Medium', # between 25 and 75 
-                                    biomass_per_m2 > 878.5136 ~ 'High')) # 75%
+  mutate(biomass_level = case_when (biomass_per_m2 < 307.5213     ~ 'Open', # 25% quant.
+                                    biomass_per_m2> 307.5213    & biomass_per_m2 < 723.4860 ~ 'Dense', # between 25 and 75 
+                                    biomass_per_m2 > 723.4860 ~ 'Very dense')) # 75%
 
 # ordering factor levels
 threshold_max_warm$biomass_level <- factor(threshold_max_warm$biomass_level,levels=c("Low", "Medium", "High"),
                                              labels = c("Low", "Medium", "High"),
                                              ordered = T)
 
-threshold_maxmean_warm$biomass_level <- factor(threshold_maxmean_warm$biomass_level,levels=c("Low", "Medium", "High"),
-                                           labels = c("Low", "Medium", "High"),
+threshold_maxmean_warm$biomass_level <- factor(threshold_maxmean_warm$biomass_level,levels=c("Open", "Dense", "Very dense"),
+                                           labels = c("Open", "Dense", "Very dense"),
                                            ordered = T)
 
 threshold_maxmean_warm_summary <- threshold_maxmean_warm %>% 
@@ -126,10 +127,11 @@ threshold_maxmean_warm_summary <- threshold_maxmean_warm %>%
     scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
     coord_quickmap()+
     theme_shrub() +  
-    theme(axis.text.x  = element_text(vjust=0.5, size=10, colour = "black", angle = 45)) +
-    theme(axis.text.y  = element_text(vjust=0.5, size=10, colour = "black")) + 
+    theme(axis.text.x  = element_text(vjust=0.5, size=13, colour = "black", angle = 45)) +
+    theme(axis.text.y  = element_text(vjust=0.5, size=13, colour = "black")) + 
+    theme(strip.text.x = element_text(size = 14, face = "bold.italic")) +
     xlab("\nLongitude") +
-    ylab("Latitude\n"))
+    ylab("Latitude\n")+ theme(text=element_text(family="Helvetica Light")) )
 
 # binary threshold map
 threshold_max_warm_bi <- max_warm_to_plot %>%

@@ -187,7 +187,7 @@ threshold_novel_warm_2050_summary <- threshold_novel_warm_2050 %>%
     theme(axis.text.y  = element_text(vjust=0.5, size=13, colour = "black")) + 
     theme(strip.text.x = element_text(size = 14, face = "bold.italic")) +
     xlab("\nLongitude") +
-    ylab("Latitude\n")+ theme(text=element_text(family="Helvetica Light")) )
+    ylab("Latitude\n") + theme(text=element_text(family="Helvetica Light")) )
 
 ggsave(threshold_novel_warm_levels, filename ="output/final_maps/threshold_novel_warm_levels.pdf", width = 11.7, height = 8.3, units = "in")
 
