@@ -104,13 +104,17 @@ novel_warm_to_plot_all <- rbind(coord.chelsa.combo.c.biom.2020, novel_warm_bind_
     geom_tile(aes(x=x,y=y,fill=(biomass_per_m2))) + 
     facet_wrap(~year, nrow = 1) +
     #scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
-    scale_fill_gradient(name = "Shrub biomass g/m2",high = "#013220", low = "lightyellow1",  na.value="white")+
+    scale_fill_gradient(name = "Shrub biomass g/m2",high = "#013220", low = "lightyellow1",  na.value="white", 
+                        breaks = seq(0, 4600, 800))+
     coord_quickmap()+
     theme_shrub() +  
-    theme(axis.text.x  = element_text(vjust=0.5, size=10, colour = "black", angle = 45)) +
-    theme(axis.text.y  = element_text(vjust=0.5, size=10, colour = "black")) + 
+    theme(axis.text.x  = element_text(vjust=0.5, size=13, colour = "black", angle = 45)) +
+    theme(axis.text.y  = element_text(vjust=0.5, size=13, colour = "black")) + 
+    theme(strip.text.x = element_text(size = 14, face = "bold.italic")) +
     xlab("\nLongitude") +
-    ylab("Latitude\n"))
+    ylab("Latitude\n")+ theme(text=element_text(family="Helvetica Light")) )
+
+ggsave(raster_test_temp, filename ="output/final_maps/novel_test_temp.png", width = 11.7, height = 8.3, units = "in")
 
 # TRESHOLD MAPS-----
 quant_novel_warm_2100 <- quantile(novel_warm_to_plot$biomass_per_m2)
@@ -141,9 +145,9 @@ threshold_novel_warm_2030 <- novel_warm_to_plot_2030 %>%
                                     biomass_per_m2 > 1425.6429 ~ 'High')) # 75%
 
 threshold_novel_warm_2050 <- novel_warm_to_plot_2050 %>%
-  mutate(biomass_level = case_when (biomass_per_m2 < 276.7149     ~ 'Low', # 25% quant.
-                                    biomass_per_m2> 276.7149    & biomass_per_m2 < 2010.3582 ~ 'Medium', # between 25 and 75 
-                                    biomass_per_m2 > 2010.3582 ~ 'High')) # 75%
+  mutate(biomass_level = case_when (biomass_per_m2 < 276.7149     ~ 'Open', # 25% quant.
+                                    biomass_per_m2> 276.7149    & biomass_per_m2 < 2010.3582 ~ 'Dense', # between 25 and 75 
+                                    biomass_per_m2 > 2010.3582 ~ 'Very dense')) # 75%
 
 threshold_novel_warm_all <- novel_warm_to_plot_all %>%
   mutate(biomass_level = case_when (biomass_per_m2 < 466.2626     ~ 'Low', # 25% quant.
@@ -159,11 +163,11 @@ threshold_novel_warm_2030$biomass_level <- factor(threshold_novel_warm_2030$biom
                                              labels = c("Low", "Medium", "High"),
                                              ordered = T)
 
-threshold_novel_warm_2050$biomass_level <- factor(threshold_novel_warm_2050$biomass_level,levels=c("Low", "Medium", "High"),
-                                                  labels = c("Low", "Medium", "High"),
+threshold_novel_warm_2050$biomass_level <- factor(threshold_novel_warm_2050$biomass_level,levels=c("Open", "Dense", "Very dense"),
+                                                  labels = c("Open", "Dense", "Very dense"),
                                                   ordered = T)
 
-threshold_novel_warm_all$biomass_level <- factor(threshold_novel_warm_all$biomass_level,levels=c("Low", "Medium", "High"),
+threshold_novel_warm_all$biomass_level <- factor(threshold_novel_warm_all$biomass_level,levels=c("Open", "Dense", "Very dense"),
                                                   labels = c("Low", "Medium", "High"),
                                                   ordered = T)
 
@@ -176,13 +180,17 @@ threshold_novel_warm_2050_summary <- threshold_novel_warm_2050 %>%
 (threshold_novel_warm_levels <- ggplot(threshold_novel_warm_2050) + 
     geom_tile(aes(x=x,y=y,fill=biomass_level)) + 
     facet_wrap(~year, nrow = 1) +
-    scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
+    scale_fill_manual(name = "Biomass density", values=c( "#F0E442", "#E69F00", "#009E73")) +
     coord_quickmap()+
    theme_shrub() +  
-    theme(axis.text.x  = element_text(vjust=0.5, size=10, colour = "black", angle = 45)) +
-    theme(axis.text.y  = element_text(vjust=0.5, size=10, colour = "black")) + 
+    theme(axis.text.x  = element_text(vjust=0.5, size=13, colour = "black", angle = 45)) +
+    theme(axis.text.y  = element_text(vjust=0.5, size=13, colour = "black")) + 
+    theme(strip.text.x = element_text(size = 14, face = "bold.italic")) +
     xlab("\nLongitude") +
-    ylab("Latitude\n"))
+    ylab("Latitude\n")+ theme(text=element_text(family="Helvetica Light")) )
+
+ggsave(threshold_novel_warm_levels, filename ="output/final_maps/threshold_novel_warm_levels.pdf", width = 11.7, height = 8.3, units = "in")
+
 
 
 # binary threshold map

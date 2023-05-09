@@ -53,20 +53,36 @@ max_warm_bind$year <- as.factor(max_warm_bind$year)
 coord.chelsa.combo.c.biom.2020$year <- as.factor(coord.chelsa.combo.c.biom.2020$year)
 max_warm_to_plot <- rbind(coord.chelsa.combo.c.biom.2020, max_warm_bind)
 mean_max_warm_to_plot <- rbind(coord.chelsa.combo.c.biom.2020, avg_warm_bind, max_warm_bind)
-# mean_max_novel_warm_to_plot <- rbind(coord.chelsa.combo.c.biom.2020, avg_warm_bind, max_warm_bind, novel_warm_bind)
+
+# run this code if I want them all on same scale
+#novel_warm_to_plot_2100 <- novel_warm_to_plot %>%
+ # filter(year == 2100) %>%
+ # mutate(year= rep("2100_novel"))
+#novel_warm_bind_2030_2 <- novel_warm_bind_2030 %>%
+#  mutate(year= rep("2030_novel"))
+#novel_warm_bind_2050_2 <- novel_warm_bind_2050 %>%
+ # mutate(year= rep("2050_novel"))
+
+#mean_max_novel_warm_to_plot <- rbind(coord.chelsa.combo.c.biom.2020, avg_warm_bind, max_warm_bind, novel_warm_bind_2030_2, novel_warm_bind_2050_2)
 
 # plotting facet biomass (yellow-green)
 (max_test_temp <- ggplot(mean_max_warm_to_plot) + 
     geom_tile(aes(x=x,y=y,fill=(biomass_per_m2))) + 
     facet_wrap(~year, nrow = 1) +
     #scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
-    scale_fill_gradient(name = "Shrub biomass g/m2",high = "#013220", low = "lightyellow1",  na.value="white")+
+    scale_fill_gradient(name = "Shrub biomass g/m2",high = "#013220", low = "lightyellow1",  na.value="white", 
+                        breaks = seq(0, 2500, 400))+
     coord_quickmap()+
     theme_shrub() +  
-    theme(axis.text.x  = element_text(vjust=0.5, size=10, colour = "black", angle = 45)) +
-    theme(axis.text.y  = element_text(vjust=0.5, size=10, colour = "black")) + 
+    theme(axis.text.x  = element_text(vjust=0.5, size=13, colour = "black", angle = 45)) +
+    theme(axis.text.y  = element_text(vjust=0.5, size=13, colour = "black")) + 
+    theme(strip.text.x = element_text(size = 14, face = "bold.italic")) +
     xlab("\nLongitude") +
-    ylab("Latitude\n"))
+    ylab("Latitude\n") + theme(text=element_text(family="Helvetica Light")) )
+
+ggsave(max_test_temp, filename ="output/final_maps/max_test_temp.png", width = 11.7, height = 8.3, units = "in")
+# ggsave(max_test_temp, filename ="output/final_maps/max_test_temp_2.png", width = 11.7, height = 8.3, units = "in", dpi = 300)
+
 
 # TRESHOLD MAPS-----
 quant_max_warm <- quantile(max_warm_to_plot$biomass_per_m2)
