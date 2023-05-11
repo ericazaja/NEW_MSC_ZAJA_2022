@@ -301,6 +301,42 @@ panel <- grid.arrange(pulchra_height_plot_mean_new,
 
 ggsave(panel, filename ="output/figures/QHI_heights_panel.png", width = 14.67, height = 6.53, units = "in")
 
+# try ggpred
+library(ggeffects)
+ggpred_MAX_qhi <- ggpredict(MAX, terms = "Year_index")
+colnames(ggpred_MAX_qhi) = c('Year_index', 'fit', 'lwr', 'upr', 'dunno')
+
+(ggrped_MAX_qhi_plot <-ggplot(ggpred_MAX_qhi) +
+    geom_point(data = all_bind_new_max, aes(x = Year_index, y = max_height),
+               alpha = 0.5, colour = "#2b788c")+ # raw data
+    geom_line(aes(x = Year_index , y = fit), linewidth = 1, colour = "#2b788c")+
+    geom_ribbon(aes(x = Year_index, ymin = lwr, ymax = upr),
+                  alpha = 0.2, fill = "#2b788c") +
+    ylab("Max. canopy height (cm)\n") +
+    xlab("\n Year (indexed)" ) +
+    #scale_colour_viridis_d(begin = 0.1, end = 0.95) +
+    #scale_fill_viridis_d(begin = 0.1, end = 0.95) +
+    theme_shrub()+ theme(text=element_text(family="Helvetica Light")) +
+    theme( axis.text.x  = element_text(angle = 0))) # if i log everything it's exactly the same plot as with conditional effects! 
+
+# try ggpred
+library(ggeffects)
+ggpred_MEAN_qhi <- ggpredict(MEAN, terms = "Year_index")
+colnames(ggpred_MEAN_qhi) = c('Year_index', 'fit', 'lwr', 'upr', 'dunno')
+
+(ggrped_MEAN_qhi_plot <-ggplot(ggpred_MEAN_qhi) +
+    geom_point(data = all_bind_new_mean, aes(x = Year_index, y = mean_height),
+               alpha = 0.5, colour = "#2b788c")+ # raw data
+    geom_line(aes(x = Year_index , y = fit), linewidth = 1, colour = "#2b788c")+
+    geom_ribbon(aes(x = Year_index, ymin = lwr, ymax = upr),
+                alpha = 0.2, fill = "#2b788c") +
+    ylab("Mean canopy height (cm)\n") +
+    xlab("\n Year (indexed)" ) +
+    #scale_colour_viridis_d(begin = 0.1, end = 0.95) +
+    #scale_fill_viridis_d(begin = 0.1, end = 0.95) +
+    theme_shrub()+ theme(text=element_text(family="Helvetica Light")) +
+    theme( axis.text.x  = element_text(angle = 0))) # if i log everything it's exactly the same plot as with conditional effects! 
+
 
 # STOP ----
 

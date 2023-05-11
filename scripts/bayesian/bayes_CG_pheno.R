@@ -67,6 +67,7 @@ all_phenocam_rich_source <- all_phenocam_rich %>%
   filter(population %in% c("N. Source", "S. Source"))
 all_phenocam_rich_source$population <- as.character(all_phenocam_rich_source$population)
 all_phenocam_rich_source$population <- as.factor(all_phenocam_rich_source$population)
+
 unique(all_phenocam_rich_source$population)
 
 all_phenocam_pul_source <- all_phenocam_pulchra %>%
@@ -77,6 +78,7 @@ unique(all_phenocam_pul_source$population)
 
 all_phenocam_arc_source <- all_phenocam_arctica %>%
   filter(population %in% c("N. Source", "S. Source"))
+
 all_phenocam_arc_source$population <- as.character(all_phenocam_arc_source$population)
 all_phenocam_arc_source$population <- as.factor(all_phenocam_arc_source$population)
 unique(all_phenocam_arc_source$population)
@@ -267,6 +269,7 @@ summary(garden_rich_emerg_compare)
 plot(garden_rich_emerg_compare)
 pp_check(garden_rich_emerg_compare, type = "dens_overlay", nsamples = 100) # looks good
 readRDS(garden_rich_emerg_compare, file = "outputs/models/garden_rich_emerg_compare.rds")
+garden_rich_emerg_compare <- readRDS("outputs/models/garden_rich_emerg_compare.rds")
 
 # Salix pulchra -----
 all_phenocam_pulchra$First_bud_burst_DOY_center <- center_scale(all_phenocam_pulchra$First_bud_burst_DOY) 
@@ -551,6 +554,7 @@ plot(growing_season_rich)
 pp_check(growing_season_rich, type = "dens_overlay", ndraws = 100) # looks decent
 season_rich_results <- model_summ_pheno(growing_season_rich)
 season_rich_results$Species <- "Salix richardsonii"
+saveRDS(growing_season_rich, file = "outputs/models/growing_season_rich.rds")
 
 # center on 0
 all_phenocam_rich$growing_season_length_scale <- center_scale(all_phenocam_rich$growing_season_length)
@@ -561,10 +565,11 @@ growing_season_rich_scale <- brms::brm(growing_season_length_scale ~ population 
 summary(growing_season_rich_scale) 
 plot(growing_season_rich_scale)
 pp_check(growing_season_rich_scale, type = "dens_overlay", ndraws = 100) # looks decent
+saveRDS(growing_season_rich_scale, file = "outputs/models/growing_season_rich_scale.rds")
 
 # Salix pulchra ------
-growing_season_pul <- brms::brm(growing_season.y ~ population + (1|Year), 
-                                data = all_growing_season_pul, family = gaussian(), chains = 3,
+growing_season_pul <- brms::brm(growing_season_length ~ population + (1|Year), 
+                                data = all_phenocam_pulchra, family = gaussian(), chains = 3,
                                 iter = 3000, warmup = 1000,
                                 control = list(max_treedepth = 15, adapt_delta = 0.99))
 
@@ -573,6 +578,7 @@ plot(growing_season_pul)
 pp_check(growing_season_pul, type = "dens_overlay", ndraws = 100) # looks decent
 season_pul_results <- model_summ_pheno(growing_season_pul)
 season_pul_results$Species <- "Salix pulchra"
+saveRDS(growing_season_pul, file = "outputs/models/growing_season_pul.rds")
 
 # center on 0
 all_phenocam_pulchra$growing_season_length_scale <- center_scale(all_phenocam_pulchra$growing_season_length)
@@ -584,10 +590,11 @@ growing_season_pul_scaled <- brms::brm(growing_season_length_scale ~ population 
 summary(growing_season_pul_scaled) # 
 plot(growing_season_pul_scaled)
 pp_check(growing_season_pul_scaled, type = "dens_overlay", ndraws = 100) # looks decent
+saveRDS(growing_season_pul_scaled, file = "outputs/models/growing_season_pul_scaled.rds")
 
 # Salix arctica ------
-growing_season_arc <- brms::brm(growing_season.y ~ population + (1|Year),
-                                data = all_growing_season_arc, family = gaussian(), chains = 3,
+growing_season_arc <- brms::brm(growing_season_length ~ population + (1|Year),
+                                data = all_phenocam_arctica, family = gaussian(), chains = 3,
                                 iter = 3000, warmup = 1000,
                                 control = list(max_treedepth = 15, adapt_delta = 0.99))
 
@@ -596,6 +603,7 @@ plot(growing_season_arc)
 pp_check(growing_season_arc, type = "dens_overlay", ndraws = 100) # looks good
 season_arc_results <- model_summ_pheno(growing_season_arc)
 season_arc_results$Species <- "Salix arctica"
+saveRDS(growing_season_arc, file = "outputs/models/growing_season_arc.rds")
 
 # center on 0
 all_phenocam_arctica$growing_season_length_scale <- center_scale(all_phenocam_arctica$growing_season_length)
@@ -606,6 +614,8 @@ growing_season_arc_scaled <- brms::brm(growing_season_length_scale ~ population 
 summary(growing_season_arc_scaled) # 
 plot(growing_season_arc_scaled)
 pp_check(growing_season_arc_scaled, type = "dens_overlay", ndraws = 100) # looks decent
+saveRDS(growing_season_arc_scaled, file = "outputs/models/growing_season_arc_scaled.rds")
+
 # compile non-scaled results, should change to scaled though I think (Madi)
 season_results <- rbind(season_rich_results, season_pul_results, season_arc_results)
 
@@ -1056,6 +1066,7 @@ arc_grow_data <- arc_grow[[1]] # making the extracted model outputs into a data
 (growing_season_panel <- ggarrange(ric_growing_plot, pul_growing_plot, arc_growing_plot, 
                                    common.legend = TRUE, legend = "bottom",
                                    ncol = 3, nrow = 1))
+
 # growing season scaled (and then not in figures) ----
 
 # S. richardsonii -------

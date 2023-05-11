@@ -18,19 +18,19 @@ coord.chelsa.combo.c.biom.2020 <- read.csv("data/coord.chelsa.combo.c.biom.2020.
 #  18590.5 g/m2
 
 # times pulchra rates by 23 to keep years consistent.
-# height slope pulchra = 1 --> 1*23= 23
+# log height slope pulchra = 0.003288811 --> 0.003288811*23=exp(0.07564265)= 1.078577
 # cover slope pulchra = 0.24 --> 24% * 23 =552
 # PULCHRA FINAL EQUATION:  Biomass =  (1.1*23 +-  5.0 ) + (18.1 *552 +-  8.2)
-(1.1*23  ) + (18.1 *552)
-# 10016.5
+(1.1*1.078577  ) + (18.1 *552)
+# 9992.386
 
 # Mean
 (18590.5+10016.5)/2
 #14303.5
 
 # Biomass over 23 year period divided by the 6.4 difference in temp between KP and CG
-10016.5/6.4
-#  1565.078 g/m2/degC
+9992.386/6.4
+#  1561.31 g/m2/degC
 
 
 # multiply by biomass increase

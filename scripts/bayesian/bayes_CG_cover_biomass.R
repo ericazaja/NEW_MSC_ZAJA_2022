@@ -258,9 +258,9 @@ pul_cov_data_1 <- pul_cov_1[[1]]
     geom_point(data = CG_pul_cover_biomass, aes(x = Sample_age, y = (cover_percent/100)),
                alpha = 0.5, colour = "#5ccc64")+
     geom_line(aes(x = effect1__, y = estimate__),
-              linewidth = 1.5, colour = "#5ccc64") +
+              linewidth = 1.5, colour = "#122814", alpha = 0.3) +
     geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
-                alpha = .1, fill = "#5ccc64") +
+                alpha = .2, fill = "#5ccc64") +
    # ylab("Cover (/m2)\n") +
     xlab("\n Sample age" ) +
     ylab("Cover (proportion) \n") + 

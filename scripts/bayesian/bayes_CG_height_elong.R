@@ -318,7 +318,7 @@ rich_height_data_2 <- rich_height_1[[2]]
     #group_by(population) %>%
     add_predicted_draws(height_pul_south, allow_new_levels = TRUE ) %>%
     ggplot(aes(x = Sample_age, y = Canopy_Height_cm), color = "#5ccc64") +
-    stat_lineribbon(aes(y = exp(.prediction)), colour = "#2D6532", fill = "#5ccc64",.width = c(.50), alpha = 0.2) +
+    stat_lineribbon(aes(y = exp(.prediction)), colour = "#122814", fill = "#5ccc64",.width = c(.50), alpha = 0.2) +
     geom_point(data = all_CG_growth_pul_south, alpha = 0.5, colour = "#5ccc64") +
    # scale_colour_viridis_d(begin = 0.1, end = 0.85) +
     #scale_fill_viridis_d(begin = 0.1, end = 0.85) +
@@ -352,8 +352,9 @@ pul_height_data_back <- pul_height_data_1 %>%
     theme_shrub()+ theme(text=element_text(family="Helvetica Light")) +
     theme( axis.text.x  = element_text(angle = 0)))
 
-pulchra_CG_panel <- grid.arrange(pul_heights_plot_new_south,pul_cover_plot_new, nrow=1)
+pulchra_CG_panel <- grid.arrange(pul_heights_plot_new_south,pul_cover_plot, nrow=1)
 ggsave(pulchra_CG_panel, filename ="output/figures/pulchra_CG_panel.png", width = 14.67, height = 6.53, units = "in")
+
 
 # Salix arctica------
 (arc_heights_plot_new <- all_CG_growth_arc %>%
