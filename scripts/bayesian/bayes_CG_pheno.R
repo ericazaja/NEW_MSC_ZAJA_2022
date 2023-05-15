@@ -424,9 +424,9 @@ garden_rich_yellow_compare <- brms::brm(First_leaf_yellow_DOY_center ~ populatio
 summary(garden_rich_yellow_compare)
 plot(garden_rich_yellow_compare)
 pp_check(garden_rich_yellow_compare, type = "dens_overlay", ndraws = 100) # looks good
+garden_rich_yellow_compare <- readRDS(file = "outputs/models/garden_rich_yellow_compare.rds")
 
 garden_rich_yellow_compare_extract <- model_summ_pheno(garden_rich_yellow_compare)
-garden_rich_yellow_compare <- readRDS(file = "outputs/models/garden_rich_yellow_compare.rds")
 
 # Salix pulchra ------
 all_phenocam_pulchra$First_leaf_yellow_DOY_center <- center_scale(all_phenocam_pulchra$First_leaf_yellow_DOY) 
@@ -541,6 +541,7 @@ save_kable(kable_yellow_garden, file = "output/phenology/yellow_garden_results.p
            latex_header_includes = NULL,
            keep_tex =TRUE,
            density = 300)
+
 
 # 3. GROWING SEASON LENGTH -----
 # Salix richardsonii ------
