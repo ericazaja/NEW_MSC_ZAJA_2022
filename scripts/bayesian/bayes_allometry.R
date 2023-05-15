@@ -5,6 +5,25 @@ library(tidyverse)
 library(brms)
 library(gridExtra)
 
+
+model_summ_allom <- function(x) {
+  sum = summary(x)
+  fixed = sum$fixed
+  sigma = sum$spec_pars
+  obs = sum$nobs
+  
+  fixed$effect <- "fixed"  # add ID column for type of effect (fixed, random, residual)
+  # fixed$effect <- "population"  # add ID column for type of effect (fixed, random, residual)
+  # random$effect <- "SampleID_standard"
+  sigma$effect <- "residual"
+  fixed$nobs <- obs  # add column with number of observations
+  # random$nobs <- obs
+  sigma$nobs <- obs
+  #row.names(random)[row.names(index_year) == "index_year"] <- "index_year" # could change rowname here of random effect if you'd like 
+  
+  modelTerms <- as.data.frame(bind_rows(fixed, sigma))  # merge together
+}
+
 # 2. DATA -----
 # Andy Cunliffe data from QHI: S rich. and arctica
 QHI_salarc_shrub_biomass <- read_csv("data/allometry/Andy_paper/QHI_salarc_shrub_biomass.csv")
@@ -46,6 +65,10 @@ summary(rich_allom) # not significant
 plot(rich_allom) # great
 pp_check(rich_allom, type = "dens_overlay", nsamples = 100) # fine
 # biomass increases with height
+saveRDS(rich_allom, file ="outputs/models/rich_allom.rds")
+rich_allom_summ <- model_summ_allom(rich_allom)
+rich_allom_summ <- rich_allom_summ %>%
+  mutate(Species = "Salix richardsonii")
 
 # running the model 6 times, recording the estimates and errors each time, 
 # making a mean and rounding to one decimal
@@ -73,6 +96,10 @@ pul_allom <- brms::brm(biomass_per_m2 ~ 0 + Shrub_Height_cm + max_cover,
 summary(pul_allom) # not significant 
 plot(pul_allom) # great
 pp_check(pul_allom, type = "dens_overlay", nsamples = 100) # meh
+saveRDS(pul_allom, file ="outputs/models/pul_allom.rds")
+pul_allom_summ <- model_summ_allom(pul_allom)
+pul_allom_summ <- pul_allom_summ %>%
+  mutate(Species = "Salix pulchra")
 
 # running the model 6 times, recording the estimates and errors each time, 
 # making a mean and rounding to one decimal
@@ -101,6 +128,10 @@ arc_allom <- brms::brm(biomass_per_m2 ~ 0 + max_height + percent_cover,
 summary(arc_allom) # not significant 
 plot(arc_allom) # great
 pp_check(arc_allom, type = "dens_overlay", nsamples = 100) # meh
+saveRDS(arc_allom, file ="outputs/models/arc_allom.rds")
+arc_allom_summ <- model_summ_allom(arc_allom)
+arc_allom_summ <- arc_allom_summ %>%
+  mutate(Species = "Salix arctica")
 
 # running the model 6 times, recording the estimates and errors each time, 
 # making a mean and rounding to one decimal
@@ -117,6 +148,37 @@ round(14.20833, digits = 1) # 14.2
 mean(covers_errors_arc) 
 round(20.71333, digits = 1) # 20.7
 # FINAL EQUATION:  # Equation: Biomass =  ( 2.2 *height +-  24.0) + (14.2 *cover +-  20.7)
+
+# table ----
+all_allom_table <-rbind(rich_allom_summ, pul_allom_summ, arc_allom_summ)
+
+all_allom_table <-all_allom_table%>%
+  relocate("Species", .before = "Estimate")
+
+rownames(all_allom_table) <-  c("Height (cm)", "Cover (%)", "sigma",
+                                "Height (cm) ", "Cover (%) ", "sigma ",
+                                " Height (cm)", " Cover (%)", " sigma")
+
+all_allom_table$Rhat <- as.character(formatC(all_allom_table$Rhat, digits = 2, format = 'f'))
+
+all_allom_table_table <- all_allom_table %>% 
+  kbl(caption="Table. Allometric equations. ", 
+      col.names = c("Species", "Estimate", "Error", "Lower 95% CI", "Upper 95% CI",
+                    "Rhat", "Bulk effective sample size", "Tail effective sample size",
+                    "Effect", "Sample size"), # give the column names you want making sure you have one name per column!
+      digits=2, align = "c") %>%  # specify number of significant digits, align numbers at the centre (can also align "l" left/ "r" right)
+  kable_classic(full_width=FALSE, html_font="Helvetica") # can change fonts
+
+# optional: making specific column text in italics
+column_spec(all_allom_table_table, 2, width = NULL, bold = FALSE, italic=TRUE) # 2 is my example column number 
+
+save_kable(all_allom_table_table,file = "outputs/tables/all_allom_table_table.pdf", # or .png, or .jpeg, save in your working directory
+           bs_theme = "simplex",
+           self_contained = TRUE,
+           extra_dependencies = NULL,
+           latex_header_includes = NULL,
+           keep_tex = FALSE,
+           density = 300)
 
 
 # 4.DATA VISUALISATION------
