@@ -14,7 +14,8 @@ library(tidyverse)
 #  boundary of Katie's maps
 boundary_highest <- st_read("data/shapefiles/katie_map_border_highest.shp")
 p50_2020_resample_highest <- raster("data/p50_2020_resample_highest.tiff") 
-plot(boundary_highest)
+plot(boundary_highest, fill=NA, color = "purple4")
+
 # raster to practice on
 tasmax.2020.1.re <- raster("outputs/CMPI6_rasters/tasmax.2020.1.re.tif")
 r2.1 <- crop(tasmax.2020.1.re, extent(boundary_highest))

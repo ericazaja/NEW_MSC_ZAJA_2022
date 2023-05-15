@@ -81,13 +81,33 @@ height_rich <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population+(Sample_a
 saveRDS(height_rich, file = "outputs/models/height_rich.rds")
 height_rich <- readRDS("outputs/models/height_rich.rds")
 
+library(ggeffects)
+ggpred_height_ric <- ggpredict(height_rich, terms = c("Sample_age", "population"))
+colnames(ggpred_height_ric) = c('Sample_age','fit', 'lwr', 'upr',"population")
+
+
+(ggpred_height_rich_plot <-ggplot(ggpred_height_ric) +
+    geom_point(data = all_CG_growth_ric, aes(x = Sample_age, y = Canopy_Height_cm, colour = population),
+               alpha = 0.5)+ # raw data
+    geom_line(aes(x = Sample_age , y = fit, colour = population), linewidth = 1)+
+    geom_ribbon(aes(x = Sample_age, ymin = lwr, ymax = upr,  fill = population),
+                alpha = 0.2) +
+    ylab("Canopy height (cm)\n") +
+    xlab("\n Sample age " ) +
+    scale_colour_viridis_d(begin = 0.1, end = 0.85) +
+    scale_fill_viridis_d(begin = 0.1, end = 0.85) +
+    ggtitle(expression(italic("Salix richardsonii"))) +
+    theme_shrub()+ theme(text=element_text(family="Helvetica Light")) +
+    theme( axis.text.x  = element_text(angle = 0))) # if i log everything it's exactly the same plot as with conditional effects! 
+
+
 # extracting model summary
 height_rich_summ <- model_summ(height_rich)
 summary(height_rich)
 
-# estimate for northern sample age: 1.50+0.09 = exp(1.48) = 4.095955 cm in year 1
+# estimate for northern sample age: 1.50+0.09*1 = exp(1.59) = 4.903749 cm, in year 1
 # estimate for southern sample age: (1.50+0.91)+(0.09*1+0.16*1) = exp(2.66) = 14.29629 in year 1
-# estimate for southern sample age in year 9: (1.50+0.91)+(0.09*9 +0.16*9) = exp(4.66) = 105.6361 in year 9 -->105.6361/9 =11.73734 cm/year
+# estimate for southern sample age in year 9: (1.50+0.91)+(0.09*9 +0.16*9) = exp(4.66) = 105.6361 in year 9 -->105.6361/9 = 11.73734 cm/year
 # estimate for n sample age in year 9: 1.50+0.09*9 = exp(2.31) = 10.07442 in year 9 --> 10.07442/9= 1.11938 cm/year
 
 
@@ -145,6 +165,42 @@ summary(height_pul)
 # estimate for s. sample age at year 9: (1.99+0.95) + (-0.02*9+0.03*9)= 3.03, exp(3.03)= 20.69 in year 9 --> 2.299692 per year
 # estimate for northern sample age at year 9: 1.99-0.02*9=1.97= 3.03, exp(3.03)= 6.110447 in year 9 --> 0.6789386 per year
 
+
+ggpred_height_pul <- ggpredict(height_pul, terms = c("Sample_age", "population"))
+colnames(ggpred_height_pul) = c('Sample_age','fit', 'lwr', 'upr',"population")
+
+
+(ggpred_height_pul_plot <-ggplot(ggpred_height_pul) +
+    geom_point(data = all_CG_growth_pul, aes(x = Sample_age, y = Canopy_Height_cm, colour = population),
+               alpha = 0.5)+ # raw data
+    geom_line(aes(x = Sample_age , y = fit, colour = population), linewidth = 1)+
+    geom_ribbon(aes(x = Sample_age, ymin = lwr, ymax = upr,  fill = population),
+                alpha = 0.2) +
+    ylab("Canopy height (cm)\n") +
+    xlab("\n Sample age " ) +
+    scale_colour_viridis_d(begin = 0.1, end = 0.85) +
+    scale_fill_viridis_d(begin = 0.1, end = 0.85) +
+    ggtitle(expression(italic("Salix pulchra"))) +
+    theme_shrub()+ theme(text=element_text(family="Helvetica Light")) +
+    theme( axis.text.x  = element_text(angle = 0))) # if i log everything it's exactly the same plot as with conditional effects! 
+
+# only south--
+ggpred_height_pul_south <- ggpred_height_pul %>%
+  filter(population=="Southern")
+
+(ggpred_height_pul_plot <-ggplot(ggpred_height_pul_south) +
+    geom_point(data = all_CG_growth_pul_south, aes(x = Sample_age, y = Canopy_Height_cm), colour = "#98d83b",
+               alpha = 0.5)+ # raw data
+    geom_line(aes(x = Sample_age , y = fit), colour ="#98d83b", linewidth = 1)+
+    geom_ribbon(aes(x = Sample_age, ymin = lwr, ymax = upr), fill = "#98d83b",
+                alpha = 0.2) +
+    ylab("Canopy height (cm)\n") +
+    xlab("\n Sample age " ) +
+    scale_colour_viridis_d(begin = 0.1, end = 0.85) +
+    scale_fill_viridis_d(begin = 0.1, end = 0.85) +
+    ggtitle(expression(italic("Salix pulchra"))) +
+    theme_shrub()+ theme(text=element_text(family="Helvetica Light")) +
+    theme(axis.text.x  = element_text(angle = 0))) # if i log everything it's exactly the same plot as with conditional effects! 
 
 # times larger
 19.10595/7.170676
@@ -209,6 +265,30 @@ summary(height_arc) # significant growth over time
 # estimate for northern sample age 9: 0.86+0.08*9= exp(1.58) = 4.854956 -->0.5394396
 # estimate for s. sample age: 0.86-0.28 + 0.08*9 + 0.11*9 = 2.29= exp(2.29)=  9.874938 --> 1.097215
 
+ggpred_height_arc <- ggpredict(height_arc, terms = c("Sample_age", "population"))
+colnames(ggpred_height_arc) = c('Sample_age','fit', 'lwr', 'upr',"population")
+
+(ggpred_height_arc_plot <-ggplot(ggpred_height_arc) +
+    geom_point(data = all_CG_growth_arc, aes(x = Sample_age, y = Canopy_Height_cm, colour = population),
+               alpha = 0.5)+ # raw data
+    geom_line(aes(x = Sample_age , y = fit, colour = population), linewidth = 1)+
+    geom_ribbon(aes(x = Sample_age, ymin = lwr, ymax = upr,  fill = population),
+                alpha = 0.2) +
+    ylab("Canopy height (cm)\n") +
+    xlab("\n Sample age " ) +
+    scale_colour_viridis_d(begin = 0.1, end = 0.85) +
+    scale_fill_viridis_d(begin = 0.1, end = 0.85) +
+    ggtitle(expression(italic("Salix arctica"))) +
+    theme_shrub()+ theme(text=element_text(family="Helvetica Light")) +
+    theme( axis.text.x  = element_text(angle = 0))) # if i log everything it's exactly the same plot as with conditional effects! 
+
+ggpred_CG_height_panel <- ggarrange(ggpred_height_rich_plot,
+                                    ggpred_height_pul_plot, 
+                                    ggpred_height_arc_plot, nrow = 1,
+                             common.legend = TRUE, legend="none")
+
+ggsave(ggpred_CG_height_panel, filename ="outputs/figures/ggpred_CG_height_panel.png", width = 14.67, height = 6.53, units = "in")
+
 plot(height_arc)
 pp_check(height_arc, type = "dens_overlay", nsamples = 100) 
 
@@ -261,20 +341,20 @@ pp_check(height_arc_south, type = "dens_overlay", ndraws = 100)
 # DATA VISUALISATION -------
 # HEIGHT -----
 # Salix richardsonii ------
-rich_height_1 <- (conditional_effects(height_rich_south))
+rich_height_1 <- (conditional_effects(height_rich))
 rich_height_data <- rich_height_1[[1]]
 rich_height_data_2 <- rich_height_1[[2]]
 
 # this graph below only lets me plot one line
 (rich_height_plot <-ggplot() +
-    geom_point(data = all_CG_growth_ric, aes(x = Sample_age, y = log(Canopy_Height_cm), colour = population),
+    geom_point(data = all_CG_growth_ric, aes(x = Sample_age, y = Canopy_Height_cm, colour = population),
                alpha = 0.5)+
-    geom_line(aes(x = effect1__, y = estimate__),
+    geom_line(aes(x = effect1__, y = exp(estimate__)),
               linewidth = 1.5, data = rich_height_data) +
-  geom_line(aes(x = effect1__, y = estimate__),
+  geom_line(aes(x = effect1__, y = exp(estimate__)),
                                linewidth = 1.5, data = rich_height_data) +
-    geom_ribbon(aes(x = effect1__, ymin = lower__, ymax = upper__),
-                alpha = .1) +
+    geom_ribbon(aes(x = effect1__, ymin = exp(lower__), ymax = exp(upper__)),
+                alpha = .1, data = rich_height_data) +
     ylab("Richardsonii canopy height (log cm)\n") +
     xlab("\n Sample age" ) +
     scale_colour_viridis_d(begin = 0.1, end = 0.85) +
@@ -285,8 +365,8 @@ rich_height_data_2 <- rich_height_1[[2]]
 (rich_heights_plot_new <- all_CG_growth_ric %>%
     group_by(population) %>%
     add_predicted_draws(height_rich, allow_new_levels = TRUE) %>%
-    ggplot(aes(x = Sample_age, y = Canopy_Height_cm, colour = population)) +
-    stat_lineribbon(aes(y = exp(.prediction), fill = population), .width = c(.5), alpha = 1/4) +
+    ggplot(aes(x = Sample_age, y = log(Canopy_Height_cm), colour = population)) +
+    stat_lineribbon(aes(y = .prediction, fill = population), .width = c(.5), alpha = 1/4) +
     geom_point(data = all_CG_growth_ric, alpha = 0.5) +
     scale_colour_viridis_d(begin = 0.1, end = 0.85) +
     scale_fill_viridis_d(begin = 0.1, end = 0.85) +
@@ -329,7 +409,7 @@ rich_height_data_2 <- rich_height_1[[2]]
     xlab("\nSample age") + theme(text=element_text(family="Helvetica Light")) )
 # theme(legend.position = "none"))
 
-# Salix pulchra ------
+# Salix pulchra south ------
 pul_height_1 <- (conditional_effects(height_pul_south))
 pul_height_data_1 <- pul_height_1[[1]]
 pul_height_data_back <- pul_height_data_1 %>%
@@ -352,8 +432,8 @@ pul_height_data_back <- pul_height_data_1 %>%
     theme_shrub()+ theme(text=element_text(family="Helvetica Light")) +
     theme( axis.text.x  = element_text(angle = 0)))
 
-pulchra_CG_panel <- grid.arrange(pul_heights_plot_new_south,pul_cover_plot, nrow=1)
-ggsave(pulchra_CG_panel, filename ="output/figures/pulchra_CG_panel.png", width = 14.67, height = 6.53, units = "in")
+pulchra_CG_panel <- grid.arrange(ggpred_height_pul_plot,ggpred_cover_pul_plot, nrow=1)
+ggsave(pulchra_CG_panel, filename ="outputs/figures/pulchra_CG_panel.png", width = 14.67, height = 6.53, units = "in")
 
 
 # Salix arctica------

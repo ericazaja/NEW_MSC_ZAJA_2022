@@ -595,3 +595,21 @@ panel_coverheight_mean_new <- grid.arrange(pulchra_height_plot_mean_new,pul_mean
 ggsave(panel_coverheight_max_new, filename ="outputs/figures/panel_coverheight_max.png", width = 14.67, height = 6.53, units = "in")
 ggsave(panel_coverheight_mean_new, filename ="outputs/figures/panel_coverheight_mean.png", width = 14.67, height = 6.53, units = "in")
 
+# FINAL GRAPHS ------
+ggpred_cov_mean <- ggpredict(pulchra_cover_mean, terms = c("Year_index", "SITE"))
+colnames(ggpred_cov_mean) = c('Year_index', 'fit', 'lwr', 'upr', 'SITE')
+
+(arc_height_plot <-ggplot(ggpred_cov_mean) +
+    geom_point(data = mean, aes(x = Year_index, y = mean_cov, colour = SITE),
+               alpha = 0.5)+ # raw data
+    geom_line(aes(x = Year_index , y = fit,colour = SITE), linewidth = 1)+
+    geom_ribbon(aes(x = Year_index, ymin = lwr, ymax = upr,fill = SITE),
+                  alpha = 0.1) +
+    ylab("Mean cover (proportion)\n") +
+    xlab("\n Year (scaled)" ) +
+    # ylim(0, 1.00) +
+    scale_color_manual(values = c("QHI" = "#2b788c", "TOOLIK" = "#e75480"))+
+    scale_fill_manual(values = c("QHI" = "#2b788c", "TOOLIK" = "#e75480"))+
+    theme_shrub() + theme(legend.position = "none") +
+    theme(text=element_text(family="Helvetica Light")) +
+    theme( axis.text.x  = element_text(angle = 0)))

@@ -126,6 +126,23 @@ cov_pul_summ <- cov_pul_summ %>%
   relocate("Response variable", .before = "Site") %>%
   relocate("Scenario", .before = "Site")
 
+ggpred_cover_pul <- ggpredict(cover_pul, terms = "Sample_age")
+colnames(ggpred_cover_pul) = c('Sample_age','fit', 'lwr', 'upr')
+
+
+(ggpred_cover_pul_plot <-ggplot(ggpred_cover_pul) +
+    geom_point(data = CG_pul_cover_biomass, aes(x = Sample_age, y = (cover_percent/100)), colour = "#98d83b",
+               alpha = 0.5)+ # raw data
+    geom_line(aes(x = Sample_age , y = fit), colour ="#98d83b", linewidth = 1)+
+    geom_ribbon(aes(x = Sample_age, ymin = lwr, ymax = upr), fill = "#98d83b",
+                alpha = 0.2) +
+    ylab("Cover (proportion)\n") +
+    xlab("\n Sample age " ) +
+    scale_x_continuous(breaks = seq(0, 9, by = 1)) + 
+    ggtitle(expression(italic("Salix pulchra"))) +
+    theme_shrub()+ theme(text=element_text(family="Helvetica Light")) +
+    theme(axis.text.x  = element_text(angle = 0))) # if i log everything it's exactly the same plot as with conditional effects! 
+
 # Salix arctica -------
 cover_arc <- brms::brm((cover_percent/100) ~ Sample_age + (Sample_age|SampleID_standard),
                        data = CG_arc_cover_biomass,  family = "beta", chains = 3,
