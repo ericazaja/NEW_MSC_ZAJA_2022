@@ -311,7 +311,7 @@ colnames(ggpred_MAX_qhi) = c('Year_index', 'fit', 'lwr', 'upr', 'dunno')
                alpha = 0.5, colour = "#2b788c")+ # raw data
     geom_line(aes(x = Year_index , y = fit), linewidth = 1, colour = "#2b788c")+
     geom_ribbon(aes(x = Year_index, ymin = lwr, ymax = upr),
-                  alpha = 0.2, fill = "#2b788c") +
+                  alpha = 0.1, fill = "#2b788c") +
     ylab("Max. canopy height (cm)\n") +
     xlab("\n Year (indexed)" ) +
     #scale_colour_viridis_d(begin = 0.1, end = 0.95) +
@@ -329,7 +329,7 @@ colnames(ggpred_MEAN_qhi) = c('Year_index', 'fit', 'lwr', 'upr', 'dunno')
                alpha = 0.5, colour = "#2b788c")+ # raw data
     geom_line(aes(x = Year_index , y = fit), linewidth = 1, colour = "#2b788c")+
     geom_ribbon(aes(x = Year_index, ymin = lwr, ymax = upr),
-                alpha = 0.2, fill = "#2b788c") +
+                alpha = 0.1, fill = "#2b788c") +
     ylab("Mean canopy height (cm)\n") +
     xlab("\n Year (indexed)" ) +
     #scale_colour_viridis_d(begin = 0.1, end = 0.95) +

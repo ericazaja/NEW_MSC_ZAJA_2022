@@ -599,7 +599,7 @@ ggsave(panel_coverheight_mean_new, filename ="outputs/figures/panel_coverheight_
 ggpred_cov_mean <- ggpredict(pulchra_cover_mean, terms = c("Year_index", "SITE"))
 colnames(ggpred_cov_mean) = c('Year_index', 'fit', 'lwr', 'upr', 'SITE')
 
-(arc_height_plot <-ggplot(ggpred_cov_mean) +
+(QHI_TOOLIK_mean_cover <-ggplot(ggpred_cov_mean) +
     geom_point(data = mean, aes(x = Year_index, y = mean_cov, colour = SITE),
                alpha = 0.5)+ # raw data
     geom_line(aes(x = Year_index , y = fit,colour = SITE), linewidth = 1)+
@@ -608,8 +608,31 @@ colnames(ggpred_cov_mean) = c('Year_index', 'fit', 'lwr', 'upr', 'SITE')
     ylab("Mean cover (proportion)\n") +
     xlab("\n Year (scaled)" ) +
     # ylim(0, 1.00) +
+    scale_color_manual(values = c("TOOLIK" = "#2b788c", "QHI" = "#e75480"))+
+    scale_fill_manual(values = c("TOOLIK" = "#2b788c", "QHI" = "#e75480"))+
+    theme_shrub() + theme(legend.position = "none") +
+    theme(text=element_text(family="Helvetica Light")) +
+    theme( axis.text.x  = element_text(angle = 0)))
+
+ggpred_cov_max <- ggpredict(pulchra_cover_max, terms = c("Year_index", "SITE"))
+colnames(ggpred_cov_max) = c('Year_index', 'fit', 'lwr', 'upr', 'SITE')
+
+(QHI_TOOLIK_max_cover <-ggplot(ggpred_cov_max) +
+    geom_point(data = max, aes(x = Year_index, y = max_cov, colour = SITE),
+               alpha = 0.5)+ # raw data
+    geom_line(aes(x = Year_index , y = fit,colour = SITE), linewidth = 1)+
+    geom_ribbon(aes(x = Year_index, ymin = lwr, ymax = upr,fill = SITE),
+                alpha = 0.1) +
+    ylab("Max. cover (proportion)\n") +
+    xlab("\n Year (scaled)" ) +
+    # ylim(0, 1.00) +
     scale_color_manual(values = c("QHI" = "#2b788c", "TOOLIK" = "#e75480"))+
     scale_fill_manual(values = c("QHI" = "#2b788c", "TOOLIK" = "#e75480"))+
     theme_shrub() + theme(legend.position = "none") +
     theme(text=element_text(family="Helvetica Light")) +
     theme( axis.text.x  = element_text(angle = 0)))
+
+ggpred_panel_coverheight_max_new <- grid.arrange(ggrped_MAX_qhi_plot,QHI_TOOLIK_max_cover,nrow=1)
+ggpred_panel_coverheight_mean_new <- grid.arrange(ggrped_MEAN_qhi_plot, QHI_TOOLIK_mean_cover, nrow=1)
+ggsave(ggpred_panel_coverheight_max_new, filename ="outputs/figures/ggpred_panel_coverheight_max_new.png", width = 14.67, height = 6.53, units = "in")
+ggsave(ggpred_panel_coverheight_mean_new, filename ="outputs/figures/ggpred_panel_coverheight_mean_new.png", width = 14.67, height = 6.53, units = "in")
