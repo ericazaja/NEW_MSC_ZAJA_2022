@@ -268,9 +268,34 @@ garden_rich_emerg_compare <- brms::brm(First_bud_burst_DOY_center ~ population +
 summary(garden_rich_emerg_compare)
 plot(garden_rich_emerg_compare)
 pp_check(garden_rich_emerg_compare, type = "dens_overlay", nsamples = 100) # looks good
-readRDS(garden_rich_emerg_compare, file = "outputs/models/garden_rich_emerg_compare.rds")
+saveRDS(garden_rich_emerg_compare, file = "outputs/models/garden_rich_emerg_compare.rds")
 garden_rich_emerg_compare <- readRDS("outputs/models/garden_rich_emerg_compare.rds")
 
+garden_rich_emerg_results <- model_summ_pheno(garden_rich_emerg_compare)
+garden_rich_emerg_results <- garden_rich_emerg_results %>% 
+  dplyr::rename("l_95_CI_log" = "l-95% CI", 
+                "u_95_CI_log" = "u-95% CI")
+garden_rich_emerg_results$Species <- "Salix richardsonii"
+
+# change estimates by adding estimate to other rows 
+garden_rich_emerg_results[2,1] <- garden_rich_emerg_results[2,1] + garden_rich_emerg_results[1,1]
+garden_rich_emerg_results[3,1] <- garden_rich_emerg_results[3,1] + garden_rich_emerg_results[1,1]
+garden_rich_emerg_results[4,1] <- garden_rich_emerg_results[4,1] + garden_rich_emerg_results[1,1]
+# change lower CI by adding 
+garden_rich_emerg_results[2,3] <- garden_rich_emerg_results[2,3] + garden_rich_emerg_results[1,3]
+garden_rich_emerg_results[3,3] <- garden_rich_emerg_results[3,3] + garden_rich_emerg_results[1,3]
+garden_rich_emerg_results[4,3] <- garden_rich_emerg_results[4,3] + garden_rich_emerg_results[1,3]
+# change upper CI
+garden_rich_emerg_results[2,4] <- garden_rich_emerg_results[2,4] + garden_rich_emerg_results[1,4]
+garden_rich_emerg_results[3,4] <- garden_rich_emerg_results[3,4] + garden_rich_emerg_results[1,4]
+garden_rich_emerg_results[4,4] <- garden_rich_emerg_results[4,4] + garden_rich_emerg_results[1,4]
+
+m_rich_emerg <- mean(all_phenocam_rich$First_bud_burst_DOY, na.rm = T)
+garden_rich_emerg_results_out <- garden_rich_emerg_results %>% 
+  dplyr::mutate(CI_low_trans = ((l_95_CI_log) + m_rich_emerg)) %>% 
+  dplyr::mutate(CI_high_trans = ((u_95_CI_log) + m_rich_emerg)) %>% 
+  dplyr::mutate(Estimate_trans = (Estimate + m_rich_emerg)) %>% 
+  dplyr::select(-Est.Error)
 # Salix pulchra -----
 all_phenocam_pulchra$First_bud_burst_DOY_center <- center_scale(all_phenocam_pulchra$First_bud_burst_DOY) 
 
@@ -283,8 +308,34 @@ garden_pul_emerg_compare <- brms::brm(First_bud_burst_DOY_center ~ population + 
 summary(garden_pul_emerg_compare)
 plot(garden_pul_emerg_compare)
 pp_check(garden_pul_emerg_compare, type = "dens_overlay", nsamples = 100) # looks good
+saveRDS(garden_pul_emerg_compare, file = "outputs/models/garden_pul_emerg_compare.rds")
 garden_pul_emerg_compare <- readRDS(file = "outputs/models/garden_pul_emerg_compare.rds")
 
+garden_pul_emerg_results <- model_summ_pheno(garden_pul_emerg_compare)
+garden_pul_emerg_results <- garden_pul_emerg_results %>% 
+  dplyr::rename("l_95_CI_log" = "l-95% CI", 
+                "u_95_CI_log" = "u-95% CI")
+garden_pul_emerg_results$Species <- "Salix pulchra"
+
+# change estimates by adding estimate to other rows 
+garden_pul_emerg_results[2,1] <- garden_pul_emerg_results[2,1] + garden_pul_emerg_results[1,1]
+garden_pul_emerg_results[3,1] <- garden_pul_emerg_results[3,1] + garden_pul_emerg_results[1,1]
+garden_pul_emerg_results[4,1] <- garden_pul_emerg_results[4,1] + garden_pul_emerg_results[1,1]
+# change lower CI by adding 
+garden_pul_emerg_results[2,3] <- garden_pul_emerg_results[2,3] + garden_pul_emerg_results[1,3]
+garden_pul_emerg_results[3,3] <- garden_pul_emerg_results[3,3] + garden_pul_emerg_results[1,3]
+garden_pul_emerg_results[4,3] <- garden_pul_emerg_results[4,3] + garden_pul_emerg_results[1,3]
+# change upper CI
+garden_pul_emerg_results[2,4] <- garden_pul_emerg_results[2,4] + garden_pul_emerg_results[1,4]
+garden_pul_emerg_results[3,4] <- garden_pul_emerg_results[3,4] + garden_pul_emerg_results[1,4]
+garden_pul_emerg_results[4,4] <- garden_pul_emerg_results[4,4] + garden_pul_emerg_results[1,4]
+
+m_pul_emerg <- mean(all_phenocam_pulchra$First_bud_burst_DOY, na.rm = T)
+garden_pul_emerg_results_out <- garden_pul_emerg_results %>% 
+  dplyr::mutate(CI_low_trans = ((l_95_CI_log) + m_pul_emerg)) %>% 
+  dplyr::mutate(CI_high_trans = ((u_95_CI_log) + m_pul_emerg)) %>% 
+  dplyr::mutate(Estimate_trans = (Estimate + m_pul_emerg)) %>% 
+  dplyr::select(-Est.Error)
 # Salix arctica -----
 all_phenocam_arctica$First_bud_burst_DOY_center <- center_scale(all_phenocam_arctica$First_bud_burst_DOY) 
 
@@ -297,8 +348,49 @@ garden_arc_emerg_compare <- brms::brm(First_bud_burst_DOY_center ~ population + 
 summary(garden_arc_emerg_compare)
 tab_model(garden_arc_emerg_compare)
 plot(garden_arc_emerg_compare)
+saveRDS(garden_arc_emerg_compare, file = "outputs/models/garden_arc_emerg_compare.rds")
 pp_check(garden_arc_emerg_compare, type = "dens_overlay", nsamples = 100) # looks good
 garden_arc_emerg_compare<-readRDS(file = "outputs/models/garden_arc_emerg_compare.rds")
+
+garden_arc_emerg_results <- model_summ_pheno(garden_arc_emerg_compare)
+garden_arc_emerg_results <- garden_arc_emerg_results %>% 
+  dplyr::rename("l_95_CI_log" = "l-95% CI", 
+                "u_95_CI_log" = "u-95% CI")
+garden_arc_emerg_results$Species <- "Salix arctica"
+
+# change estimates by adding estimate to other rows 
+garden_arc_emerg_results[2,1] <- garden_arc_emerg_results[2,1] + garden_arc_emerg_results[1,1]
+garden_arc_emerg_results[3,1] <- garden_arc_emerg_results[3,1] + garden_arc_emerg_results[1,1]
+# change lower CI by adding 
+garden_arc_emerg_results[2,3] <- garden_arc_emerg_results[2,3] + garden_arc_emerg_results[1,3]
+garden_arc_emerg_results[3,3] <- garden_arc_emerg_results[3,3] + garden_arc_emerg_results[1,3]
+# change upper CI
+garden_arc_emerg_results[2,4] <- garden_arc_emerg_results[2,4] + garden_arc_emerg_results[1,4]
+garden_arc_emerg_results[3,4] <- garden_arc_emerg_results[3,4] + garden_arc_emerg_results[1,4]
+
+m_arc_emerg <- mean(all_phenocam_arctica$First_bud_burst_DOY, na.rm = T)
+garden_arc_emerg_results_out <- garden_arc_emerg_results %>% 
+  dplyr::mutate(CI_low_trans = ((l_95_CI_log) + m_arc_emerg)) %>% 
+  dplyr::mutate(CI_high_trans = ((u_95_CI_log) + m_arc_emerg)) %>% 
+  dplyr::mutate(Estimate_trans = (Estimate + m_arc_emerg)) %>% 
+  dplyr::select(-Est.Error)
+
+# merging all extracted outputs
+emerg_pheno_out <- rbind(garden_rich_emerg_results_out, garden_pul_emerg_results_out, garden_arc_emerg_results_out)
+
+# adding spaces before/after each name so they let me repeat them in the table
+rownames(emerg_pheno_out) <- c("Intercept", "Northern Source", "Southern Garden",  "Southern Source", 
+                               "Year", "Sigma", 
+                               " Intercept", " Northern Source", " Southern Garden", " Southern Source", " Year", 
+                               " Sigma", 
+                               "Intercept ", "Northern Source ", "Southern Garden ", "Year ", 
+                               "Sigma ")
+
+# making sure Rhat keeps the .00 
+emerg_pheno_out$Rhat <- as.character(formatC(emerg_pheno_out$Rhat, digits = 2, format = 'f')) #new character variable with format specification
+
+# save df of results 
+write.csv(emerg_pheno_out, "output/phenology/emerg_pheno_out_back.csv")
 
 
 # 1.2. LEAF EMERGENCE (CG ONLY MODELS) ------
@@ -425,9 +517,34 @@ summary(garden_rich_yellow_compare)
 plot(garden_rich_yellow_compare)
 pp_check(garden_rich_yellow_compare, type = "dens_overlay", ndraws = 100) # looks good
 garden_rich_yellow_compare <- readRDS(file = "outputs/models/garden_rich_yellow_compare.rds")
-
+saveRDS(garden_rich_yellow_compare, file = "outputs/models/garden_rich_yellow_compare.rds")
 garden_rich_yellow_compare_extract <- model_summ_pheno(garden_rich_yellow_compare)
 
+garden_rich_yellow_results <- model_summ_pheno(garden_rich_yellow_compare)
+garden_rich_yellow_results <- garden_rich_yellow_results %>% 
+  dplyr::rename("l_95_CI_log" = "l-95% CI", 
+                "u_95_CI_log" = "u-95% CI")
+garden_rich_yellow_results$Species <- "Salix richardsonii"
+
+# change estimates by adding estimate to other rows 
+garden_rich_yellow_results[2,1] <- garden_rich_yellow_results[2,1] + garden_rich_yellow_results[1,1]
+garden_rich_yellow_results[3,1] <- garden_rich_yellow_results[3,1] + garden_rich_yellow_results[1,1]
+garden_rich_yellow_results[4,1] <- garden_rich_yellow_results[4,1] + garden_rich_yellow_results[1,1]
+# change lower CI by adding 
+garden_rich_yellow_results[2,3] <- garden_rich_yellow_results[2,3] + garden_rich_yellow_results[1,3]
+garden_rich_yellow_results[3,3] <- garden_rich_yellow_results[3,3] + garden_rich_yellow_results[1,3]
+garden_rich_yellow_results[4,3] <- garden_rich_yellow_results[4,3] + garden_rich_yellow_results[1,3]
+# change upper CI
+garden_rich_yellow_results[2,4] <- garden_rich_yellow_results[2,4] + garden_rich_yellow_results[1,4]
+garden_rich_yellow_results[3,4] <- garden_rich_yellow_results[3,4] + garden_rich_yellow_results[1,4]
+garden_rich_yellow_results[4,4] <- garden_rich_yellow_results[4,4] + garden_rich_yellow_results[1,4]
+
+m_rich_yellow <- mean(all_phenocam_rich$First_leaf_yellow_DOY, na.rm = T)
+garden_rich_yellow_results_out <- garden_rich_yellow_results %>% 
+  dplyr::mutate(CI_low_trans = ((l_95_CI_log) + m_rich_yellow)) %>% 
+  dplyr::mutate(CI_high_trans = ((u_95_CI_log) + m_rich_yellow)) %>% 
+  dplyr::mutate(Estimate_trans = (Estimate + m_rich_yellow)) %>% 
+  dplyr::select(-Est.Error)
 # Salix pulchra ------
 all_phenocam_pulchra$First_leaf_yellow_DOY_center <- center_scale(all_phenocam_pulchra$First_leaf_yellow_DOY) 
 
@@ -440,8 +557,34 @@ summary(garden_pul_yellow_compare)
 plot(garden_pul_yellow_compare)
 pp_check(garden_pul_yellow_compare, type = "dens_overlay", ndraws = 100) # looks good
 garden_pul_yellow_compare <-readRDS(file = "outputs/models/garden_pul_yellow_compare.rds")
-
+saveRDS(garden_pul_yellow_compare,file = "outputs/models/garden_pul_yellow_compare.rds")
 garden_pul_yellow_compare_extract <- model_summ_pheno(garden_pul_yellow_compare)
+
+garden_pul_yellow_results <- model_summ_pheno(garden_pul_yellow_compare)
+garden_pul_yellow_results <- garden_pul_yellow_results %>% 
+  dplyr::rename("l_95_CI_log" = "l-95% CI", 
+                "u_95_CI_log" = "u-95% CI")
+garden_pul_yellow_results$Species <- "Salix pulchra"
+
+# change estimates by adding estimate to other rows 
+garden_pul_yellow_results[2,1] <- garden_pul_yellow_results[2,1] + garden_pul_yellow_results[1,1]
+garden_pul_yellow_results[3,1] <- garden_pul_yellow_results[3,1] + garden_pul_yellow_results[1,1]
+garden_pul_yellow_results[4,1] <- garden_pul_yellow_results[4,1] + garden_pul_yellow_results[1,1]
+# change lower CI by adding 
+garden_pul_yellow_results[2,3] <- garden_pul_yellow_results[2,3] + garden_pul_yellow_results[1,3]
+garden_pul_yellow_results[3,3] <- garden_pul_yellow_results[3,3] + garden_pul_yellow_results[1,3]
+garden_pul_yellow_results[4,3] <- garden_pul_yellow_results[4,3] + garden_pul_yellow_results[1,3]
+# change upper CI
+garden_pul_yellow_results[2,4] <- garden_pul_yellow_results[2,4] + garden_pul_yellow_results[1,4]
+garden_pul_yellow_results[3,4] <- garden_pul_yellow_results[3,4] + garden_pul_yellow_results[1,4]
+garden_pul_yellow_results[4,4] <- garden_pul_yellow_results[4,4] + garden_pul_yellow_results[1,4]
+
+m_pul_yellow <- mean(all_phenocam_pulchra$First_leaf_yellow_DOY, na.rm = T)
+garden_pul_yellow_results_out <- garden_pul_yellow_results %>% 
+  dplyr::mutate(CI_low_trans = ((l_95_CI_log) + m_pul_yellow)) %>% 
+  dplyr::mutate(CI_high_trans = ((u_95_CI_log) + m_pul_yellow)) %>% 
+  dplyr::mutate(Estimate_trans = (Estimate + m_pul_yellow)) %>% 
+  dplyr::select(-Est.Error)
 
 # Salix arctica ------
 all_phenocam_arctica$First_leaf_yellow_DOY_center <- center_scale(all_phenocam_arctica$First_leaf_yellow_DOY) 
@@ -455,8 +598,48 @@ summary(garden_arc_yellow_compare)
 plot(garden_arc_yellow_compare)
 pp_check(garden_arc_yellow_compare, type = "dens_overlay", ndraws = 100) # looks good
 garden_arc_yellow_compare <- readRDS(file = "outputs/models/garden_arc_yellow_compare.rds")
-
+saveRDS(garden_arc_yellow_compare, file = "outputs/models/garden_arc_yellow_compare.rds")
 garden_arc_yellow_compare_extract <- model_summ_pheno(garden_arc_yellow_compare)
+
+garden_arc_yellow_results <- model_summ_pheno(garden_arc_yellow_compare)
+garden_arc_yellow_results <- garden_arc_yellow_results %>% 
+  dplyr::rename("l_95_CI_log" = "l-95% CI", 
+                "u_95_CI_log" = "u-95% CI")
+garden_arc_yellow_results$Species <- "Salix arctica"
+
+# change estimates by adding intercept to other rows for estimate + CIs 
+garden_arc_yellow_results[2,1] <- garden_arc_yellow_results[2,1] + garden_arc_yellow_results[1,1]
+garden_arc_yellow_results[3,1] <- garden_arc_yellow_results[3,1] + garden_arc_yellow_results[1,1]
+# change lower CI by adding 
+garden_arc_yellow_results[2,3] <- garden_arc_yellow_results[2,3] + garden_arc_yellow_results[1,3]
+garden_arc_yellow_results[3,3] <- garden_arc_yellow_results[3,3] + garden_arc_yellow_results[1,3]
+# change upper CI
+garden_arc_yellow_results[2,4] <- garden_arc_yellow_results[2,4] + garden_arc_yellow_results[1,4]
+garden_arc_yellow_results[3,4] <- garden_arc_yellow_results[3,4] + garden_arc_yellow_results[1,4]
+
+m_arc_yellow <- mean(all_phenocam_arctica$First_leaf_yellow_DOY, na.rm = T)
+garden_arc_yellow_results_out <- garden_arc_yellow_results %>% 
+  dplyr::mutate(CI_low_trans = ((l_95_CI_log) + m_arc_yellow)) %>% 
+  dplyr::mutate(CI_high_trans = ((u_95_CI_log) + m_arc_yellow)) %>% 
+  dplyr::mutate(Estimate_trans = (Estimate + m_arc_yellow)) %>% 
+  dplyr::select(-Est.Error)
+
+# merging all extracted outputs
+yellow_pheno_out <- rbind(garden_rich_yellow_results_out, garden_pul_yellow_results_out, garden_arc_yellow_results_out)
+
+# adding spaces before/after each name so they let me repeat them in the table
+rownames(yellow_pheno_out) <- c("Intercept", "Northern Source", "Southern Garden",  "Southern Source", 
+                                "Year", "Sigma", 
+                                " Intercept", " Northern Source", " Southern Garden", " Southern Source", " Year", 
+                                " Sigma", 
+                                "Intercept ", "Northern Source ", "Southern Garden ", "Year ", 
+                                "Sigma ")
+
+# save df of results 
+write.csv(yellow_pheno_out, "output/phenology/yellow_pheno_out_back.csv")
+# making sure Rhat keeps the .00 
+yellow_pheno_out$Rhat <- as.character(formatC(yellow_pheno_out$Rhat, digits = 2, format = 'f')) #new character variable with format specification
+
 
 # 2.2.  LEAF YELLOWING (only CG) -----
 # Salix richardsonii -------
@@ -568,6 +751,29 @@ plot(growing_season_rich_scale)
 pp_check(growing_season_rich_scale, type = "dens_overlay", ndraws = 100) # looks decent
 saveRDS(growing_season_rich_scale, file = "outputs/models/growing_season_rich_scale.rds")
 
+growing_season_rich_scale_results <- model_summ_pheno(growing_season_rich_scale)
+growing_season_rich_scale_results <- growing_season_rich_scale_results %>% 
+  dplyr::rename("l_95_CI_log" = "l-95% CI", 
+                "u_95_CI_log" = "u-95% CI")
+growing_season_rich_scale_results$Species <- "Salix richardsonii"
+
+# change estimates by adding estimate to other rows 
+growing_season_rich_scale_results[2,1] <- growing_season_rich_scale_results[2,1] + growing_season_rich_scale_results[1,1]
+growing_season_rich_scale_results[3,1] <- growing_season_rich_scale_results[3,1] + growing_season_rich_scale_results[1,1]
+# change lower CI by adding 
+growing_season_rich_scale_results[2,3] <- growing_season_rich_scale_results[2,3] + growing_season_rich_scale_results[1,3]
+growing_season_rich_scale_results[3,3] <- growing_season_rich_scale_results[3,3] + growing_season_rich_scale_results[1,3]
+# change upper CI
+growing_season_rich_scale_results[2,4] <- growing_season_rich_scale_results[2,4] + growing_season_rich_scale_results[1,4]
+growing_season_rich_scale_results[3,4] <- growing_season_rich_scale_results[3,4] + growing_season_rich_scale_results[1,4]
+
+m_rich_grow <- mean(all_phenocam_rich$growing_season_length, na.rm = T)
+growing_season_rich_scale_results_out <- growing_season_rich_scale_results %>% 
+  dplyr::mutate(CI_low_trans = ((l_95_CI_log) + m_rich_grow)) %>% 
+  dplyr::mutate(CI_high_trans = ((u_95_CI_log) + m_rich_grow)) %>% 
+  dplyr::mutate(Estimate_trans = (Estimate + m_rich_grow)) %>% 
+  dplyr::select(-Est.Error)
+
 # Salix pulchra ------
 growing_season_pul <- brms::brm(growing_season_length ~ population + (1|Year), 
                                 data = all_phenocam_pulchra, family = gaussian(), chains = 3,
@@ -593,6 +799,32 @@ plot(growing_season_pul_scaled)
 pp_check(growing_season_pul_scaled, type = "dens_overlay", ndraws = 100) # looks decent
 saveRDS(growing_season_pul_scaled, file = "outputs/models/growing_season_pul_scaled.rds")
 
+growing_season_pul_scaled_results <- model_summ_pheno(growing_season_pul_scaled)
+growing_season_pul_scaled_results <- growing_season_pul_scaled_results %>% 
+  dplyr::rename("l_95_CI_log" = "l-95% CI", 
+                "u_95_CI_log" = "u-95% CI")
+growing_season_pul_scaled_results$Species <- "Salix pulchra"
+
+# change estimates by adding estimate to other rows 
+growing_season_pul_scaled_results[2,1] <- growing_season_pul_scaled_results[2,1] + growing_season_pul_scaled_results[1,1]
+growing_season_pul_scaled_results[3,1] <- growing_season_pul_scaled_results[3,1] + growing_season_pul_scaled_results[1,1]
+growing_season_pul_scaled_results[4,1] <- growing_season_pul_scaled_results[4,1] + growing_season_pul_scaled_results[1,1]
+# change lower CI by adding 
+growing_season_pul_scaled_results[2,3] <- growing_season_pul_scaled_results[2,3] + growing_season_pul_scaled_results[1,3]
+growing_season_pul_scaled_results[3,3] <- growing_season_pul_scaled_results[3,3] + growing_season_pul_scaled_results[1,3]
+growing_season_pul_scaled_results[4,3] <- growing_season_pul_scaled_results[4,3] + growing_season_pul_scaled_results[1,3]
+# change upper CI
+growing_season_pul_scaled_results[2,4] <- growing_season_pul_scaled_results[2,4] + growing_season_pul_scaled_results[1,4]
+growing_season_pul_scaled_results[3,4] <- growing_season_pul_scaled_results[3,4] + growing_season_pul_scaled_results[1,4]
+growing_season_pul_scaled_results[4,4] <- growing_season_pul_scaled_results[4,4] + growing_season_pul_scaled_results[1,4]
+
+m_pul_grow <- mean(all_phenocam_pulchra$growing_season_length, na.rm = T)
+growing_season_pul_scaled_results_out <- growing_season_pul_scaled_results %>% 
+  dplyr::mutate(CI_low_trans = ((l_95_CI_log) + m_pul_grow)) %>% 
+  dplyr::mutate(CI_high_trans = ((u_95_CI_log) + m_pul_grow)) %>% 
+  dplyr::mutate(Estimate_trans = (Estimate + m_pul_grow)) %>% 
+  dplyr::select(-Est.Error)
+
 # Salix arctica ------
 growing_season_arc <- brms::brm(growing_season_length ~ population + (1|Year),
                                 data = all_phenocam_arctica, family = gaussian(), chains = 3,
@@ -617,8 +849,31 @@ plot(growing_season_arc_scaled)
 pp_check(growing_season_arc_scaled, type = "dens_overlay", ndraws = 100) # looks decent
 saveRDS(growing_season_arc_scaled, file = "outputs/models/growing_season_arc_scaled.rds")
 
+growing_season_arc_scaled_results <- model_summ_pheno(growing_season_arc_scaled)
+growing_season_arc_scaled_results <- growing_season_arc_scaled_results %>% 
+  dplyr::rename("l_95_CI_log" = "l-95% CI", 
+                "u_95_CI_log" = "u-95% CI")
+growing_season_arc_scaled_results$Species <- "Salix arctica"
+
+# change estimates by adding estimate to other rows 
+growing_season_arc_scaled_results[2,1] <- growing_season_arc_scaled_results[2,1] + growing_season_arc_scaled_results[1,1]
+growing_season_arc_scaled_results[3,1] <- growing_season_arc_scaled_results[3,1] + growing_season_arc_scaled_results[1,1]
+# change lower CI by adding 
+growing_season_arc_scaled_results[2,3] <- growing_season_arc_scaled_results[2,3] + growing_season_arc_scaled_results[1,3]
+growing_season_arc_scaled_results[3,3] <- growing_season_arc_scaled_results[3,3] + growing_season_arc_scaled_results[1,3]
+# change upper CI
+growing_season_arc_scaled_results[2,4] <- growing_season_arc_scaled_results[2,4] + growing_season_arc_scaled_results[1,4]
+growing_season_arc_scaled_results[3,4] <- growing_season_arc_scaled_results[3,4] + growing_season_arc_scaled_results[1,4]
+
+m_arc_grow <- mean(all_phenocam_arctica$growing_season_length, na.rm = T)
+growing_season_arc_scaled_results_out <- growing_season_arc_scaled_results %>% 
+  dplyr::mutate(CI_low_trans = ((l_95_CI_log) + m_arc_grow)) %>% 
+  dplyr::mutate(CI_high_trans = ((u_95_CI_log) + m_arc_grow)) %>% 
+  dplyr::mutate(Estimate_trans = (Estimate + m_arc_grow)) %>% 
+  dplyr::select(-Est.Error)
+
 # compile non-scaled results, should change to scaled though I think (Madi)
-season_results <- rbind(season_rich_results, season_pul_results, season_arc_results)
+season_results <- rbind(growing_season_pul_scaled_results_out, growing_season_pul_scaled_results_out, growing_season_arc_scaled_results_out)
 
 # adding spaces before/after each name so they let me repeat them in the table
 rownames(season_results) <- c("Intercept", "Northern Source", "Southern Garden",  "Southern Source", 
@@ -639,15 +894,17 @@ kable_season_garden <- season_results %>%
   kbl(caption="Table.xxx BRMS model outputs: Growing season length northern vs southern willows in common garden and source populations. 
       Model structure per species: Growing season length ~ population. Data scaled to center on 0.", 
       col.names = c( "Estimate",
-                     "Est. Error",
-                     "Lower 95% CI (log)",
-                     "Upper 95% CI (log)", 
+                     "Lower 95% CI (scaled)",
+                     "Upper 95% CI (scaled)", 
                      "Rhat", 
                      "Bulk Effective Sample Size",
                      "Tail Effective Sample Size", 
                      "Effect",
                      "Sample Size",
-                     "Species"), digits=2, align = "c") %>% 
+                     "Species", 
+                     "Lower 95% CI (unscaled)",
+                     "Upper 95% CI (unscaled)",
+                     "Estimate (unscaled)"), digits=2, align = "c") %>% 
   kable_classic(full_width=FALSE, html_font="Cambria")
 column_spec(kable_season_garden, 2, width = NULL, bold = FALSE, italic = TRUE)
 
@@ -748,7 +1005,9 @@ richard_emerg_trans <- ric_emerg_data %>%
   dplyr::mutate(CI_high_trans = ((estimate__ + CI_range) + m_rich_emerg)) %>% 
   dplyr::mutate(Estimate_trans = (estimate__ + m_rich_emerg), 
                 Est.Error_trans = (se__ + m_rich_emerg)) %>% 
-  dplyr::select(-CI_range) 
+  dplyr::select(-CI_range) %>% 
+  dplyr::mutate(Species = "Salix richardsonii", 
+                "Response variable "= "Leaf emergence")
 
 (ric_emerg_plot_scaled <-ggplot(richard_emerg_trans) +
     geom_point(data = all_phenocam_rich, aes(x = population, y = First_bud_burst_DOY, colour = population),
@@ -791,7 +1050,9 @@ pulchra_emerg_trans <- pul_emerg_data %>%
   dplyr::mutate(CI_high_trans = ((estimate__ + CI_range) + m_pul_emerg)) %>% 
   dplyr::mutate(Estimate_trans = (estimate__ + m_pul_emerg), 
                 Est.Error_trans = (se__ + m_pul_emerg)) %>% 
-  dplyr::select(-CI_range) 
+  dplyr::select(-CI_range) %>% 
+  dplyr::mutate(Species = "Salix pulchra", 
+                "Response variable "= "Leaf emergence")
 
 (pul_emerg_plot_scaled <-ggplot(pulchra_emerg_trans) +
     geom_point(data = all_phenocam_pulchra, aes(x = population, y = First_bud_burst_DOY, colour = population),
@@ -833,7 +1094,10 @@ arc_emerg_trans <- arc_emerg_data %>%
   dplyr::mutate(CI_high_trans = ((estimate__ + CI_range) + m_arc_emerg)) %>% 
   dplyr::mutate(Estimate_trans = (estimate__ + m_arc_emerg), 
                 Est.Error_trans = (se__ + m_arc_emerg)) %>% 
-  dplyr::select(-CI_range) 
+  dplyr::select(-CI_range) %>% 
+  dplyr::mutate(Species = "Salix arctica", 
+                "Response variable "= "Leaf emergence")
+
 
 (arc_emerg_plot_scaled <-ggplot(arc_emerg_trans) +
     geom_point(data = all_phenocam_arctica, aes(x = population, y = First_bud_burst_DOY, colour = population),
@@ -888,7 +1152,10 @@ richard_yellow_trans <- ric_yellow_data %>%
   dplyr::mutate(CI_high_trans = ((estimate__ + CI_range) + m_rich_yellow)) %>% 
   dplyr::mutate(Estimate_trans = (estimate__ + m_rich_yellow), 
                 Est.Error_trans = (se__ + m_rich_yellow)) %>% 
-  dplyr::select(-CI_range) 
+  dplyr::select(-CI_range) %>% 
+  dplyr::mutate(Species = "Salix richardsonii", 
+                "Response variable "= "Leaf yellowing")
+
 
 (ric_yellow_plot_scaled <-ggplot(richard_yellow_trans) +
     geom_point(data = all_phenocam_rich, aes(x = population, y = First_leaf_yellow_DOY, colour = population),
@@ -932,7 +1199,9 @@ pulchra_yellow_trans <- pul_yellow_data %>%
   dplyr::mutate(CI_high_trans = ((estimate__ + CI_range) + m_pul_yellow)) %>% 
   dplyr::mutate(Estimate_trans = (estimate__ + m_pul_yellow), 
                 Est.Error_trans = (se__ + m_pul_yellow)) %>% 
-  dplyr::select(-CI_range) 
+  dplyr::select(-CI_range)  %>% 
+  dplyr::mutate(Species = "Salix pulchra", 
+                "Response variable "= "Leaf yellowing")
 
 (pul_yellow_plot_scaled <-ggplot(pulchra_yellow_trans) +
     geom_point(data = all_phenocam_pulchra, aes(x = population, y = First_leaf_yellow_DOY, colour = population),
@@ -975,7 +1244,9 @@ arctica_yellow_trans <- arc_yellow_data %>%
   dplyr::mutate(CI_high_trans = ((estimate__ + CI_range) + m_arc_yellow)) %>% 
   dplyr::mutate(Estimate_trans = (estimate__ + m_arc_yellow), 
                 Est.Error_trans = (se__ + m_arc_yellow)) %>% 
-  dplyr::select(-CI_range) 
+  dplyr::select(-CI_range)  %>% 
+  dplyr::mutate(Species = "Salix arctica", 
+                "Response variable "= "Leaf yellowing")
 
 (arc_yellow_plot_scaled <-ggplot(arctica_yellow_trans) +
     geom_point(data = all_phenocam_arctica, aes(x = population, y = First_leaf_yellow_DOY, colour = population),

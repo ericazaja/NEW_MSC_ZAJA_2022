@@ -308,7 +308,6 @@ plot(garden_pul_height) # fine
 pp_check(garden_pul_height, type = "dens_overlay", nsamples = 100)  # good) 
 saveRDS(garden_pul_height, file = "output/models/garden_pul_height.rds")
 garden_pul_height <- readRDS("outputs/models/garden_pul_height.rds")
-garden_pul_height <- readRDS("outputs/models/garden_pul_height.rds")
 
 # estimate for northern: 2.2889943 = exp(2.2889943) = 9.865011
 # estimate for southern: 2.2889943+0.9149186=3.203913 -> exp(3.203913) = 24.62871
@@ -359,7 +358,7 @@ garden_heights_out <- rbind(rich_extract_df, pul_extract_df,
                             arc_extract_df) 
 
 
-# back transforming from log
+# back transforming from log -- dont bother adding transformed effects in table
 garden_heights_out_back <- garden_heights_out %>%
   dplyr::rename("l_95_CI_log" = "l-95% CI", 
                 "u_95_CI_log" = "u-95% CI") %>%
@@ -375,40 +374,34 @@ write.csv(garden_heights_out_back, "output/garden_heights_out_back.csv")
 garden_heights_out_back <- read_csv("output/garden_heights_out_back.csv")
 
 # adding spaces before/after each name so they let me repeat them in the table
-rownames(garden_heights_out_back) <- c("Intercept", "Southern Garden", "Sample age", 
+rownames(garden_heights_out) <- c("Intercept", "Southern Garden", "Sample age", 
                                        "Sigma", " Intercept", " Southern Garden", " Sample age", 
                                        " Sigma", "Intercept ", "Southern Garden ", "Sample age ", 
                                        "Sigma ")
 
 # making sure Rhat keeps the .00 
-garden_heights_out_back$Rhat <- as.character(formatC(garden_heights_out_back$Rhat, digits = 2, format = 'f')) #new character variable with format specification
+garden_heights_out$Rhat <- as.character(formatC(garden_heights_out$Rhat, digits = 2, format = 'f')) #new character variable with format specification
 
 # creating table
-kable_heights <- garden_heights_out_back %>% 
+kable_heights <- garden_heights_out %>% 
   kbl(caption="Table.xxx BRMS model outputs: max. heights of northern vs southern shrubs in the common garden. 
-      Model structure per species: (log(max_canopy_height_cm) ~ population + (1|Sample_age). 
-      Model output back-transformed in the table below.", 
-      col.names = c( "Species","Estimate",
-                     "Est. Error",
+      Log transformed output in the table below.", 
+      col.names = c( "Species","Estimate (log)",
+                     "Est. Error (log)",
                      "Lower 95% CI (log)",
                      "Upper 95% CI (log)", 
                      "Rhat", 
                      "Bulk Effective Sample Size",
                      "Tail Effective Sample Size", 
                      "Sample Size",
-                     "Effect",
-                     "Lower 95% CI 
-                    (back transformed)", "Upper 95% CI
-                    (back transformed)", 
-                     "Estimate transformed", 
-                     "Error transformed"), digits=2, align = "l") %>% 
+                     "Effect"), digits=2, align = "l") %>% 
   kable_classic(full_width=FALSE, html_font="Cambria")
 
 # making species column in cursive
 column_spec(kable_heights, 2, width = NULL, bold = FALSE, italic = TRUE)
 row_spec(kable_heights, 1:12, align = "c") 
 
-save_kable(kable_heights,file = "output/kable_heights.pdf",
+save_kable(kable_heights,file = "outputs/tables/kable_heights.pdf",
            bs_theme = "simplex",
            self_contained = TRUE,
            extra_dependencies = NULL,
