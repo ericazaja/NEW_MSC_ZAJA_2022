@@ -23,11 +23,11 @@ library(ggpubr)
 # Loading data ---- 
 all_CG_source_growth <- read_csv("data/all_CG_source_growth.csv")
 # Only using max growth variables values
-max_widths_cg <- read_csv("data/common_garden_data_2022/max_widths_cg.csv")
-max_heights_cg <- read_csv("data/common_garden_data_2022/max_heights_cg.csv")
-max_biovol_cg <- read_csv("data/common_garden_data_2022/max_biovol_cg.csv")
-max_elong_cg <- read_csv("data/common_garden_data_2022/max_elong_cg.csv")
-max_diam_cg <- read_csv("data/common_garden_data_2022/max_diam_cg.csv")
+#max_widths_cg <- read_csv("data/common_garden_data_2022/max_widths_cg.csv")
+max_heights_cg <- read_csv("data/max_heights_cg.csv")
+#max_biovol_cg <- read_csv("data/common_garden_data_2022/max_biovol_cg.csv")
+#max_elong_cg <- read_csv("data/common_garden_data_2022/max_elong_cg.csv")
+#max_diam_cg <- read_csv("data/common_garden_data_2022/max_diam_cg.csv")
 
 # Functions -------
 # 1. scale function =====
@@ -271,6 +271,8 @@ garden_rich_height <- brms::brm(log(max_canopy_height_cm) ~ population +(1|Sampl
                                 iter = 5000, warmup = 1000, 
                                 control = list(max_treedepth = 15, adapt_delta = 0.99))
 
+
+
 summary(garden_rich_height) # significantly higher canopy heights for southern pop.
 plot(garden_rich_height) # fine
 pp_check(garden_rich_height,  type = "dens_overlay", nsamples = 100)  # good
@@ -289,13 +291,50 @@ garden_rich_height <- readRDS("outputs/models/garden_rich_height.rds")
 # extract output with function
 rich_extract <- model_summ_growth(garden_rich_height)
 
+ric_extract <- rich_extract %>% 
+  dplyr::rename("l_95_CI_log_og" = "l-95% CI", 
+                "u_95_CI_log_og" = "u-95% CI", 
+                "Estimate (log og)"= "Estimate")
+
+ric_extract_2 <- ric_extract %>% 
+  dplyr::rename("l_95_CI_log_sum" = "l_95_CI_log_og", 
+                "u_95_CI_log_sum" = "u_95_CI_log_og",
+                "Estimate (log sum)"= "Estimate (log og)")
+
+
+# change estimates by adding estimate to other rows 
+ric_extract_2[2,1] <- ric_extract_2[2,1] + ric_extract_2[1,1]
+# change lower CI by adding 
+ric_extract_2[2,3] <- ric_extract_2[2,3] + ric_extract_2[1,3]
+# change upper CI
+ric_extract_2[2,4] <- ric_extract_2[2,4] + ric_extract_2[1,4]
+
 # extraction for model output table
-rownames(rich_extract) <- c("Intercept", "Southern Garden", "Sample age", "Sigma")
-rich_extract_df <- rich_extract %>% 
-  mutate(Species = rep("Salix richardsonii")) %>% 
-  # "Sample Size" = rep(105)) %>% 
-  relocate("Species", .before = "Estimate")%>%
-  relocate("nobs", .before = "effect")
+rownames(ric_extract) <- c("Intercept  ", "Southern Garden  ", "Sample age  ", "Sigma  ")
+rownames(ric_extract_2) <- c("Intercept ", "Southern Garden ", "Sample age ", "Sigma ")
+
+ric_extract_df_1 <- ric_extract %>% 
+  mutate(Species = rep("Salix richardsonii")) %>%
+  #"Sample Size" = rep(69)) %>%
+  relocate("Species", .before = "Estimate (log og)") %>%
+  relocate("nobs", .before = "effect")%>%
+  dplyr::select(-Est.Error)
+
+ric_extract_df <- ric_extract_2 %>% 
+  mutate(Species = rep("Salix richardsonii")) %>%
+  #"Sample Size" = rep(69)) %>%
+  relocate("Species", .before = "Estimate (log sum)") %>%
+  relocate("nobs", .before = "effect")%>%
+  dplyr::select(-Est.Error)
+
+ric_extract_all <- full_join(ric_extract_df_1, ric_extract_df, 
+                             by = c("effect" = "effect", "nobs"="nobs",
+                                    "Bulk_ESS"="Bulk_ESS", "Tail_ESS"="Tail_ESS",
+                                    "Species"="Species", "Rhat"="Rhat"))
+
+rownames(ric_extract_all) <- c("Intercept", "Southern Garden", "Sample age", "Sigma")
+
+
 
 # S. Pulchra -----
 garden_pul_height <- brms::brm(log(max_canopy_height_cm) ~ population + (1|Sample_age),
@@ -322,16 +361,51 @@ garden_pul_height <- readRDS("outputs/models/garden_pul_height.rds")
 # extract output with function
 pul_extract <- model_summ_growth(garden_pul_height)
 
+pul_extract <- pul_extract %>% 
+  dplyr::rename("l_95_CI_log_og" = "l-95% CI", 
+                "u_95_CI_log_og" = "u-95% CI", 
+                "Estimate (log og)"= "Estimate")
+
+pul_extract_2 <- pul_extract %>% 
+  dplyr::rename("l_95_CI_log_sum" = "l_95_CI_log_og", 
+                "u_95_CI_log_sum" = "u_95_CI_log_og",
+                "Estimate (log sum)"= "Estimate (log og)")
+
+# change estimates by adding estimate to other rows 
+pul_extract_2[2,1] <- pul_extract_2[2,1] + pul_extract_2[1,1]
+# change lower CI by adding 
+pul_extract_2[2,3] <- pul_extract_2[2,3] + pul_extract_2[1,3]
+# change upper CI
+pul_extract_2[2,4] <- pul_extract_2[2,4] + pul_extract_2[1,4]
+
 # extraction for model output table
-rownames(pul_extract) <- c("Intercept", "Southern Garden", "Sample age", "Sigma")
-pul_extract_df <- pul_extract %>% 
-  mutate(Species = rep("Salix pulchra")) %>% 
-  # "Sample Size" = rep(141)) %>%
-  relocate("Species", .before = "Estimate")%>% 
-  relocate("nobs", .before = "effect")
+rownames(pul_extract) <- c("Intercept  ", "Southern Garden  ", "Sample age  ", "Sigma  ")
+rownames(pul_extract_2) <- c("Intercept ", "Southern Garden ", "Sample age ", "Sigma ")
+
+pul_extract_df_1 <- pul_extract %>% 
+  mutate(Species = rep("Salix pulchra")) %>%
+  #"Sample Size" = rep(69)) %>%
+  relocate("Species", .before = "Estimate (log og)") %>%
+  relocate("nobs", .before = "effect")%>%
+  dplyr::select(-Est.Error)
+
+pul_extract_df <- pul_extract_2 %>% 
+  mutate(Species = rep("Salix pulchra")) %>%
+  #"Sample Size" = rep(69)) %>%
+  relocate("Species", .before = "Estimate (log sum)") %>%
+  relocate("nobs", .before = "effect")%>%
+  dplyr::select(-Est.Error)
+
+pul_extract_all <- full_join(pul_extract_df_1, pul_extract_df, 
+                             by = c("effect" = "effect", "nobs"="nobs",
+                                    "Bulk_ESS"="Bulk_ESS", "Tail_ESS"="Tail_ESS",
+                                    "Species"="Species", "Rhat"="Rhat"))
+
+rownames(pul_extract_all) <- c("Intercept ", "Southern Garden ", "Sample age ", "Sigma  ")
+
 
 # S. Arctica -----
-garden_arc_height <- brms::brm(log(max_canopy_height_cm) ~ population + (1|Sample_age),
+garden_arc_height <- brms::brm(log(max_canopy_height_cm) ~ population +(1|Sample_age),
                                data = max_heights_cg_arc, family = gaussian(), chains = 3, 
                                iter = 5000, warmup = 1000, 
                                control = list(max_treedepth = 15, adapt_delta = 0.99))
@@ -345,61 +419,98 @@ garden_arc_height <- readRDS("outputs/models/garden_arc_height.rds")
 # extract output with function
 arc_extract <- model_summ_growth(garden_arc_height)
 
+arc_extract <- arc_extract %>% 
+  dplyr::rename("l_95_CI_log_og" = "l-95% CI", 
+                "u_95_CI_log_og" = "u-95% CI", 
+                "Estimate (log og)"= "Estimate")
+
+arc_extract_2 <- arc_extract %>% 
+  dplyr::rename("l_95_CI_log_sum" = "l_95_CI_log_og", 
+                "u_95_CI_log_sum" = "u_95_CI_log_og",
+                "Estimate (log sum)"= "Estimate (log og)")
+
+# change estimates by adding estimate to other rows 
+arc_extract_2[2,1] <- arc_extract_2[2,1] + arc_extract_2[1,1]
+# change lower CI by adding 
+arc_extract_2[2,3] <- arc_extract_2[2,3] + arc_extract_2[1,3]
+# change upper CI
+arc_extract_2[2,4] <- arc_extract_2[2,4] + arc_extract_2[1,4]
+
 # extraction for model output table
-rownames(arc_extract) <- c("Intercept", "Southern Garden", "Sample age", "Sigma")
-arc_extract_df <- arc_extract %>% 
+rownames(arc_extract) <- c("Intercept  ", "Southern Garden  ", "Sample age  ", "Sigma  ")
+rownames(arc_extract_2) <- c("Intercept ", "Southern Garden ", "Sample age ", "Sigma ")
+
+arc_extract_df_1 <- arc_extract %>% 
   mutate(Species = rep("Salix arctica")) %>%
   #"Sample Size" = rep(69)) %>%
-  relocate("Species", .before = "Estimate") %>%
-  relocate("nobs", .before = "effect")
+  relocate("Species", .before = "Estimate (log og)") %>%
+  relocate("nobs", .before = "effect")%>%
+  dplyr::select(-Est.Error)
+
+arc_extract_df <- arc_extract_2 %>% 
+  mutate(Species = rep("Salix arctica")) %>%
+  #"Sample Size" = rep(69)) %>%
+  relocate("Species", .before = "Estimate (log sum)") %>%
+  relocate("nobs", .before = "effect")%>%
+  dplyr::select(-Est.Error)
+
+arc_extract_all <- full_join(arc_extract_df_1, arc_extract_df, 
+                             by = c("effect" = "effect", "nobs"="nobs",
+                                    "Bulk_ESS"="Bulk_ESS", "Tail_ESS"="Tail_ESS",
+                                    "Species"="Species", "Rhat"="Rhat"))
+
+rownames(arc_extract_all) <- c("Intercept  ", "Southern Garden  ", "Sample age  ", "Sigma  ")
 
 # merging all extracted outputs
-garden_heights_out <- rbind(rich_extract_df, pul_extract_df, 
-                            arc_extract_df) 
+garden_heights_out <- rbind(ric_extract_all, pul_extract_all, 
+                            arc_extract_all) 
 
+garden_heights_out <- garden_heights_out %>%
+  dplyr::rename("Estimate_log_sum" = "Estimate (log sum)")
 
-# back transforming from log -- dont bother adding transformed effects in table
+# back transforming from log 
+# back transforming from log
 garden_heights_out_back <- garden_heights_out %>%
-  dplyr::rename("l_95_CI_log" = "l-95% CI", 
-                "u_95_CI_log" = "u-95% CI") %>%
-  mutate(CI_range = (Estimate - l_95_CI_log)) %>% 
-  mutate(CI_low_trans = exp(Estimate - CI_range)) %>% 
-  mutate(CI_high_trans = exp(Estimate + CI_range)) %>% 
-  mutate(Estimate_trans = exp(Estimate), 
-         Est.Error_trans = exp(Est.Error)) %>% 
-  select(-CI_range)
+  mutate(CI_low_trans = exp(l_95_CI_log_sum)) %>% 
+  mutate(CI_high_trans = exp(u_95_CI_log_sum)) %>% 
+  mutate(Estimate_trans = exp(Estimate_log_sum))
 
 # save df of results 
 write.csv(garden_heights_out_back, "output/garden_heights_out_back.csv")
 garden_heights_out_back <- read_csv("output/garden_heights_out_back.csv")
 
 # adding spaces before/after each name so they let me repeat them in the table
-rownames(garden_heights_out) <- c("Intercept", "Southern Garden", "Sample age", 
+rownames(garden_heights_out_back) <- c("Intercept", "Southern Garden", "Sample age", 
                                        "Sigma", " Intercept", " Southern Garden", " Sample age", 
                                        " Sigma", "Intercept ", "Southern Garden ", "Sample age ", 
                                        "Sigma ")
 
 # making sure Rhat keeps the .00 
-garden_heights_out$Rhat <- as.character(formatC(garden_heights_out$Rhat, digits = 2, format = 'f')) #new character variable with format specification
+garden_heights_out_back$Rhat <- as.character(formatC(garden_heights_out_back$Rhat, digits = 2, format = 'f')) #new character variable with format specification
 
 # creating table
-kable_heights <- garden_heights_out %>% 
+kable_heights <- garden_heights_out_back %>% 
   kbl(caption="Table.xxx BRMS model outputs: max. heights of northern vs southern shrubs in the common garden. 
       Log transformed output in the table below.", 
       col.names = c( "Species","Estimate (log)",
-                     "Est. Error (log)",
                      "Lower 95% CI (log)",
                      "Upper 95% CI (log)", 
                      "Rhat", 
                      "Bulk Effective Sample Size",
                      "Tail Effective Sample Size", 
                      "Sample Size",
-                     "Effect"), digits=2, align = "l") %>% 
+                     "Effect",  "Estimate (log sum)",  "Lower 95% CI 
+                    (log sum)", "Upper 95% CI
+                    (log sum)", "Lower 95% CI 
+                    (transformed)", "Upper 95% CI
+                    (transformed)", 
+                     "Estimate (transformed)"), digits=2, align = "l") %>% 
   kable_classic(full_width=FALSE, html_font="Cambria")
 
 # making species column in cursive
-column_spec(kable_heights, 2, width = NULL, bold = FALSE, italic = TRUE)
 row_spec(kable_heights, 1:12, align = "c") 
+column_spec(kable_heights, 2, width = NULL, bold = FALSE, italic = TRUE)
+
 
 save_kable(kable_heights,file = "outputs/tables/kable_heights.pdf",
            bs_theme = "simplex",
@@ -1251,14 +1362,14 @@ arc_diam_data <- arc_diam[[1]] # making the extracted model outputs into a data
 
 # try with ggpredict () ------
 # Model predictions - get number of species per degree from here
-ggpred_height <- ggpredict(garden_arc_height, terms = "population")
+ggpred_height <- ggpredict(garden_rich_height, terms = "population")
 colnames(ggpred_height) = c('population', 'fit', 'lwr', 'upr', 'dunno')
 
 (arc_height_plot <-ggplot(ggpred_height) +
-    geom_point(data = max_heights_cg_arc, aes(x = population, y = log(max_canopy_height_cm), colour = population),
+    geom_point(data = max_heights_cg_rich, aes(x = population, y = max_canopy_height_cm, colour = population),
                alpha = 0.5)+ # raw data
-    geom_point(aes(x = population , y = log(fit),colour = population), size = 4)+
-    geom_errorbar(aes(x = population, ymin = log(lwr), ymax = log(upr),colour = population),
+    geom_point(aes(x = population , y = fit,colour = population), size = 4)+
+    geom_errorbar(aes(x = population, ymin = lwr, ymax = upr,colour = population),
                   alpha = 1) +
     ylab("Max. canopy height (cm)\n") +
     xlab("\n Population" ) +
