@@ -468,12 +468,18 @@ garden_heights_out <- rbind(ric_extract_all, pul_extract_all,
 garden_heights_out <- garden_heights_out %>%
   dplyr::rename("Estimate_log_sum" = "Estimate (log sum)")
 
-# back transforming from log 
 # back transforming from log
 garden_heights_out_back <- garden_heights_out %>%
   mutate(CI_low_trans = exp(l_95_CI_log_sum)) %>% 
   mutate(CI_high_trans = exp(u_95_CI_log_sum)) %>% 
-  mutate(Estimate_trans = exp(Estimate_log_sum))
+  mutate(Estimate_trans = exp(Estimate_log_sum))%>%
+  relocate(CI_low_trans, .before = Rhat) %>%
+  relocate(CI_high_trans, .before = Rhat) %>%
+  relocate(Estimate_trans, .before = CI_low_trans)%>%
+  relocate(Estimate_log_sum, .before = Estimate_trans) %>%
+  relocate(l_95_CI_log_sum, .before = Estimate_trans) %>%
+  relocate(u_95_CI_log_sum, .before = Estimate_trans)
+  
 
 # save df of results 
 write.csv(garden_heights_out_back, "output/garden_heights_out_back.csv")
@@ -494,17 +500,18 @@ kable_heights <- garden_heights_out_back %>%
       Log transformed output in the table below.", 
       col.names = c( "Species","Estimate (log)",
                      "Lower 95% CI (log)",
-                     "Upper 95% CI (log)", 
+                     "Upper 95% CI (log)",
+                     "Estimate (log sum)",  "Lower 95% CI 
+                    (log sum)", "Upper 95% CI
+                    (log sum)",  
+                     "Estimate (transformed)","Lower 95% CI 
+                    (transformed)", "Upper 95% CI
+                    (transformed)",
                      "Rhat", 
                      "Bulk Effective Sample Size",
                      "Tail Effective Sample Size", 
                      "Sample Size",
-                     "Effect",  "Estimate (log sum)",  "Lower 95% CI 
-                    (log sum)", "Upper 95% CI
-                    (log sum)", "Lower 95% CI 
-                    (transformed)", "Upper 95% CI
-                    (transformed)", 
-                     "Estimate (transformed)"), digits=2, align = "l") %>% 
+                     "Effect"), digits=2, align = "l") %>% 
   kable_classic(full_width=FALSE, html_font="Cambria")
 
 # making species column in cursive

@@ -62,11 +62,11 @@ itex_EZ_pulchra <- itex_EZ_shrubs_2023 %>%
 
 # calculate subsite mean per year, cannot do it plot level
 mean <- ddply(itex_EZ_pulchra,.(YEAR, SiteSubsite), summarise,
-              mean_cov = mean(cover_prop))
+              mean_cov = mean(cover_prop))# take all plots and calculate mean. so i have one value per yer
 
 # calculate subsite max per year, cannot do it plot level
 max <- ddply(itex_EZ_pulchra,.(YEAR, SiteSubsite), summarise,
-             max_cov = max(cover_prop))
+             max_cov = max(cover_prop)) # # take all plots and calculate max. so i have one value per yer (plot with highest value)
 hist(max$max_cov, breaks = 10)
 
 # mean and max in one dataset

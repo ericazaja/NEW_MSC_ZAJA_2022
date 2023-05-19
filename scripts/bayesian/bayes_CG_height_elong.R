@@ -109,16 +109,16 @@ height_rich_summ <- height_rich_summ %>%
                 "u_95_CI_log" = "u-95% CI")
 
 # change estimates by adding estimate to other rows 
-height_rich_summ[3,1] <- height_rich_summ[3,1] + height_rich_summ[1,1]
-height_rich_summ[4,1] <- height_rich_summ[4,1] + height_rich_summ[2,1]
+#height_rich_summ[3,1] <- height_rich_summ[3,1] + height_rich_summ[1,1]
+#height_rich_summ[4,1] <- height_rich_summ[4,1] + height_rich_summ[2,1]
 
 # change lower CI by adding 
-height_rich_summ[3,3] <- height_rich_summ[3,3] + height_rich_summ[1,3]
-height_rich_summ[4,3] <- height_rich_summ[4,3] + height_rich_summ[2,3]
+#height_rich_summ[3,3] <- height_rich_summ[3,3] + height_rich_summ[1,3]
+#height_rich_summ[4,3] <- height_rich_summ[4,3] + height_rich_summ[2,3]
 
 # change upper CI
-height_rich_summ[3,4] <- height_rich_summ[3,4] + height_rich_summ[1,4]
-height_rich_summ[4,4] <- height_rich_summ[4,4] + height_rich_summ[2,4]
+#height_rich_summ[3,4] <- height_rich_summ[3,4] + height_rich_summ[1,4]
+#height_rich_summ[4,4] <- height_rich_summ[4,4] + height_rich_summ[2,4]
 
 #height_rich_summ <- height_rich_summ[c(1:4),] # this removes the random effects
 
@@ -247,16 +247,16 @@ height_pul_summ <- height_pul_summ %>%
                 "u_95_CI_log" = "u-95% CI")
 
 # change estimates by adding estimate to other rows 
-height_pul_summ[3,1] <- height_pul_summ[3,1] + height_pul_summ[1,1]
-height_pul_summ[4,1] <- height_pul_summ[4,1] + height_pul_summ[2,1]
+#height_pul_summ[3,1] <- height_pul_summ[3,1] + height_pul_summ[1,1]
+#height_pul_summ[4,1] <- height_pul_summ[4,1] + height_pul_summ[2,1]
 
 # change lower CI by adding 
-height_pul_summ[3,3] <- height_pul_summ[3,3] + height_pul_summ[1,3]
-height_pul_summ[4,3] <- height_pul_summ[4,3] + height_pul_summ[2,3]
+#height_pul_summ[3,3] <- height_pul_summ[3,3] + height_pul_summ[1,3]
+#height_pul_summ[4,3] <- height_pul_summ[4,3] + height_pul_summ[2,3]
 
 # change upper CI
-height_pul_summ[3,4] <- height_pul_summ[3,4] + height_pul_summ[1,4]
-height_pul_summ[4,4] <- height_pul_summ[4,4] + height_pul_summ[2,4]
+#height_pul_summ[3,4] <- height_pul_summ[3,4] + height_pul_summ[1,4]
+#height_pul_summ[4,4] <- height_pul_summ[4,4] + height_pul_summ[2,4]
 
 #height_pul_summ <- height_pul_summ[c(1:4),]
 
@@ -343,16 +343,16 @@ height_arc_summ <- height_arc_summ %>%
                 "u_95_CI_log" = "u-95% CI")
 
 # change estimates by adding estimate to other rows 
-height_arc_summ[3,1] <- height_arc_summ[3,1] + height_arc_summ[1,1]
-height_arc_summ[4,1] <- height_arc_summ[4,1] + height_arc_summ[2,1]
+#height_arc_summ[3,1] <- height_arc_summ[3,1] + height_arc_summ[1,1]
+#height_arc_summ[4,1] <- height_arc_summ[4,1] + height_arc_summ[2,1]
 
 # change lower CI by adding 
-height_arc_summ[3,3] <- height_arc_summ[3,3] + height_arc_summ[1,3]
-height_arc_summ[4,3] <- height_arc_summ[4,3] + height_arc_summ[2,3]
+#height_arc_summ[3,3] <- height_arc_summ[3,3] + height_arc_summ[1,3]
+#height_arc_summ[4,3] <- height_arc_summ[4,3] + height_arc_summ[2,3]
 
 # change upper CI
-height_arc_summ[3,4] <- height_arc_summ[3,4] + height_arc_summ[1,4]
-height_arc_summ[4,4] <- height_arc_summ[4,4] + height_arc_summ[2,4]
+#height_arc_summ[3,4] <- height_arc_summ[3,4] + height_arc_summ[1,4]
+#height_arc_summ[4,4] <- height_arc_summ[4,4] + height_arc_summ[2,4]
 
 rownames(height_arc_summ) <- c(" Intercept ", " Sample age ", " Southern population "
                                , " Sample age:Southern population ", " Random intercept ", 
@@ -364,27 +364,35 @@ height_arc_summ$Rhat <- as.character(formatC(height_arc_summ$Rhat, digits = 2, f
 # binding all summaries
 all_height_summ <- rbind(height_rich_summ,height_pul_summ,height_arc_summ)
 
-all_height_summ_back <- all_height_summ %>% 
-  dplyr::mutate("Estimate (back)" = exp(Estimate)) %>% 
-  dplyr::mutate("Lower 95% CI (back)" = exp(l_95_CI_log))%>%
-  dplyr::mutate("Upper 95% CI (back)" = exp(u_95_CI_log)) %>%
-  dplyr::rename("Est.Error (log)" = "Est.Error") %>%
-  dplyr::rename("Lower 95% CI (log)" = "l_95_CI_log") %>%
-  dplyr::rename("Upper 95% CI (log)" = "u_95_CI_log")
+#all_height_summ_back <- all_height_summ %>% 
+ # dplyr::mutate("Estimate (back)" = exp(Estimate)) %>% 
+ # dplyr::mutate("Lower 95% CI (back)" = exp(l_95_CI_log))%>%
+  #dplyr::mutate("Upper 95% CI (back)" = exp(u_95_CI_log)) %>%
+  #dplyr::rename("Est.Error (log)" = "Est.Error") %>%
+  #dplyr::rename("Lower 95% CI (log)" = "l_95_CI_log") %>%
+  #dplyr::rename("Upper 95% CI (log)" = "u_95_CI_log")
   
 
-all_height_summ_table <- all_height_summ_back %>% 
-  kbl(caption="Table. Heights over time of northern and southern shrubs in the common garden. ", 
-      col.names = c("Species", "Estimate (log)", "Error (log)", "Lower 95% CI (log)", "Upper 95% CI (log)",
-                    "Rhat", "Bulk effective sample size", "Tail effective sample size",
-                    "Effect", "Sample size", "Estimate (back)", "Lower 95% CI (back)", "Upper 95% CI (back)"), # give the column names you want making sure you have one name per column!
-      digits=2, align = "c") %>%  # specify number of significant digits, align numbers at the centre (can also align "l" left/ "r" right)
-  kable_classic(full_width=FALSE, html_font="Helvetica") # can change fonts
+#all_height_summ_table <- all_height_summ_back %>% 
+ # kbl(caption="Table. Heights over time of northern and southern shrubs in the common garden. ", 
+  #    col.names = c("Species", "Estimate (log)", "Error (log)", "Lower 95% CI (log)", "Upper 95% CI (log)",
+   #                 "Rhat", "Bulk effective sample size", "Tail effective sample size",
+    #                "Effect", "Sample size", "Estimate (back)", "Lower 95% CI (back)", "Upper 95% CI (back)"), # give the column names you want making sure you have one name per column!
+    #  digits=2, align = "c") %>%  # specify number of significant digits, align numbers at the centre (can also align "l" left/ "r" right)
+ # kable_classic(full_width=FALSE, html_font="Helvetica") # can change fonts
+
+all_height_summ_table <- all_height_summ %>% 
+kbl(caption="Table. Heights over time of northern and southern shrubs in the common garden. ", 
+col.names = c("Species", "Estimate (log)", "Error (log)", "Lower 95% CI (log)", "Upper 95% CI (log)",
+               "Rhat", "Bulk effective sample size", "Tail effective sample size",
+              "Effect", "Sample size"), # give the column names you want making sure you have one name per column!
+digits=2, align = "c") %>%  # specify number of significant digits, align numbers at the centre (can also align "l" left/ "r" right)
+ kable_classic(full_width=FALSE, html_font="Helvetica") # can change fonts
 
 # optional: making specific column text in italics
 column_spec(all_height_summ_table, 2, width = NULL, bold = FALSE, italic = TRUE) # 2 is my example column number 
 
-save_kable(kable_rich_pul_arc,file = "outputs/tables/kable_rich_pul_arc.pdf", # or .png, or .jpeg, save in your working directory
+save_kable(all_height_summ_table,file = "outputs/tables/kable_rich_pul_arc.pdf", # or .png, or .jpeg, save in your working directory
            bs_theme = "simplex",
            self_contained = TRUE,
            extra_dependencies = NULL,

@@ -32,6 +32,8 @@ hist(july_enviro_chelsa$mean_temp_C)
 hist(july_enviro_chelsa$mean_temp_C_scaled)
 
 july_enviro_chelsa <-july_enviro_chelsa %>%
+  filter(year >=1999) %>%
+  select(-PrecipMeanJuly)%>%
   mutate(index_year = I(year-1998))
 
 # temp over time (random intercept random slope)
@@ -44,9 +46,24 @@ temp_time_interact <- brms::brm(mean_temp_C ~ index_year*Site + (1|index_year),
                        data = july_enviro_chelsa,  family = gaussian(), chains = 3,
                        iter = 5000, warmup = 1000, 
                        control = list(max_treedepth = 15, adapt_delta = 0.99))
+
 saveRDS(temp_time_interact,file = "outputs/models/temp_time_interact.rds")
 summary(temp_time_interact)
 ylab <- "Mean July temperature (°C)"
+
+temp_preds <- ggpredict(temp_time_interact, terms = c("index_year", "Site"))
+# temp at year 22 for QHI=8.761188
+#  temp at year 0 for QHI=3.539306
+#delta =8.761188-3.539306=5.221882
+# temp change per year 5.221882/21 = 0.248661 deg C/year
+
+#  temp at year 22 for toolik=11.826728
+#  temp at year 0 for toolik=9.003889
+# delta 11.826728-9.003889 =  2.822839 deg C/year
+#  temp change per year = 2.822839/22 = 0.1283109 decC/year
+
+# mean (0.248661+0.1283109)/2 = 0.188486 degC/year in natural populations
+
 
 (temp_time_plot <- july_enviro_chelsa %>%
     group_by(Site) %>%
