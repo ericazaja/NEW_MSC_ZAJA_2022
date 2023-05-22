@@ -36,32 +36,36 @@ coord.chelsa.combo.c.biom.2020 <- read.csv("data/coord.chelsa.combo.c.biom.2020.
 # multiply by biomass increase
 novel_warm_2100 <- coord.chelsa.combo.c.delta.2100.solo %>%
   filter(year == 2100) %>% 
-  mutate(biomass_per_m2_2100_solo = biomass_per_m2 + (1565.078*delta.7.solo)) %>%
+  mutate(biomass_per_m2_2100_solo = biomass_per_m2 + (48.31628*delta.7.solo)) %>%
   dplyr::select(-biomass_per_m2)
 
 c_mean_2100 <- c(novel_warm_2100$biomass_per_m2_2100_solo)
-mean(c_mean_2100)  #8134.769
-range(novel_warm_2100$biomass_per_m2_2100_solo) # 6413.707 11624.328
+mean(c_mean_2100)  #472.3576
+range(novel_warm_2100$biomass_per_m2_2100_solo) # 198.0007 2399.3773
+
+# times larger
+472.3576/228.2723
+# 2.069273
 
 # 2030, multiply by biomass increase
 novel_warm_2030 <- coord.chelsa.combo.c.delta.2030 %>%
   filter(year == 2030) %>% 
-  mutate(biomass_per_m2_2030 = biomass_per_m2 + (1565.078*delta)) %>%
+  mutate(biomass_per_m2_2030 = biomass_per_m2 + (48.31628*delta)) %>%
   dplyr::select(-biomass_per_m2)
 
 c_mean_2030 <- c(novel_warm_2030$biomass_per_m2_2030)
-mean(c_mean_2030) # 996.9929 g/m2
-range(novel_warm_2030$biomass_per_m2_2030) # -247.4458 4658.8445
+mean(c_mean_2030) # 252.0039 g/m2
+range(novel_warm_2030$biomass_per_m2_2030) #  -4.757722 2143.627452
 
 # 2050
 novel_warm_2050 <- coord.chelsa.combo.c.delta.2050 %>%
   filter(year == 2050) %>% 
-  mutate(biomass_per_m2_2050 = biomass_per_m2 + (1565.078*delta.2)) %>%
+  mutate(biomass_per_m2_2050 = biomass_per_m2 + (48.31628*delta.2)) %>%
   dplyr::select(-biomass_per_m2)
 
 c_mean_2050 <- c(novel_warm_2050$biomass_per_m2_2050)
-mean(c_mean_2050) #2266.216 g/m2
-range(novel_warm_2050$biomass_per_m2_2050) #  313.9614 6095.8091
+mean(c_mean_2050) #291.1867 g/m2
+range(novel_warm_2050$biomass_per_m2_2050) #   6.229799 2194.010368
 
 c_mean_2100_temp_solo <- c(novel_warm$mean_temp_C)
 mean(c_mean_2100_temp_solo) # 20.17315 C
@@ -78,7 +82,8 @@ mean(c_mean_2100_temp_solo) # 20.17315 C
 # bind 2020 and 2100
 novel_warm_bind <- novel_warm_2100 %>%
   dplyr::rename(biomass_per_m2 = biomass_per_m2_2100_solo, 
-                delta = delta.7.solo)
+                delta = delta.7.solo)%>%
+  mutate(year= rep("2100_novel"))
 
 novel_warm_bind_2030 <- novel_warm_2030 %>%
   dplyr::rename(biomass_per_m2 = biomass_per_m2_2030)
@@ -100,7 +105,7 @@ novel_warm_to_plot_2050 <- rbind(coord.chelsa.combo.c.biom.2020, novel_warm_bind
 novel_warm_to_plot_all <- rbind(coord.chelsa.combo.c.biom.2020, novel_warm_bind_2030, novel_warm_bind_2050, novel_warm_bind)
 
 # plotting facet biomass (yellow-green)
-(raster_test_temp <- ggplot(novel_warm_to_plot_2050) + 
+(raster_test_temp <- ggplot(novel_warm_to_plot) + 
     geom_tile(aes(x=x,y=y,fill=(biomass_per_m2))) + 
     facet_wrap(~year, nrow = 1) +
     #scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +

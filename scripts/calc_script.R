@@ -13,6 +13,11 @@
 
 # mean temp change (0.248661+0.1283109)/2 = 0.188486 degC/year in natural populations
 
+# CG TEMP: 
+# difference in temp between KP and CG = 6.4 degC
+# 6.4/9 years of growth in the CG
+# 0.71 degC/year in CG
+
 # COVER -----
 
 # MEAN COVER 
@@ -42,7 +47,7 @@
 # estimate at year 1 = 8.10 cm 
 # estimate at year 24 = 24.73 cm 
 
-# ALLOMETRIC -----
+# MEAN AND MAX NATURAL SCENARIOS -----
 #Salix pulchra	Shrub AGB = (1.1*height ±  5.0 ) + (18.1 *cover ± 8.2)
 
 # MEAN BIOMASS at year 1
@@ -88,3 +93,33 @@
 # Biomass change per degree
 5.505917/0.188486
 # 29.21128 g/m2/degC for MAX NATURAL scenario
+
+
+# NOVEL SCENARIO (CG) ----
+# HEIGHT cm (start at year 2 because that is when cover starts)
+# estimate at year 2 =  19.35 cm
+# estimate at year 9 =  20.79 cm
+
+# COVER %
+# estimate at year 2 = 0.05032221 --> 5.03 %
+# estimate at year 9 =  0.22003389 --> 22.0 %
+
+# BIOMASS at year 2
+(1.1*19.35) + (18.1 *5.03)
+# 112.328 g/m2
+
+# BIOMASS at year 9
+(1.1*20.79) + (18.1 *22.0)
+# 421.069
+
+# Delta biomass 
+421.069-112.328
+# 308.741 g/m2
+
+# Divide by 9 years
+308.741/9
+# 34.30456
+
+# Biomass change per degC change
+34.30456/0.71
+# 48.31628 g/m2/degC for NOVEL SCENARIO

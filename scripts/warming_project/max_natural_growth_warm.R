@@ -53,7 +53,9 @@ max_warm_bind$year <- as.factor(max_warm_bind$year)
 coord.chelsa.combo.c.biom.2020$year <- as.factor(coord.chelsa.combo.c.biom.2020$year)
 max_warm_to_plot <- rbind(coord.chelsa.combo.c.biom.2020, max_warm_bind)
 mean_max_warm_to_plot <- rbind(coord.chelsa.combo.c.biom.2020, avg_warm_bind, max_warm_bind)
+all_warm_to_plot <- rbind(coord.chelsa.combo.c.biom.2020, avg_warm_bind, max_warm_bind, novel_warm_bind)
 
+write.csv(all_warm_to_plot, file = "data/all_warm_to_plot.csv")
 # run this code if I want them all on same scale
 #novel_warm_to_plot_2100 <- novel_warm_to_plot %>%
  # filter(year == 2100) %>%
@@ -66,7 +68,7 @@ mean_max_warm_to_plot <- rbind(coord.chelsa.combo.c.biom.2020, avg_warm_bind, ma
 #mean_max_novel_warm_to_plot <- rbind(coord.chelsa.combo.c.biom.2020, avg_warm_bind, max_warm_bind, novel_warm_bind_2030_2, novel_warm_bind_2050_2)
 
 # plotting facet biomass (yellow-green)
-(max_test_temp <- ggplot(mean_max_warm_to_plot) + 
+(max_test_temp <- ggplot(all_warm_to_plot) + 
     geom_tile(aes(x=x,y=y,fill=(biomass_per_m2))) + 
     facet_wrap(~year, nrow = 1) +
     #scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
@@ -81,19 +83,22 @@ mean_max_warm_to_plot <- rbind(coord.chelsa.combo.c.biom.2020, avg_warm_bind, ma
     ylab("Latitude\n") + theme(text=element_text(family="Helvetica Light")) )
 
 
-ggsave(max_test_temp, filename ="output/final_maps/max_test_temp.png", width = 11.7, height = 8.3, units = "in")
+ggsave(max_test_temp, filename ="output/final_maps/all_scenarios_temp.png", width = 11.7, height = 8.3, units = "in")
 # ggsave(max_test_temp, filename ="output/final_maps/max_test_temp_2.png", width = 11.7, height = 8.3, units = "in", dpi = 300)
 
 
 # TRESHOLD MAPS-----
 quant_max_warm <- quantile(max_warm_to_plot$biomass_per_m2)
 quant_maxmean_warm <- quantile(mean_max_warm_to_plot$biomass_per_m2)
+quant_all_warm <- quantile(all_warm_to_plot$biomass_per_m2)
 quant_max_warm
 quant_maxmean_warm
+quant_all_warm
 
 #0%       25%       50%       75%      100% 
 # 0.0000  174.4421  957.9852 1238.5743 3305.8807 
-#    0.0000  157.4943  251.7672  385.4468 2291.2797 
+#    0.0000  157.4943  251.7672  385.4468 2291.2797
+# 0.0000  185.9591  302.4739  442.2580 2399.3773
 
 
 # setting biomass level thresholds using quantiles
@@ -103,9 +108,14 @@ threshold_max_warm <- max_warm_to_plot %>%
                                     biomass_per_m2 > 385.4468 ~ 'High')) # 75%
 
 threshold_maxmean_warm <- mean_max_warm_to_plot %>%
-  mutate(biomass_level = case_when (biomass_per_m2 < 157.4943     ~ 'Open', # 25% quant.
-                                    biomass_per_m2> 157.4943    & biomass_per_m2 < 385.4468 ~ 'Dense', # between 25 and 75 
+  mutate(biomass_level = case_when (biomass_per_m2 < 185.9591     ~ 'Open', # 25% quant.
+                                    biomass_per_m2> 185.9591    & biomass_per_m2 < 385.4468 ~ 'Dense', # between 25 and 75 
                                     biomass_per_m2 > 385.4468 ~ 'Very dense')) # 75%
+
+threshold_all_warm <- all_warm_to_plot %>%
+  mutate(biomass_level = case_when (biomass_per_m2 < 157.4943     ~ 'Open', # 25% quant.
+                                    biomass_per_m2> 157.4943    & biomass_per_m2 < 442.2580 ~ 'Dense', # between 25 and 75 
+                                    biomass_per_m2 > 442.2580 ~ 'Very dense')) # 75%
 
 # ordering factor levels
 threshold_max_warm$biomass_level <- factor(threshold_max_warm$biomass_level,levels=c("Low", "Medium", "High"),
@@ -116,13 +126,17 @@ threshold_maxmean_warm$biomass_level <- factor(threshold_maxmean_warm$biomass_le
                                            labels = c("Open", "Dense", "Very dense"),
                                            ordered = T)
 
+threshold_all_warm$biomass_level <- factor(threshold_all_warm$biomass_level,levels=c("Open", "Dense", "Very dense"),
+                                               labels = c("Open", "Dense", "Very dense"),
+                                               ordered = T)
+
 threshold_maxmean_warm_summary <- threshold_maxmean_warm %>% 
   filter(year == "2100_max")%>% 
   group_by(biomass_level) %>% 
   summarise(percent_biomass_level = n())
 # finding the ratio of 100% using method here: https://www.mathswithmum.com/calculate-ratio-3-numbers/ 
 
-(threshold_max_warm_levels <- ggplot(threshold_maxmean_warm) + 
+(threshold_max_warm_levels <- ggplot(threshold_all_warm) + 
     geom_tile(aes(x=x,y=y,fill=biomass_level)) + 
     facet_wrap(~year, nrow = 1) +
     scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +
@@ -133,7 +147,8 @@ threshold_maxmean_warm_summary <- threshold_maxmean_warm %>%
     theme(strip.text.x = element_text(size = 14, face = "bold.italic")) +
     xlab("\nLongitude") +
     ylab("Latitude\n")+ theme(text=element_text(family="Helvetica Light")) )
-ggsave(threshold_max_warm_levels, filename ="output/final_maps/mean_max_thresh.png", width = 11.7, height = 8.3, units = "in")
+
+ggsave(threshold_max_warm_levels, filename ="output/final_maps/all_scenarios_thresh.png", width = 11.7, height = 8.3, units = "in")
 
 # binary threshold map
 threshold_max_warm_bi <- max_warm_to_plot %>%
