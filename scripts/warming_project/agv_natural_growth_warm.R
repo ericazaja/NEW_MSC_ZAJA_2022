@@ -45,24 +45,23 @@ coord.chelsa.combo.c.biom.2020 <- read.csv("data/coord.chelsa.combo.c.biom.2020.
 # multiply by biomass increase
 avg_warm <- coord.chelsa.combo.c.delta.2100.solo %>%
   filter(year == 2100) %>% 
-  mutate(biomass_per_m2_2100_solo = biomass_per_m2 + (83.33577 *delta.7.solo)) %>%
+  mutate(biomass_per_m2_2100_solo = biomass_per_m2 + (11.78204 *delta.7.solo)) %>%
   dplyr::select(-biomass_per_m2)
 
 c_mean_2100_solo <- c(avg_warm$biomass_per_m2_2100_solo)
-mean(c_mean_2100_solo) #649.2699 g/m2
-range(avg_warm$biomass_per_m2_2100_solo) # 351.6952 2611.5816
+mean(c_mean_2100_solo) #287.7931 g/m2
+range(avg_warm$biomass_per_m2_2100_solo) # 48.28293 2192.66370
 
 c_mean_2100_temp_solo <- c(avg_warm$mean_temp_C)
 mean(c_mean_2100_temp_solo) # 20.17315 C
 
 # %diff
-(661.8245-228.2723)/228.2723
-# 1.899276
-#189%
+(287.7931-228.2723)/228.2723
+# 0.2607447
 
 # times larger
-(661.8245/228.2723)
-# 2.899276
+(287.7931/228.2723)
+# 1.260745
 
 # temperatre difference
 20.17315-15.12132

@@ -93,18 +93,19 @@ quant_maxmean_warm
 
 #0%       25%       50%       75%      100% 
 # 0.0000  174.4421  957.9852 1238.5743 3305.8807 
-# 0.0000  307.5213  576.3771  723.4860 2718.3623 
+#    0.0000  157.4943  251.7672  385.4468 2291.2797 
+
 
 # setting biomass level thresholds using quantiles
 threshold_max_warm <- max_warm_to_plot %>%
-  mutate(biomass_level = case_when (biomass_per_m2 < 174.4421     ~ 'Low', # 25% quant.
-                                    biomass_per_m2> 174.4421    & biomass_per_m2 < 1238.5743 ~ 'Medium', # between 25 and 75 
-                                    biomass_per_m2 > 1238.5743 ~ 'High')) # 75%
+  mutate(biomass_level = case_when (biomass_per_m2 < 157.4943     ~ 'Low', # 25% quant.
+                                    biomass_per_m2> 157.4943    & biomass_per_m2 < 385.4468 ~ 'Medium', # between 25 and 75 
+                                    biomass_per_m2 > 385.4468 ~ 'High')) # 75%
 
 threshold_maxmean_warm <- mean_max_warm_to_plot %>%
-  mutate(biomass_level = case_when (biomass_per_m2 < 307.5213     ~ 'Open', # 25% quant.
-                                    biomass_per_m2> 307.5213    & biomass_per_m2 < 723.4860 ~ 'Dense', # between 25 and 75 
-                                    biomass_per_m2 > 723.4860 ~ 'Very dense')) # 75%
+  mutate(biomass_level = case_when (biomass_per_m2 < 157.4943     ~ 'Open', # 25% quant.
+                                    biomass_per_m2> 157.4943    & biomass_per_m2 < 385.4468 ~ 'Dense', # between 25 and 75 
+                                    biomass_per_m2 > 385.4468 ~ 'Very dense')) # 75%
 
 # ordering factor levels
 threshold_max_warm$biomass_level <- factor(threshold_max_warm$biomass_level,levels=c("Low", "Medium", "High"),
@@ -132,6 +133,7 @@ threshold_maxmean_warm_summary <- threshold_maxmean_warm %>%
     theme(strip.text.x = element_text(size = 14, face = "bold.italic")) +
     xlab("\nLongitude") +
     ylab("Latitude\n")+ theme(text=element_text(family="Helvetica Light")) )
+ggsave(threshold_max_warm_levels, filename ="output/final_maps/mean_max_thresh.png", width = 11.7, height = 8.3, units = "in")
 
 # binary threshold map
 threshold_max_warm_bi <- max_warm_to_plot %>%
