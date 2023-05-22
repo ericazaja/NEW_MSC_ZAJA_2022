@@ -31,7 +31,7 @@
 # actual max cover value at year 34 qhi:0.2822647 --> 28.22%
 
 # mean max cover value at year 10 = (36.05 + 26.99)/2= 31.52 %
-# mean max cover value at year 34 = (47.41 + 28.22)/2= 37.815%
+# mean max cover value at year 34 = (47.41 + 28.22)/2= 37.81%
 
 # HEIGHT ------
 # MEAN HEIGHT cm
@@ -39,8 +39,8 @@
 # estimate at year 24 = 12.75 cm
 
 # MAX HEIGHT cm
-# estimate at year 1 = 8.105129 cm 
-# estimate at year 24 = 24.729984 cm 
+# estimate at year 1 = 8.10 cm 
+# estimate at year 24 = 24.73 cm 
 
 # ALLOMETRIC -----
 #Salix pulchra	Shrub AGB = (1.1*height ±  5.0 ) + (18.1 *cover ± 8.2)
@@ -69,10 +69,22 @@
 
 # MAX BIOMASS at year 1
 #Biomass at year 1 = 1.1*height ±  5.0  + (18.1 *cover ± 8.2)
+(1.1*8.10) + (18.1 *31.52)
+# 579.422
 
 # MAX BIOMASS at year 24
 #Biomass at year 24 = 1.1*height ±  5.0  + (18.1 *cover ± 8.2)
+(1.1*24.73) + (18.1 *37.81)
+# 711.564
 
 # DELTA = MAX BIOMASS at year 24-MAX BIOMASS at year 1
-# MAX Biomass per year = DELTA/24
+711.564-579.422
+#132.142 g/m2
 
+# MAX Biomass per year = DELTA/24
+132.142/24
+# 5.505917
+
+# Biomass change per degree
+5.505917/0.188486
+# 29.21128 g/m2/degC for MAX NATURAL scenario
