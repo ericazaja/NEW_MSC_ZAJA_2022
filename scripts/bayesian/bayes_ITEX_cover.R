@@ -154,7 +154,7 @@ pp_check(pulchra_cover, type = "dens_overlay", nsamples = 100)
 
 # site max and means
 pulchra_cover_max <- brms::brm(max_cov ~ Year_index * SITE + (1|Year_index),
-                           data = max, family = "beta", chains = 3,
+                           data = maxtest, family = "beta", chains = 3,
                            iter = 5000, warmup = 1000, 
                            control = list(max_treedepth = 15, adapt_delta = 0.99))
 pp_check(pulchra_cover_max, ndraws=100)
@@ -598,6 +598,12 @@ ggsave(panel_coverheight_mean_new, filename ="outputs/figures/panel_coverheight_
 # FINAL GRAPHS ------
 ggpred_cov_mean <- ggpredict(pulchra_cover_mean, terms = c("Year_index", "SITE"))
 colnames(ggpred_cov_mean) = c('Year_index', 'fit', 'lwr', 'upr', 'SITE')
+# actual mean cover value at year 10 toolik: 0.09632101
+# actual mean cover value at year 34 toolik:0.08991054
+
+# actual mean cover value at year 10 qhi:0.14057432
+# actual mean cover value at year 34 qhi:0.19638900
+
 
 (QHI_TOOLIK_mean_cover <-ggplot(ggpred_cov_mean) +
     geom_point(data = mean, aes(x = Year_index, y = mean_cov, colour = SITE),
@@ -616,6 +622,12 @@ colnames(ggpred_cov_mean) = c('Year_index', 'fit', 'lwr', 'upr', 'SITE')
 
 ggpred_cov_max <- ggpredict(pulchra_cover_max, terms = c("Year_index", "SITE"))
 colnames(ggpred_cov_max) = c('Year_index', 'fit', 'lwr', 'upr', 'SITE')
+
+# actual max cover value at year 10 toolik: 0.3605562
+# actual max cover value at year 34 toolik:0.4741059
+
+# actual max cover value at year 10 qhi:0.2699834
+# actual max cover value at year 34 qhi:0.2822647
 
 (QHI_TOOLIK_max_cover <-ggplot(ggpred_cov_max) +
     geom_point(data = max, aes(x = Year_index, y = max_cov, colour = SITE),

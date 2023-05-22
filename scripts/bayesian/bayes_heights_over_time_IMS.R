@@ -305,6 +305,8 @@ ggsave(panel, filename ="output/figures/QHI_heights_panel.png", width = 14.67, h
 library(ggeffects)
 ggpred_MAX_qhi <- ggpredict(MAX, terms = "Year_index")
 colnames(ggpred_MAX_qhi) = c('Year_index', 'fit', 'lwr', 'upr', 'dunno')
+# estimate at year 1 = 8.105129
+# estimate at year 24 = 24.729984
 
 (ggrped_MAX_qhi_plot <-ggplot(ggpred_MAX_qhi) +
     geom_point(data = all_bind_new_max, aes(x = Year_index, y = max_height),
@@ -323,6 +325,9 @@ colnames(ggpred_MAX_qhi) = c('Year_index', 'fit', 'lwr', 'upr', 'dunno')
 library(ggeffects)
 ggpred_MEAN_qhi <- ggpredict(MEAN, terms = "Year_index")
 colnames(ggpred_MEAN_qhi) = c('Year_index', 'fit', 'lwr', 'upr', 'dunno')
+# estimate at year 1 = 4.941228
+# estimate at year 24 = 12.754196
+
 
 (ggrped_MEAN_qhi_plot <-ggplot(ggpred_MEAN_qhi) +
     geom_point(data = all_bind_new_mean, aes(x = Year_index, y = mean_height),
