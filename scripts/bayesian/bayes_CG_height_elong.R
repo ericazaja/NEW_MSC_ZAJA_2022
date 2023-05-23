@@ -165,6 +165,8 @@ plot(height_rich_south)
 pp_check(height_rich_south, type = "dens_overlay", ndraws = 100) 
 
 
+ggpred_height_ric_south <- ggpred_height_ric %>%
+ filter(population=="Southern")
 
 # Salix pulchra -----
 height_pul <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population+(Sample_age|SampleID_standard),

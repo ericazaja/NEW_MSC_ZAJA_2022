@@ -92,9 +92,9 @@ cover_rich <- brms::brm((cover_percent/100) ~ Sample_age + (Sample_age|SampleID_
                                  control = list(max_treedepth = 15, adapt_delta = 0.99))
 
 summary(cover_rich) # significant cover growth over time
-plot(cover_rich)
 pp_check(cover_rich, type = "dens_overlay", nsamples = 100) 
-tab_model(cover_rich)
+ggpred_cover_ric <- ggpredict(cover_rich, terms = "Sample_age")
+colnames(ggpred_cover_ric) = c('Sample_age','fit', 'lwr', 'upr')
 
 cover_rich_random <- as.data.frame(coef(cover_rich)) 
 cover_rich_coef <- as.data.frame(coef(cover_rich, summary = TRUE, robust = FALSE, 

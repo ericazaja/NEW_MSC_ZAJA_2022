@@ -36,16 +36,16 @@ coord.chelsa.combo.c.biom.2020 <- read.csv("data/coord.chelsa.combo.c.biom.2020.
 # multiply by biomass increase
 novel_warm_2100 <- coord.chelsa.combo.c.delta.2100.solo %>%
   filter(year == 2100) %>% 
-  mutate(biomass_per_m2_2100_solo = biomass_per_m2 + (48.31628*delta.7.solo)) %>%
+  mutate(biomass_per_m2_2100_solo = biomass_per_m2 + (62.12093*delta.7.solo)) %>%
   dplyr::select(-biomass_per_m2)
 
 c_mean_2100 <- c(novel_warm_2100$biomass_per_m2_2100_solo)
-mean(c_mean_2100)  #472.3576
-range(novel_warm_2100$biomass_per_m2_2100_solo) # 198.0007 2399.3773
+mean(c_mean_2100)  #542.0962
+range(novel_warm_2100$biomass_per_m2_2100_solo) # 254.5723 2477.4851
 
 # times larger
-472.3576/228.2723
-# 2.069273
+542.0962/228.2723
+# 2.374779
 
 # 2030, multiply by biomass increase
 novel_warm_2030 <- coord.chelsa.combo.c.delta.2030 %>%

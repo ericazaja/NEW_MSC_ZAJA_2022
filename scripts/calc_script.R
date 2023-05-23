@@ -95,7 +95,7 @@
 # 29.21128 g/m2/degC for MAX NATURAL scenario
 
 
-# NOVEL SCENARIO (CG) ----
+# NOVEL SCENARIO (CG) pulchra only ----
 # HEIGHT cm (start at year 2 because that is when cover starts)
 # estimate at year 2 =  19.35 cm
 # estimate at year 9 =  20.79 cm
@@ -116,10 +116,47 @@
 421.069-112.328
 # 308.741 g/m2
 
-# Divide by 9 years
-308.741/9
-# 34.30456
+# Divide by 7 years
+308.741/7
+# 44.10586
 
 # Biomass change per degC change
-34.30456/0.71
-# 48.31628 g/m2/degC for NOVEL SCENARIO
+44.10586/0.71
+# 62.12093 g/m2/degC for NOVEL SCENARIO
+
+# NOVEL SCENARIO (CG) pulchra + rich ----
+# HEIGHT cm (start at year 2 because that is when cover starts)
+
+# RIC estimate at year 3 =  23.51 cm
+# RIC estimate at year 9 =  105.32 cm
+
+# COVER %
+# RIC estimate at year 3 = 0.03940055 --> 3.94 %
+# RIC estimate at year 9 =  0.67738921 --> 67.74 %
+
+
+# BIOMASS at year 3
+# RICHARDSONII FINAL EQUATION: Biomass =  (18.0*height +- 5.1) + (11.9 *cover +-  18.0)
+
+(18.0*23.51) + (11.9 *3.94)
+# 470.066 g/m2
+
+# BIOMASS at year 9
+(18.0*105.32) + (11.9 *67.74)
+# 2701.866
+
+# Delta biomass 
+2701.866-470.066
+# 2231.8 g/m2
+
+# Divide by 6 years
+2231.8/6
+# 371.9667
+
+# Biomass change per degC change
+371.9667/0.71
+# 523.8968 g/m2/degC for NOVEL SCENARIO
+
+# average of Rich and pul
+(523.8968+62.12093)/2
+# 293.0089 g/m2/degC
