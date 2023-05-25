@@ -41,11 +41,21 @@ novel_warm_2100 <- coord.chelsa.combo.c.delta.2100.solo %>%
 
 c_mean_2100 <- c(novel_warm_2100$biomass_per_m2_2100_solo)
 mean(c_mean_2100)  #542.0962
+sd(c_mean_2100) # 201.3826
+sqrt(1015142)# 1007.543
+# SE
+201.3826/1007.543
+# 0.1998749
+
 range(novel_warm_2100$biomass_per_m2_2100_solo) # 254.5723 2477.4851
 
 # times larger
 542.0962/228.2723
 # 2.374779
+
+# %diff
+(542.0962-228.2723)/228.2723
+# 1.374779
 
 # 2030, multiply by biomass increase
 novel_warm_2030 <- coord.chelsa.combo.c.delta.2030 %>%

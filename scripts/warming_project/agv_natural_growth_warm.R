@@ -50,10 +50,22 @@ avg_warm <- coord.chelsa.combo.c.delta.2100.solo %>%
 
 c_mean_2100_solo <- c(avg_warm$biomass_per_m2_2100_solo)
 mean(c_mean_2100_solo) #287.7931 g/m2
+sd(c_mean_2100_solo)#201.6382
+# SE
+201.6382/1007.543# 0.2001286
+
 range(avg_warm$biomass_per_m2_2100_solo) # 48.28293 2192.66370
 
 c_mean_2100_temp_solo <- c(avg_warm$mean_temp_C)
 mean(c_mean_2100_temp_solo) # 20.17315 C
+
+c_mean_2020_solo <- c(coord.chelsa.combo.c.biom.2020$biomass_per_m2)
+mean(c_mean_2020_solo) #228.2723
+sd(c_mean_2020_solo)#202.0902
+sqrt(1015142)#1007.543
+# SE
+202.0902/1007.543
+# 0.2005772
 
 # %diff
 (287.7931-228.2723)/228.2723

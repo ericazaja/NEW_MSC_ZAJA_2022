@@ -31,8 +31,11 @@ max_warm <- coord.chelsa.combo.c.delta.2100.solo %>%
   mutate(biomass_per_m2_2100_solo = biomass_per_m2 + (29.21128*delta.7.solo)) %>%
   dplyr::select(-biomass_per_m2)
 
-c_mean_2100_solo <- c(max_warm$biomass_per_m2_2100_solo)
-mean(c_mean_2100_solo) #375.8425 g/m2
+c_max_2100_solo <- c(max_warm$biomass_per_m2_2100_solo)
+mean(c_max_2100_solo) #375.8425 g/m2
+sd(c_max_2100_solo)#201.2416
+201.2416/1007.543
+# 0.199735
 range(max_warm$biomass_per_m2_2100_solo) #  119.7082 2291.2797
 
 # %diff
@@ -98,7 +101,7 @@ quant_all_warm
 #0%       25%       50%       75%      100% 
 # 0.0000  174.4421  957.9852 1238.5743 3305.8807 
 #    0.0000  157.4943  251.7672  385.4468 2291.2797
-# 0.0000  185.9591  302.4739  442.2580 2399.3773
+# 0.0000  185.9591  322.8674  477.7382 2477.4851 
 
 
 # setting biomass level thresholds using quantiles
@@ -113,9 +116,9 @@ threshold_maxmean_warm <- mean_max_warm_to_plot %>%
                                     biomass_per_m2 > 385.4468 ~ 'Very dense')) # 75%
 
 threshold_all_warm <- all_warm_to_plot %>%
-  mutate(biomass_level = case_when (biomass_per_m2 < 157.4943     ~ 'Open', # 25% quant.
-                                    biomass_per_m2> 157.4943    & biomass_per_m2 < 442.2580 ~ 'Dense', # between 25 and 75 
-                                    biomass_per_m2 > 442.2580 ~ 'Very dense')) # 75%
+  mutate(biomass_level = case_when (biomass_per_m2 < 185.9591     ~ 'Open', # 25% quant.
+                                    biomass_per_m2> 185.9591    & biomass_per_m2 < 477.7382 ~ 'Dense', # between 25 and 75 
+                                    biomass_per_m2 > 477.7382 ~ 'Very dense')) # 75%
 
 # ordering factor levels
 threshold_max_warm$biomass_level <- factor(threshold_max_warm$biomass_level,levels=c("Low", "Medium", "High"),
@@ -129,11 +132,13 @@ threshold_maxmean_warm$biomass_level <- factor(threshold_maxmean_warm$biomass_le
 threshold_all_warm$biomass_level <- factor(threshold_all_warm$biomass_level,levels=c("Open", "Dense", "Very dense"),
                                                labels = c("Open", "Dense", "Very dense"),
                                                ordered = T)
-
-threshold_maxmean_warm_summary <- threshold_maxmean_warm %>% 
-  filter(year == "2100_max")%>% 
-  group_by(biomass_level) %>% 
-  summarise(percent_biomass_level = n())
+summary <- threshold_all_warm %>% 
+  #filter(year == "2100_max")%>% 
+  group_by(biomass_level, year) %>% 
+  summarise(percent_biomass_level = n()) %>% 
+  mutate(total = rep(1015142))%>% 
+  mutate(division = 100/total)%>% 
+  mutate(percent = (percent_biomass_level*division))
 # finding the ratio of 100% using method here: https://www.mathswithmum.com/calculate-ratio-3-numbers/ 
 
 (threshold_max_warm_levels <- ggplot(threshold_all_warm) + 
