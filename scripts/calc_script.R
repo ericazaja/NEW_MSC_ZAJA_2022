@@ -66,7 +66,7 @@
 
 # MEAN Biomass per year =DELTA/24
 53.298/24
-# 2.22075g/m2 
+# 2.22075 g/m2 
 
 # Biomass change per degree
 2.22075/0.188486

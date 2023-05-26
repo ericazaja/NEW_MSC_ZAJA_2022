@@ -49,13 +49,13 @@ shrub_map_2020 <- shrub_map_extract_highest %>%
 #%>% dplyr::mutate(biomass_per_km2 = biomass_per_m2/1000000)
 
 shrub_map_project_mean <- shrub_map_2020 %>%
-  dplyr::mutate(biomass_per_m2_new = biomass_per_m2 + ( 12.501*80))%>%
+  dplyr::mutate(biomass_per_m2_new = biomass_per_m2 + ( 2.22075*80))%>%
   dplyr::select(-biomass_per_m2)%>%
   mutate(year = rep("2100_avg"))
 
-range(shrub_map_project_mean$biomass_per_m2_new) # 1000.08 3126.08
+range(shrub_map_project_mean$biomass_per_m2_new) # 177.66 2303.66
 mean_2100_natural <- c(shrub_map_project_mean$biomass_per_m2_new)
-mean(mean_2100_natural)# 1228.352 g/m2
+mean(mean_2100_natural) # 405.9323 g/m2
 
 shrub_map_2020 <- shrub_map_2020 %>%
   dplyr::rename("biomass_per_m2_new" = "biomass_per_m2")
@@ -63,12 +63,12 @@ mean_2020_natural <- c(shrub_map_2020$biomass_per_m2_new)
 mean(mean_2020_natural) # 228.2723 g/m2
 
 # %diff 
-(1228.352 -228.2723)/228.2723
-# 4.381082 or 438%
+(405.9323 -228.2723)/228.2723
+# 0.778281 or 77%
 
 # how many times bigger
-1228.352/228.2723
-# 5.381082 times bigger
+405.9323/228.2723
+# 1.778281 times bigger
 
 # bind data so that I can facet plot
 shrub_natural_mean_max <- rbind(shrub_map_2020, shrub_map_project_mean, shrub_map_project_max)

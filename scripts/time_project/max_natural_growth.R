@@ -31,12 +31,12 @@ shrub_map_2020 <- shrub_map_extract_highest %>%
   mutate(year = rep(2020))
 
 shrub_map_project_max <- shrub_map_2020 %>%
-  mutate(biomass_per_m2_new = biomass_per_m2 + ( 21.404*80))%>%
+  mutate(biomass_per_m2_new = biomass_per_m2 + ( 5.505917*80))%>%
   dplyr::select(-biomass_per_m2)%>%
   mutate(year = rep("2100_max"))
 
 mean_2100_natural_max <- c(shrub_map_project_max$biomass_per_m2_new)
-mean(mean_2100_natural_max)# 1940.592 g/m2
+mean(mean_2100_natural_max)# 668.7457 g/m2
 
 range(shrub_map_project_max$biomass_per_m2_2100)
 shrub_map_2020 <- shrub_map_2020 %>%
@@ -45,19 +45,23 @@ mean_2020_natural_max <- c(shrub_map_2020$biomass_per_m2_new)
 mean(mean_2020_natural_max)# 228.2723 g/m2
 
 # %diff
-(1940.592-228.2723)/228.2723
-# 7.501215
-# 750.1215%
+(668.7457-228.2723)/228.2723
+# 1.929596
+# 192%
 
 # times larger
-(1940.592/228.2723)
-#8.501215
+(668.7457/228.2723)
+#2.929596
 
 # bind data so that I can facet plot
 shrub_natural_max <- rbind(shrub_map_2020, shrub_map_project_max)
-unique(shrub_natural_max$year)
+# bind all scenarios
+all_time_proj <- rbind(shrub_map_2020, shrub_map_project_mean, shrub_map_project_max, 
+                       shrub_map_project_novel_2100)
 
-(raster_test_max <- ggplot(shrub_natural_max) + 
+unique(all_time_proj$year)
+
+(raster_test_max <- ggplot(all_time_proj) + 
     geom_tile(aes(x=x,y=y,fill=(biomass_per_m2_new))) + 
     facet_wrap(~year, nrow = 1) +
     #scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +

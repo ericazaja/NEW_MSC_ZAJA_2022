@@ -284,10 +284,10 @@ height_pul_south_summ$Rhat <- as.character(formatC(height_pul_south_summ$Rhat, d
 height_pul_south_summ <- height_pul_south_summ %>%
   mutate("Site" = "CG", "Scenario"="Novel",
          "Response variable" = "Canopy height") %>% 
-  mutate("Estimate_back" = exp(Estimate),
-         "Error_back"= exp(Est.Error))%>%
-  select(-"Estimate", -"Est.Error")%>%
-  dplyr::rename("Estimate" ="Estimate_back","Est.Error"= "Error_back") %>%
+  #mutate("Estimate_back" = exp(Estimate),
+   #      "Error_back"= exp(Est.Error))%>%
+  # select(-"Estimate", -"Est.Error")%>%
+  # dplyr::rename("Estimate" ="Estimate_back","Est.Error"= "Error_back") %>%
   relocate("Est.Error", .before = "l-95% CI")%>%
   relocate("Estimate", .before = "Est.Error")%>%
   relocate("Site", .before = "Estimate") %>%

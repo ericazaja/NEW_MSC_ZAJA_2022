@@ -47,19 +47,19 @@ dplyr::rename("biomass_per_m2" = "pft_agb_deciduousshrub_p50_2020_wgs84")%>%
 mutate(year = rep(2020)) 
 
 shrub_map_project_novel_2050 <- shrub_map_2020 %>%
-  dplyr::mutate(biomass_per_m2_new = biomass_per_m2 + (435.5*30))%>%
+  dplyr::mutate(biomass_per_m2_new = biomass_per_m2 + (44.10586*30))%>%
   dplyr::select(-biomass_per_m2)%>%
   mutate(year = rep(2050))
 
 shrub_map_project_novel_2030 <- shrub_map_2020 %>%
-  dplyr::mutate(biomass_per_m2_new = biomass_per_m2 + (435.5*10))%>%
+  dplyr::mutate(biomass_per_m2_new = biomass_per_m2 + (44.10586*10))%>%
   dplyr::select(-biomass_per_m2)%>%
   mutate(year = rep(2030))
 
 shrub_map_project_novel_2100 <- shrub_map_2020 %>%
-  dplyr::mutate(biomass_per_m2_new = biomass_per_m2 + (435.5*80))%>%
+  dplyr::mutate(biomass_per_m2_new = biomass_per_m2 + (44.10586*80))%>%
   dplyr::select(-biomass_per_m2)%>%
-  mutate(year = rep(2100))
+  mutate(year = rep("2100_novel"))
 
 mean_2030_novel <- c(shrub_map_project_novel_2030$biomass_per_m2_new)
 mean(mean_2030_novel)# 4583.272 g/m2
@@ -67,17 +67,20 @@ mean(mean_2030_novel)# 4583.272 g/m2
 mean_2050_novel <- c(shrub_map_project_novel_2050$biomass_per_m2_new)
 mean(mean_2050_novel)# 13293.27 g/m2
 
+mean_2100_novel <- c(shrub_map_project_novel_2100$biomass_per_m2_new)
+mean(mean_2100_novel)# 3756.741 g/m2
+
 hist(shrub_map_project_novel$biomass_per_m2_new)
 
 shrub_map_2020 <- shrub_map_2020 %>%
   dplyr::rename("biomass_per_m2_new" = "biomass_per_m2")
 
 # % diff
-(6489.372-228.2723)/228.2723
-# 2742.821%
+(3756.741-228.2723)/228.2723
+# 15.45728 
 # times larger
-(6489.372/228.2723)
-#  28.42821 times larger 
+(3756.741/228.2723)
+#  16.45728 times larger 
 
 # bind data so that I can facet plot
 shrub_novel <- rbind(shrub_map_2020, shrub_map_project_novel)
