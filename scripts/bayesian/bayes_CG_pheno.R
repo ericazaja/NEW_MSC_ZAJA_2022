@@ -386,12 +386,51 @@ rownames(emerg_pheno_out) <- c("Intercept", "Northern Source", "Southern Garden"
                                "Intercept ", "Northern Source ", "Southern Garden ", "Year ", 
                                "Sigma ")
 
+
+emerg_pheno_out <- emerg_pheno_out %>%
+  relocate("Species", .before = "Estimate") %>%
+  relocate("Estimate_trans", .before = "Rhat")%>%
+  relocate("CI_low_trans", .before = "Rhat")%>%
+  relocate("CI_high_trans", .before = "Rhat")
+  
+  
+
 # making sure Rhat keeps the .00 
 emerg_pheno_out$Rhat <- as.character(formatC(emerg_pheno_out$Rhat, digits = 2, format = 'f')) #new character variable with format specification
 
 # save df of results 
 write.csv(emerg_pheno_out, "output/phenology/emerg_pheno_out_back.csv")
 
+
+kable_emerg_pheno <- emerg_pheno_out %>% 
+  kbl(caption="Table.xxx BRMS model outputs: Leaf emergence day of year for northern garden, northern source, sourthern garden and southern source populations. 
+      Scaled to center on zero and transformed output in the table below.", 
+      col.names = c( "Species",
+                     "Estimate (centred)",
+                     "Lower 95% CI (centred)",
+                     "Upper 95% CI (centred)",
+                     "Estimate (transformed)",  
+                     "Lower 95% CI (transformed)", 
+                     "Upper 95% CI (transformed)",
+                     "Rhat", 
+                     "Bulk Effective Sample Size",
+                     "Tail Effective Sample Size",
+                     "Effect",
+                     "Sample Size"), digits=2, align = "l") %>% 
+  kable_classic(full_width=FALSE, html_font="Cambria")
+
+# making species column in italics
+row_spec(kable_emerg_pheno, 1:12, align = "c") 
+column_spec(kable_emerg_pheno, 2, width = NULL, bold = FALSE, italic = TRUE)
+
+# optional: making specific column text in italics
+save_kable(kable_emerg_pheno,file = "outputs/tables/kable_emerg_pheno.pdf", # or .png, or .jpeg, save in your working directory
+           bs_theme = "simplex",
+           self_contained = TRUE,
+           extra_dependencies = NULL,
+           latex_header_includes = NULL,
+           keep_tex = FALSE,
+           density = 300)
 
 # 1.2. LEAF EMERGENCE (CG ONLY MODELS) ------
 # Salix richardsonii -----
@@ -922,7 +961,7 @@ pal  <- c("#2A788EFF", "#440154FF", "#FDE725FF","#5ccc64") # for reall levels
 pal_garden <- c("#440154FF", "#5ccc64") # for only garden 
 pal_ric  <- c("#440154FF", "#FDE725FF","#5ccc64") # for when n source is missing  
 pal_arc  <- c("#2A788EFF", "#440154FF", "#5ccc64") # for when southern source is missing  
-
+pal_arc_2  <- c("#FDE725FF", "#440154FF","#5ccc64" )
 theme_shrub <- function(){ theme(legend.position = "right",
                                  axis.title.x = element_text(size=18),
                                  axis.text.x  = element_text(angle = 35, vjust=0.5, size=14, colour = "black"), 
@@ -1455,7 +1494,8 @@ all_phenocam_rich_all <- rbind(all_phenocam_rich_1, all_phenocam_rich_2)
               linewidth = 1, alpha = 1)+
     ylab("\nDOY") +
     xlab("Population\n" ) +
-    coord_cartesian(ylim=c(120, 250))+
+    coord_cartesian(ylim=c(130, 250))+
+    scale_y_continuous(breaks = c(130, 150, 170, 190, 210, 230, 250)) + 
     scale_color_manual(values=pal)+
     coord_flip() + 
     theme_shrub() +
@@ -1493,9 +1533,10 @@ all_phenocam_pul_all <- rbind(all_phenocam_pul_1, all_phenocam_pul_2)
               linewidth = 1, alpha = 1)+
     ylab("\nDOY") +
     xlab("Population\n" ) +
-    coord_cartesian(ylim=c(120, 250))+
+    coord_cartesian(xlim=c(100, 250))+
     scale_color_manual(values=pal)+
     coord_flip() + 
+    scale_y_continuous(breaks = c(130, 150, 170, 190, 210, 230, 250)) + 
     theme_shrub() +
     theme(axis.text.y  = element_text(angle = 30))+ # if i log everything it's exactly the same plot as with conditional effects! 
     ggtitle(expression(italic("Salix pulchra"))) +
@@ -1530,9 +1571,10 @@ all_phenocam_arc_all <- rbind(all_phenocam_arc_1, all_phenocam_arc_2)
               linewidth = 1, alpha = 1)+
     ylab("\nDOY") +
    xlab("Population\n" ) +
-    coord_cartesian(ylim=c(120, 250))+
-    scale_color_manual(values=pal)+
+    coord_cartesian(xlim=c(120, 250))+
+    scale_color_manual(values=pal_arc)+
     coord_flip() + 
+    scale_y_continuous(breaks = c(130, 150, 170, 190, 210, 230, 250)) + 
     theme_shrub() +
     ggtitle(expression(italic("Salix arctica"))) +
     theme(axis.text.y  = element_text(angle = 30))+ # if i log everything it's exactly the same plot as with conditional effects! 
