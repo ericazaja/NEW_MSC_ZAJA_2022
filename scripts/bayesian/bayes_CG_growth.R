@@ -1011,6 +1011,56 @@ save_kable(kable_diam,file = "output/kable_diam.pdf",
            keep_tex =TRUE,
            density = 300)
 
+
+# table of SOURCE POP heights model -----
+source_heights_out_back <- read.csv(file ="output/source_heights_out_back.csv")
+
+# adding spaces before/after each name so they let me repeat them in the table
+rownames(source_heights_out_back) <- c("Intercept", "Northern source", "Sample year", 
+                                       "Sigma", " Intercept", " Northern source", " Sample year", 
+                                       " Sigma", "Intercept ", "Northern source ", "Sample year ", 
+                                       "Sigma ")
+
+
+source_heights_out_back <- source_heights_out_back %>%
+  select(-X)
+
+# making sure Rhat keeps the .00 
+source_heights_out_back$Rhat <- as.character(formatC(source_heights_out_back$Rhat, digits = 2, format = 'f')) #new character variable with format specification
+
+# creating table
+kable_heights_source <- source_heights_out_back %>% 
+  kbl(caption="Table.xxx BRMS model outputs: canopy heights of northern vs southern shrubs in source populations. 
+      Model structure per species: log(Canopy_Height_cm) ~ Site + (1|SampleYear). 
+      Including model output back-transformed in the table below.", 
+      col.names = c("Species","Estimate (log)",
+                     "Lower 95% CI (log)",
+                     "Upper 95% CI (log)",
+                     "Estimate (log sum)",  "Lower 95% CI 
+                    (log sum)", "Upper 95% CI
+                    (log sum)",  
+                     "Estimate (transformed)","Lower 95% CI 
+                    (transformed)", "Upper 95% CI
+                    (transformed)",
+                     "Rhat", 
+                     "Bulk Effective Sample Size",
+                     "Tail Effective Sample Size", 
+                     "Sample Size",
+                     "Effect"), digits=2, align = "l") %>% 
+  kable_classic(full_width=FALSE, html_font="Cambria")
+
+# making species column in cursive
+column_spec(kable_heights_source, 2, width = NULL, bold = FALSE, italic = TRUE)
+row_spec(kable_heights_source, 1:12, align = "c") 
+
+save_kable(kable_heights_source,file = "outputs/tables/kable_heights_source.pdf",
+           bs_theme = "simplex",
+           self_contained = TRUE,
+           extra_dependencies = NULL,
+           latex_header_includes = NULL,
+           keep_tex =TRUE,
+           density = 300)
+
 # DATA VISUALISATION -----
 theme_shrub <- function(){ theme(legend.position = "right",
                                  axis.title.x = element_text(size=18),
