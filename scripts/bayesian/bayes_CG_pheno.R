@@ -385,27 +385,28 @@ rownames(emerg_pheno_out) <- c("Intercept", "Northern Source", "Southern Garden"
                                " Sigma", 
                                "Intercept ", "Northern Source ", "Southern Garden ", "Year ", 
                                "Sigma ")
+  
+  
 
+
+# save df of results 
+write.csv(emerg_pheno_out, "output/emerg_pheno_out_back.csv")
+emerg_pheno_out <- read.csv("output/emerg_pheno_out_back.csv")
 
 emerg_pheno_out <- emerg_pheno_out %>%
-  relocate("Species", .before = "Estimate") %>%
-  relocate("Estimate_trans", .before = "Rhat")%>%
-  relocate("CI_low_trans", .before = "Rhat")%>%
-  relocate("CI_high_trans", .before = "Rhat")
-  
-  
+  relocate("Species", .before = "Estimate..scale.og.") %>%
+  relocate("Estimate_scale_sum", .before = "Rhat")%>%
+  relocate("l_95_CI_scale_sum", .before = "Rhat")%>%
+  relocate("u_95_CI_scale_sum", .before = "Rhat")%>%
+  relocate("effect", .before = "nobs")
 
 # making sure Rhat keeps the .00 
 emerg_pheno_out$Rhat <- as.character(formatC(emerg_pheno_out$Rhat, digits = 2, format = 'f')) #new character variable with format specification
 
-# save df of results 
-write.csv(emerg_pheno_out, "output/phenology/emerg_pheno_out_back.csv")
-
-
 kable_emerg_pheno <- emerg_pheno_out %>% 
   kbl(caption="Table.xxx BRMS model outputs: Leaf emergence day of year for northern garden, northern source, sourthern garden and southern source populations. 
       Scaled to center on zero and transformed output in the table below.", 
-      col.names = c( "Species",
+      col.names = c( "", "Species",
                      "Estimate (centred)",
                      "Lower 95% CI (centred)",
                      "Upper 95% CI (centred)",
@@ -420,7 +421,7 @@ kable_emerg_pheno <- emerg_pheno_out %>%
   kable_classic(full_width=FALSE, html_font="Cambria")
 
 # making species column in italics
-row_spec(kable_emerg_pheno, 1:12, align = "c") 
+row_spec(kable_emerg_pheno, 1:17, align = "c") 
 column_spec(kable_emerg_pheno, 2, width = NULL, bold = FALSE, italic = TRUE)
 
 # optional: making specific column text in italics
@@ -675,9 +676,46 @@ rownames(yellow_pheno_out) <- c("Intercept", "Northern Source", "Southern Garden
                                 "Sigma ")
 
 # save df of results 
-write.csv(yellow_pheno_out, "output/phenology/yellow_pheno_out_back.csv")
+write.csv(yellow_pheno_out, "output/yellow_pheno_out_back.csv")
+yellow_pheno_out <- read.csv("output/yellow_pheno_out_back.csv")
 # making sure Rhat keeps the .00 
 yellow_pheno_out$Rhat <- as.character(formatC(yellow_pheno_out$Rhat, digits = 2, format = 'f')) #new character variable with format specification
+
+yellow_pheno_out <- yellow_pheno_out %>%
+  relocate("Species", .before = "Estimate..scale.og.") %>%
+  relocate("Estimate_scale_sum", .before = "Rhat")%>%
+  relocate("l_95_CI_scale_sum", .before = "Rhat")%>%
+  relocate("u_95_CI_scale_sum", .before = "Rhat")%>%
+  relocate("effect", .before = "nobs")
+
+kable_yellow_pheno <- yellow_pheno_out %>% 
+  kbl(caption="Table.xxx BRMS model outputs: Leaf yellowing day of year for northern garden, northern source, sourthern garden and southern source populations. 
+      Scaled to center on zero and transformed output in the table below.", 
+      col.names = c( "", "Species",
+                     "Estimate (centred)",
+                     "Lower 95% CI (centred)",
+                     "Upper 95% CI (centred)",
+                     "Estimate (transformed)",  
+                     "Lower 95% CI (transformed)", 
+                     "Upper 95% CI (transformed)",
+                     "Rhat", 
+                     "Bulk Effective Sample Size",
+                     "Tail Effective Sample Size","Effect",
+                     "Sample Size"), digits=2, align = "l") %>% 
+  kable_classic(full_width=FALSE, html_font="Cambria")
+
+# making species column in italics
+row_spec(kable_yellow_pheno, 1:17, align = "c") 
+column_spec(kable_yellow_pheno, 2, width = NULL, bold = FALSE, italic = TRUE)
+
+# optional: making specific column text in italics
+save_kable(kable_yellow_pheno,file = "outputs/tables/kable_yellow_pheno.pdf", # or .png, or .jpeg, save in your working directory
+           bs_theme = "simplex",
+           self_contained = TRUE,
+           extra_dependencies = NULL,
+           latex_header_includes = NULL,
+           keep_tex = FALSE,
+           density = 300)
 
 
 # 2.2.  LEAF YELLOWING (only CG) -----
@@ -765,6 +803,7 @@ save_kable(kable_yellow_garden, file = "output/phenology/yellow_garden_results.p
            density = 300)
 
 
+
 # 3. GROWING SEASON LENGTH -----
 # Salix richardsonii ------
 growing_season_rich <- brms::brm(growing_season_length ~ population + (1|Year), 
@@ -789,6 +828,7 @@ summary(growing_season_rich_scale)
 plot(growing_season_rich_scale)
 pp_check(growing_season_rich_scale, type = "dens_overlay", ndraws = 100) # looks decent
 saveRDS(growing_season_rich_scale, file = "outputs/models/growing_season_rich_scale.rds")
+growing_season_rich_scale <- readRDS(file = "outputs/models/growing_season_rich_scale.rds")
 
 growing_season_rich_scale_results <- model_summ_pheno(growing_season_rich_scale)
 growing_season_rich_scale_results <- growing_season_rich_scale_results %>% 
@@ -837,6 +877,7 @@ summary(growing_season_pul_scaled) #
 plot(growing_season_pul_scaled)
 pp_check(growing_season_pul_scaled, type = "dens_overlay", ndraws = 100) # looks decent
 saveRDS(growing_season_pul_scaled, file = "outputs/models/growing_season_pul_scaled.rds")
+growing_season_pul_scaled <- readRDS(file = "outputs/models/growing_season_pul_scaled.rds")
 
 growing_season_pul_scaled_results <- model_summ_pheno(growing_season_pul_scaled)
 growing_season_pul_scaled_results <- growing_season_pul_scaled_results %>% 
@@ -887,6 +928,7 @@ summary(growing_season_arc_scaled) #
 plot(growing_season_arc_scaled)
 pp_check(growing_season_arc_scaled, type = "dens_overlay", ndraws = 100) # looks decent
 saveRDS(growing_season_arc_scaled, file = "outputs/models/growing_season_arc_scaled.rds")
+growing_season_arc_scaled <- readRDS(file = "outputs/models/growing_season_arc_scaled.rds")
 
 growing_season_arc_scaled_results <- model_summ_pheno(growing_season_arc_scaled)
 growing_season_arc_scaled_results <- growing_season_arc_scaled_results %>% 
@@ -912,10 +954,10 @@ growing_season_arc_scaled_results_out <- growing_season_arc_scaled_results %>%
   dplyr::select(-Est.Error)
 
 # compile non-scaled results, should change to scaled though I think (Madi)
-season_results <- rbind(growing_season_pul_scaled_results_out, growing_season_pul_scaled_results_out, growing_season_arc_scaled_results_out)
+season_results <- rbind(growing_season_rich_scale_results_out, growing_season_pul_scaled_results_out, growing_season_arc_scaled_results_out)
 
 # adding spaces before/after each name so they let me repeat them in the table
-rownames(season_results) <- c("Intercept", "Northern Source", "Southern Garden",  "Southern Source", 
+rownames(season_results) <- c("Intercept", "Southern Garden",  "Southern Source", 
                               "Year", "Sigma", 
                               " Intercept", " Northern Source", " Southern Garden", " Southern Source", " Year", 
                               " Sigma", 
@@ -926,28 +968,35 @@ rownames(season_results) <- c("Intercept", "Northern Source", "Southern Garden",
 season_results$Rhat <- as.character(formatC(season_results$Rhat, digits = 2, format = 'f')) #new character variable with format specification
 
 # save df of results 
-write.csv(season_results, "output/phenology/season_outputs.csv")
-season_results <- read.csv("output/phenology/season_outputs.csv", row.names=1)
+write.csv(season_results, file = "output/season_outputs.csv")
+season_results <- read.csv("output/season_outputs.csv", row.names=1)
+
+season_results <- season_results %>%
+  relocate("Species", .before = "Estimate") %>%
+  relocate("Estimate_trans", .before = "Rhat")%>%
+  relocate("CI_low_trans", .before = "Rhat")%>%
+  relocate("CI_high_trans", .before = "Rhat")%>%
+  relocate("effect", .before = "nobs")
+
 
 kable_season_garden <- season_results %>% 
   kbl(caption="Table.xxx BRMS model outputs: Growing season length northern vs southern willows in common garden and source populations. 
-      Model structure per species: Growing season length ~ population. Data scaled to center on 0.", 
-      col.names = c( "Estimate",
-                     "Lower 95% CI (scaled)",
-                     "Upper 95% CI (scaled)", 
+      Model structure per species: Growing season length ~ population + (1|year). Data scaled to center on 0.", 
+      col.names = c( "Species",
+                     "Estimate (centred)",
+                     "Lower 95% CI (centred)",
+                     "Upper 95% CI (centred)",
+                     "Estimate (transformed)",  
+                     "Lower 95% CI (transformed)", 
+                     "Upper 95% CI (transformed)",
                      "Rhat", 
                      "Bulk Effective Sample Size",
-                     "Tail Effective Sample Size", 
-                     "Effect",
-                     "Sample Size",
-                     "Species", 
-                     "Lower 95% CI (unscaled)",
-                     "Upper 95% CI (unscaled)",
-                     "Estimate (unscaled)"), digits=2, align = "c") %>% 
+                     "Tail Effective Sample Size","Effect",
+                     "Sample Size"), digits=2, align = "c") %>% 
   kable_classic(full_width=FALSE, html_font="Cambria")
 column_spec(kable_season_garden, 2, width = NULL, bold = FALSE, italic = TRUE)
 
-save_kable(kable_season_garden, file = "output/phenology/season__length_results.pdf",
+save_kable(kable_season_garden, file = "outputs/tables/kable_growing_season_length.pdf",
            bs_theme = "simplex",
            self_contained = TRUE,
            extra_dependencies = NULL,
