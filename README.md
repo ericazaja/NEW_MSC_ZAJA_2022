@@ -46,7 +46,8 @@
     - [ITEX_cleaning_dec2022.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/wrangle/ITEX_cleaning_dec2022.R): cleaning script by Mariana updated in december 2022.
     - [Erica_ITEX_cleaning.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/wrangle/Erica_ITEX_cleaning.R): itex data cleaning of the relevant data for my MSc
     
-- #### [TOMST](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/scripts/TOMST): these are scripts to download and wrangle TOMST logger data from QHI, Kluane Plateau and Common Garden (CG) used to make informative tables.
+- #### [TOMST](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/scripts/TOMST) 
+   - scripts to download and wrangle TOMST logger data from QHI, Kluane Plateau and Common Garden (CG) used to make informative tables.
     
 - #### [extra_scripts](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/scripts/extra_scripts): these are exploratory/data wrangling/extra analyses scripts not directly used in final thesis. Including: 
    - [bayes_CG_elong_temp.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/extra_scripts/bayesian/bayes_CG_elong_temp.R): script to model annual stem elongation as a function of annual temperature. INFORMATIVE analysis, not used in the allom. equations NOR IN FINAL THESIS. Just to see if we see more growth in warmer years.
@@ -54,6 +55,14 @@
     - [bayesian_stem_elong_vs_temp.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/extra_scripts/bayesian/bayes_stem_elong_vs_temp.R): Stem elongation - temperature relationships. Mean stem elong vs mean july temperature at CG, QHI, KP, ANWR, TOOLIK.
     - [carbon.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/extra_scripts/carbon.R): script I will use to convert shrubs growth estimates to carbon content.
  
+### Outputs
+- [outputs](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/outputs)
+   - [models](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/outputs/models): saved model outputs (as rds files) to easily import 
+   - [figures](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/outputs/figures): all saved figures in different formats (pdf, png etc)
+   - [tables](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/outputs/tables):saved model output tables (using kable)
+   - [final_maps](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/outputs/final_maps): final scenarios maps (shrub biomass + threshold maps)
+   - [CMPI6_rasters](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/outputs/CMPI6_rasters): climate rasters of multiple years
+   - [CMPI6_pdf](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/outputs/CMPI6_pdf): climate rasters of 2100 in pdf format
 
 *******
 
