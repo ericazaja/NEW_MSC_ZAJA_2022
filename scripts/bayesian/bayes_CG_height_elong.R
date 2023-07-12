@@ -1,6 +1,6 @@
 # BAYESIAN: CG height and stem elongation over time 
 #### Script by Erica Zaja, created 27/02/23
-### Last updated: 27/02/23
+### Last updated: 12/07/23
 
 # Libraries ------
 library(tidybayes)
@@ -11,9 +11,11 @@ library(gridExtra)
 library(kableExtra)
 library(knitr)
 library(ggpubr)
+library(ggeffects)
 
 
-# funciton to extract model summary
+
+# function to extract model summary
 model_summ <- function(x) {
   sum = summary(x)
   fixed = sum$fixed
@@ -81,10 +83,10 @@ height_rich <- brms::brm(log(Canopy_Height_cm) ~ Sample_age*population+(Sample_a
 saveRDS(height_rich, file = "outputs/models/height_rich.rds")
 height_rich <- readRDS("outputs/models/height_rich.rds")
 
-library(ggeffects)
+# extract model output with ggpredict
 ggpred_height_ric <- ggpredict(height_rich, terms = c("Sample_age", "population"))
 colnames(ggpred_height_ric) = c('Sample_age','fit', 'lwr', 'upr',"population")
-
+# plot
 (ggpred_height_rich_plot <-ggplot(ggpred_height_ric) +
     geom_point(data = all_CG_growth_ric, aes(x = Sample_age, y = Canopy_Height_cm, colour = population),
                alpha = 0.5)+ # raw data
@@ -139,7 +141,7 @@ height_rich_summ <- height_rich_summ %>%
 14.29629/4.903749
 # 2.91538
 
-
+# changing rownames for table
 rownames(height_rich_summ) <- c("Intercept", "Sample age", "Southern population"
                            , "Sample age:Southern population", "Random intercept", 
                            "sd(Sample age)", "cor(Intercept, Sample age)", "sigma")
@@ -150,10 +152,10 @@ height_rich_summ <- height_rich_summ %>%
   #mutate(Species = "Salix richardsonii")%>%
   relocate("Species", .before = "Estimate")
 
-# only southern random slopes
 max(all_CG_growth_ric_south$Canopy_Height_cm, na.rm=TRUE) # 127
 mean(all_CG_growth_ric_south$Canopy_Height_cm, na.rm=TRUE) # 127
 
+# South S. rich. model ------
 # truncating to max richardsonii height from usda.gov (450cm, log(450)=6.109)
 height_rich_south <- brms::brm(log(Canopy_Height_cm)|trunc(lb = 0, ub = 6.109248) ~ Sample_age+(Sample_age|SampleID_standard),
                          data = all_CG_growth_ric_south,  family = gaussian(), chains = 3,
@@ -163,7 +165,6 @@ height_rich_south <- brms::brm(log(Canopy_Height_cm)|trunc(lb = 0, ub = 6.109248
 summary(height_rich_south) # significant height growth over time
 plot(height_rich_south)
 pp_check(height_rich_south, type = "dens_overlay", ndraws = 100) 
-
 
 ggpred_height_ric_south <- ggpred_height_ric %>%
  filter(population=="Southern")
@@ -204,7 +205,7 @@ colnames(ggpred_height_pul) = c('Sample_age','fit', 'lwr', 'upr',"population")
     theme_shrub()+ theme(text=element_text(family="Helvetica Light")) +
     theme( axis.text.x  = element_text(angle = 0))) # if i log everything it's exactly the same plot as with conditional effects! 
 
-# only south--
+# only southern pulchra
 ggpred_height_pul_south <- ggpred_height_pul %>%
   filter(population=="Southern")
 
@@ -262,7 +263,7 @@ height_pul_summ <- height_pul_summ %>%
 
 #height_pul_summ <- height_pul_summ[c(1:4),]
 
-# only southern
+# South S. pul. model ------
 # truncating to max height of pulchra 160 cm = log(160 )
 height_pul_south <- brms::brm(log(Canopy_Height_cm) |trunc(lb = 0, ub =5.075174) ~ Sample_age+(Sample_age|SampleID_standard),
                                data = all_CG_growth_pul_south,  family = gaussian(), chains = 3,
@@ -402,7 +403,7 @@ save_kable(all_height_summ_table,file = "outputs/tables/kable_rich_pul_arc.pdf",
            keep_tex = FALSE,
            density = 300)
 
-# only southern
+# South S. arc. model ------
 # truncarte to max height 23 cm, log(23)= 3.135494, -1 lower bound because some small values when logged give negative number eg log(0.5)
 height_arc_south <- brms::brm(log(Canopy_Height_cm)|trunc(lb = -1, ub =3.135494) ~ Sample_age+(Sample_age|SampleID_standard),
                               data = all_CG_growth_arc_south,  family = gaussian(), chains = 3,
@@ -543,7 +544,8 @@ legend("topleft", legend =c('Northern Garden', 'Southern Garden'), pch=16, pt.ce
        col = c('#D55E00'), text(family="Helvetica Light"))
 mtext("Site", at=0.2, cex=2, family = "Helvetica Light")
 
-# STEM ELONG over time ------
+# EXTRA below (not used in final thesis)-----
+# STEM ELONG analysis over time ------
 # Salix richardsonii -------
 elong_rich <- brms::brm(log(mean_stem_elong) ~ Sample_age*population +(1|Year),
                         data = all_CG_growth_ric,  family = gaussian(), chains = 3,
@@ -605,7 +607,7 @@ summary(elong_arc_south) # significant growth over time
 plot(elong_arc_south)
 pp_check(elong_arc_south, type = "dens_overlay", nsamples = 100) 
 
-# 2.STEM ELONGATION -----
+# visualisation -----
 # Salix richardsonii -------
 (rich_elong_plot_new <- all_CG_growth_ric_south %>%
   # group_by(population) %>%
