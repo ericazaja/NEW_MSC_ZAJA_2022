@@ -9,7 +9,7 @@ library(tidybayes)
 library(gridExtra)
 library(kableExtra)
 
-# funciton to extract model summary
+# function to extract model summary
 model_summ_heights <- function(x) {
   sum = summary(x)
   fixed = sum$fixed
@@ -349,7 +349,7 @@ colnames(ggpred_MEAN_qhi) = c('Year_index', 'fit', 'lwr', 'upr', 'dunno')
     theme( axis.text.x  = element_text(angle = 0))) # if i log everything it's exactly the same plot as with conditional effects! 
 
 
-# STOP ----
+# STOP (ignore code below) ----
 
 # Something is wrong here - check with Mariana
 test <- QHI_1999_2022 %>% 

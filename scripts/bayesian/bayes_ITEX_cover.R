@@ -1,6 +1,6 @@
-# BAYESIAN models for itex cover analysis
+# BAYESIAN models for ITEX cover analysis
 # script by Erica
-# last update: 21/02/2023
+# last update: 12/07/2023
 
 # libraries ------
 library(tidyverse)
