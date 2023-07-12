@@ -27,19 +27,28 @@
    - [bayes_CG_height_elong.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/bayesian/bayes_CG_height_elong.R): script to model height over time of commmon garden shrubs. 
     - [bayes_CG_pheno.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/bayesian/bayes_CG_pheno.R): script to model phenology of commmon garden shrubs. 
     - [bayes_heights_over_time_IMS.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/bayesian/bayes_heights_over_time_IMS.R): modelling QHI shrub max and mean heights over time (long term monitoring plots)
-    - [bayes_ITEX_cover.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/ITEX_cover.R): explorative analysis of ITEX cover over time
+    - [bayes_ITEX_cover.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/bayesian/bayes_ITEX_cover.R): explorative analysis of ITEX cover over time
+    - [calc_script](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/bayesian/calc_script.R): script with all final calculations, encompassing statistics from bayesian modelling and mapping, to estimate biomass in the future.
   
 - #### [maps](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/scripts/maps)
- - [raster_starter.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/maps/raster_starter.R): script to read and modify Katie's maps
- 
+  - [raster_starter.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/maps/warming_project/raster_starter.R): script to read and modify Orndhal et al 2022 maps.
+  - [avg_natural_growth_warm.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/maps/warming_project/agv_natural_growth_warm.R): script to project shrub biomass to 2100 using mean natural shrub growth rate scenario.
+  - [max_natural_growth_warm.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/maps/warming_project/max_natural_growth_warm.R): script to project shrub biomass to 2100 using max natural shrub growth rate scenario.
+  - [novel_growth_warm.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/maps/warming_project/novel_growth_warm.R): script to project shrub biomass to 2100 using novel (common garden) shrub growth rate scenario.
+  - [base_map.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/maps/warming_project/base_map.R): script to make map of North America and overlay shrub biomass rasters.
+  - [base_2020_map.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/maps/warming_project/base_2020_map.R): script to read and extract information from Orndhal et al 2022 latest shrub biomass map (2020)
+  - [Climate_extract.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/maps/climate/Climate_extract.R): script to extract and stack temperature rasters from global climate models.
+  - [Climate_models.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/maps/climate/Climate_models.R): script relating climate in 2020 and biomass in 2020 in the study area, and analysing future temperature increases.
+  - [CMPI6_tut.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/maps/climate/CMPI6_tut.R): script to download and extract usable data from global climate models. Using instructions from tutorial by Michael Minn: [here](https://michaelminn.net/tutorials/r-climate/index.html)
 
-- ### [wrangle](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/scripts/wrangle)
+
+- #### [wrangle](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/scripts/wrangle)
     - [ITEX_cleaning_dec2022.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/wrangle/ITEX_cleaning_dec2022.R): cleaning script by Mariana updated in december 2022.
     - [Erica_ITEX_cleaning.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/wrangle/Erica_ITEX_cleaning.R): itex data cleaning of the relevant data for my MSc
     
     
     
-- [extra_scripts](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/scripts/extra_scripts): these are exploratory/data wrangling/extra analyses scripts not directly used in final thesis. Including: 
+- #### [extra_scripts](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/scripts/extra_scripts): these are exploratory/data wrangling/extra analyses scripts not directly used in final thesis. Including: 
    - [bayes_CG_elong_temp.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/extra_scripts/bayesian/bayes_CG_elong_temp.R): script to model annual stem elongation as a function of annual temperature. INFORMATIVE analysis, not used in the allom. equations NOR IN FINAL THESIS. Just to see if we see more growth in warmer years.
      - [bayes_cover_vs_temp.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/extra_scripts/bayesian/bayes_Cover_vs_temp.R): Exploratory script showing mean cover change - temperature relationships. Cover vs mean july temperature at CG, QHI, KP, ANWR, TOOLIK. 
     - [bayesian_stem_elong_vs_temp.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/extra_scripts/bayesian/bayes_stem_elong_vs_temp.R): Stem elongation - temperature relationships. Mean stem elong vs mean july temperature at CG, QHI, KP, ANWR, TOOLIK.
