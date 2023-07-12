@@ -1,11 +1,13 @@
 # BAYESIAN allometry -----
+# script by Erica Zaja
+# last modified 12/07/23
 
 # 1. LOADING LIBRARIES -----
 library(tidyverse)
 library(brms)
 library(gridExtra)
 
-
+# function to extract model summary
 model_summ_allom <- function(x) {
   sum = summary(x)
   fixed = sum$fixed
@@ -32,7 +34,9 @@ QHI_salric_shrub_biomass <- read_csv("data/allometry/Andy_paper/QHI_salric_shrub
 # Isla Myers Smith Phd data from Pika Camp: S. pulchra + S rich.
 Pika_all_shrub_biomass <- read_csv("data/allometry/Isla_phd/Pika_all_shrub_biomass.csv")
 
-# 3. MODELS -------
+# 3. MODELLING -------
+
+# Data exploration 
 hist(Pika_all_shrub_biomass$biomass_per_m2, breaks = 7) # weird, not much data
 hist(QHI_salric_shrub_biomass$biomass_per_m2, breaks = 20) # not super normal
 hist(QHI_salarc_shrub_biomass$biomass_per_m2, breaks = 10) # weird,not much data
@@ -52,7 +56,9 @@ Pika_all_shrub_biomass_edit <- Pika_all_shrub_biomass %>%
                   biomass_per_m2)
 
 Pika_all_shrub_biomass_edit_2 <- Pika_all_shrub_biomass_edit[-1,] # plot 2a
+# done, ready to model
 
+# One model per species
 # 3.1. Salix richardsonii ------
 
 rich_allom <- brms::brm(biomass_per_m2 ~ 0 + max_height + percent_cover,
@@ -61,10 +67,12 @@ rich_allom <- brms::brm(biomass_per_m2 ~ 0 + max_height + percent_cover,
                                  control = list(max_treedepth = 15, adapt_delta = 0.99))
 # Adding the 0 term tells the model to fit the line through the origin
 
-summary(rich_allom) # not significant 
+summary(rich_allom) 
 plot(rich_allom) # great
 pp_check(rich_allom, type = "dens_overlay", nsamples = 100) # fine
 # biomass increases with height
+
+# saving model output
 saveRDS(rich_allom, file ="outputs/models/rich_allom.rds")
 rich_allom_summ <- model_summ_allom(rich_allom)
 rich_allom_summ <- rich_allom_summ %>%
@@ -149,7 +157,7 @@ mean(covers_errors_arc)
 round(20.71333, digits = 1) # 20.7
 # FINAL EQUATION:  # Equation: Biomass =  ( 2.2 *height +-  24.0) + (14.2 *cover +-  20.7)
 
-# table ----
+# model outputs table ----
 all_allom_table <-rbind(rich_allom_summ, pul_allom_summ, arc_allom_summ)
 
 all_allom_table <-all_allom_table%>%
@@ -180,8 +188,35 @@ save_kable(all_allom_table_table,file = "outputs/tables/all_allom_table_table.pd
            keep_tex = FALSE,
            density = 300)
 
+# Height vs cover models (informative)----
+# 3.4. Sal. rich. -----
+rich_height_cov <- brms::brm(max_height |trunc(lb = 0, ub = 450) ~ percent_cover,
+                             data = QHI_salric_shrub_biomass, family = gaussian(), chains = 3,
+                             iter = 5000, warmup = 1000, 
+                             control = list(max_treedepth = 15, adapt_delta = 0.99))
+summary(rich_height_cov)
+pp_check(rich_height_cov, type = "dens_overlay", nsamples = 100) # meh
+
+
+# 3.5. Sal.pul ----
+pul_height_cov <- brms::brm(Shrub_Height_cm|trunc(lb = 0, ub = 160) ~ max_cover,
+                            data = Pika_all_shrub_biomass_edit_2, family = gaussian(), chains = 3,
+                            iter = 5000, warmup = 1000, 
+                            control = list(max_treedepth = 15, adapt_delta = 0.99))
+summary(pul_height_cov)
+pp_check(pul_height_cov, type = "dens_overlay", nsamples = 100) # meh
+
+# 3.6. Sal. arc -----
+arc_height_cov <- brms::brm(max_height|trunc(lb = 0, ub = 23) ~ percent_cover ,
+                            data = QHI_salarc_shrub_biomass, family = gaussian(), chains = 3,
+                            iter = 5000, warmup = 1000, 
+                            control = list(max_treedepth = 15, adapt_delta = 0.99))
+
+summary(arc_height_cov)
+pp_check(arc_height_cov, type = "dens_overlay", nsamples = 100) # meh
 
 # 4.DATA VISUALISATION------
+# personalised theme
 theme_shrub <- function(){ theme(legend.position = "right",
                                  axis.title.x = element_text(size=16),
                                  axis.text.x  = element_text(vjust=0.5, size=14, colour = "black"), 
@@ -193,7 +228,7 @@ theme_shrub <- function(){ theme(legend.position = "right",
                                  plot.title = element_text(color = "black", size = 14, face = "bold", hjust = 0.5),
                                  plot.margin = unit(c(1,1,1,1), units = , "cm"))}
 
-
+# HEIGHT vs BIOMASS and COVER vs BIOMASS ------
 # 4.1. Salix richardsonii -------
 rich <- (conditional_effects(rich_allom))
 rich_data <- rich[[1]]
@@ -264,7 +299,7 @@ pul_data_2 <- pul[[2]]
     scale_fill_brewer(palette = "Greys")+
     theme_shrub())
 
-# 4.2. Salix arctica -------
+# 4.3. Salix arctica -------
 arc <- (conditional_effects(arc_allom))
 arc_data <- arc[[1]]
 arc_data_2 <- arc[[2]]
@@ -319,33 +354,8 @@ arctic_allom <- grid.arrange(arc_height_allom, arc_cov_allom, arc_height_cov_plo
 all_allom <- grid.arrange(rich_allom,pulchra_allom,arctic_allom, ncol=3)
 
 # HEIGHT vs COVER ------
-# Sal. rich. -----
-rich_height_cov <- brms::brm(max_height |trunc(lb = 0, ub = 450) ~ percent_cover,
-                        data = QHI_salric_shrub_biomass, family = gaussian(), chains = 3,
-                        iter = 5000, warmup = 1000, 
-                        control = list(max_treedepth = 15, adapt_delta = 0.99))
-summary(rich_height_cov)
-pp_check(rich_height_cov, type = "dens_overlay", nsamples = 100) # meh
 
-
-# Sal.pul ----
-pul_height_cov <- brms::brm(Shrub_Height_cm|trunc(lb = 0, ub = 160) ~ max_cover,
-                       data = Pika_all_shrub_biomass_edit_2, family = gaussian(), chains = 3,
-                       iter = 5000, warmup = 1000, 
-                       control = list(max_treedepth = 15, adapt_delta = 0.99))
-summary(pul_height_cov)
-pp_check(pul_height_cov, type = "dens_overlay", nsamples = 100) # meh
-
-# Sal. arc -----
-arc_height_cov <- brms::brm(max_height|trunc(lb = 0, ub = 23) ~ percent_cover ,
-                       data = QHI_salarc_shrub_biomass, family = gaussian(), chains = 3,
-                       iter = 5000, warmup = 1000, 
-                       control = list(max_treedepth = 15, adapt_delta = 0.99))
-
-summary(arc_height_cov)
-pp_check(arc_height_cov, type = "dens_overlay", nsamples = 100) # meh
-
-# Data vis
+# 4.4. S.rich.------
 rich_height_cov1 <- (conditional_effects(rich_height_cov))
 rich_height_cov2 <- rich_height_cov1[[1]]
 
@@ -361,6 +371,7 @@ rich_height_cov2 <- rich_height_cov1[[1]]
     labs(x = expression("Cover %/"~m^2)) + 
     theme_shrub())
 
+# 4.5. S. pul.-----
 pul_height_cov1 <- (conditional_effects(pul_height_cov))
 pul_height_cov2 <- pul_height_cov1[[1]]
 
@@ -377,6 +388,7 @@ pul_height_cov2 <- pul_height_cov1[[1]]
     #ylim(0, 4000 ) +
     theme_shrub())
 
+# 4.6. S.arc. -----
 arc_height_cov1 <- (conditional_effects(arc_height_cov))
 arc_height_cov2 <- arc_height_cov1[[1]]
 
@@ -393,6 +405,7 @@ arc_height_cov2 <- arc_height_cov1[[1]]
     #ylim(0, 4000 ) +
     theme_shrub())
 
+# panel -----
 heightcov_all <- grid.arrange(rich_height_cov_plot,
                               pul_height_cov_plot,
                               arc_height_cov_plot, nrow = 1)
