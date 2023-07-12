@@ -329,7 +329,7 @@ CG_biom_panel <- grid.arrange(rich_biom_plot,
                              arc_biom_plot, nrow = 1)
 
 
-# EXTRAS below (ignore)------
+# EXTRAS random slope models below (ignore)------
 
 # RANDOM SLOPE MODELS (not using in thesis) 
 CG_ALL_cover_biomass$Species <- as.factor(CG_ALL_cover_biomass$Species)

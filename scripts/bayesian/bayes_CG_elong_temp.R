@@ -1,11 +1,13 @@
 # CG stem elongation vs annual temperature
 #### Script by Erica Zaja, created 22/02/23
-### Last updated: 22/02/23
+### Last updated: 12/07/23
+# NOT USED in FINAL THESIS
 
 # Workflow:
 # model annual stem elongation as a function of annual temperature
 # INFORMATIVE analysis, not used in the allom. equations. 
 # Just to see if we see more growth in warmer years
+
 
 # 1. Libraries -------
 library(tidyverse)
