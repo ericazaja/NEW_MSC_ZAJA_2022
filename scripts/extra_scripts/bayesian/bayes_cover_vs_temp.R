@@ -2,7 +2,7 @@
 #### Script by Erica Zaja, created 23/02/2023
 ### Last updated: 01/02/23
 
-# 1. LIBRARIES -----
+# 1. LIBRARIES ----- 
 library(tidyverse)
 library(brms)
 

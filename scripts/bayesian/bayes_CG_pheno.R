@@ -1,6 +1,5 @@
 # BAYESIAN phenology script ----
-# BY Erica and Madi 
-# Last update: 20/03/2023
+# Last update: 12/07/2023
 
 # Libraries----
 library(plyr)
@@ -296,6 +295,7 @@ garden_rich_emerg_results_out <- garden_rich_emerg_results %>%
   dplyr::mutate(CI_high_trans = ((u_95_CI_log) + m_rich_emerg)) %>% 
   dplyr::mutate(Estimate_trans = (Estimate + m_rich_emerg)) %>% 
   dplyr::select(-Est.Error)
+
 # Salix pulchra -----
 all_phenocam_pulchra$First_bud_burst_DOY_center <- center_scale(all_phenocam_pulchra$First_bud_burst_DOY) 
 
@@ -336,6 +336,7 @@ garden_pul_emerg_results_out <- garden_pul_emerg_results %>%
   dplyr::mutate(CI_high_trans = ((u_95_CI_log) + m_pul_emerg)) %>% 
   dplyr::mutate(Estimate_trans = (Estimate + m_pul_emerg)) %>% 
   dplyr::select(-Est.Error)
+
 # Salix arctica -----
 all_phenocam_arctica$First_bud_burst_DOY_center <- center_scale(all_phenocam_arctica$First_bud_burst_DOY) 
 

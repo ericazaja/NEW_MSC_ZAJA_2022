@@ -1,4 +1,4 @@
-# All the caculations go in this script!
+# All the calculations go in this script!
 
 # TEMPERATURES ------
 # Temp at year 22 for QHI=8.761188
