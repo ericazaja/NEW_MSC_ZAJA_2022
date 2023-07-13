@@ -2,18 +2,17 @@
 ### GeoSciences Individual Project (2022-2023)
 #### Supervised by Prof Isla Myers-Smith and Dr Mariana García Criado (Team Shrub)
 #### Last update: 12/07/2023
-*******
-
 #### Research title: Projecting Arctic wildlife habitat change with warming using natural and experimental shrub growth scenarios
 
- 
-#### Repository structure
+*******
+
+### Repository structure:
 
 ### Data   
 - #### [data](https://github.com/ericazaja/MSc_ZAJA_2022/tree/main/data)
     - [allometry](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/data/allometry) including: (a) Isla's PhD data from Pika Camp (biomass harvests and heights); (b) Andy's paper data including biomass harvests and heights from QHI (c) [long-term point framing plots from Hershel Vegetation type in QHI](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/data/allometry/qhi-1999-2022-clean-nov22.csv)
      - [climate_data](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/data/climate_data): all extracted climate data from CHELSA.
-      - [CMPI6](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/data/CMPI6): all files of CMPI6 global circulation models of estimated air temperature under SSP 8.5.
+     - [CMPI6](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/data/CMPI6): all files of CMPI6 global circulation models of estimated air temperature under SSP 8.5.
     - [common_garden_shrub_data](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/data/common_garden_shrub_data): including all necessary datasets for CG analyses. Also including start, middle and end of season (2022) and wrangled full dataset (2022) and weekly subsets (2022).
     - [source_pop_Kluane_shrub_data](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/data/source_pop_Kluane_shrub_data): 2022 subsets from Kluane Plateau
     - [source_pop_QHI_shrub_data](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/data/source_pop_QHI_shrub_data): 2022 subsets from QHI
@@ -22,7 +21,7 @@
     - [phenology](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/data/phenology): common garden phenology groundtruthing weekly 2022.
      - [ITEX](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/data/ITEX): all ITEX data used in natural populations growth analyses.
      - [maps_data](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/data/maps_data): extrcted data from Orndahl et al's map (2020) including 2020 tiff file.
-    - Other datasets required which cannot be uploaded (too large): Katie Orndahl's 2022 raster maps,
+    - Other datasets required which cannot be uploaded (too large): Katie Orndahl's 2022 raster maps and border shapefiles, CMPI6 GCMs (.nc files). Please contact Erica Zaja if required.
 
 ### Scripts   
 - #### [bayesian scripts](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/scripts/bayesian)
