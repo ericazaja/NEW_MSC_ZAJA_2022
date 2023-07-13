@@ -14,18 +14,18 @@ library(sf)
 
 # 2. LOADING DATA ----
 # Shapefile of border of katie's map  (different resolutions)
-boundary <- st_read("data/katie_map_border.shp") 
+boundary <- st_read("data/shapefiles/katie_map_border.shp") 
 boundary_test <- st_read("data/cells.shp") 
-boundary_high <- st_read("data/katie_map_border_high.shp")
+boundary_high <- st_read("data/shapefiles/katie_map_border_high.shp")
 boundary_highest <- st_read("data/shapefiles/katie_map_border_highest.shp")
 
 # raster biomass 2020  (different resolutions)
-p50_2020_resample <- rast("data/p50_2020_resample.tif") 
-p50_2020_resample_test <- rast("data/p50_2020_resample_test.tif") 
-p50_2020_resample_highest <- raster("data/p50_2020_resample_highest.tiff") 
+p50_2020_resample <- rast("data/maps_data/p50_2020_resample.tif") 
+p50_2020_resample_test <- rast("data/maps_data/p50_2020_resample_test.tif") 
+p50_2020_resample_highest <- raster("data/maps_data/p50_2020_resample_highest.tiff") 
 
 # extracted raster values 
-extract_end_highest <- read_csv("data/extract_end_highest.csv")
+extract_end_highest <- read_csv("data/maps_data/extract_end_highest.csv")
 
 # ORIGINAL rasters of shrub biomass (g/m2) in the PCH range in 2020 (relevant to me) 
 # Using the best-estimates: the 50th percentile of the 1,000 permutations

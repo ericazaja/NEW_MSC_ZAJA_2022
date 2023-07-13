@@ -30,7 +30,7 @@ model_summ <- function(x) {
 }
 
 # DATA -----
-all_CG_growth_cover <- read_csv("data/all_CG_growth_cover.csv")
+all_CG_growth_cover <- read_csv("data/common_garden_shrub_data/all_CG_growth_cover.csv")
 
 # 1. CG BIOMASS derivation from bayesian allom. equations ------
 # calculate biomass for each species based on BAYESIAN allometric equations

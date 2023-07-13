@@ -1,9 +1,9 @@
 # WARMING PROJECTIONS: Max natural growth with warming scenario
 
 # data -----
-shrub_map_extract_highest <- read.csv("data/extract_end_highest.csv") # high res map
-coord.chelsa.combo.c.delta.2100.solo <- read.csv("data/coord.chelsa.combo.c.delta.2100.solo")
-coord.chelsa.combo.c.delta.2020 <- read.csv("data/coord.chelsa.combo.c.biom.2020.csv")
+shrub_map_extract_highest <- read.csv("data/maps_data/extract_end_highest.csv") # high res map
+coord.chelsa.combo.c.delta.2100.solo <- read.csv("data/climate_data/coord.chelsa.combo.c.delta.2100.solo")
+coord.chelsa.combo.c.delta.2020 <- read.csv("data/climate_data/coord.chelsa.combo.c.biom.2020.csv")
 
 # MAX HEIGHT and COVER SLOPES:
 # # Height slope  for S pulchra for full time period = 0.70 +- 0.09 * 23 years = 16.1

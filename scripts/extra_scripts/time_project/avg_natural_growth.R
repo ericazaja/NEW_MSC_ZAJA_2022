@@ -6,7 +6,7 @@
 library(tidyverse)
 
 # Data 
-shrub_map_extract_highest <- read.csv("data/extract_end_highest.csv") # high res map
+shrub_map_extract_highest <- read.csv("data/maps_data/extract_end_highest.csv") # high res map
 
 # Data needed: 
 # 1. Height data: QHI monitoring 1999 -2022. Height over time → slope (cm per year). 

@@ -8,10 +8,10 @@ library(tidyverse)
 
 
 # data ------
-# coord.chelsa.combo.c.2020 <- read.csv("data/coord.chelsa.combo.c.2020")
-coord.chelsa.combo.c.all.biom <- read.csv("data/coord.chelsa.combo.c.all.biom.csv")
-coord.chelsa.combo.c.biom.2020 <- read.csv("data/coord.chelsa.combo.c.biom.2020.csv")
-# coord.chelsa.combo.c.all <- read_csv("data/coord.chelsa.combo.c.all.csv") # too heavy, model wont run
+# coord.chelsa.combo.c.2020 <- read.csv("data/climate_data/coord.chelsa.combo.c.2020")
+coord.chelsa.combo.c.all.biom <- read.csv("data/climate_data/coord.chelsa.combo.c.all.biom.csv")
+coord.chelsa.combo.c.biom.2020 <- read.csv("data/climate_data/coord.chelsa.combo.c.biom.2020.csv")
+# coord.chelsa.combo.c.all <- read_csv("data/climate_data/coord.chelsa.combo.c.all.csv") # too heavy, model wont run
 
 
 # temp over time (2020-2100)-------

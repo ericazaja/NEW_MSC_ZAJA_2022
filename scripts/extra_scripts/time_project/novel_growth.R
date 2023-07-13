@@ -5,7 +5,7 @@
 # we assume that the northern shrubs have weird phenology because of photoperiod 
 # adaptation so we won’t consider their growth rates.
 
-shrub_map_extract_highest <- read.csv("data/extract_end_highest.csv") # high res map
+shrub_map_extract_highest <- read.csv("data/maps_data/extract_end_highest.csv") # high res map
 
 # Height: height over time (script:bayes_CG_height_elong.R)
 # Cover: cover over time (script: )

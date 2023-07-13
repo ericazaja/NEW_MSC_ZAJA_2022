@@ -1,9 +1,9 @@
 # WARMING PROJECTIONS: Novel growth with warming scenario
 
 # data
-coord.chelsa.combo.c.delta.2100.solo <- read.csv("data/coord.chelsa.combo.c.delta.2100.solo")
-coord.chelsa.combo.c.delta.2030 <- read.csv("data/coord.chelsa.combo.c.delta.2030.csv")
-coord.chelsa.combo.c.delta.2050 <- read.csv("data/coord.chelsa.combo.c.delta.2050.csv")
+coord.chelsa.combo.c.delta.2100.solo <- read.csv("data/climate_data/coord.chelsa.combo.c.delta.2100.solo")
+coord.chelsa.combo.c.delta.2030 <- read.csv("data/climate_data/coord.chelsa.combo.c.delta.2030.csv")
+coord.chelsa.combo.c.delta.2050 <- read.csv("data/climate_data/coord.chelsa.combo.c.delta.2050.csv")
 coord.chelsa.combo.c.biom.2020 <- read.csv("data/coord.chelsa.combo.c.biom.2020.csv")
 # Get biomass over full time period. Divide biomass by 6 deg warming (difference between KP and CG temps). Get biomass per degree of warming
 # multiply this by the 5 degrees projected warming.

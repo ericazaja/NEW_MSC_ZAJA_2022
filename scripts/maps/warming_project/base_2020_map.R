@@ -1,7 +1,7 @@
 # BASE MAP: 2020 Katie raster
 
 # download extracted data
-shrub_map_extract_highest <- read.csv("data/extract_end_highest.csv") # high res map
+shrub_map_extract_highest <- read.csv("data/maps_data/extract_end_highest.csv") # high res map
 
 shrub_map_2020 <- shrub_map_extract_highest %>%
   rename("biomass_per_m2" = "pft_agb_deciduousshrub_p50_2020_wgs84") 

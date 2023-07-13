@@ -7,7 +7,7 @@ library(raster)
 library(tidyr)
 library(magrittr)
 
-# setting working directory 
+# setting working directory to a hard drive where data stored
 setwd("/Volumes/Kluane_22/CHELSA_CMIP5")
 
 # download data (from hard drive)

@@ -11,9 +11,9 @@
 # THEN Multiply the 2.0 g/m2 per degree x 5 degrees warming (future proj. Difference between temp in 2020-2100)  = 10cm
 
 # data -----
-shrub_map_extract_highest <- read.csv("data/extract_end_highest.csv") # high res map
-coord.chelsa.combo.c.delta.2100.solo <- read.csv("data/coord.chelsa.combo.c.delta.2100.solo")
-coord.chelsa.combo.c.biom.2020 <- read.csv("data/coord.chelsa.combo.c.biom.2020.csv")
+shrub_map_extract_highest <- read.csv("data/maps_data/extract_end_highest.csv") # high res map
+coord.chelsa.combo.c.delta.2100.solo <- read.csv("data/climate_data/coord.chelsa.combo.c.delta.2100.solo")
+coord.chelsa.combo.c.biom.2020 <- read.csv("data/climate_data/coord.chelsa.combo.c.biom.2020.csv")
 
 # HEIGHT and COVER SLOPES:
 # # Height slope  for S pulchra for full time period =  0.34 * 23 years = 7.82 +- 0.04

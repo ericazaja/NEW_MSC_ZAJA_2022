@@ -8,7 +8,7 @@ library(sjPlot)
 library(lme4)
 
 # 1. Loading data -----
-july_enviro_chelsa <- read_csv("data/july_enviro_chelsa.csv") # chelsa temperature and precipitation data 
+july_enviro_chelsa <- read_csv("data/climate_data/july_enviro_chelsa.csv") # chelsa temperature and precipitation data 
 ITEX_shrubs_msc <- read_csv("data/ITEX/itex_EZ_shrubs_2023.csv") # newest 
 all_CG_source_growth <- read_csv("data/common_garden_shrub_data/all_CG_source_growth.csv")
 

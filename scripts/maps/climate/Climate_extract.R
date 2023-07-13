@@ -5,9 +5,9 @@ library(raster)
 library(tidyverse)
 
 # Load data -----
-#shrub_map_extract <- read.csv("data/extract_end.csv") # low res map
-#shrub_map_extract_high <- read.csv("data/extract_end_high.csv") # high res map
-shrub_map_extract_highest <- read.csv("data/extract_end_highest.csv") # high res map
+#shrub_map_extract <- read.csv("data/maps_data/extract_end.csv") # low res map
+#shrub_map_extract_high <- read.csv("data/maps_data/extract_end_high.csv") # high res map
+shrub_map_extract_highest <- read.csv("data/maps_data/extract_end_highest.csv") # high res map
 
 # Loading climate rasters -------
 tasmax.2020.1.re <- raster("outputs/CMPI6_rasters/tasmax.2020.1.re.tif")

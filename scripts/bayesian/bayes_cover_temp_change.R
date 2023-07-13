@@ -2,6 +2,7 @@
 
 library(brms)
 library(tidybayes)
+
 # scale function =====
 # centering with 'scale()'
 center_scale <- function(x) {
@@ -9,7 +10,7 @@ center_scale <- function(x) {
 }
 
 # data  --------
-july_enviro_chelsa <- read_csv("data/july_enviro_chelsa.csv") # chelsa temperature and precipitation data 
+july_enviro_chelsa <- read_csv("data/climate_data/july_enviro_chelsa.csv") # chelsa temperature and precipitation data 
 ITEX_shrubs_msc <- read_csv("data/ITEX/itex_EZ_shrubs_2023.csv") # newest 
 all_CG_source_growth <- read_csv("data/common_garden_shrub_data/all_CG_source_growth.csv")
 
@@ -165,7 +166,6 @@ save_kable(temp_time_interact_table,file = "outputs/tables/temp_time_interact_ta
            density = 300)
 
 # IGNORE Slope vs slope models -----
-# SLOPE vs slopes 
 # S. Pulchra slope vs slope -----
 temp_time_pul <- temp_time_random_year %>%
   filter(Site %in% c("QHI", "TOOLIK"))
@@ -223,7 +223,7 @@ pp_check(temp_time_arc_mod, type = "dens_overlay", nsamples = 100)
     labs(title = "Salix arctica"))
 
 
-# IGNORE BELOW FOR NOW -----
+# IGNORE BELOW -----
 # 2. cover over time only CG 
 # calculate cover based on widths for all CG and source pop shurbs
 all_CG_source_growth$population <- as.factor(all_CG_source_growth$population)
