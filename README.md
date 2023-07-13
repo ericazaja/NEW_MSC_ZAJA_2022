@@ -11,13 +11,18 @@
 
 ### Data   
 - #### [data](https://github.com/ericazaja/MSc_ZAJA_2022/tree/main/data)
-    - [allometry](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/data/allometry) including: (a) Isla's PhD data from Pika Camp (biomass harvests and heights); (b) Andy's paper data including biomass harvests and heights from QHI; (c) [carbon content](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/data/allometry/carbon) (%); (d) Berner 2015 height and biomass harvest data; (e) [long-term point framing plots from Hershel Vegetation type in QHI](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/data/allometry/qhi-1999-2022-clean-nov22.csv)
-    - [common_garden_shrub_data](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/data/common_garden_shrub_data) including start, middle and end of season (2022) and wrangled full dataset (2022) and weekly subsets (2022).
-    - [katie_maps](not uploaded yet)
+    - [allometry](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/data/allometry) including: (a) Isla's PhD data from Pika Camp (biomass harvests and heights); (b) Andy's paper data including biomass harvests and heights from QHI (c) [long-term point framing plots from Hershel Vegetation type in QHI](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/data/allometry/qhi-1999-2022-clean-nov22.csv)
+     - [climate_data](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/data/climate_data): all extracted climate data from CHELSA.
+      - [CMPI6](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/data/CMPI6): all files of CMPI6 global circulation models of estimated air temperature under SSP 8.5.
+    - [common_garden_shrub_data](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/data/common_garden_shrub_data): including all necessary datasets for CG analyses. Also including start, middle and end of season (2022) and wrangled full dataset (2022) and weekly subsets (2022).
     - [source_pop_Kluane_shrub_data](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/data/source_pop_Kluane_shrub_data): 2022 subsets from Kluane Plateau
     - [source_pop_QHI_shrub_data](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/data/source_pop_QHI_shrub_data): 2022 subsets from QHI
     - [tomst](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/data/tomst): common garden, KP and QHI tomst 2022.
+     - [hobo](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/data/hobo): common garden HOBO records.
     - [phenology](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/data/phenology): common garden phenology groundtruthing weekly 2022.
+     - [ITEX](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/data/ITEX): all ITEX data used in natural populations growth analyses.
+     - [maps_data](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/data/maps_data): extrcted data from Orndahl et al's map (2020) including 2020 tiff file.
+    - Other datasets required which cannot be uploaded (too large): Katie Orndahl's 2022 raster maps,
 
 ### Scripts   
 - #### [bayesian scripts](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/scripts/bayesian)
@@ -29,6 +34,7 @@
     - [bayes_heights_over_time_IMS.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/bayesian/bayes_heights_over_time_IMS.R): modelling QHI shrub max and mean heights over time (long term monitoring plots)
     - [bayes_ITEX_cover.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/bayesian/bayes_ITEX_cover.R): explorative analysis of ITEX cover over time
     - [calc_script](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/bayesian/calc_script.R): script with all final calculations, encompassing statistics from bayesian modelling and mapping, to estimate biomass in the future.
+     - [bayes_cover_temp_change.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/bayesian/bayes_cover_temp_change.R): modelling temperature over time at different sites (CG, KP, QHI, TOOLIK, ANWR)
   
 - #### [maps](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/scripts/maps)
   - [raster_starter.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/maps/warming_project/raster_starter.R): script to read and modify Orndahl et al 2022 maps.
