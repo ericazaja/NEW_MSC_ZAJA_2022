@@ -168,6 +168,9 @@ save_kable(temp_time_interact_table,file = "outputs/tables/temp_time_interact_ta
            keep_tex = FALSE,
            density = 300)
 
+
+
+
 # IGNORE Slope vs slope models -----
 # S. Pulchra slope vs slope -----
 temp_time_pul <- temp_time_random_year %>%
