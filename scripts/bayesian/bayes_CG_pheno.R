@@ -1340,18 +1340,19 @@ arctica_yellow_trans <- arc_yellow_data %>%
 (arc_yellow_plot_scaled <-ggplot(arctica_yellow_trans) +
     geom_point(data = all_phenocam_arctica, aes(x = population, y = First_leaf_yellow_DOY, colour = population),
                alpha = 0.5)+
-    geom_point(aes(x = effect1__, y = Estimate_trans, colour = population), width=0.5, size = 6)+
+    geom_point(aes(x = effect1__, y = Estimate_trans, colour = population), width=0.5, size = 4)+
     geom_errorbar(aes(x = effect1__, ymin = CI_low_trans, ymax = CI_high_trans,colour = population),
-                  alpha = 1,  width=.5) +
+                  alpha = 1,  linewidth=1) +
     ylab("First leaf yellowing DOY \n") +
     xlab("\n" ) +
     scale_color_manual(values=pal_arc) +
     theme_shrub() +
     coord_cartesian(ylim=c(170, 250)) +
-    ggtitle(expression(italic("Salix pulchra"))) +
+    ggtitle(expression(italic("Salix arctica"))) +
     theme(text=element_text(family="Helvetica Light")) )
 
 # arrange 
+library(ggpubr)
 (leaf_yellow_panel <- ggarrange(ric_yellow_plot, pul_yellow_plot, arc_yellow_plot, 
                                 common.legend = TRUE, legend = "bottom",
                                 ncol = 3, nrow = 1))

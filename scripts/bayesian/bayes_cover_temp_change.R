@@ -2,6 +2,8 @@
 
 library(brms)
 library(tidybayes)
+library(tidyverse)
+library(ggeffects)
 
 # scale function =====
 # centering with 'scale()'
@@ -35,7 +37,8 @@ hist(july_enviro_chelsa$mean_temp_C_scaled)
 july_enviro_chelsa <-july_enviro_chelsa %>%
   filter(year >=1999) %>%
   select(-PrecipMeanJuly)%>%
-  mutate(index_year = I(year-1998))
+  mutate(index_year = I(year-1998))%>%
+  filter(Site != "ANWR")
 
 # temp over time (random intercept random slope)
 temp_time <- brms::brm(mean_temp_C ~ index_year + (index_year|Site),
@@ -92,8 +95,8 @@ colnames(ggpred_chelsa_temps) = c('index_year', 'fit', 'lwr', 'upr', 'Site')
     #scale_colour_viridis_d(begin = 0.1, end = 0.95) +
     #scale_fill_viridis_d(begin = 0.1, end = 0.95) +
     scale_color_manual(values = c("QHI" = "#2b788c", "TOOLIK" = "#e75480",
-                                  "CG"= "#98d83b", "KP" = "yellow2", "ANWR" = "orange4"))+
-    scale_fill_manual(values = c("QHI" = "#2b788c", "TOOLIK" = "#e75480", "CG"= "#98d83b","KP" = "yellow2", "ANWR" = "orange4"))+
+                                  "CG"= "#98d83b", "KP" = "yellow2"))+
+    scale_fill_manual(values = c("QHI" = "#2b788c", "TOOLIK" = "#e75480", "CG"= "#98d83b","KP" = "yellow2"))+
     theme_shrub()+ theme(text=element_text(family="Helvetica Light")) +
     theme( axis.text.x  = element_text(angle = 0))) # if i log everything it's exactly the same plot as with conditional effects! 
 
