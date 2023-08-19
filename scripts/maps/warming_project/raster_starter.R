@@ -155,7 +155,7 @@ write.csv(extract_end, file = "data/extract_end.csv")
 
 write.csv(extract_end, file = "data/extract_end_high.csv")
 
-# DATA VIS ------
+# DATA VISUALISATION ------
 # setting a personalised theme 
 theme_shrub <- function(){ theme(legend.position = "right",
                                  axis.title.x = element_text(face="bold", size=20),
@@ -221,44 +221,3 @@ theme_shrub <- function(){ theme(legend.position = "right",
 ggsave(file = "outputs/raster_my_palette_new.png")
 
 
-# EXTRAS ----
-#p50_2020_resample_df <- extract(p50_2020_resample, xy, cellnumbers = T)
-#view(p50_2020_resample_df)
-
-#p50_2020_random <- as.data.frame(sampleRandom(p50_2020_resample, 264, na.rm=TRUE, ext=NULL, 
-#                                           cells=TRUE, rowcol=FALSE, xy = TRUE)) 
-#view(p50_2020_random)
-#hist(p50_2020_random$pft_agb_deciduousshrub_p50_2020_wgs84)
-gdal_polygonizeR <- function(inputraster, 
-                             outshape,
-                             gdalformat = 'ESRI Shapefile',
-                             pypath     = NULL,
-                             pyexe      = 'python',
-                             overwrite  = FALSE,
-                             directory  = "") {
-  
-  inputraster <- paste0(directory, inputraster)
-  outshape <- paste0(directory, outshape)
-  if (is.null(pypath)) {
-    pypath <- Sys.which('gdal_polygonize.py')
-  }
-  if (!file.exists(pypath)) stop("Can't find gdal_polygonize.py on your system.")
-  
-  if (!is.null(outshape)) {
-    outshape <- sub('\\.shp$', '', outshape)
-    f.exists <- file.exists(paste(outshape, c('shp', 'shx', 'dbf'), sep = '.'))
-    if (any(f.exists)) {
-      if (overwrite == FALSE) {
-        stop(sprintf('File already exists: %s',
-                     toString(paste(outshape, c('shp', 'shx', 'dbf'),
-                                    sep = '.')[f.exists])), call.=FALSE)
-      } else (
-        unlink(paste(outshape, c('shp', 'shx', 'dbf'), sep = '.'))
-      )
-    }
-    system("OSGeo4W", input = paste0(sprintf('%1$s "%2$s" "%3$s" -f "%4$s" "%5$s.shp"', pyexe, pypath, inputraster, gdalformat, outshape), " -fieldname id"))
-  }
-}
-
-
-poly_gdal <- polygonizer(p50_2020, r)

@@ -1,10 +1,10 @@
-# EXTRACTION FUTURE CLIMATE PROJECTIONS -----
+# EXTRACTION for FUTURE CLIMATE PROJECTIONS -----
 
-# libraries
+# Loading libraries -------
 library(raster)
 library(tidyverse)
 
-# Load data -----
+# Loading data -----
 #shrub_map_extract <- read.csv("data/maps_data/extract_end.csv") # low res map
 #shrub_map_extract_high <- read.csv("data/maps_data/extract_end_high.csv") # high res map
 shrub_map_extract_highest <- read.csv("data/maps_data/extract_end_highest.csv") # high res map
@@ -18,7 +18,6 @@ tasmax.2020.5.re <- raster("outputs/CMPI6_rasters/tasmax.2020.5.re.tif")
 tasmax.2020.6.re<- raster("outputs/CMPI6_rasters/tasmax.2020.6.re.tif")
 
 tasmax.2030.1.re <- raster("outputs/CMPI6_rasters/tasmax.2030.1.re.tif")
-
 tasmax.2030.2.re <- raster("outputs/CMPI6_rasters/tasmax.2030.2.re.tif")
 tasmax.2030.3.re <- raster("outputs/CMPI6_rasters/tasmax.2030.3.re.tif")
 tasmax.2030.4.re <- raster("outputs/CMPI6_rasters/tasmax.2030.4.re.tif")
@@ -75,10 +74,7 @@ tasmax.2100.5.re <- raster("outputs/CMPI6_rasters/tasmax.2100.5.re.tif")
 tasmax.2100.6.re <- raster("outputs/CMPI6_rasters/tasmax.2100.6.re.tif")
 
 
-
-
-
-# EXTRACTION ------
+# EXTRACTION of climate data ------
 # Loading the coordinates of the cropped shrub map
 coords <- shrub_map_extract_highest %>% 
   dplyr::select(x, y) # keeping lat and long
@@ -364,7 +360,6 @@ mean(c_meantemp_2020) # 15.12132
 
 write.csv(coord.chelsa.combo.c.biom.2020, "data/coord.chelsa.combo.c.biom.2020.csv")
 
-# NB ignore below ------
 # July 2030 projection -------
 
 # multiply by biomass increase
@@ -622,7 +617,6 @@ coord.chelsa.combo.c.all.biom <- rbind(coord.chelsa.combo.c.biom.2020, coord.che
 write.csv(coord.chelsa.combo.c.all.biom, "data/coord.chelsa.combo.c.all.biom.csv")
 
 # Data visualisation -------
-# trying to plot 
 
 # plotting facet biomass (yellow-green)
 (raster_test_temp <- ggplot(coord.chelsa.combo.c.final.2100) + 

@@ -1,11 +1,12 @@
-# BASE MAP: 2020 Katie raster
+# BASE MAP: 2020 Katie Orndhal raster ----
 
-# download extracted data
+# Download extracted data -----
 shrub_map_extract_highest <- read.csv("data/maps_data/extract_end_highest.csv") # high res map
 
 shrub_map_2020 <- shrub_map_extract_highest %>%
   rename("biomass_per_m2" = "pft_agb_deciduousshrub_p50_2020_wgs84") 
 
+# Plot base raster
 (base_map <- ggplot(shrub_map_2020) + 
     geom_tile(aes(x=x,y=y,fill=(biomass_per_m2))) + 
     #facet_wrap(~year, nrow = 1) +
@@ -37,6 +38,7 @@ threshold_avg_base$biomass_level <- factor(threshold_avg_base$biomass_level,leve
                                       labels = c("Low", "Medium", "High"),
                                       ordered = T)
 
+# plot with my palette
 (raster_my_palette_new <- ggplot(threshold_avg_base) + 
     geom_tile(aes(x=x,y=y,fill=biomass_level)) + 
     scale_fill_manual(name = "Biomass level", values=c( "#F0E442", "#E69F00", "#009E73")) +

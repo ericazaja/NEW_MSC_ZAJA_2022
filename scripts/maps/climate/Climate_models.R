@@ -1,36 +1,13 @@
 # CLIMATE MODELS ------
+# By Erica Zaja
 
-# libraries ----
+# Loading libraries ----
 library(bayesplot)
 library(brms)
 library(tidybayes)
 library(tidyverse)
 
-
-# data ------
-# coord.chelsa.combo.c.2020 <- read.csv("data/climate_data/coord.chelsa.combo.c.2020")
-coord.chelsa.combo.c.all.biom <- read.csv("data/climate_data/coord.chelsa.combo.c.all.biom.csv")
-coord.chelsa.combo.c.biom.2020 <- read.csv("data/climate_data/coord.chelsa.combo.c.biom.2020.csv")
-# coord.chelsa.combo.c.all <- read_csv("data/climate_data/coord.chelsa.combo.c.all.csv") # too heavy, model wont run
-
-
-# temp over time (2020-2100)-------
-hist(coord.chelsa.combo.c.all.biom$mean_temp_C) # normal
-unique(coord.chelsa.combo.c.all.biom$year_index) # I want 2020 as year 0
-coord.chelsa.combo.c.all.biom <- coord.chelsa.combo.c.all.biom %>%
-  mutate(year_index= I(year-2020))
-
-temp_time_future <- brms::brm(mean_temp_C ~ year_index, 
-                        data = coord.chelsa.combo.c.all.biom, family = gaussian(), chains = 3,
-                        iter = 5000, warmup = 1000, 
-                        control = list(max_treedepth = 15, adapt_delta = 0.99))
-summary(temp_time_future) #significant ! 
-plot(temp_time_future) # great
-pp_check(temp_time_future, type = "dens_overlay", ndraws  = 100) 
-# Save an object to a file
-saveRDS(temp_time_future, file = "outputs/models/temp_time_future.rds")
-# Restore the object
-temp_time_future <- readRDS(file ="outputs/models/temp_time_future.rds")
+# functions -----
 #without random effects 
 model_summ_no_rf <- function(x) {
   sum = summary(x)
@@ -45,6 +22,34 @@ model_summ_no_rf <- function(x) {
   
   modelTerms <- as.data.frame(bind_rows(fixed, sigma))  # merge it all together
 }
+
+# Loading data ------
+# coord.chelsa.combo.c.2020 <- read.csv("data/climate_data/coord.chelsa.combo.c.2020")
+coord.chelsa.combo.c.all.biom <- read.csv("data/climate_data/coord.chelsa.combo.c.all.biom.csv")
+coord.chelsa.combo.c.biom.2020 <- read.csv("data/climate_data/coord.chelsa.combo.c.biom.2020.csv")
+# coord.chelsa.combo.c.all <- read_csv("data/climate_data/coord.chelsa.combo.c.all.csv") # too heavy, model wont run
+
+
+# Modelling -----
+# temp over time (2020-2100)-------
+hist(coord.chelsa.combo.c.all.biom$mean_temp_C) # normal
+unique(coord.chelsa.combo.c.all.biom$year_index) # I want 2020 as year 0
+coord.chelsa.combo.c.all.biom <- coord.chelsa.combo.c.all.biom %>%
+  mutate(year_index= I(year-2020))
+
+temp_time_future <- brms::brm(mean_temp_C ~ year_index, 
+                        data = coord.chelsa.combo.c.all.biom, family = gaussian(), chains = 3,
+                        iter = 5000, warmup = 1000, 
+                        control = list(max_treedepth = 15, adapt_delta = 0.99))
+summary(temp_time_future) #significant ! 
+plot(temp_time_future) # great
+pp_check(temp_time_future, type = "dens_overlay", ndraws  = 100) 
+
+# Save an object to a file
+saveRDS(temp_time_future, file = "outputs/models/temp_time_future.rds")
+# Restore the object
+temp_time_future <- readRDS(file ="outputs/models/temp_time_future.rds")
+
 
 temp_time_future_mod <- model_summ_no_rf(temp_time_future)
 
@@ -70,8 +75,8 @@ save_kable(temp_time_future_table,file = "outputs/tables/temp_time_future_table.
            keep_tex = FALSE,
            density = 300)
 
-# model: 2020 only----
-# biomass in 2020 ~ temp in 2020 
+# biomass in 2020 ~ temp in 2020 ----
+
 model_test <- brms::brm(biomass_per_m2 ~ mean_temp_C, 
                         data = coord.chelsa.combo.c.biom.2020, family = gaussian(), chains = 3,
                         iter = 5000, warmup = 1000, 

@@ -1,4 +1,4 @@
-# ITEX cleaninng of only data I need (point framing only)
+# ITEX cleaning of only data I need (point framing only)
 
 ## FUNCTIONS ----
 `%notin%` <- Negate(`%in%`)

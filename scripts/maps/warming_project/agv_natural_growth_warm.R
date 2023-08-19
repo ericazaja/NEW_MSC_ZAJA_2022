@@ -1,16 +1,9 @@
 # WARMING PROJECTIONS: Average natural growth with warming scenario
 
-# NB this below is just the method, not accurate numbers. Calculatins after data
-# STEP 1. Height with warming: 
-# Height over time S. pulchra on QHI: 0.34 cm per year. = 8.16 cm height over 24 years (1999-2022, 24 years) . 
-# STEP 2. Cover over time. Multiply by full time period.
-# STEP 3. BIOMASS: Put the height over the full time period and the cover over full time period in the allometric equations, derive biomass. 
+# Loading libraries ----
+library(tidyverse)
 
-# STEP 4 Get temp over time slope: times the slope per year times 24 years => 1.2 degrees C over 24 years. 
-# Divide the biomass over the full time period by the temp over the full time period 1.2 = to get 2.0 g/m2 per degree
-# THEN Multiply the 2.0 g/m2 per degree x 5 degrees warming (future proj. Difference between temp in 2020-2100)  = 10cm
-
-# data -----
+# Loading data -----
 shrub_map_extract_highest <- read.csv("data/maps_data/extract_end_highest.csv") # high res map
 coord.chelsa.combo.c.delta.2100.solo <- read.csv("data/climate_data/coord.chelsa.combo.c.delta.2100.solo")
 coord.chelsa.combo.c.biom.2020 <- read.csv("data/climate_data/coord.chelsa.combo.c.biom.2020.csv")
@@ -19,7 +12,6 @@ coord.chelsa.combo.c.biom.2020 <- read.csv("data/climate_data/coord.chelsa.combo
 # # Height slope  for S pulchra for full time period =  0.34 * 23 years = 7.82 +- 0.04
 # Cover slope for S pulchra for full time period =  0.65% * 23 years =14.95 % +-0.02
 
-# no error: 
 # Salpul allom equation = 
 # Biomass =  (1.1*7.82) + (18.1 *14.95)
 (1.1*7.82) + (18.1 *14.95)

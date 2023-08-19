@@ -1,15 +1,14 @@
 # WARMING PROJECTIONS: Max natural growth with warming scenario
 
-# data -----
+# Loading data -----
 shrub_map_extract_highest <- read.csv("data/maps_data/extract_end_highest.csv") # high res map
 coord.chelsa.combo.c.delta.2100.solo <- read.csv("data/climate_data/coord.chelsa.combo.c.delta.2100.solo")
 coord.chelsa.combo.c.delta.2020 <- read.csv("data/climate_data/coord.chelsa.combo.c.biom.2020.csv")
 
 # MAX HEIGHT and COVER SLOPES:
-# # Height slope  for S pulchra for full time period = 0.70 +- 0.09 * 23 years = 16.1
+# Height slope  for S pulchra for full time period = 0.70 +- 0.09 * 23 years = 16.1
 # Cover slope for S pulchra for full time period =   0.8 +-0.03 * 23 years =  18.4
 
-# no error
 # Salpul allom equation = 
 # Biomass =  (1.1*16.1 ) + (18.1 *18.4 ) 
 (1.1*16.1 ) + (18.1 *18.4 )
@@ -21,9 +20,7 @@ coord.chelsa.combo.c.delta.2020 <- read.csv("data/climate_data/coord.chelsa.comb
 
 # TEMP SLOPES:
 # mean = 3.350266 over full time period
-
 # biomass/temp over full time = 350.75/3.350266 = 104.6932/degC
-
 
 # multiply by biomass increase
 max_warm <- coord.chelsa.combo.c.delta.2100.solo %>%
@@ -141,6 +138,7 @@ summary <- threshold_all_warm %>%
   mutate(percent = (percent_biomass_level*division))
 # finding the ratio of 100% using method here: https://www.mathswithmum.com/calculate-ratio-3-numbers/ 
 
+# plot with my palette
 (threshold_max_warm_levels <- ggplot(threshold_all_warm) + 
     geom_tile(aes(x=x,y=y,fill=biomass_level)) + 
     facet_wrap(~year, nrow = 1) +

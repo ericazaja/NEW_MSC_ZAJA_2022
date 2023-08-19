@@ -1,8 +1,6 @@
-# NORT AMERICA MAP -----
-# tutorial:
+# NORTH AMERICA MAP -----
 
 # Libraries -----
-
 library(raster)
 library(rworldmap)
 library(rgeos)
@@ -11,7 +9,7 @@ library(sf)
 library(rasterVis)
 library(tidyverse)
 
-#  boundary of Katie's maps
+# Load boundary of Katie Orndhal maps ------
 boundary_highest <- st_read("data/shapefiles/katie_map_border_highest.shp")
 p50_2020_resample_highest <- raster("data/maps_data/p50_2020_resample_highest.tiff") 
 plot(boundary_highest, fill=NA, color = "purple4")
@@ -35,7 +33,6 @@ object.size(NA_full) / 1000000
 NA_full_2 <- rgeos::gSimplify(NA_full, tol = 0.001)
 NA_full_2 <- SpatialPolygonsDataFrame(NA_full_2, NA_full@data)
 object.size(NA_full_2) / 1000000
-
 
 # this below works
 pdf("outputs/plot_test.pdf",paper = "A4")

@@ -1,10 +1,11 @@
 # WARMING PROJECTIONS: Novel growth with warming scenario
 
-# data
+# Loading data -----
 coord.chelsa.combo.c.delta.2100.solo <- read.csv("data/climate_data/coord.chelsa.combo.c.delta.2100.solo")
 coord.chelsa.combo.c.delta.2030 <- read.csv("data/climate_data/coord.chelsa.combo.c.delta.2030.csv")
 coord.chelsa.combo.c.delta.2050 <- read.csv("data/climate_data/coord.chelsa.combo.c.delta.2050.csv")
 coord.chelsa.combo.c.biom.2020 <- read.csv("data/coord.chelsa.combo.c.biom.2020.csv")
+
 # Get biomass over full time period. Divide biomass by 6 deg warming (difference between KP and CG temps). Get biomass per degree of warming
 # multiply this by the 5 degrees projected warming.
 # NB we basically gave the KP shrubs in the CG the warming that they will experience naturally in the future.
@@ -31,7 +32,6 @@ coord.chelsa.combo.c.biom.2020 <- read.csv("data/coord.chelsa.combo.c.biom.2020.
 # Biomass over 23 year period divided by the 6.4 difference in temp between KP and CG
 9992.386/6.4
 #  1561.31 g/m2/degC
-
 
 # multiply by biomass increase
 novel_warm_2100 <- coord.chelsa.combo.c.delta.2100.solo %>%
@@ -207,7 +207,6 @@ threshold_novel_warm_2050_summary <- threshold_novel_warm_2050 %>%
 ggsave(threshold_novel_warm_levels, filename ="output/final_maps/threshold_novel_warm_levels.pdf", width = 11.7, height = 8.3, units = "in")
 
 
-
 # binary threshold map
 threshold_novel_warm_bi <- shrub_novel %>%
   mutate(biomass_level = case_when (biomass_per_m2_new < 50263.2420     ~ 'Low', # 75% quant.
@@ -254,7 +253,7 @@ threshold_novel_warm_bi_all$biomass_level <- factor(threshold_novel_warm_bi_all$
     ylab("Latitude\n"))
 
 
-# plotting facet biomass (yellow-green)
+# plotting facet biomass (red-blue)
 (raster_temps <- ggplot(novel_warm_to_plot_all) + 
     geom_tile(aes(x=x,y=y,fill=(mean_temp_C))) + 
     facet_wrap(~year, nrow = 1) +

@@ -1,7 +1,7 @@
 ## Masters by Research repository by Erica Zaja
 ### GeoSciences Individual Project (2022-2023)
 #### Supervised by Prof Isla Myers-Smith and Dr Mariana García Criado (Team Shrub)
-#### Last update: 12/07/2023
+#### Last update: 19/08/2023
 #### Research title: Projecting Arctic wildlife habitat change with warming using natural and experimental shrub growth scenarios
 
 *******
@@ -91,5 +91,9 @@
 *******
 
 #### Acknowledgements
-I thank the data providers, my supervisors Prof Isla Myers Smith and Dr Mariana García Criado, and Team Shrub members for their support. Thank you Kathleen Orndahl for the data she shared with me, which is the baseline of all my work.
+I thank the data providers, my supervisors Prof Isla Myers Smith and Dr Mariana García Criado, and Team Shrub members for their support. Thank you Kathleen Orndahl for the data she shared with me, which is the baseline of all my work. 
+
+We thank co-authots Kathleen Orhdahl and Prof. Logan Berner (Northern Arizona University) who provided the shrub biomass base maps. 
+
+We thank Dr. Andrew Cunliffe for the biomass harvest and cover data from Qikiqtaruk-Herschel Island. We acknowledge the World Climate Research Programme, which, through its Working Group on Coupled Modelling, coordinated and promoted CMIP6. We thank the climate modeling groups for producing and making available their model output, the Earth System Grid Federation (ESGF) for archiving the data and providing access, and the multiple funding agencies who support CMIP6 and ESGF.
 

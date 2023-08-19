@@ -1,9 +1,9 @@
-# CMPI6 dowload and average script 
+# CMPI6 download 
 # Created on 06/03/2023 by Erica
-# following tutrial:
+# following tutorial:
 # https://michaelminn.net/tutorials/r-climate/index.html
 
-# Libraries -----
+# Loading libraries -----
 library(ncdf4)
 library(raster)
 library(tidyr)
@@ -1250,82 +1250,4 @@ writeRaster(tasmax.2100.4.re, "outputs/CMPI6_rasters/tasmax.2100.4.re.tif", over
 writeRaster(tasmax.2100.5.re, "outputs/CMPI6_rasters/tasmax.2100.5.re.tif", overwrite = TRUE)
 writeRaster(tasmax.2100.6.re, "outputs/CMPI6_rasters/tasmax.2100.6.re.tif", overwrite = TRUE)
 
-# STOP----
-# hdd.cdd.2023 = crop(tasmax.2023, boundary) # crop to the extent of the PCH range
-# df_2023_july_85 <- as.data.frame(r3, xy=TRUE)
 
-# Aggregated Temperature
-
-indices = which((tasmax.dates_2 >= as.Date(paste0("2060-01-01"))) &
-(tasmax.dates_2 <= as.Date(paste0("2060-12-31"))))
-
-tasmax.2060 = tasmax.scenes[[indices[1]]]
-
-for (scene in tasmax.scenes[indices[2:length(indices)]]) {
-  values(tasmax.2060) = pmax(values(tasmax.2060), values(scene)) }
-
-plot(tasmax.2060, main="2060", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
-
-
-# Extract 
-
-weather_station = st_sfc(st_point(c(-88.27778, 40.03972)), crs=4326)
-
-y = sapply(tasmax.scenes, function(scene)  extract(scene, as_Spatial(poly)))
-
-x = 1970 + (as.numeric(tasmax.dates) / 365.25)
-
-tasmax.series = ts(y, start=floor(min(x)), end=floor(max(x)), deltat=1/12)
-
-plot(tasmax.series, col="darkred", ylab="Monthly Mean High Temperatures (F)",
-     type="l", lwd=3, bty="n", las=1, fg=NA)
-
-grid(nx=NA, ny=NULL, lty=1)
-
-decomposition = stl(tasmax.series, s.window=240, t.window=120)
-
-plot(decomposition)
-
-# Aggregated Baseline Rasters (2020)
-
-indices = which((tasmax.dates <= as.Date(paste0("2020-12-31"))) & 
-                  (tasmax.dates >= as.Date(paste0("2020-01-01"))))
-
-tasmax.2020 = tasmax.scenes[[indices[1]]]
-
-
-plot(hdd.cdd.2060, main="2020", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
-
-for (scene in tasmax.scenes[indices[2:length(indices)]]) {
-  values(tasmax.2020) = pmax(values(hdd.cdd.2060), values(scene)) }
-
-
-# STOP ----
-
-for (scene in tasmax.scenes[indices[2:length(indices)]]) {
-  values(tasmax.2023) = pmax(values(hdd.cdd.2023), values(scene)) }
-
-indices = which((pr.dates <= as.Date(paste0("2020-12-31"))) & 
-                  (pr.dates >= as.Date(paste0("2020-01-01"))))
-
-pr.2020 = pr.scenes[[indices[1]]]
-
-for (scene in pr.scenes[indices[2:length(indices)]]) {
-  pr.2020 = pr.2020 + scene }
-
-
-# extras ------
-# nc_26 = open.nc("data/CHELSA_CMPI5/tasmax_Amon_GFDL-ESM4_ssp126_r1i1p1f1_gr1_201501-210012.nc")
-
-# # polygon of max and min lat long of caribou area
-#lon <- c(-135.29,-149.9)
-#lat <- c(70.1, 64.8)
-#Poly_Coord_df = data.frame(lon, lat)
-#poly <- Poly_Coord_df %>% 
-# sf::st_as_sf(coords = c("lon", "lat"), 
-#crs = 4326) %>% 
-#sf::st_bbox() %>% 
-#st_as_sfc()
-#plot(poly, x = lon, y = lat)
-#class(poly) #sfc_POLYGON
-#nc_sp <- sf:::as_Spatial(poly) # This works

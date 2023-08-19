@@ -1,3 +1,6 @@
+# Script for random bits of code not used 
+# please ignore
+
 ITEX_shrubs_msc <- read_csv("data/ITEX/itex_EZ_shrubs_2023.csv") # newest 
 all_CG_source_growth <- read_csv("data/common_garden_shrub_data/all_CG_source_growth.csv")
 
@@ -359,6 +362,99 @@ QHI_height_random_year <- QHI_height_random %>%
 view(QHI_height_random_year)
 
 
+
+
+# hdd.cdd.2023 = crop(tasmax.2023, boundary) # crop to the extent of the PCH range
+# df_2023_july_85 <- as.data.frame(r3, xy=TRUE)
+
+# Aggregated Temperature
+
+indices = which((tasmax.dates_2 >= as.Date(paste0("2060-01-01"))) &
+                  (tasmax.dates_2 <= as.Date(paste0("2060-12-31"))))
+
+tasmax.2060 = tasmax.scenes[[indices[1]]]
+
+for (scene in tasmax.scenes[indices[2:length(indices)]]) {
+  values(tasmax.2060) = pmax(values(tasmax.2060), values(scene)) }
+
+plot(tasmax.2060, main="2060", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+
+
+# Extract 
+
+weather_station = st_sfc(st_point(c(-88.27778, 40.03972)), crs=4326)
+
+y = sapply(tasmax.scenes, function(scene)  extract(scene, as_Spatial(poly)))
+
+x = 1970 + (as.numeric(tasmax.dates) / 365.25)
+
+tasmax.series = ts(y, start=floor(min(x)), end=floor(max(x)), deltat=1/12)
+
+plot(tasmax.series, col="darkred", ylab="Monthly Mean High Temperatures (F)",
+     type="l", lwd=3, bty="n", las=1, fg=NA)
+
+grid(nx=NA, ny=NULL, lty=1)
+
+decomposition = stl(tasmax.series, s.window=240, t.window=120)
+
+plot(decomposition)
+
+# Aggregated Baseline Rasters (2020)
+
+indices = which((tasmax.dates <= as.Date(paste0("2020-12-31"))) & 
+                  (tasmax.dates >= as.Date(paste0("2020-01-01"))))
+
+tasmax.2020 = tasmax.scenes[[indices[1]]]
+
+
+plot(hdd.cdd.2060, main="2020", col = colorRampPalette(c('navy', 'lightgray', 'red'))(32))
+
+for (scene in tasmax.scenes[indices[2:length(indices)]]) {
+  values(tasmax.2020) = pmax(values(hdd.cdd.2060), values(scene)) }
+
+
+
+# EXTRAS ----
+#p50_2020_resample_df <- extract(p50_2020_resample, xy, cellnumbers = T)
+#view(p50_2020_resample_df)
+
+#p50_2020_random <- as.data.frame(sampleRandom(p50_2020_resample, 264, na.rm=TRUE, ext=NULL, 
+#                                           cells=TRUE, rowcol=FALSE, xy = TRUE)) 
+#view(p50_2020_random)
+#hist(p50_2020_random$pft_agb_deciduousshrub_p50_2020_wgs84)
+gdal_polygonizeR <- function(inputraster, 
+                             outshape,
+                             gdalformat = 'ESRI Shapefile',
+                             pypath     = NULL,
+                             pyexe      = 'python',
+                             overwrite  = FALSE,
+                             directory  = "") {
+  
+  inputraster <- paste0(directory, inputraster)
+  outshape <- paste0(directory, outshape)
+  if (is.null(pypath)) {
+    pypath <- Sys.which('gdal_polygonize.py')
+  }
+  if (!file.exists(pypath)) stop("Can't find gdal_polygonize.py on your system.")
+  
+  if (!is.null(outshape)) {
+    outshape <- sub('\\.shp$', '', outshape)
+    f.exists <- file.exists(paste(outshape, c('shp', 'shx', 'dbf'), sep = '.'))
+    if (any(f.exists)) {
+      if (overwrite == FALSE) {
+        stop(sprintf('File already exists: %s',
+                     toString(paste(outshape, c('shp', 'shx', 'dbf'),
+                                    sep = '.')[f.exists])), call.=FALSE)
+      } else (
+        unlink(paste(outshape, c('shp', 'shx', 'dbf'), sep = '.'))
+      )
+    }
+    system("OSGeo4W", input = paste0(sprintf('%1$s "%2$s" "%3$s" -f "%4$s" "%5$s.shp"', pyexe, pypath, inputraster, gdalformat, outshape), " -fieldname id"))
+  }
+}
+
+
+poly_gdal <- polygonizer(p50_2020, r)
 
 
 
