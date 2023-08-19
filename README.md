@@ -33,7 +33,7 @@
     - [bayes_heights_over_time_IMS.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/bayesian/bayes_heights_over_time_IMS.R): modelling QHI shrub max and mean heights over time (long term monitoring plots)
     - [bayes_ITEX_cover.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/bayesian/bayes_ITEX_cover.R): explorative analysis of ITEX cover over time
     - [calc_script](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/bayesian/calc_script.R): script with all final calculations, encompassing statistics from bayesian modelling and mapping, to estimate biomass in the future.
-     - [bayes_cover_temp_change.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/bayesian/bayes_cover_temp_change.R): modelling temperature over time at different sites (CG, KP, QHI, TOOLIK, ANWR)
+     - [bayes_temp_change.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/bayesian/bayes_temp_change.R): modelling temperature over time at different sites (CG, KP, QHI, TOOLIK, ANWR)
   
 - #### [maps](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/tree/main/scripts/maps)
   - [raster_starter.R](https://github.com/ericazaja/NEW_MSC_ZAJA_2022/blob/main/scripts/maps/warming_project/raster_starter.R): script to read and modify Orndahl et al 2022 maps.

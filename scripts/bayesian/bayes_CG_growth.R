@@ -18,12 +18,13 @@ library(ggpubr)
 
 # Loading data ---- 
 all_CG_source_growth <- read_csv("data/all_CG_source_growth.csv")
+
 # Only using max growth variables values
-#max_widths_cg <- read_csv("data/common_garden_shrub_data/max_widths_cg.csv")
+max_widths_cg <- read_csv("data/common_garden_shrub_data/max_widths_cg.csv")
 max_heights_cg <- read_csv("data/common_garden_shrub_data/max_heights_cg.csv")
-#max_biovol_cg <- read_csv("data/common_garden_shrub_data/max_biovol_cg.csv")
-#max_elong_cg <- read_csv("data/common_garden_shrub_data/max_elong_cg.csv")
-#max_diam_cg <- read_csv("data/common_garden_shrub_data/max_diam_cg.csv")
+max_biovol_cg <- read_csv("data/common_garden_shrub_data/max_biovol_cg.csv")
+max_elong_cg <- read_csv("data/common_garden_shrub_data/max_elong_cg.csv")
+max_diam_cg <- read_csv("data/common_garden_shrub_data/max_diam_cg.csv")
 
 # Functions -------
 # 1. scale function =====
@@ -100,7 +101,7 @@ model_summ_time <- function(x) {
   modelTerms <- as.data.frame(bind_rows(fixed, random, sigma))  # merge it all together
 }
 
-# Data wrangling ------
+# DATA WRANGLE ------
 # max height  
 max_heights_cg$Species <- as.factor(max_heights_cg$Species)
 max_heights_cg$SampleID_standard <- as.factor(max_heights_cg$SampleID_standard)
@@ -685,6 +686,7 @@ ggsave(growth_maxheights, filename ="output/figures/growth_maxheights.png", widt
 
 # EXTRAS below (not used in final thesis) -----
 # MODELLING OTHER CG VARIABLES (for CG manuscript) -----
+
 # 2. STEM ELONGATION ------
 
 # S. Richardsonii -----

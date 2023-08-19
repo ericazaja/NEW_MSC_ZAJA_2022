@@ -14,6 +14,8 @@ library(ggpubr)
 library(ggeffects)
 
 
+# DATA -------
+all_CG_growth <- read_csv("data/common_garden_shrub_data/all_CG_growth.csv")
 
 # function to extract model summary
 model_summ <- function(x) {
@@ -25,9 +27,9 @@ model_summ <- function(x) {
   obs = sum$nobs
   
   fixed$effect <- "fixed"  # add ID column for type of effect (fixed, random, residual)
- # fixed$effect <- "population"  # add ID column for type of effect (fixed, random, residual)
+  # fixed$effect <- "population"  # add ID column for type of effect (fixed, random, residual)
   random$effect <- "random"
- # random$effect <- "SampleID_standard"
+  # random$effect <- "SampleID_standard"
   sigma$effect <- "residual"
   fixed$nobs <- obs  # add column with number of observations
   random$nobs <- obs
@@ -37,10 +39,7 @@ model_summ <- function(x) {
   modelTerms <- as.data.frame(bind_rows(fixed, random, sigma))  # merge together
 }
 
-# DATA -------
-all_CG_growth <- read_csv("data/common_garden_shrub_data/all_CG_growth.csv")
-
-# Wrangle -------
+# Data wrangle -------
 # reclassing variables
 all_CG_growth$Species <- as.factor(all_CG_growth$Species)
 all_CG_growth$SampleID_standard <- as.factor(all_CG_growth$SampleID_standard)
@@ -185,11 +184,11 @@ summary(height_pul)
 # estimate for s. sample age at year 9: (1.99+0.95) + (-0.02*9+0.03*9)= 3.03, exp(3.03)= 20.69 in year 9 --> 2.299692 per year, 2.30969
 # estimate for northern sample age at year 9: 1.99-0.02*9=1.97= 3.03, exp(3.03)= 6.110447 in year 9 --> 0.6789386 per year
 
-
+# extract outputs with ggpredict
 ggpred_height_pul <- ggpredict(height_pul, terms = c("Sample_age", "population"))
 colnames(ggpred_height_pul) = c('Sample_age','fit', 'lwr', 'upr',"population")
 
-
+# quick plot
 (ggpred_height_pul_plot <-ggplot(ggpred_height_pul) +
     geom_point(data = all_CG_growth_pul, aes(x = Sample_age, y = Canopy_Height_cm, colour = population),
                alpha = 0.5)+ # raw data
@@ -228,6 +227,7 @@ ggpred_height_pul_south <- ggpred_height_pul %>%
 19.10595/7.170676
 # 2.664456
 
+# summary stats for table
 height_pul_summ <- model_summ(height_pul)
 
 rownames(height_pul_summ) <- c("Intercept      ", "Sample age      ", "Southern population "
@@ -282,6 +282,7 @@ rownames(height_pul_south_summ) <- c("Intercept          ", "Sample age         
                             "sd(Sample age) ", "cor(Intercept, Sample age)    ", "phi       ")
 height_pul_south_summ$Rhat <- as.character(formatC(height_pul_south_summ$Rhat, digits = 2, format = 'f'))
 
+# southern pulchra only 
 height_pul_south_summ <- height_pul_south_summ %>%
   mutate("Site" = "CG", "Scenario"="Novel",
          "Response variable" = "Canopy height") %>% 
@@ -328,6 +329,7 @@ colnames(ggpred_height_arc) = c('Sample_age','fit', 'lwr', 'upr',"population")
     theme_shrub()+ theme(text=element_text(family="Helvetica Light")) +
     theme( axis.text.x  = element_text(angle = 0))) # if i log everything it's exactly the same plot as with conditional effects! 
 
+# panel of all ggpred graphs
 ggpred_CG_height_panel <- ggarrange(ggpred_height_rich_plot,
                                     ggpred_height_pul_plot, 
                                     ggpred_height_arc_plot, nrow = 1,
@@ -384,6 +386,7 @@ all_height_summ <- rbind(height_rich_summ,height_pul_summ,height_arc_summ)
     #  digits=2, align = "c") %>%  # specify number of significant digits, align numbers at the centre (can also align "l" left/ "r" right)
  # kable_classic(full_width=FALSE, html_font="Helvetica") # can change fonts
 
+# table 
 all_height_summ_table <- all_height_summ %>% 
 kbl(caption="Table. Heights over time of northern and southern shrubs in the common garden. ", 
 col.names = c("Species", "Estimate (log)", "Error (log)", "Lower 95% CI (log)", "Upper 95% CI (log)",
@@ -404,7 +407,7 @@ save_kable(all_height_summ_table,file = "outputs/tables/kable_rich_pul_arc.pdf",
            density = 300)
 
 # South S. arc. model ------
-# truncarte to max height 23 cm, log(23)= 3.135494, -1 lower bound because some small values when logged give negative number eg log(0.5)
+# truncate to max height 23 cm, log(23)= 3.135494, -1 lower bound because some small values when logged give negative number eg log(0.5)
 height_arc_south <- brms::brm(log(Canopy_Height_cm)|trunc(lb = -1, ub =3.135494) ~ Sample_age+(Sample_age|SampleID_standard),
                               data = all_CG_growth_arc_south,  family = gaussian(), chains = 3,
                               iter = 5000, warmup = 1000, 
@@ -648,6 +651,3 @@ pp_check(elong_arc_south, type = "dens_overlay", nsamples = 100)
    ylab("Arctica stem elongation (log mm)\n") +
    xlab("\nSample age"))
 
-CG_height_panel <- grid.arrange(rich_heights_plot_new,
-                                pul_heights_plot_new, 
-                                arc_heights_plot_new, nrow = 1)

@@ -1,6 +1,7 @@
 # Script to plot QHI monitoring heights over time -----
+# created by Erica and helped by Prof. Isla Myers-Smith
 
-# libraries
+# Loading libraries -----
 library(tidyverse)
 library(plyr)
 library(brms) 
@@ -8,7 +9,9 @@ library(readxl)
 library(tidybayes)
 library(gridExtra)
 library(kableExtra)
+library(ggeffects)
 
+# functions ----
 # function to extract model summary
 model_summ_heights <- function(x) {
   sum = summary(x)
@@ -29,18 +32,19 @@ model_summ_heights <- function(x) {
 }
 
 
-# LOAD DATA -----
+# Loading data -----
 # data 1999-2019
 QHI_1999_2022 <- read_csv("data/ITEX/pointfr_1999_2022_clean.csv")
 # upload new data from QHI repo
 salpuls <- read_csv("data/ITEX/salpuls.csv")
 
+# Data wrangling ------
 # Wrangle salpuls data
 salpuls <- subset(salpuls,!is.na(Height..cm.)) %>%
   dplyr::select(SUBSITE, PLOT, YEAR, X, Y, SPP, STATUS, Height..cm.)%>%
   dplyr::rename(Height = Height..cm.)
 
-# filter out 2016 where STATUS and TISSU messed up
+# filter out 2016 where STATUS and TISSUE messed up
 salpuls_no_2016 <- salpuls %>%
   dplyr::filter(YEAR != 2016)
 
@@ -91,7 +95,7 @@ all_bind_new <- all_bind %>%
 all_bind_new <- all_bind_new %>% 
   dplyr::mutate(Year_index = I(YEAR - 1998)) 
 
-
+# Modelling ------
 # model with ALL data
 QHI_height_new <- brms::brm(max_pointfr_height ~ Year_index + (Year_index|SubsitePlot),
                              data = all_bind_new,  family = gaussian(), chains = 3,
@@ -103,6 +107,7 @@ pp_check(QHI_height_new, type = "dens_overlay", ndraws = 100)
 all_bind_d <- (conditional_effects(QHI_height_new))
 all_bind_dat <- all_bind_d[[1]]
 
+# plot
 (pulchra_height_plot_all <-ggplot(all_bind_dat) +
     geom_point(data = all_bind, aes(x = Year_index, y = Height),
                alpha = 0.5)+
@@ -118,7 +123,6 @@ all_bind_dat <- all_bind_d[[1]]
     theme_classic())
 
 # calculate plot means and plot max
-
 all_bind_new_mean <- ddply(all_bind_new,.(YEAR, SubsitePlot), summarise,
         mean_height = mean(max_pointfr_height))
   
@@ -133,8 +137,7 @@ all_bind_new_max <- all_bind_new_max %>%
 
 range(all_bind_new$max_pointfr_height)
 
-# quick plot
-# raw data 
+# raw data plot
 (pulchra_height_plot <- all_bind_new_mean %>%
     ggplot(aes(x = YEAR, y = mean_height)) +
     geom_point(data = all_bind_new_mean) +
@@ -168,7 +171,7 @@ MEAN_summ <- MEAN_summ %>%
   relocate("Response variable", .before = "Site")%>%
   relocate("Scenario", .before = "Site")
 
-# plot
+# plot mean data model
 all_bind_mean <- (conditional_effects(MEAN))
 all_bind_mean_dat <- all_bind_mean[[1]]
 
@@ -265,7 +268,7 @@ save_kable(kable_bind_with_cg,file = "outputs/tables/kable_bind_with_cg_2.pdf", 
            density = 300)
 
 
-# plot
+# plot with max data model
 (pulchra_height_plot_max_new <- all_bind_new_max %>%
     #group_by(population) %>%
     add_predicted_draws(MAX, allow_new_levels = TRUE ) %>%
@@ -307,8 +310,7 @@ panel <- grid.arrange(pulchra_height_plot_mean_new,
 
 ggsave(panel, filename ="output/figures/QHI_heights_panel.png", width = 14.67, height = 6.53, units = "in")
 
-# try ggpred
-library(ggeffects)
+# trying plotting with ggpredict
 ggpred_MAX_qhi <- ggpredict(MAX, terms = "Year_index")
 colnames(ggpred_MAX_qhi) = c('Year_index', 'fit', 'lwr', 'upr', 'dunno')
 # estimate at year 1 = 8.105129
@@ -327,8 +329,7 @@ colnames(ggpred_MAX_qhi) = c('Year_index', 'fit', 'lwr', 'upr', 'dunno')
     theme_shrub()+ theme(text=element_text(family="Helvetica Light")) +
     theme( axis.text.x  = element_text(angle = 0))) # if i log everything it's exactly the same plot as with conditional effects! 
 
-# try ggpred
-library(ggeffects)
+# trying model with ggpredict
 ggpred_MEAN_qhi <- ggpredict(MEAN, terms = "Year_index")
 colnames(ggpred_MEAN_qhi) = c('Year_index', 'fit', 'lwr', 'upr', 'dunno')
 # estimate at year 1 = 4.941228
@@ -349,109 +350,7 @@ colnames(ggpred_MEAN_qhi) = c('Year_index', 'fit', 'lwr', 'upr', 'dunno')
     theme( axis.text.x  = element_text(angle = 0))) # if i log everything it's exactly the same plot as with conditional effects! 
 
 
-# STOP (ignore code below) ----
 
-# Something is wrong here - check with Mariana
-test <- QHI_1999_2022 %>% 
-  mutate(Year_index = I(YEAR - 1998)) %>%
-  group_by(SUBSITE, PLOT, YEAR) %>%
-  summarise(HeightMax = max(Height))
-
-# DATA WRANGLE 
-# make a subsite plot year x y column 
-QHI_2022 <- QHI_1999_2022 %>% select(SUBSITE, PLOT, YEAR, X, Y, SPP, STATUS, Height) %>% 
-  filter(SPP == "Salix pulchra" & STATUS == "LIVE")
-
-QHI_2022_sum_max <- QHI_2022 %>% 
-  group_by(SUBSITE, PLOT, YEAR, SPP) %>%
-  summarise(HeightMax = max(Height)) %>%
-  mutate(Height_mm = case_when(HeightMax >= 100 ~ "TRUE", HeightMax < 100 ~ "FALSE")) %>%
-  select(-HeightMax)
-
-
-QHI_2022_cm <- QHI_2022 %>% 
-  left_join(QHI_2022_sum_max) %>% 
-  mutate(Height_cm = case_when(Height_mm == "TRUE" ~ Height/10, 
-                               Height_mm == "FALSE"~ Height)) %>% 
-  # filter(Height_cm > 10) %>% # This will remove things like roots and basal stems
-  select(-Height) %>%
-  na.omit(Height_cm) 
-
-# keeping only max values
-QHI_2022_max <- QHI_2022_cm %>%
-  group_by(SUBSITE, PLOT, YEAR, SPP, X, Y) %>%
-  summarise(max_heights_cm = max(Height_cm)) %>%
-  distinct() %>% # keeping one unique value
-  na.omit(max_heights_cm) %>%
-  mutate(max_heights_integer = round(max_heights_cm))
-
-range(QHI_2022_max$max_heights_cm) # 0.2 39.3 cm 
-hist(QHI_2022_max$max_heights_cm, breaks = 30) # not normal at all
-
-QHI_2022_max$SubsitePlot <- with(QHI_2022_max, paste0(SUBSITE, PLOT))
-
-# calculating a plot mean per year
-QHI_2022_max_2 <- QHI_2022_max %>%
-  group_by(SubsitePlot, YEAR) %>%
-  summarise(plot_mean = mean(max_heights_cm))
-hist(QHI_2022_max_2$plot_mean, breaks=30)
-
-# calculating a plot max
-QHI_2022_max_3 <- QHI_2022_max %>%
-  group_by(SubsitePlot, YEAR) %>%
-  summarise(plot_max = max(max_heights_cm))
-hist(QHI_2022_max_3$plot_max, breaks = 30)
-
-#QHI_2022_max <- QHI_2022_max %>%
- # mutate(log_max_heights = log(max_heights_cm))
-
-# MODELLING
-# Model QHI pulchra heights over time
-
-range(QHI_2022_max$max_heights_cm) #  0.0 39.3
-hist(QHI_2022_max$max_heights_cm, breaks = 30)
-hist(QHI_2022_max$log_max_heights, breaks = 30)
-hist(QHI_2022_max$max_heights_integer, breaks = 30)
-
-QHI_2022_max$SubsitePlot <- with(QHI_2022_max, paste0(SUBSITE, PLOT))
-QHI_2022_max <- QHI_2022_max %>% 
-  mutate(Year_index = I(YEAR - 1998)) 
-
-QHI_2022_max$SubsitePlot <- as.factor(QHI_2022_max$SubsitePlot)
-unique(QHI_2022_max$SubsitePlot)
-
-QHI_height_time <- brms::brm(max_heights_cm ~ Year_index + (Year_index|SubsitePlot),
-                               data = QHI_2022_max,  family = gaussian(), chains = 3,
-                               iter = 5000, warmup = 1000, 
-                               control = list(max_treedepth = 15, adapt_delta = 0.99))
-
-
-(pulchra_height_plot <- QHI_2022_max %>%
-    group_by(SubsitePlot)%>%
-    add_predicted_draws(QHI_height_time) %>%
-    ggplot(aes(x = Year_index, y = max_heights_cm)) +
-    stat_lineribbon(aes(y = .prediction), .width = .50, alpha = 1/4) +
-    geom_point(data = QHI_2022_max) +
-    scale_fill_brewer(palette = "Set2") +
-    scale_color_brewer(palette = "Dark2") +
-    ylab("Salix pulchra height (cm) \n") +
-    xlab("\nYear (scaled)") +
-    theme_shrub())
-
-QHI_height_random <- as.data.frame(ranef(QHI_height_time)) # extract random eff. slopes 
-QHI_height_random$Plot <- row.names(QHI_height_random) # Apply row.names function
-rownames(QHI_height_random) <- NULL
-colnames(QHI_height_random)[5] <- "plot_height_index_year_estimate" 
-colnames(QHI_height_random)[6] <- "plot_height_index_year_error" 
-colnames(QHI_height_random)[7] <- "plot_height_index_year_Q_25" 
-colnames(QHI_height_random)[8] <- "plot_height_index_year_Q_97"
-view(QHI_height_random)
-
-QHI_height_random_year <- QHI_height_random %>%
-  dplyr::select("Plot","plot_height_index_year_estimate" ,"plot_height_index_year_error", "plot_height_index_year_Q_25",
-                "plot_height_index_year_Q_97")%>%
-  mutate(Site = rep("QHI"))
-view(QHI_height_random_year)
 
 
 

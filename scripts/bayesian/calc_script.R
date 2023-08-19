@@ -1,4 +1,6 @@
-# All the calculations go in this script!
+# All the calculations for shrub biomass projections go in this script!
+# by Erica Zaja 
+
 
 # TEMPERATURES ------
 # Temp at year 22 for QHI=8.761188

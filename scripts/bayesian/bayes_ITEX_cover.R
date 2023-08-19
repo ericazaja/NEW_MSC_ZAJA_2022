@@ -1,16 +1,20 @@
 # BAYESIAN models for ITEX cover analysis
-# script by Erica
+# script by Erica Zaja 
 # last update: 12/07/2023
 
-# libraries ------
+# Loading libraries ------
 library(tidyverse)
 library(brms)
 library(tidybayes)
 library(bayesplot)
 library(plyr)
 library(sjPlot)
+library(tidybayes)
+library(brms)
+library(gridExtra)
 
-# funciton to extract model summary
+
+# function to extract model summary
 model_summ_cov <- function(x) {
   sum = summary(x)
   fixed = sum$fixed
@@ -29,13 +33,13 @@ model_summ_cov <- function(x) {
   modelTerms <- as.data.frame(bind_rows(fixed, random, sigma))  # merge together
 }
 
-# load data ------
+# Loading data ------
 itex_EZ_shrubs_2023 <- read_csv("data/ITEX/itex_EZ_shrubs_2023.csv")
 #pulchra_yearly_max <- read_csv("data/ITEX/itex.meta.max.csv")
 #pulchra_yearly_mean <- read_csv("data/ITEX/itex.meta.mean.csv")
 
 
-# wrangle data -----
+# Wrangle data -----
 #pulchra_yearly_max <- pulchra_yearly_max%>%
  # mutate(cover_prop_max = max_cov/100)%>% 
  # mutate(Year_index = I(YEAR - 1988)) %>%
@@ -132,7 +136,7 @@ itex_EZ_arctica$SiteSubsitePlot <- as.factor(itex_EZ_arctica$SiteSubsitePlot)
 itex_EZ_pulchra$SitePlotYear<- with(itex_EZ_pulchra, paste0(SITE, PLOT, YEAR))
 itex_EZ_pulchra$SitePlot<- with(itex_EZ_pulchra, paste0(SITE, PLOT))
 
-# quick plots
+# quick plots to explore
 (plot <- ggplot(meanmax) +
   geom_point(aes(x =YEAR , y = mean_cov, color= SITE, fill =SITE)))
 
@@ -140,9 +144,9 @@ itex_EZ_pulchra$SitePlot<- with(itex_EZ_pulchra, paste0(SITE, PLOT))
     geom_point(aes(x =YEAR , y = max_cov, color= SITE, fill =SITE)))
 
 # MODELLING -----
-# cover over time at different sites
+
+# 1. cover over time at different sites
 # Salix pulchra -----
-# overall model 
 pulchra_cover <- brms::brm(cover_prop ~ I(YEAR-1988)+ (I(YEAR-1988)|SiteSubsitePlot),
                       data = itex_EZ_pulchra, family = "beta", chains = 3,
                       iter = 5000, warmup = 1000, 
@@ -152,7 +156,7 @@ summary(pulchra_cover)
 plot(pulchra_cover)
 pp_check(pulchra_cover, type = "dens_overlay", nsamples = 100) 
 
-# site max and means
+# site max and means models
 pulchra_cover_max <- brms::brm(max_cov ~ Year_index * SITE + (1|Year_index),
                            data = maxtest, family = "beta", chains = 3,
                            iter = 5000, warmup = 1000, 
@@ -178,6 +182,7 @@ plot_model(pulchra_cover_mean, type = "pred", terms = c("Year_index ", "SITE")) 
 saveRDS(pulchra_cover_mean, file = "outputs/models/pulchra_cover_mean.rds")
 pulchra_cover_mean <- readRDS("outputs/models/pulchra_cover_mean.rds")
 
+# summary for table
 pulchra_cover_mean_summ <- model_summ_cov(pulchra_cover_mean)
 rownames(pulchra_cover_mean_summ) <- c("Intercept ", "Year (indexed) ", "Toolik site ", "Year (indexed):Toolik site",
                                        "Random intercept", "phi")
@@ -210,7 +215,7 @@ cov_time_pul_random_new$Site <- ifelse(grepl("QHI", cov_time_pul_random_new$Site
 view(cov_time_pul_random_new)
 
 # single site models
-# QHI only
+# QHI ONLY ----
 mean_QHI <- mean %>%
   dplyr::filter(SITE == "QHI")
 
@@ -260,7 +265,7 @@ cov_time_pul_fix_QHI <- as.data.frame(fixef(pulchra_cover_mean_QHI)) # extract f
 cov_time_pul_fix_QHI_max <- as.data.frame(fixef(pulchra_cover_max_QHI)) # extract fixed eff. slopes 
 
 
-# TOOLIK ONLY
+# TOOLIK ONLY -----
 mean_toolik <- mean %>%
   dplyr::filter(SITE == "TOOLIK")
 
@@ -314,7 +319,7 @@ summary(pulchra_cover_max_toolik)
 cov_time_pul_fix_toolik <- as.data.frame(fixef(pulchra_cover_mean_toolik)) # extract fixed eff. slopes 
 cov_time_pul_fix_toolik_max <- as.data.frame(fixef(pulchra_cover_max_toolik)) # extract fixed eff. slopes 
 
-# salix arctica -----
+# Salix arctica -----
 arctica_cover <- brms::brm(cover_prop ~ I(YEAR-1996)+(I(YEAR-1996)|SiteSubsitePlot),
                            data = itex_EZ_arctica, family = gaussian(),
                            chains = 3,iter = 5000, warmup = 1000, 
@@ -344,8 +349,7 @@ cov_time_arc_random_new$Site <- ifelse(grepl("QHI", cov_time_arc_random_new$Site
                                        ifelse(grepl("ANWR", cov_time_arc_random_new$SiteSubsitePlot), "ANWR" , NA))
 view(cov_time_arc_random_new)
 
-
-# data visualisation ------
+# Data visualisation ------
 # one line per site
 (pulchra_cover_plot <- itex_EZ_pulchra_max %>%
   group_by(SITE) %>%
@@ -386,8 +390,7 @@ view(cov_time_arc_random_new)
           axis.text.y = element_text(size = 12, colour = "black"))) 
 
 # mean and max plot
-library(tidybayes)
-library(brms)
+
 cov_mean <- (conditional_effects(pulchra_cover_mean))
 cov_mean_dat <- cov_mean[[1]]
 
@@ -466,7 +469,6 @@ cov_mean_dat <- cov_mean[[1]]
           axis.text.x = element_text(vjust = 0.5, size = 12, colour = "black"),
           axis.text.y = element_text(size = 12, colour = "black"))) 
 
-library(gridExtra)
 grid.arrange(pulchra_cover_plot_max, pulchra_cover_plot_mean, nrow=1)
 
 # trying to plot both models in one graph
@@ -600,7 +602,7 @@ panel_coverheight_mean_new <- grid.arrange(pulchra_height_plot_mean_new,pul_mean
 ggsave(panel_coverheight_max_new, filename ="outputs/figures/panel_coverheight_max.png", width = 14.67, height = 6.53, units = "in")
 ggsave(panel_coverheight_mean_new, filename ="outputs/figures/panel_coverheight_mean.png", width = 14.67, height = 6.53, units = "in")
 
-# FINAL GRAPHS ------
+# FINAL GRAPHS (used in thesis) ------
 ggpred_cov_mean <- ggpredict(pulchra_cover_mean, terms = c("Year_index", "SITE"))
 colnames(ggpred_cov_mean) = c('Year_index', 'fit', 'lwr', 'upr', 'SITE')
 # actual mean cover value at year 10 toolik: 0.09632101

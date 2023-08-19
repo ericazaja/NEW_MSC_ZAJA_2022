@@ -25,12 +25,7 @@ all_phenocam_data_salix$population <- plyr::revalue(all_phenocam_data_salix$popu
 # species code from QHI pheno plots is different, change to Salix arctica 
 all_phenocam_data_salix$Species <- plyr::revalue(all_phenocam_data_salix$Species, 
                                                  c("SALARC"="Salix arctica"))
-
-#all_phenocam_data_salix$population <- ordered(all_phenocam_data_salix$population, 
-#                                              levels = c("Northern Source", 
-#                                                         "Northern Garden", 
-#                                                         "Southern Source",
-#                                                         "Southern Garden"))
+                                                      "Southern Garden"))
 
 all_phenocam_data_salix$Year <- as.factor(all_phenocam_data_salix$Year)
 
@@ -39,12 +34,6 @@ all_growing_season$population <- plyr::revalue(all_growing_season$population,
                                                  "Southern"="S. Garden",
                                                  "KP"="S. Source",
                                                  "QHI"="S. Source"))
-
-#all_growing_season$population <- ordered(all_growing_season$population, 
-#                                         levels = c("Northern Source", 
-#                                                    "Northern Garden", 
-#                                                  "Southern Source",
-#                                                    "Southern Garden"))
 
 # calculate growing season length in all_phenocam_data_salix data sheet 
 
@@ -120,13 +109,14 @@ hist(all_phenocam_pul_source$First_leaf_yellow_DOY, breaks=30) # defo not normal
 hist(all_phenocam_rich_source$First_leaf_yellow_DOY, breaks=30) # defo not normal
 hist(all_phenocam_arc_source$First_leaf_yellow_DOY, breaks=30) # defo not normal
 
-# scale function =====
+# functions ------
+# 1. scale function
 # centering with 'scale()'
 center_scale <- function(x) {
   scale(x, scale = FALSE)
 }
 
-# 2. extract model result function =====
+# 2. extract model result function
 # with random effects:
 model_summ_pheno <- function(x) {
   sum = summary(x)
@@ -146,7 +136,8 @@ model_summ_pheno <- function(x) {
   
   modelTerms <- as.data.frame(bind_rows(fixed, random, sigma))  # merge it all together
 }
-#without random effects 
+
+# 3. without random effects 
 model_summ_pheno_no_rf <- function(x) {
   sum = summary(x)
   fixed = sum$fixed
@@ -160,6 +151,7 @@ model_summ_pheno_no_rf <- function(x) {
   
   modelTerms <- as.data.frame(bind_rows(fixed, sigma))  # merge it all together
 }
+
 # MODELLING ------
 # 1. LEAF EMERGENCE (only source pops) -------
 
@@ -1006,12 +998,16 @@ save_kable(kable_season_garden, file = "outputs/tables/kable_growing_season_leng
            density = 300)
 
 
-# PLOTS ====
+# Data visualisation -------
+
+# setting palettes 
 pal  <- c("#2A788EFF", "#440154FF", "#FDE725FF","#5ccc64") # for reall levels 
 pal_garden <- c("#440154FF", "#5ccc64") # for only garden 
 pal_ric  <- c("#440154FF", "#FDE725FF","#5ccc64") # for when n source is missing  
 pal_arc  <- c("#2A788EFF", "#440154FF", "#5ccc64") # for when southern source is missing  
 pal_arc_2  <- c("#FDE725FF", "#440154FF","#5ccc64" )
+
+# personalised theme
 theme_shrub <- function(){ theme(legend.position = "right",
                                  axis.title.x = element_text(size=18),
                                  axis.text.x  = element_text(angle = 35, vjust=0.5, size=14, colour = "black"), 
@@ -1429,9 +1425,8 @@ arc_grow_data <- arc_grow[[1]] # making the extracted model outputs into a data
                                    common.legend = TRUE, legend = "bottom",
                                    ncol = 3, nrow = 1))
 
-# growing season scaled (and then not in figures) ----
-
-# S. richardsonii -------
+# growing season scaled (and then not in figures)
+# S. richardsonii 
 ric_grow <- (conditional_effects(growing_season_rich_scale)) # extracting conditional effects from bayesian model
 ric_grow_data <- ric_grow[[1]] # making the extracted model outputs into a dataset (for plotting)
 
@@ -1458,7 +1453,7 @@ rich_grow_trans<- ric_grow_data %>%
     ggtitle(expression(italic("Salix richardsonii"))) +
     theme(text=element_text(family="Helvetica Light")) )
 
-# S. pulchra ----------
+# S. pulchra 
 pul_grow_scale <- (conditional_effects(growing_season_pul_scaled)) # extracting conditional effects from bayesian model
 pul_grow_data <- pul_grow_scale[[1]] # making the extracted model outputs into a dataset (for plotting)
 m_pul_grow <- mean(all_phenocam_pulchra$growing_season_length, na.rm = T)
@@ -1483,7 +1478,7 @@ pulchra_grow_trans <- pul_grow_data %>%
     ggtitle(expression(italic("Salix pulchra"))) +
     theme(text=element_text(family="Helvetica Light")) )
 
-# S. arctica --------
+# S. arctica 
 arc_grow_scale <- (conditional_effects(growing_season_arc_scaled)) # extracting conditional effects from bayesian model
 arc_grow_data <- arc_grow_scale[[1]] # making the extracted model outputs into a dataset (for plotting)
 
