@@ -227,6 +227,7 @@ MAX_summ <- MAX_summ %>%
   relocate("Response variable", .before = "Site")%>%
   relocate("Scenario", .before = "Site")
 
+# binding datasets from various scripts to make final table
 Mean_max_bind <- rbind(MEAN_summ, MAX_summ, all_natural_cov)
 bind_with_cg <- rbind(cg_models_bind, Mean_max_bind)
 
@@ -240,13 +241,14 @@ rownames(subsetted) <- c("Intercept", "Age","sigma","Intercept " , "Age ",
                         "    Intercept ", "     Year ", "     sigma  ",
                         "Intercept    ", " Year    ", "  sigma     ")
 
+write.csv(subsetted, file= "data/subsetted_table_1_dat.csv")
   
 kable_bind_with_cg <- subsetted %>% 
   kbl(caption="Table. Heights and cover over time of natural vs novel scenarios. ", 
       col.names = c("Response variable", "Scenario", "Site", "Estimate", "Error", "Lower 95% CI", "Upper 95% CI",
                     "Rhat", "Bulk effective sample size", "Tail effective sample size",
                     "Effect", "Sample size"), # give the column names you want making sure you have one name per column!
-      digits=3, align = "c") %>%  # specify number of significant digits, align numbers at the centre (can also align "l" left/ "r" right)
+      digits=1, align = "c") %>%  # specify number of significant digits, align numbers at the centre (can also align "l" left/ "r" right)
   kable_classic(full_width=TRUE, html_font="Helvetica")# can change fonts
 
 kable_bind_with_cg <- kable_bind_with_cg %>%

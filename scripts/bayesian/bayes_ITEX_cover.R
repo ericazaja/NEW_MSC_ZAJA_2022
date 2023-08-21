@@ -228,6 +228,8 @@ pulchra_cover_mean_QHI <- brms::brm(mean_cov ~ Year_index + (1|Year_index),
                                 control = list(max_treedepth = 15, adapt_delta = 0.99))
 
 saveRDS(pulchra_cover_mean_QHI, file = "outputs/models/pulchra_cover_mean_QHI.rds")
+pulchra_cover_mean_QHI <- readRDS("outputs/models/pulchra_cover_mean_QHI.rds")
+
 pulchra_cover_mean_QHI_summ <- model_summ_cov(pulchra_cover_mean_QHI)
 rownames(pulchra_cover_mean_QHI_summ) <- c("Intercept   ", "Year (indexed)            ",
                                        "Random intercept  ", "phi   ")
@@ -246,6 +248,7 @@ pulchra_cover_max_QHI <- brms::brm(max_cov ~ Year_index + (1|Year_index),
                                     control = list(max_treedepth = 15, adapt_delta = 0.99))
 
 saveRDS(pulchra_cover_max_QHI, file = "outputs/models/pulchra_cover_max_QHI.rds")
+pulchra_cover_max_QHI <- readRDS("outputs/models/pulchra_cover_max_QHI.rds")
 
 pulchra_cover_max_QHI_summ <- model_summ_cov(pulchra_cover_max_QHI)
 rownames(pulchra_cover_max_QHI_summ) <- c(" Intercept  ", "Year (indexed)  ",
@@ -278,6 +281,7 @@ pulchra_cover_mean_toolik <- brms::brm(mean_cov ~ Year_index + (1|Year_index),
                                     control = list(max_treedepth = 15, adapt_delta = 0.99))
 
 saveRDS(pulchra_cover_mean_toolik, file = "outputs/models/pulchra_cover_mean_toolik.rds")
+pulchra_cover_mean_toolik <- readRDS("outputs/models/pulchra_cover_mean_toolik.rds")
 
 pulchra_cover_mean_toolik_summ <- model_summ_cov(pulchra_cover_mean_toolik)
 rownames(pulchra_cover_mean_toolik_summ) <- c("Intercept     ", "  Year (indexed) ",
@@ -297,6 +301,7 @@ pulchra_cover_max_toolik <- brms::brm(max_cov ~ Year_index + (1|Year_index),
                                        iter = 5000, warmup = 1000, 
                                        control = list(max_treedepth = 15, adapt_delta = 0.99))
 saveRDS(pulchra_cover_max_toolik, file = "outputs/models/pulchra_cover_max_toolik.rds")
+pulchra_cover_max_toolik <- readRDS("outputs/models/pulchra_cover_max_toolik.rds")
 pulchra_cover_max_toolik_summ <- model_summ_cov(pulchra_cover_max_toolik)
 rownames(pulchra_cover_max_toolik_summ) <- c(" Intercept  ", " Year (indexed) ",
                                               " Random intercept ", " phi ")
