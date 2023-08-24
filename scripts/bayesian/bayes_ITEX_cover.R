@@ -303,7 +303,7 @@ pulchra_cover_max_toolik <- brms::brm(max_cov ~ Year_index + (1|Year_index),
 saveRDS(pulchra_cover_max_toolik, file = "outputs/models/pulchra_cover_max_toolik.rds")
 pulchra_cover_max_toolik <- readRDS("outputs/models/pulchra_cover_max_toolik.rds")
 pulchra_cover_max_toolik_summ <- model_summ_cov(pulchra_cover_max_toolik)
-rownames(pulchra_cover_max_toolik_summ) <- c(" Intercept  ", " Year (indexed) ",
+rownames(pulchra_cover_max_toolik_summ) <- c(" Intercept                      ", " Year (indexed) ",
                                               " Random intercept ", " phi ")
 pulchra_cover_max_toolik_summ$Rhat <- as.character(formatC(pulchra_cover_max_toolik_summ$Rhat, digits = 2, format = 'f'))
 
