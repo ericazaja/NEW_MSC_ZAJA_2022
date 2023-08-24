@@ -231,6 +231,9 @@ MAX_summ <- MAX_summ %>%
 Mean_max_bind <- rbind(MEAN_summ, MAX_summ, all_natural_cov)
 bind_with_cg <- rbind(cg_models_bind, Mean_max_bind)
 
+write.csv(bind_with_cg, file= "data/bind_with_cg.csv")
+
+
 subsetted <- bind_with_cg[c(1, 2, 6,7, 8,12, 13, 14,16, 17, 18,20, 21, 22,24, 25, 26, 28,29,30,32,33, 34, 36),] # only keeping sample age term
 
 rownames(subsetted) <- c("Intercept", "Age","sigma","Intercept " , "Age ",
@@ -243,7 +246,7 @@ rownames(subsetted) <- c("Intercept", "Age","sigma","Intercept " , "Age ",
 
 write.csv(subsetted, file= "data/subsetted_table_1_dat.csv")
   
-kable_bind_with_cg <- subsetted %>% 
+kable_bind_with_cg <- bind_with_cg %>% 
   kbl(caption="Table. Heights and cover over time of natural vs novel scenarios. ", 
       col.names = c("Response variable", "Scenario", "Site", "Estimate", "Error", "Lower 95% CI", "Upper 95% CI",
                     "Rhat", "Bulk effective sample size", "Tail effective sample size",
@@ -254,14 +257,14 @@ kable_bind_with_cg <- subsetted %>%
 kable_bind_with_cg <- kable_bind_with_cg %>%
   row_spec(0,  bold = TRUE)%>%
   #column_spec(5,  bold = TRUE)%>%
- # column_spec(4,  bold = TRUE)%>%
-  #row_spec(c(2,8,14,18,22, 26, 30, 34), bold = TRUE)%>%
+ #column_spec(4,  bold = TRUE)%>%
+  row_spec(c(2,8,14,18,22, 26, 30, 34), bold = TRUE)%>%
   landscape()
 
 kable_bind_with_cg
 
 # optional: making specific column text in italics
-save_kable(kable_bind_with_cg,file = "outputs/tables/kable_bind_with_cg_2.pdf", # or .png, or .jpeg, save in your working directory
+save_kable(kable_bind_with_cg,file = "outputs/tables/kable_bind_with_cg.pdf", # or .png, or .jpeg, save in your working directory
            bs_theme = "simplex",
            self_contained = TRUE,
            extra_dependencies = NULL,
